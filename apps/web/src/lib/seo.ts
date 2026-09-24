@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { DOCUMENT_PATHS } from "./legal";
 import { SITE_NAME } from "./site";
 
 // Личные страницы: вход, портрет и всё, что под ними. В поиск не попадают
 export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret"];
 
-// Документы добавляет задача 4, страницы практик — следующие планы
-export const PUBLIC_PATHS: string[] = ["/"];
+// Страницы практик добавляют следующие планы
+export const PUBLIC_PATHS: string[] = ["/", ...DOCUMENT_PATHS];
 
 export function publicMetadata(p: { title: string; description: string; path: string; absoluteTitle?: boolean }): Metadata {
   return {

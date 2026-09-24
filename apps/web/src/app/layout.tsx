@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import type { ReactNode } from "react";
+import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );

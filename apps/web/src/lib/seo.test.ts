@@ -27,4 +27,8 @@ describe("paths", () => {
     expect(PUBLIC_PATHS).toContain("/");
     expect(PRIVATE_PATHS).toContain("/portret");
   });
+
+  test("documents are public", () => {
+    expect(PUBLIC_PATHS).toEqual(expect.arrayContaining(["/contacts", "/privacy", "/consent"]));
+  });
 });
