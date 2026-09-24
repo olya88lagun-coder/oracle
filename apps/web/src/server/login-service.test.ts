@@ -66,7 +66,7 @@ describe("VK ID login", () => {
     expect(params.get("code_challenge_method")).toBe("S256");
   });
 
-  test("round-trips state and creates a user with the full name from VK", async () => {
+  test("round-trips state and creates a user with only the first name from VK", async () => {
     const fetchFn = vi
       .fn()
       .mockResolvedValueOnce(jsonResponse({ access_token: "at" }))
@@ -75,7 +75,7 @@ describe("VK ID login", () => {
     const outcome = await finishWith(fetchFn, await giveConsent(deps));
 
     const userId = await userIdOf(outcome);
-    expect(userId && (await getUser(db, userId))?.displayName).toBe("Аня Петрова");
+    expect(userId && (await getUser(db, userId))?.displayName).toBe("Аня");
   });
 
   test("reports the token exchange error with a vk_ prefix", async () => {

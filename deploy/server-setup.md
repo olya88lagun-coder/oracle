@@ -131,3 +131,11 @@ docker exec -i food-tracker-bot-db-1 psql -U food_tracker -d postgres -c "DROP D
 gunzip -c backups/pre-<тег>.sql.gz | docker exec -i food-tracker-bot-db-1 psql -U oracle -d oracle -v ON_ERROR_STOP=1
 docker compose up -d web
 ```
+
+### Срок хранения копий
+
+Деплой сам хранит только пять последних копий и удаляет те, что старше 30 дней, но выкладки могут быть редкими, и без деплоя чистка не запустится. На сервере нужна ежедневная проверка через cron: `crontab -e`, затем добавить строку
+
+```
+0 4 * * * find /opt/oracle/backups -name 'pre-*.sql.gz' -mtime +30 -delete
+```

@@ -18,7 +18,7 @@ export type DataRecipient = { name: string; what: string; why: string };
 export const DATA_RECIPIENTS: readonly DataRecipient[] = [
   {
     name: "Яндекс.Метрика",
-    what: "обезличенные данные о посещении: cookie, просмотренные страницы, устройство",
+    what: "IP-адрес, cookie, просмотренные страницы и сведения об устройстве",
     why: "статистика посещений — только если вы приняли cookie",
   },
 ];

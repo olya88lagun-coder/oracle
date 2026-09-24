@@ -65,7 +65,7 @@ function keepExtendedProtocolTogether(queue) {
 
 const db = await PGlite.create(dataDir);
 await migrate(drizzle(db), { migrationsFolder });
-// web (postgres.js + отправка в pg-boss) и воркер (postgres.js + pg-boss) держат до ~8 соединений; PGlite выполняет запросы по очереди
+// web (postgres.js + отправка в pg-boss) держит до ~8 соединений; PGlite выполняет запросы по очереди
 const server = new PGLiteSocketServer({ db, port: DEV_DB_PORT, host: "127.0.0.1", maxConnections: 10 });
 keepExtendedProtocolTogether(server.queryQueue);
 await server.start();

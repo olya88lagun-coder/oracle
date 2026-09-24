@@ -83,12 +83,12 @@ describe("exchangeVkCode", () => {
 });
 
 describe("fetchVkUser", () => {
-  test("reads the id and names, turning an empty last name into null", async () => {
-    const fetchFn = vi.fn().mockResolvedValue(jsonResponse({ user: { user_id: 777, first_name: "Аня", last_name: "", sex: 1 } }));
+  test("reads the id and the first name", async () => {
+    const fetchFn = vi.fn().mockResolvedValue(jsonResponse({ user: { user_id: 777, first_name: "Аня", last_name: "Петрова", sex: 1 } }));
 
     expect(await fetchVkUser({ clientId: "123", accessToken: "at-1", fetchFn })).toEqual({
       ok: true,
-      user: { id: "777", firstName: "Аня", lastName: null },
+      user: { id: "777", firstName: "Аня" },
     });
   });
 

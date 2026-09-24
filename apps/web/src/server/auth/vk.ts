@@ -6,7 +6,7 @@ const FORM_HEADERS = { "content-type": "application/x-www-form-urlencoded" };
 const PKCE_VERIFIER_BYTES = 48;
 
 export type FetchFn = (input: string, init: RequestInit) => Promise<Response>;
-export type VkUser = { id: string; firstName: string; lastName: string | null };
+export type VkUser = { id: string; firstName: string };
 
 export function createPkcePair(): { codeVerifier: string; codeChallenge: string } {
   const codeVerifier = randomBytes(PKCE_VERIFIER_BYTES).toString("base64url");
@@ -67,6 +67,5 @@ export async function fetchVkUser(p: { clientId: string; accessToken: string; fe
   const user = body.user as Record<string, unknown> | undefined;
   const id = user?.user_id;
   if (!user || (typeof id !== "string" && typeof id !== "number") || typeof user.first_name !== "string") return { ok: false, error: "malformed_user_info" };
-  const lastName = typeof user.last_name === "string" && user.last_name.length > 0 ? user.last_name : null;
-  return { ok: true, user: { id: String(id), firstName: user.first_name, lastName } };
+  return { ok: true, user: { id: String(id), firstName: user.first_name } };
 }

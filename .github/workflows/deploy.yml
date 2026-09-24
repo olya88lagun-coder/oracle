@@ -79,6 +79,8 @@ jobs:
           mkdir -p backups
           docker exec food-tracker-bot-db-1 pg_dump -U food_tracker -d oracle --no-owner | gzip > "backups/pre-$EXPECTED_TAG.sql.gz"
           ls -1t backups/pre-*.sql.gz | tail -n +6 | xargs -r rm -f
+          # удалённые данные не должны жить в копиях дольше срока из политики
+          find backups -name 'pre-*.sql.gz' -mtime +30 -delete
 
           docker compose run --rm migrate
           docker compose up -d --force-recreate web

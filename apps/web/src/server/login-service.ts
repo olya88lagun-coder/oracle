@@ -14,7 +14,6 @@ export type LoginCookies = { consent: string | null };
 export type LoginOutcome = { ok: true; sessionToken: string; redirectTo: string } | { ok: false; error: string };
 
 const vkRedirectUri = (env: AppEnv) => new URL("/api/auth/vk/callback", env.APP_URL).toString();
-const fullName = (first: string, last: string | null) => [first, last].filter(Boolean).join(" ");
 
 export async function giveConsent(deps: Pick<LoginDeps, "env" | "now">): Promise<string> {
   return signConsent({ version: CONSENT_VERSION, at: deps.now() }, deps.env.SESSION_SECRET);
@@ -58,7 +57,8 @@ export async function finishVkLogin(
   if (!profile.ok) return { ok: false, error: `vk_${profile.error}` };
 
   const { user } = profile;
-  return completeLogin(deps, { provider: "vk", externalId: user.id, displayName: fullName(user.firstName, user.lastName) }, p.cookies);
+  // Политика и согласие обещают хранить только имя из VK ID: фамилию не показываем нигде на сайте, поэтому не сохраняем и её
+  return completeLogin(deps, { provider: "vk", externalId: user.id, displayName: user.firstName }, p.cookies);
 }
 
 export async function getCurrentUser(deps: Pick<LoginDeps, "db" | "env">, sessionToken: string | null): Promise<UserRecord | null> {
