@@ -18,6 +18,10 @@
   --radius: 16px;
   --radius-lg: 24px;
   --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  --glow: #24183A;
+  --glow-fade: #0B0911;
+  --input-bg: #0B0910;
+  --focus-ring: rgba(184, 156, 255, 0.12);
   --font-body: var(--font-manrope), system-ui, sans-serif;
 }
 
@@ -25,7 +29,7 @@
 html, body { margin: 0; }
 body {
   min-height: 100vh;
-  background: radial-gradient(circle at 15% 0, #24183A 0, #0B0911 38%, var(--bg) 100%) fixed;
+  background: radial-gradient(circle at 15% 0, var(--glow) 0, var(--glow-fade) 38%, var(--bg) 100%) fixed;
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 16px;
@@ -69,8 +73,8 @@ body .stack > * + * { margin-top: 20px; }
 
 .field { display: grid; gap: 8px; }
 .field label { color: var(--ink-soft); font-size: 13px; }
-.input { width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: #0B0910; color: var(--ink); font: inherit; color-scheme: dark; }
-.input:focus { border-color: var(--line-strong); outline: none; box-shadow: 0 0 0 3px rgba(184, 156, 255, 0.12); }
+.input { width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--input-bg); color: var(--ink); font: inherit; color-scheme: dark; }
+.input:focus { border-color: var(--line-strong); outline: none; box-shadow: 0 0 0 3px var(--focus-ring); }
 .choice { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: var(--ink-soft); cursor: pointer; }
 .choice input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); }
 
