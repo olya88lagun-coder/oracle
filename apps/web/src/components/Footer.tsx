@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CookieSettingsButton } from "./CookieSettingsButton";
 import { DISCLAIMER } from "@/lib/legal";
 
 const LINKS = [
@@ -17,6 +18,7 @@ export function Footer() {
             {link.label}
           </Link>
         ))}
+        <CookieSettingsButton />
       </nav>
       <p className="disclaimer">{DISCLAIMER}</p>
     </footer>

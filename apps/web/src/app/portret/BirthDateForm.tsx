@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { reachGoal } from "@/lib/analytics";
 
 const ERRORS: Record<string, string> = {
   invalid_date: "Проверьте дату: она должна быть настоящей и не позже сегодняшней.",
@@ -30,6 +31,7 @@ export function BirthDateForm({ initial }: { initial: string | null }) {
         setMessage({ kind: "error", text: ERRORS[body.error ?? ""] ?? "Не получилось сохранить. Попробуйте ещё раз." });
         return;
       }
+      reachGoal("birth_date_saved");
       setMessage({ kind: "success", text: "Сохранено." });
       router.refresh();
     } catch {
