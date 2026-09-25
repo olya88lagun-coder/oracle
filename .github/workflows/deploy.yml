@@ -148,6 +148,7 @@ jobs:
           assert_contains 'Disallow: /portret' "$tmp/robots.txt" "robots private pages"
 
           assert_status "404" "dev login is off in production" "$SITE/api/dev/login"
+          assert_status "200" "home images are served" "$SITE/practices/matrix.webp"
           assert_status "403" "profile API checks the origin" -X POST "$SITE/api/profile/birth-date" -d '{}'
 
           echo "Deployment and smoke tests passed."
