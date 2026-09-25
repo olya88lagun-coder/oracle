@@ -30,7 +30,7 @@ export function LoginPanel() {
           Соглашаюсь на <Link href="/consent">обработку персональных данных</Link> в соответствии с <Link href="/privacy">политикой</Link>
         </span>
       </label>
-      <button type="button" className="button button--block" disabled={!agreed || sending} onClick={signIn}>
+      <button type="button" className="button button--lavender button--block" disabled={!agreed || sending} onClick={signIn}>
         {sending ? "Переходим в VK ID…" : "Войти через VK ID"}
       </button>
       {error && (
