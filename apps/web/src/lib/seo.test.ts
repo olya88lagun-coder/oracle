@@ -8,11 +8,11 @@ describe("publicMetadata", () => {
     expect(metadata.robots).toEqual({ index: true, follow: true });
     expect(metadata.alternates).toEqual({ canonical: "/contacts" });
     expect(metadata.title).toBe("Контакты");
-    expect(metadata.openGraph).toMatchObject({ title: "Контакты", url: "/contacts", locale: "ru_RU", siteName: "ORACLE" });
+    expect(metadata.openGraph).toMatchObject({ title: "Контакты", url: "/contacts", locale: "ru_RU", siteName: "Твой оракул" });
   });
 
   test("an absolute title skips the site-wide template", () => {
-    expect(publicMetadata({ title: "ORACLE", description: "d", path: "/", absoluteTitle: true }).title).toEqual({ absolute: "ORACLE" });
+    expect(publicMetadata({ title: "Главная", description: "d", path: "/", absoluteTitle: true }).title).toEqual({ absolute: "Главная" });
   });
 });
 

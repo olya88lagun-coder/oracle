@@ -4,7 +4,7 @@ export function Header() {
   return (
     <header className="site-header">
       <Link href="/" className="site-header__logo">
-        ORACLE
+        Твой оракул
       </Link>
       <Link href="/portret">Мой портрет</Link>
     </header>

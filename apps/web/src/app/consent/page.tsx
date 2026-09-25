@@ -6,7 +6,7 @@ import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = publicMetadata({
   title: "Согласие на обработку персональных данных",
-  description: "Текст согласия на обработку персональных данных, которое даётся при входе в ORACLE.",
+  description: "Текст согласия на обработку персональных данных, которое даётся при входе на сайт «Твой оракул».",
   path: "/consent",
 });
 

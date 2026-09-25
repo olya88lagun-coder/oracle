@@ -1,4 +1,4 @@
-export const SITE_NAME = "ORACLE";
+export const SITE_NAME = "Твой оракул";
 
 export function readSiteUrl(value: string | undefined): string {
   if (!value) throw new Error("NEXT_PUBLIC_SITE_URL is required");

@@ -1,8 +1,8 @@
-# ORACLE — выкладка на общий VPS
+# «Твой оракул» (ORACLE) — выкладка на общий VPS
 
-Сервер `root@200.169.178.231` (Timeweb, Москва) общий с трекером питания (`/opt/food-tracker-bot`), wishlist (`/opt/wishlist`) и Гранями (`/opt/grani`). У трекера трогаем только две вещи: создаём БД и роль `oracle` в его Postgres и **дописываем** блок в его `Caddyfile`. Каталог ORACLE — `/opt/oracle`.
+Сервер `root@200.169.178.231` (Timeweb, Москва) общий с трекером питания (`/opt/food-tracker-bot`), wishlist (`/opt/wishlist`) и Гранями (`/opt/grani`). У трекера трогаем только две вещи: создаём БД и роль `oracle` в его Postgres и **дописываем** блок в его `Caddyfile`. Каталог сайта — `/opt/oracle`: внутреннее имя проекта `oracle` остаётся в путях, базе и образах.
 
-Во всех командах ниже `DOMAIN` — домен ORACLE без `https://`. Перед началом в терминале: `DOMAIN=tvoy-orakul.ru`.
+Во всех командах ниже `DOMAIN` — домен сайта без `https://`. Перед началом в терминале: `DOMAIN=tvoy-orakul.ru`.
 
 ## 1. Память
 
@@ -11,7 +11,7 @@ free -h
 docker stats --no-stream --format "{{.Name}} {{.MemUsage}}"
 ```
 
-Лимит ORACLE: `web` 350 МБ. Если свободно меньше 500 МБ — увеличить память в панели Timeweb до запуска.
+Лимит сайта: `web` 350 МБ. Если свободно меньше 500 МБ — увеличить память в панели Timeweb до запуска.
 
 ## 2. DNS
 
@@ -105,7 +105,7 @@ docker exec food-tracker-bot-caddy-1 caddy validate --config /tmp/Caddyfile --ad
 
 ## 9. VK ID
 
-В настройках приложения ORACLE на id.vk.ru: доверенный Redirect URL `https://tvoy-orakul.ru/api/auth/vk/callback`, базовый домен `tvoy-orakul.ru`.
+В настройках приложения «Твой оракул» на id.vk.ru (отдельное веб-приложение VK ID, не сообщество): доверенный Redirect URL `https://tvoy-orakul.ru/api/auth/vk/callback`, базовый домен `tvoy-orakul.ru`.
 
 ## 10. Логи и откат
 

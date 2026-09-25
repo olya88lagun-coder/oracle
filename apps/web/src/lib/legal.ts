@@ -9,7 +9,7 @@ export const DATA_STORAGE = "на сервере в Москве (Timeweb Cloud)
 export const DOCUMENT_PATHS = ["/contacts", "/privacy", "/consent"] as const;
 
 export const DISCLAIMER =
-  "ORACLE — инструмент самопознания. Трактовки символических практик — не предсказания и не медицинская, психологическая, юридическая или финансовая консультация.";
+  "«Твой оракул» — инструмент самопознания. Трактовки символических практик — не предсказания и не медицинская, психологическая, юридическая или финансовая консультация.";
 
 export type DataRecipient = { name: string; what: string; why: string };
 

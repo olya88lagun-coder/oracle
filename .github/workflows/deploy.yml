@@ -135,7 +135,7 @@ jobs:
             fi
           }
 
-          assert_contains '<title>ORACLE — символические практики для самопознания</title>' "$tmp/home.html" "home title"
+          assert_contains '<title>Твой оракул — символические практики для самопознания</title>' "$tmp/home.html" "home title"
           assert_contains "rel=\"canonical\" href=\"$SITE\"" "$tmp/home.html" "home canonical"
           assert_contains 'content="index, follow"' "$tmp/home.html" "home indexable"
           assert_contains 'ИНН' "$tmp/contacts.html" "contacts INN"

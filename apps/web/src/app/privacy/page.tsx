@@ -6,7 +6,7 @@ import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = publicMetadata({
   title: "Политика обработки персональных данных",
-  description: "Какие данные собирает ORACLE, зачем, кому передаёт, где хранит и как их удалить.",
+  description: "Какие данные собирает сайт «Твой оракул», зачем, кому передаёт, где хранит и как их удалить.",
   path: "/privacy",
 });
 
