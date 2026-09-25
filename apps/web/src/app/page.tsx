@@ -17,12 +17,12 @@ export default function HomePage() {
     <main className="home">
       <section className="hero">
         <div className="hero__art">
-          <Image src="/hero.webp" alt="" fill priority unoptimized sizes="(min-width: 900px) 60vw, 100vw" />
+          <Image src="/hero.webp" alt="" fill priority unoptimized sizes="100vw" />
         </div>
         <div className="hero__text">
           <p className="eyebrow">Символические практики · самопознание</p>
           <h1 className="display">
-            Иногда нужен не ответ.
+            Иногда нужен не&nbsp;ответ.
             <br />А другой взгляд.
           </h1>
           <p className="lead">
