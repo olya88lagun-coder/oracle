@@ -82,7 +82,9 @@ jobs:
           # удалённые данные не должны жить в копиях дольше срока из политики
           find backups -name 'pre-*.sql.gz' -mtime +30 -delete
 
-          docker compose run --rm migrate
+          # Скрипт приходит на сервер через stdin (bash -s). Без -T и </dev/null compose run
+          # дочитает остаток скрипта как свой ввод, и bash молча завершится после миграции.
+          docker compose run --rm -T migrate </dev/null
           docker compose up -d --force-recreate web
 
           for attempt in $(seq 1 30); do
