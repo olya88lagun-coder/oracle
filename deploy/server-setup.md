@@ -2,7 +2,7 @@
 
 Сервер `root@200.169.178.231` (Timeweb, Москва) общий с трекером питания (`/opt/food-tracker-bot`), wishlist (`/opt/wishlist`) и Гранями (`/opt/grani`). У трекера трогаем только две вещи: создаём БД и роль `oracle` в его Postgres и **дописываем** блок в его `Caddyfile`. Каталог ORACLE — `/opt/oracle`.
 
-Во всех командах ниже `DOMAIN` — домен ORACLE без `https://`. Перед началом в терминале: `DOMAIN=<домен>`.
+Во всех командах ниже `DOMAIN` — домен ORACLE без `https://`. Перед началом в терминале: `DOMAIN=tvoy-orakul.ru`.
 
 ## 1. Память
 
@@ -100,12 +100,12 @@ docker exec food-tracker-bot-caddy-1 caddy validate --config /tmp/Caddyfile --ad
 
 Репозиторий → Settings → Secrets and variables → Actions:
 
-- **Variables:** `SITE_URL` = `https://<домен>` (без слэша в конце). Без неё `images` падает, а `deploy` пропускает выкладку.
+- **Variables:** `SITE_URL` = `https://tvoy-orakul.ru` (без слэша в конце). Без неё `images` падает, а `deploy` пропускает выкладку.
 - **Secrets** — такие же, как у wishlist и Граней: `DEPLOY_HOST` (`200.169.178.231`), `DEPLOY_USER` (`root`), `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS` (вывод `ssh-keyscan 200.169.178.231`).
 
 ## 9. VK ID
 
-В настройках приложения ORACLE на id.vk.ru: доверенный Redirect URL `https://<домен>/api/auth/vk/callback`, базовый домен `<домен>`.
+В настройках приложения ORACLE на id.vk.ru: доверенный Redirect URL `https://tvoy-orakul.ru/api/auth/vk/callback`, базовый домен `tvoy-orakul.ru`.
 
 ## 10. Логи и откат
 
