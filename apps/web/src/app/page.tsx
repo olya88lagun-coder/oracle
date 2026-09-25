@@ -49,7 +49,10 @@ export default function HomePage() {
           </ul>
         </section>
 
-        <section className="card card--accent stack">
+        <section className="card card--accent card--portrait stack">
+          <div className="card__art">
+            <Image src="/portrait.webp" alt="" fill unoptimized sizes="(min-width: 760px) 1360px, 100vw" />
+          </div>
           <p className="eyebrow">Мой портрет</p>
           <h2>Одна дата рождения — для всех практик</h2>
           <p className="muted">Сохраните дату один раз: каждая новая практика откроется в портрете сразу, без повторного ввода.</p>
