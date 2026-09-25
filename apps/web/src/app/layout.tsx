@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import { Manrope, Noto_Serif_Display } from "next/font/google";
 import type { ReactNode } from "react";
 import { Analytics } from "@/components/Analytics";
 import { Footer } from "@/components/Footer";
@@ -8,7 +8,9 @@ import { YANDEX_VERIFICATION } from "@/lib/analytics";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
-const body = Manrope({ subsets: ["latin", "cyrillic"], weight: ["400", "600", "800"], variable: "--font-manrope" });
+const body = Manrope({ subsets: ["latin", "cyrillic"], weight: ["300", "400", "600", "800"], variable: "--font-manrope" });
+// Заголовки — тонкая контрастная антиква; шрифты next/font скачивает при сборке и отдаёт с нашего домена
+const display = Noto_Serif_Display({ subsets: ["latin", "cyrillic"], weight: ["300", "400"], variable: "--font-noto-display" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -21,7 +23,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ru" className={body.variable}>
+    <html lang="ru" className={`${body.variable} ${display.variable}`}>
       <body>
         <Header />
         {children}
