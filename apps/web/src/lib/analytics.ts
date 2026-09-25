@@ -2,8 +2,8 @@ export { LOGIN_MARK } from "./login-mark";
 
 // Номер счётчика и код Вебмастера видны в коде страницы любому, это не секреты.
 // Пока значений нет (null), Метрика не загружается и метатег не выводится
-export const METRIKA_ID: number | null = null;
-export const YANDEX_VERIFICATION: string | null = null;
+export const METRIKA_ID: number | null = 113068094;
+export const YANDEX_VERIFICATION: string | null = "9512ea7a80f720a4";
 
 export const GOALS = ["login", "birth_date_saved"] as const;
 export type Goal = (typeof GOALS)[number];
