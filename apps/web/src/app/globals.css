@@ -22,6 +22,11 @@
   --glow-fade: #0D0B11;
   --input-bg: #0D0B10;
   --focus-ring: rgba(203, 166, 118, 0.16);
+  --lavender: #B9A4E8;
+  --lavender-hover: #CBBAF1;
+  --lavender-ink: #16111F;
+  --lavender-glow: rgba(185, 164, 232, 0.16);
+  --accent-line: rgba(203, 166, 118, 0.38);
   --scrim: rgba(10, 9, 14, 0.92);
   --scrim-clear: rgba(10, 9, 14, 0);
   --container: 1360px;
@@ -54,12 +59,13 @@ body .stack > * + * { margin-top: 20px; }
 
 .site-header { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 16px; max-width: var(--container); margin: 0 auto; padding: 16px; }
 @media (min-width: 900px) { .site-header { padding: 24px 28px; } }
-.site-header__logo { color: var(--ink); font-size: clamp(22px, 3vw, 30px); font-weight: 300; letter-spacing: -0.01em; white-space: nowrap; text-decoration: none; }
+.site-header__logo { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); font-size: clamp(22px, 3vw, 30px); font-weight: 300; letter-spacing: -0.01em; white-space: nowrap; text-decoration: none; }
 .site-header__account { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: var(--ink); font-size: 14px; text-decoration: none; }
 .site-header__icon { display: inline-grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--ink-soft); transition: border-color 200ms ease, color 200ms ease; }
 .site-header__account:hover .site-header__icon { border-color: var(--accent); color: var(--accent); }
 
-.eyebrow { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent-soft); }
+.eyebrow--line::after { content: ""; display: inline-block; width: clamp(48px, 10vw, 120px); height: 1px; margin-left: 14px; vertical-align: middle; background: linear-gradient(90deg, var(--accent), transparent); }
+.eyebrow { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-soft); }
 .display { font-size: clamp(40px, 5.6vw, 76px); font-weight: 300; line-height: 1.04; letter-spacing: -0.015em; }
 .lead { margin: 0; font-size: 18px; color: var(--ink-soft); max-width: 640px; }
 .muted { color: var(--ink-soft); font-size: 14px; }
@@ -77,12 +83,16 @@ body .stack > * + * { margin-top: 20px; }
 .button--ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-strong); }
 .button--ghost:hover { background: var(--surface-2); }
 .button--block { width: 100%; }
+.button--lavender { background: var(--lavender); color: var(--lavender-ink); }
+.button--lavender:hover { background: var(--lavender-hover); }
+.quiet-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-faint); font-size: 14px; }
+.quiet-link:hover { color: var(--ink-soft); }
 
 .field { display: grid; gap: 8px; }
-.field label { color: var(--ink-soft); font-size: 13px; }
+.field label { color: var(--ink-soft); font-size: 14px; }
 .input { width: 100%; min-height: 48px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--input-bg); color: var(--ink); font: inherit; color-scheme: dark; }
 .input:focus { border-color: var(--line-strong); outline: none; box-shadow: 0 0 0 3px var(--focus-ring); }
-.choice { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: var(--ink-soft); cursor: pointer; }
+.choice { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; font-size: 14px; color: var(--ink-soft); cursor: pointer; }
 .choice input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); }
 
 /* Первый экран главной: широкий кадр на всю ширину, текст стоит на его тёмной левой части */
@@ -114,6 +124,52 @@ body .stack > * + * { margin-top: 20px; }
   .card--portrait > :not(.card__art) { max-width: 520px; }
 }
 
+/* Личное пространство («Мой портрет», вход): силуэт справа, мягкое лавандовое свечение, текст и карточки слева */
+.scene { position: relative; isolation: isolate; margin-top: -72px; }
+.scene::before { content: ""; position: absolute; inset: 0 0 auto; z-index: -2; height: 720px; background: radial-gradient(circle at 8% 0, var(--lavender-glow), transparent 55%); pointer-events: none; }
+.scene__art { position: absolute; inset: 0 0 auto; z-index: -1; height: min(96vw, 520px); -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent); mask-image: linear-gradient(to bottom, #000 50%, transparent); }
+.scene__art img { object-fit: cover; object-position: 76% 20%; }
+.scene__content { padding-top: calc(min(96vw, 520px) - 150px); }
+.scene__intro { max-width: 760px; }
+.scene--compact .scene__content { max-width: 560px; margin-inline: 0 auto; }
+@media (min-width: 900px) {
+  .scene { margin-top: -96px; }
+  .scene__art { inset: 0 0 auto auto; width: min(58%, 1000px); height: min(62vw, 860px); -webkit-mask-image: linear-gradient(90deg, transparent, #000 32%), linear-gradient(to bottom, #000 62%, transparent); mask-image: linear-gradient(90deg, transparent, #000 32%), linear-gradient(to bottom, #000 62%, transparent); -webkit-mask-composite: source-in; mask-composite: intersect; }
+  .scene__art img { object-position: 80% 12%; }
+  .scene__content { padding-top: 150px; }
+  .scene--compact .scene__content { max-width: var(--container); margin-inline: auto; }
+  .scene--compact .login-card { max-width: 520px; }
+}
+
+.birth-card { position: relative; overflow: hidden; isolation: isolate; display: grid; gap: 24px; max-width: 980px; background: radial-gradient(circle at 100% 50%, var(--lavender-glow), transparent 45%), linear-gradient(135deg, var(--surface-3), var(--surface)); border-color: var(--line-strong); }
+.birth-card::after { content: ""; position: absolute; z-index: -1; top: 50%; right: -160px; width: 340px; height: 340px; border: 1px solid var(--accent-line); border-radius: 50%; transform: translateY(-50%); background: radial-gradient(circle at 35% 50%, var(--lavender-glow), transparent 70%); pointer-events: none; }
+.birth-card__info { display: flex; gap: 20px; align-items: flex-start; }
+.birth-card__icon { flex: none; display: grid; place-items: center; width: 64px; height: 64px; border: 1px solid var(--accent-line); border-radius: 50%; color: var(--accent); }
+.birth-card__info h2 { font-size: clamp(28px, 3.4vw, 36px); }
+.birth-card__info .lead { font-family: var(--font-display); font-size: 22px; color: var(--ink); }
+.birth-card__form { max-width: 360px; }
+@media (min-width: 760px) {
+  .birth-card { grid-template-columns: 1.1fr 1fr; align-items: center; padding: 36px 40px; }
+}
+
+.portrait-practices { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
+@media (min-width: 640px) { .portrait-practices { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1100px) { .portrait-practices { grid-template-columns: repeat(4, 1fr); } }
+.portrait-practice { overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); transition: border-color 300ms ease; }
+.portrait-practice:hover { border-color: var(--line-strong); }
+.portrait-practice__art { position: relative; aspect-ratio: 16 / 7; -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent); mask-image: linear-gradient(to bottom, #000 60%, transparent); }
+.portrait-practice__art img { object-fit: cover; object-position: 70% 50%; opacity: 0.85; }
+.portrait-practice__body { display: flex; flex: 1; flex-direction: column; gap: 10px; padding: 4px 20px 22px; }
+.portrait-practice h3 { font-size: 24px; }
+.portrait-practice p { margin: 0 0 6px; color: var(--ink-soft); font-size: 14px; }
+.portrait-practice .tag { margin-top: auto; font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none; }
+
+.portrait-actions { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; padding-top: 8px; border-top: 1px solid var(--line); }
+
+.login-card { position: relative; overflow: hidden; background: radial-gradient(circle at 100% 0, var(--lavender-glow), transparent 55%), linear-gradient(180deg, var(--surface-2), var(--surface)); border-color: var(--line-strong); }
+.login-card .display { font-size: clamp(40px, 6vw, 60px); }
+.login-card .choice input { accent-color: var(--lavender); }
+
 /* Карточки практик: символ справа на картинке, текст слева на затемнении */
 .practice-grid { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
 @media (min-width: 760px) { .practice-grid { grid-template-columns: 1fr 1fr; gap: 20px; } }
@@ -128,8 +184,9 @@ body .stack > * + * { margin-top: 20px; }
 .practice-card h3 { margin: 0; font-size: clamp(24px, 3vw, 30px); }
 .practice-card p { margin: 0; color: var(--ink-soft); font-size: 14px; }
 
-.footer { max-width: var(--container); margin: 0 auto; padding: 24px 16px 40px; font-size: 13px; color: var(--ink-faint); }
-.footer nav { display: flex; flex-wrap: wrap; gap: 10px 20px; padding-top: 20px; border-top: 1px solid var(--line); }
+.footer { max-width: var(--container); margin: 0 auto; padding: 24px 16px 40px; font-size: 14px; color: var(--ink-faint); }
+.footer nav { display: flex; flex-wrap: wrap; gap: 0 20px; padding-top: 12px; border-top: 1px solid var(--line); }
+.footer nav a, .footer nav .link-button { display: inline-flex; align-items: center; min-height: 44px; }
 .footer a, .footer .link-button { color: var(--ink-faint); }
 .disclaimer { margin: 16px 0 0; max-width: 720px; }
 .link-button { background: none; border: 0; padding: 0; font: inherit; text-decoration: underline; cursor: pointer; }

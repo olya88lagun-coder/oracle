@@ -47,7 +47,7 @@ export function BirthDateForm({ initial }: { initial: string | null }) {
         <label htmlFor="birth-date">Дата рождения</label>
         <input id="birth-date" className="input" type="date" required min="1900-01-01" value={value} onChange={(event) => setValue(event.target.value)} />
       </div>
-      <button type="submit" className="button" disabled={!value || sending}>
+      <button type="submit" className="button button--lavender" disabled={!value || sending}>
         {sending ? "Сохраняем…" : "Сохранить"}
       </button>
       {message && (
