@@ -109,6 +109,8 @@ jobs:
           curl -fsS "$SITE/login" > "$tmp/login.html"
           curl -fsS "$SITE/sitemap.xml" > "$tmp/sitemap.xml"
           curl -fsS "$SITE/robots.txt" > "$tmp/robots.txt"
+          curl -fsS "$SITE/matrica-sudby" > "$tmp/matrix.html"
+          curl -fsS "$SITE/matrica-sudby/arkan-11-sila" > "$tmp/arcanum.html"
 
           assert_contains() {
             local needle="$1"
@@ -146,7 +148,12 @@ jobs:
           assert_contains "$SITE/privacy" "$tmp/sitemap.xml" "sitemap documents"
           assert_contains "Sitemap: $SITE/sitemap.xml" "$tmp/robots.txt" "robots sitemap"
           assert_contains 'Disallow: /portret' "$tmp/robots.txt" "robots private pages"
+          assert_contains '<h1 class="display">Матрица судьбы по дате рождения</h1>' "$tmp/matrix.html" "matrix calculator"
+          assert_contains 'content="index, follow"' "$tmp/matrix.html" "matrix indexable"
+          assert_contains 'application/ld+json' "$tmp/arcanum.html" "arcanum article markup"
+          assert_contains "$SITE/matrica-sudby/arkan-22-shut" "$tmp/sitemap.xml" "sitemap arcana"
 
+          assert_status "404" "unknown arcanum is 404" "$SITE/matrica-sudby/arkan-11-mag"
           assert_status "404" "dev login is off in production" "$SITE/api/dev/login"
           assert_status "200" "home images are served" "$SITE/practices/matrix.webp"
           assert_status "403" "profile API checks the origin" -X POST "$SITE/api/profile/birth-date" -d '{}'

@@ -173,6 +173,104 @@ body .stack > * + * { margin-top: 20px; }
 .login-card .display { font-size: clamp(40px, 6vw, 60px); }
 .login-card .choice input { accent-color: var(--lavender); }
 
+/* Страница аркана: крупный номер, секции карточками, соседи и сетка всех арканов */
+.arcanum-hero { display: grid; gap: 20px; align-items: center; }
+/* Иллюстрация аркана с крупным номером поверх; на телефоне — широкая полоса над заголовком */
+.arcanum-hero__art { position: relative; margin: 0; aspect-ratio: 16 / 10; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.arcanum-hero__art img { object-fit: cover; object-position: 50% 40%; }
+.arcanum-hero__art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgb(0 0 0 / 0.55), transparent 45%); pointer-events: none; }
+.arcanum-hero__number { position: absolute; right: 20px; bottom: 8px; z-index: 1; font-family: var(--font-display); font-weight: 300; font-size: clamp(72px, 14vw, 140px); line-height: 0.9; color: var(--accent); text-shadow: 0 2px 24px rgb(0 0 0 / 0.6); }
+.arcanum-hero__keywords { list-style: none; margin: 0; padding: 0; }
+.arcanum-grid { display: grid; gap: 20px; align-items: start; }
+.arcanum-positions, .arcanum-poles { display: grid; gap: 16px; }
+.arcanum-positions h2, .arcanum-poles h2 { font-size: 24px; }
+.arcanum-question { font-family: var(--font-display); font-size: 22px; line-height: 1.35; }
+.arcanum-neighbours { justify-content: space-between; }
+.arcana-index { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
+.arcana-index a { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink-soft); text-decoration: none; }
+.arcana-index a:hover, .arcana-index a[aria-current="page"] { border-color: var(--line-strong); color: var(--ink); }
+.arcana-index__number { min-width: 24px; font-family: var(--font-display); color: var(--accent); }
+@media (min-width: 760px) {
+  .arcanum-hero { grid-template-columns: 1fr minmax(320px, 480px); gap: 48px; }
+  .arcanum-hero__art { order: 2; aspect-ratio: 1; }
+  .arcanum-grid { grid-template-columns: 1.4fr 1fr; }
+  .arcanum-positions { grid-template-columns: repeat(3, 1fr); }
+  .arcanum-poles { grid-template-columns: 1fr 1fr; }
+}
+
+/* Доступный только скринридерам текст (таблица точек матрицы) */
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Результат матрицы: диаграмма слева, справа позиции и три ключевые карточки; затем действие, вопрос, предназначения */
+.matrix-result__title { font-size: clamp(32px, 5vw, 48px); outline: none; scroll-margin-top: 96px; }
+/* 96px — чтобы после «Рассчитать» над заголовком была видна строка с датой, с воздухом сверху */
+/* Результат отделён от формы заметным отступом, а не общим шагом стопки в 20px */
+body .stack > .matrix-result { margin-top: 56px; }
+.matrix-result__top { display: grid; gap: 24px; align-items: start; }
+.matrix-diagram { margin: 0; }
+.matrix-diagram svg { display: block; width: 100%; max-width: 480px; height: auto; margin-inline: auto; }
+/* На телефоне диаграмма почти во всю ширину: из 16px поля страницы остаётся 8px, чтобы крайние кружки не касались края */
+@media (max-width: 759px) { .matrix-diagram { margin-inline: -8px; } .matrix-diagram svg { max-width: none; } }
+.matrix-diagram__ring { fill: none; stroke: var(--line); stroke-dasharray: 3 5; }
+.matrix-diagram__line { stroke: var(--line-strong); stroke-width: 1; }
+.matrix-point circle { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1; }
+.matrix-point text { fill: var(--ink); font-family: var(--font-display); font-size: 16px; font-weight: 500; }
+.matrix-point--key circle { fill: var(--surface-3); stroke: var(--accent); stroke-width: 2; }
+.matrix-point--key text { fill: var(--accent); font-size: 22px; }
+.matrix-point--main text, .matrix-point--family text { font-size: 18px; }
+/* Числа внутренних точек — светлые и не мельче 14 единиц поля: на телефоне это около 13px */
+.matrix-point--inner text, .matrix-point--line text { fill: var(--ink); font-size: 14px; }
+.matrix-point--line circle { stroke: var(--lavender); }
+/* Ruling 1: visible compact «Позиции» list next to the diagram */
+.matrix-positions h3 { font-size: 20px; margin-bottom: 4px; }
+.matrix-positions__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 15px; color: var(--ink-soft); }
+.matrix-keys { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
+.matrix-key__head { display: flex; gap: 16px; align-items: center; }
+.matrix-key__number { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border: 1px solid var(--accent-line); border-radius: 50%; color: var(--accent); font-family: var(--font-display); font-size: 26px; }
+.matrix-key h3 { font-size: 26px; }
+/* Иллюстрация аркана во всю ширину верха карточки; название и трактовка — ниже */
+.matrix-key__art { position: relative; margin: -24px -20px 0; aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.matrix-key__art img { object-fit: cover; object-position: 50% 35%; }
+@media (min-width: 760px) { .matrix-key__art { margin: -32px -32px 0; } }
+.matrix-key p { margin: 0; }
+.matrix-today { display: grid; gap: 16px; }
+.matrix-today p { margin: 0; }
+/* Ruling 1: purposes — three small cards instead of a table, same data and links */
+.matrix-purposes { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
+.matrix-purpose p { margin: 4px 0 0; }
+.matrix-purpose { position: relative; padding-right: 96px; }
+.matrix-purpose__art { position: absolute; top: 16px; right: 16px; border-radius: 50%; border: 1px solid var(--accent-line); object-fit: cover; }
+.matrix-purpose a { display: inline-flex; align-items: center; min-height: 44px; }
+.matrix-next { display: flex; gap: 12px; align-items: center; }
+.matrix-next p { margin: 0; color: var(--ink-soft); }
+@media (min-width: 900px) {
+  .matrix-result__top { grid-template-columns: minmax(360px, 1fr) 1fr; }
+  .matrix-today { grid-template-columns: 1fr 1fr; }
+  .matrix-purposes { grid-template-columns: repeat(3, 1fr); }
+}
+/* Три ключевые карточки встают в ряд под позициями, когда правой колонке хватает ширины */
+@media (min-width: 1200px) {
+  .matrix-keys { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* Узкие карточки в ряд: поля меньше, номер над названием, чтобы длинные имена («Колесо Фортуны») помещались */
+  .matrix-key { padding: 20px; }
+  .matrix-key__art { margin: -20px -20px 0; }
+  .matrix-key__head { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .matrix-key__number { width: 44px; height: 44px; font-size: 20px; }
+  .matrix-key h3 { font-size: 24px; }
+}
+
+/* Калькулятор матрицы: вводная и форма на первом экране, ниже — результат */
+.matrix-hero { display: grid; gap: 24px; align-items: center; }
+.matrix-form { max-width: 440px; }
+.matrix-actions { display: grid; gap: 16px; }
+.matrix-actions h3, .save-block h3, .share-block h3 { font-size: 24px; }
+.matrix-actions p { margin: 0; }
+.matrix-about { max-width: 760px; }
+@media (min-width: 900px) {
+  .matrix-hero { grid-template-columns: 1.2fr 1fr; gap: 48px; min-height: 420px; }
+  .matrix-actions { grid-template-columns: 1fr 1fr; }
+}
+
 /* Карточки практик: символ справа на картинке, текст слева на затемнении */
 .practice-grid { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
 @media (min-width: 760px) { .practice-grid { grid-template-columns: 1fr 1fr; gap: 20px; } }
@@ -186,6 +284,16 @@ body .stack > * + * { margin-top: 20px; }
 @media (min-width: 760px) { .practice-card__body { max-width: 56%; padding: 28px; } }
 .practice-card h3 { margin: 0; font-size: clamp(24px, 3vw, 30px); }
 .practice-card p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.tag--open { border-color: var(--accent-line); color: var(--accent); }
+/* Вся карточка кликабельна через растянутую ссылку в заголовке */
+.practice-card__link { color: inherit; text-decoration: none; }
+.practice-card__link::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.practice-card:has(.practice-card__link:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
+.practice-card:has(.practice-card__link):hover { border-color: var(--accent-line); }
+.portrait-keys { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; color: var(--ink-soft); font-size: 14px; }
+.portrait-keys li { display: flex; gap: 10px; align-items: center; }
+.portrait-keys__number { display: inline-grid; place-items: center; min-width: 32px; height: 32px; border: 1px solid var(--accent-line); border-radius: 50%; color: var(--accent); font-family: var(--font-display); }
+.portrait-practice__cta { margin-top: auto; align-self: flex-start; }
 
 .footer { max-width: var(--container); margin: 0 auto; padding: 24px 16px 40px; font-size: 14px; color: var(--ink-faint); }
 .footer nav { display: flex; flex-wrap: wrap; gap: 0 20px; padding-top: 12px; border-top: 1px solid var(--line); }
@@ -195,6 +303,7 @@ body .stack > * + * { margin-top: 20px; }
 .link-button { background: none; border: 0; padding: 0; font: inherit; text-decoration: underline; cursor: pointer; }
 .cookie-banner { position: fixed; z-index: 10; inset-inline: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); max-width: 608px; margin-inline: auto; padding: 20px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--surface-2); color: var(--ink); font-size: 14px; box-shadow: var(--shadow); }
 .cookie-banner p { margin: 0 0 14px; }
-body.has-cookie-banner { padding-bottom: 220px; }
+/* Высоту баннера ставит Analytics.tsx; 220px — до первого замера. Плюс 32px: баннер висит в 16px от низа */
+body.has-cookie-banner { padding-bottom: calc(var(--cookie-banner-height, 220px) + 32px); }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } .practice-card:hover .practice-card__art { transform: none; } }

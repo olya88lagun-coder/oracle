@@ -11,6 +11,12 @@ describe("publicMetadata", () => {
     expect(metadata.openGraph).toMatchObject({ title: "Контакты", url: "/contacts", locale: "ru_RU", siteName: "Твой оракул" });
   });
 
+  test("a page with a picture shares it in link previews", () => {
+    const metadata = publicMetadata({ title: "Сила", description: "d", path: "/p", image: { url: "/arcana/11-sila.webp", alt: "Аркан 11 «Сила»" } });
+
+    expect(metadata.openGraph).toMatchObject({ images: [{ url: "/arcana/11-sila.webp", width: 960, height: 960, alt: "Аркан 11 «Сила»" }] });
+  });
+
   test("an absolute title skips the site-wide template", () => {
     expect(publicMetadata({ title: "Главная", description: "d", path: "/", absoluteTitle: true }).title).toEqual({ absolute: "Главная" });
   });
@@ -30,5 +36,11 @@ describe("paths", () => {
 
   test("documents are public", () => {
     expect(PUBLIC_PATHS).toEqual(expect.arrayContaining(["/contacts", "/privacy", "/consent"]));
+  });
+
+  test("the matrix calculator and the 22 arcana pages are public", () => {
+    expect(PUBLIC_PATHS).toContain("/matrica-sudby");
+    expect(PUBLIC_PATHS).toContain("/matrica-sudby/arkan-11-sila");
+    expect(PUBLIC_PATHS.filter((path) => path.startsWith("/matrica-sudby/arkan-"))).toHaveLength(22);
   });
 });

@@ -70,9 +70,19 @@ export function Analytics() {
     takeLoginMark();
   }, [pathname, choice]);
 
-  // Пока баннер открыт, он не должен закрывать кнопки внизу страницы
+  // Пока баннер открыт, он не должен закрывать кнопки внизу страницы: запас снизу — по его настоящей высоте
+  const bannerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    document.body.classList.toggle("has-cookie-banner", open);
+    const body = document.body;
+    body.classList.toggle("has-cookie-banner", open);
+    const banner = bannerRef.current;
+    if (!open || !banner) return;
+    const observer = new ResizeObserver(() => body.style.setProperty("--cookie-banner-height", `${banner.offsetHeight}px`));
+    observer.observe(banner);
+    return () => {
+      observer.disconnect();
+      body.style.removeProperty("--cookie-banner-height");
+    };
   }, [open]);
 
   function decide(next: CookieChoice) {
@@ -88,7 +98,7 @@ export function Analytics() {
 
   if (!open) return null;
   return (
-    <div className="cookie-banner" role="dialog" aria-label="Cookie">
+    <div ref={bannerRef} className="cookie-banner" role="dialog" aria-label="Cookie">
       <p>
         Мы используем cookie, чтобы сайт работал. С вашего разрешения — ещё и Яндекс.Метрику для статистики посещений. Подробнее — в{" "}
         <Link href="/privacy">политике</Link>.

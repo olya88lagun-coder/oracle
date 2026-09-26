@@ -5,7 +5,8 @@ export { LOGIN_MARK } from "./login-mark";
 export const METRIKA_ID: number | null = 113068094;
 export const YANDEX_VERIFICATION: string | null = "9512ea7a80f720a4";
 
-export const GOALS = ["login", "birth_date_saved"] as const;
+// План 1: вход и дата; план 2а: воронка матрицы судьбы
+export const GOALS = ["login", "birth_date_saved", "matrix_calculated", "matrix_save_click", "matrix_share", "arcana_to_calculator"] as const;
 export type Goal = (typeof GOALS)[number];
 
 export const CONSENT_KEY = "oracle-cookie-consent";

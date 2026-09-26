@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@oracle/core": "workspace:*",
+    "@oracle/content": "workspace:*",
     "@oracle/db": "workspace:*",
     "drizzle-orm": "0.45.2",
     "jose": "6.2.12",

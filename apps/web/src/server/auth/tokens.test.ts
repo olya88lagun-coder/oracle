@@ -15,10 +15,16 @@ describe("session tokens", () => {
 });
 
 describe("vk state tokens", () => {
-  test("round-trip the state and verifier", async () => {
-    const payload = { state: "st-1", codeVerifier: "ver-1" };
+  test("round-trip the state, verifier and return path", async () => {
+    const payload = { state: "st-1", codeVerifier: "ver-1", next: "/matrica-sudby" };
 
     expect(await verifyVkState(await signVkState(payload, SECRET), SECRET)).toEqual(payload);
+  });
+
+  test("never returns a return path outside the allow-list", async () => {
+    const token = await signVkState({ state: "s", codeVerifier: "v", next: "https://evil.example" }, SECRET);
+
+    expect((await verifyVkState(token, SECRET))?.next).toBe("/portret");
   });
 });
 
@@ -34,7 +40,7 @@ describe("audiences", () => {
   test("a token of one kind is never accepted as another", async () => {
     const session = await signSession("user-1", SECRET);
     const consent = await signConsent({ version: "v", at: new Date() }, SECRET);
-    const state = await signVkState({ state: "s", codeVerifier: "v" }, SECRET);
+    const state = await signVkState({ state: "s", codeVerifier: "v", next: "/portret" }, SECRET);
 
     expect(await verifyConsent(session, SECRET)).toBeNull();
     expect(await verifySession(consent, SECRET)).toBeNull();

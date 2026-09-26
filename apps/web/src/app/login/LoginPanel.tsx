@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-export function LoginPanel() {
+export function LoginPanel({ next }: { next: string }) {
   const [agreed, setAgreed] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +15,7 @@ export function LoginPanel() {
     try {
       const response = await fetch("/api/consent", { method: "POST" });
       if (!response.ok) throw new Error(`consent ${response.status}`);
-      window.location.assign("/api/auth/vk/start");
+      window.location.assign(next === "/portret" ? "/api/auth/vk/start" : `/api/auth/vk/start?next=${encodeURIComponent(next)}`);
     } catch {
       setError("Не получилось сохранить согласие. Проверьте интернет и попробуйте ещё раз.");
       setSending(false);

@@ -1,13 +1,13 @@
 import { randomBytes } from "node:crypto";
 import { getUser, upsertUserFromIdentity, type Database, type IdentityInput, type UserRecord } from "@oracle/db";
 import { LEGAL_VERSIONS } from "../lib/legal";
+import { DEFAULT_NEXT_PATH, safeNextPath } from "../lib/next-path";
 import { signConsent, signSession, signVkState, verifyConsent, verifySession, verifyVkState } from "./auth/tokens";
 import { buildVkAuthorizeUrl, createPkcePair, exchangeVkCode, fetchVkUser, type FetchFn } from "./auth/vk";
 import type { AppEnv } from "./env";
 
 export const CONSENT_VERSION = LEGAL_VERSIONS.consent;
 const STATE_BYTES = 24;
-const AFTER_LOGIN_PATH = "/portret";
 
 export type LoginDeps = { db: Database; env: AppEnv; now: () => Date; fetchFn: FetchFn };
 export type LoginCookies = { consent: string | null };
@@ -19,17 +19,17 @@ export async function giveConsent(deps: Pick<LoginDeps, "env" | "now">): Promise
   return signConsent({ version: CONSENT_VERSION, at: deps.now() }, deps.env.SESSION_SECRET);
 }
 
-export async function completeLogin(deps: LoginDeps, identity: IdentityInput, cookies: LoginCookies): Promise<LoginOutcome> {
+export async function completeLogin(deps: LoginDeps, identity: IdentityInput, cookies: LoginCookies, next: string = DEFAULT_NEXT_PATH): Promise<LoginOutcome> {
   const consent = cookies.consent ? await verifyConsent(cookies.consent, deps.env.SESSION_SECRET) : null;
   const upserted = await upsertUserFromIdentity(deps.db, identity, consent);
   if (!upserted.ok) return { ok: false, error: "consent_required" };
-  return { ok: true, sessionToken: await signSession(upserted.user.id, deps.env.SESSION_SECRET), redirectTo: AFTER_LOGIN_PATH };
+  return { ok: true, sessionToken: await signSession(upserted.user.id, deps.env.SESSION_SECRET), redirectTo: safeNextPath(next) };
 }
 
-export async function startVkLogin(deps: LoginDeps): Promise<{ redirectUrl: string; stateCookie: string }> {
+export async function startVkLogin(deps: LoginDeps, next: string = DEFAULT_NEXT_PATH): Promise<{ redirectUrl: string; stateCookie: string }> {
   const { codeVerifier, codeChallenge } = createPkcePair();
   const state = randomBytes(STATE_BYTES).toString("base64url");
-  const stateCookie = await signVkState({ state, codeVerifier }, deps.env.SESSION_SECRET);
+  const stateCookie = await signVkState({ state, codeVerifier, next: safeNextPath(next) }, deps.env.SESSION_SECRET);
   const redirectUrl = buildVkAuthorizeUrl({ clientId: deps.env.VK_CLIENT_ID, redirectUri: vkRedirectUri(deps.env), state, codeChallenge });
   return { redirectUrl, stateCookie };
 }
@@ -58,7 +58,7 @@ export async function finishVkLogin(
 
   const { user } = profile;
   // Политика и согласие обещают хранить только имя из VK ID: фамилию не показываем нигде на сайте, поэтому не сохраняем и её
-  return completeLogin(deps, { provider: "vk", externalId: user.id, displayName: user.firstName }, p.cookies);
+  return completeLogin(deps, { provider: "vk", externalId: user.id, displayName: user.firstName }, p.cookies, saved.next);
 }
 
 export async function getCurrentUser(deps: Pick<LoginDeps, "db" | "env">, sessionToken: string | null): Promise<UserRecord | null> {

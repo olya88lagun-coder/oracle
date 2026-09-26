@@ -1,5 +1,6 @@
 import type { Consent } from "@oracle/db";
 import { jwtVerify, SignJWT, type JWTPayload } from "jose";
+import { safeNextPath } from "../../lib/next-path";
 
 const SESSION_TTL = "30d";
 const VK_STATE_TTL = "10m";
@@ -32,7 +33,7 @@ export async function verifySession(token: string, secret: string): Promise<stri
   return typeof payload?.sub === "string" ? payload.sub : null;
 }
 
-export type VkState = { state: string; codeVerifier: string };
+export type VkState = { state: string; codeVerifier: string; next: string };
 
 export async function signVkState(state: VkState, secret: string): Promise<string> {
   return sign({ ...state }, AUDIENCE.vkState, VK_STATE_TTL, secret);
@@ -41,7 +42,7 @@ export async function signVkState(state: VkState, secret: string): Promise<strin
 export async function verifyVkState(token: string, secret: string): Promise<VkState | null> {
   const payload = await verify(token, AUDIENCE.vkState, secret);
   if (typeof payload?.state !== "string" || typeof payload.codeVerifier !== "string") return null;
-  return { state: payload.state, codeVerifier: payload.codeVerifier };
+  return { state: payload.state, codeVerifier: payload.codeVerifier, next: safeNextPath(payload.next) };
 }
 
 // Время согласия — это iat токена: его нельзя подменить, не зная секрета
