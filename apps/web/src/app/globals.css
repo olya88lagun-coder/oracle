@@ -193,6 +193,46 @@ body .stack > * + * { margin-top: 20px; }
   .arcanum-poles { grid-template-columns: 1fr 1fr; }
 }
 
+/* Доступный только скринридерам текст (таблица точек матрицы) */
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Результат матрицы: диаграмма и позиции, три ключевые карточки, затем действие, вопрос, предназначения */
+.matrix-result__title { font-size: clamp(32px, 5vw, 48px); outline: none; }
+.matrix-result__top { display: grid; gap: 24px; align-items: start; }
+.matrix-diagram { margin: 0; }
+.matrix-diagram svg { display: block; width: 100%; max-width: 480px; height: auto; margin-inline: auto; }
+.matrix-diagram__ring { fill: none; stroke: var(--line); stroke-dasharray: 3 5; }
+.matrix-diagram__line { stroke: var(--line-strong); stroke-width: 1; }
+.matrix-point circle { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1; }
+.matrix-point text { fill: var(--ink); font-family: var(--font-display); font-size: 14px; }
+.matrix-point--key circle { fill: var(--surface-3); stroke: var(--accent); stroke-width: 2; }
+.matrix-point--key text { fill: var(--accent); font-size: 18px; }
+.matrix-point--main text, .matrix-point--family text { font-size: 16px; }
+.matrix-point--inner text, .matrix-point--line text { fill: var(--ink-soft); font-size: 12px; }
+.matrix-point--line circle { stroke: var(--lavender); }
+/* Ruling 1: visible compact «Позиции» list next to the diagram */
+.matrix-positions h3 { font-size: 20px; margin-bottom: 4px; }
+.matrix-positions__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 15px; color: var(--ink-soft); }
+.matrix-keys { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
+.matrix-key__head { display: flex; gap: 16px; align-items: center; }
+.matrix-key__number { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border: 1px solid var(--accent-line); border-radius: 50%; color: var(--accent); font-family: var(--font-display); font-size: 26px; }
+.matrix-key h3 { font-size: 26px; }
+.matrix-key p { margin: 0; }
+.matrix-today { display: grid; gap: 16px; }
+.matrix-today p { margin: 0; }
+/* Ruling 1: purposes — three small cards instead of a table, same data and links */
+.matrix-purposes { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
+.matrix-purpose p { margin: 4px 0 0; }
+.matrix-purpose a { display: inline-flex; align-items: center; min-height: 44px; }
+.matrix-next { display: flex; gap: 12px; align-items: center; }
+.matrix-next p { margin: 0; color: var(--ink-soft); }
+@media (min-width: 900px) {
+  .matrix-result__top { grid-template-columns: minmax(360px, 1fr) 1fr; }
+  .matrix-keys { grid-template-columns: repeat(3, 1fr); }
+  .matrix-today { grid-template-columns: 1fr 1fr; }
+  .matrix-purposes { grid-template-columns: repeat(3, 1fr); }
+}
+
 /* Карточки практик: символ справа на картинке, текст слева на затемнении */
 .practice-grid { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
 @media (min-width: 760px) { .practice-grid { grid-template-columns: 1fr 1fr; gap: 20px; } }
