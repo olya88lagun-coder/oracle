@@ -31,4 +31,10 @@ describe("paths", () => {
   test("documents are public", () => {
     expect(PUBLIC_PATHS).toEqual(expect.arrayContaining(["/contacts", "/privacy", "/consent"]));
   });
+
+  test("the matrix calculator and the 22 arcana pages are public", () => {
+    expect(PUBLIC_PATHS).toContain("/matrica-sudby");
+    expect(PUBLIC_PATHS).toContain("/matrica-sudby/arkan-11-sila");
+    expect(PUBLIC_PATHS.filter((path) => path.startsWith("/matrica-sudby/arkan-"))).toHaveLength(22);
+  });
 });

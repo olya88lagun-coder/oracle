@@ -173,6 +173,26 @@ body .stack > * + * { margin-top: 20px; }
 .login-card .display { font-size: clamp(40px, 6vw, 60px); }
 .login-card .choice input { accent-color: var(--lavender); }
 
+/* Страница аркана: крупный номер, секции карточками, соседи и сетка всех арканов */
+.arcanum-hero { display: grid; gap: 20px; align-items: center; }
+.arcanum-hero__number { font-family: var(--font-display); font-weight: 300; font-size: clamp(96px, 18vw, 180px); line-height: 0.9; color: var(--accent); }
+.arcanum-hero__keywords { list-style: none; margin: 0; padding: 0; }
+.arcanum-grid { display: grid; gap: 20px; align-items: start; }
+.arcanum-positions, .arcanum-poles { display: grid; gap: 16px; }
+.arcanum-positions h2, .arcanum-poles h2 { font-size: 24px; }
+.arcanum-question { font-family: var(--font-display); font-size: 22px; line-height: 1.35; }
+.arcanum-neighbours { justify-content: space-between; }
+.arcana-index { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
+.arcana-index a { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink-soft); text-decoration: none; }
+.arcana-index a:hover, .arcana-index a[aria-current="page"] { border-color: var(--line-strong); color: var(--ink); }
+.arcana-index__number { min-width: 24px; font-family: var(--font-display); color: var(--accent); }
+@media (min-width: 760px) {
+  .arcanum-hero { grid-template-columns: auto 1fr; gap: 40px; }
+  .arcanum-grid { grid-template-columns: 1.4fr 1fr; }
+  .arcanum-positions { grid-template-columns: repeat(3, 1fr); }
+  .arcanum-poles { grid-template-columns: 1fr 1fr; }
+}
+
 /* Карточки практик: символ справа на картинке, текст слева на затемнении */
 .practice-grid { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
 @media (min-width: 760px) { .practice-grid { grid-template-columns: 1fr 1fr; gap: 20px; } }
