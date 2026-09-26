@@ -234,6 +234,18 @@ body .stack > * + * { margin-top: 20px; }
 /* Три ключевые карточки встают в ряд под позициями, когда правой колонке хватает ширины */
 @media (min-width: 1200px) { .matrix-keys { grid-template-columns: repeat(3, 1fr); } }
 
+/* Калькулятор матрицы: вводная и форма на первом экране, ниже — результат */
+.matrix-hero { display: grid; gap: 24px; align-items: center; }
+.matrix-form { max-width: 440px; }
+.matrix-actions { display: grid; gap: 16px; }
+.matrix-actions h3, .save-block h3, .share-block h3 { font-size: 24px; }
+.matrix-actions p { margin: 0; }
+.matrix-about { max-width: 760px; }
+@media (min-width: 900px) {
+  .matrix-hero { grid-template-columns: 1.2fr 1fr; gap: 48px; min-height: 420px; }
+  .matrix-actions { grid-template-columns: 1fr 1fr; }
+}
+
 /* Карточки практик: символ справа на картинке, текст слева на затемнении */
 .practice-grid { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
 @media (min-width: 760px) { .practice-grid { grid-template-columns: 1fr 1fr; gap: 20px; } }
