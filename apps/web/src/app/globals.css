@@ -259,6 +259,16 @@ body .stack > * + * { margin-top: 20px; }
 @media (min-width: 760px) { .practice-card__body { max-width: 56%; padding: 28px; } }
 .practice-card h3 { margin: 0; font-size: clamp(24px, 3vw, 30px); }
 .practice-card p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.tag--open { border-color: var(--accent-line); color: var(--accent); }
+/* Вся карточка кликабельна через растянутую ссылку в заголовке */
+.practice-card__link { color: inherit; text-decoration: none; }
+.practice-card__link::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.practice-card:has(.practice-card__link:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
+.practice-card:has(.practice-card__link):hover { border-color: var(--accent-line); }
+.portrait-keys { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; color: var(--ink-soft); font-size: 14px; }
+.portrait-keys li { display: flex; gap: 10px; align-items: center; }
+.portrait-keys__number { display: inline-grid; place-items: center; min-width: 32px; height: 32px; border: 1px solid var(--accent-line); border-radius: 50%; color: var(--accent); font-family: var(--font-display); }
+.portrait-practice__cta { margin-top: auto; align-self: flex-start; }
 
 .footer { max-width: var(--container); margin: 0 auto; padding: 24px 16px 40px; font-size: 14px; color: var(--ink-faint); }
 .footer nav { display: flex; flex-wrap: wrap; gap: 0 20px; padding-top: 12px; border-top: 1px solid var(--line); }

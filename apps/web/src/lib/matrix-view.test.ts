@@ -5,6 +5,7 @@ import {
   DIAGRAM_POINTS,
   DIAGRAM_SIZE,
   KEY_POINTS,
+  keyArcana,
   POINT_LABELS,
   pointRows,
   pointTitle,
@@ -78,5 +79,15 @@ describe("positions list", () => {
     const matrix = calculateMatrix({ year: 1988, month: 11, day: 18 });
     const all = pointRows(matrix);
     expect(positionRows(matrix)).toEqual(POSITIONS.map((point) => all.find((row) => row.point === point)));
+  });
+});
+
+describe("keyArcana", () => {
+  test("lists personality, center and task with arcana names", () => {
+    expect(keyArcana(calculateMatrix({ year: 1988, month: 11, day: 18 }))).toEqual([
+      { point: "A", label: "Личность", number: 18, name: "Луна" },
+      { point: "E", label: "Центр", number: 11, name: "Сила" },
+      { point: "D", label: "Задача", number: 10, name: "Колесо Фортуны" },
+    ]);
   });
 });

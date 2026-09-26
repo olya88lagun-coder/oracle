@@ -12,4 +12,13 @@ describe("PRACTICES", () => {
       expect(practice.summary).toMatch(/^\S.+\.$/);
     }
   });
+
+  test("only the matrix is open for now, and it leads to the calculator", () => {
+    expect(PRACTICES.map((practice) => [practice.slug, practice.href])).toEqual([
+      ["matrix", "/matrica-sudby"],
+      ["lila", null],
+      ["tarot", null],
+      ["natal", null],
+    ]);
+  });
 });

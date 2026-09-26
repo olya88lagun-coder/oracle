@@ -105,3 +105,7 @@ export function positionRows(matrix: Matrix): PointRow[] {
   const byPoint = new Map(pointRows(matrix).map((row) => [row.point, row]));
   return POSITIONS.map((point) => byPoint.get(point)!);
 }
+
+export function keyArcana(matrix: Matrix): { point: MatrixPoint; label: string; number: number; name: string }[] {
+  return KEY_POINTS.map(({ point, label }) => ({ point, label, number: matrix[point], name: arcanumByNumber(matrix[point]).name }));
+}

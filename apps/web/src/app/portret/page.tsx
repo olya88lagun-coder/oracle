@@ -1,10 +1,11 @@
-import { formatBirthDateRu, toIsoDate } from "@oracle/core";
+import { calculateMatrix, formatBirthDateRu, toIsoDate } from "@oracle/core";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { LogoutButton } from "@/components/LogoutButton";
 import { Scene } from "@/components/Scene";
 import { PRACTICES } from "@/lib/practices";
+import { keyArcana } from "@/lib/matrix-view";
 import { getDb } from "@/server/db";
 import { loadPortrait } from "@/server/profile-service";
 import { currentUser } from "@/server/viewer";
@@ -47,6 +48,7 @@ export default async function PortraitPage() {
   }
 
   const { birthDate } = await loadPortrait({ db: getDb(), now: () => new Date() }, user.id);
+  const keys = birthDate ? keyArcana(calculateMatrix(birthDate)) : null;
   return (
     <Scene>
       <div className="scene__intro stack">
@@ -80,8 +82,27 @@ export default async function PortraitPage() {
               </div>
               <div className="portrait-practice__body">
                 <h3>{practice.title}</h3>
-                <p>{practice.summary}</p>
-                <span className="tag">Скоро</span>
+                {practice.href && keys ? (
+                  <ul className="portrait-keys" aria-label="Ключевые арканы">
+                    {keys.map((key) => (
+                      <li key={key.point}>
+                        <span className="portrait-keys__number">{key.number}</span>
+                        <span>
+                          {key.label} · {key.name}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>{practice.summary}</p>
+                )}
+                {practice.href ? (
+                  <Link className="button button--ghost portrait-practice__cta" href={practice.href}>
+                    {keys ? "Открыть расчёт" : "Рассчитать матрицу"}
+                  </Link>
+                ) : (
+                  <span className="tag">Скоро</span>
+                )}
               </div>
             </li>
           ))}
