@@ -122,3 +122,24 @@ test("the result fits a phone screen without horizontal scrolling", async ({ pag
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test("on a phone the arcanum sections fold, and the first one is open", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/matrica-sudby/arkan-11-sila");
+  const section = (title: string) => page.locator("details.arcanum-section").filter({ has: page.getByRole("heading", { name: title, exact: true }) });
+
+  await expect(section("Суть")).toHaveAttribute("open", "");
+  await expect(section("В личности")).not.toHaveAttribute("open", "");
+
+  await section("В личности").locator("summary").click();
+  await expect(section("В личности")).toHaveAttribute("open", "");
+});
+
+test("on a wide screen every arcanum section stays open", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/matrica-sudby/arkan-11-sila");
+
+  const sections = page.locator("details.arcanum-section");
+  await expect(sections).toHaveCount(8);
+  await expect(sections.and(page.locator(":not([open])"))).toHaveCount(0);
+});

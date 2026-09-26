@@ -56,7 +56,9 @@ export function MatrixResult({ matrix, dateLabel, headingRef, actions }: Props) 
                   {arcanum[key].map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
-                  <Link href={arcanumPath(arcanum)}>Подробнее об аркане «{arcanum.name}»</Link>
+                  <Link className="touch-link" href={arcanumPath(arcanum)}>
+                    Подробнее об аркане «{arcanum.name}»
+                  </Link>
                 </li>
               );
             })}

@@ -1,6 +1,7 @@
 import { ARCANA } from "@oracle/content";
+import Image from "next/image";
 import Link from "next/link";
-import { arcanumPath } from "@/lib/arcana-paths";
+import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 
 export function ArcanaIndex({ current }: { current?: number }) {
   return (
@@ -10,7 +11,9 @@ export function ArcanaIndex({ current }: { current?: number }) {
         {ARCANA.map((arcanum) => (
           <li key={arcanum.number}>
             <Link href={arcanumPath(arcanum)} aria-current={arcanum.number === current ? "page" : undefined}>
-              <span className="arcana-index__number">{arcanum.number}</span> {arcanum.name}
+              <Image className="arcana-index__art" src={arcanumImage(arcanum, "thumb")} alt="" width={160} height={160} unoptimized />
+              <span className="arcana-index__number">{String(arcanum.number).padStart(2, "0")}</span>
+              <span className="arcana-index__name">{arcanum.name}</span>
             </Link>
           </li>
         ))}

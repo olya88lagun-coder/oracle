@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArcanaIndex } from "@/components/ArcanaIndex";
+import { ArcanumSection } from "@/components/ArcanumSection";
+import { ArcanumSectionsExpander } from "@/components/ArcanumSectionsExpander";
 import { CalculatorLink } from "@/components/CalculatorLink";
 import { arcanumFromParam, arcanumImage, arcanumJsonLd, arcanumParam, arcanumPath, MATRIX_PATH, shortDescription } from "@/lib/arcana-paths";
 import { publicMetadata } from "@/lib/seo";
@@ -41,7 +43,9 @@ export default async function ArcanumPage({ params }: Params) {
     <main className="page page--wide stack arcanum-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
       <nav aria-label="Навигация" className="muted">
-        <Link href={MATRIX_PATH}>Матрица судьбы</Link> › Аркан {arcanum.number}
+        <Link className="touch-link" href={MATRIX_PATH}>
+          Матрица судьбы
+        </Link> › Аркан {arcanum.number}
       </nav>
 
       <header className="arcanum-hero">
@@ -65,12 +69,11 @@ export default async function ArcanumPage({ params }: Params) {
       </header>
 
       <div className="arcanum-grid">
-        <section className="stack" aria-labelledby="essence">
-          <h2 id="essence">{SECTION_TITLES.essence}</h2>
+        <ArcanumSection title={SECTION_TITLES.essence} className="arcanum-section--plain" defaultOpen>
           {arcanum.essence.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
-        </section>
+        </ArcanumSection>
         <aside className="card card--accent stack">
           <h2>Рассчитать свою матрицу</h2>
           <p className="muted">Узнайте, где этот аркан стоит в вашей дате рождения.</p>
@@ -82,37 +85,33 @@ export default async function ArcanumPage({ params }: Params) {
 
       <section className="arcanum-positions" aria-label="Аркан в позициях матрицы">
         {(["personality", "center", "task"] as const).map((key) => (
-          <article key={key} className="card stack">
-            <h2>{SECTION_TITLES[key]}</h2>
+          <ArcanumSection key={key} title={SECTION_TITLES[key]} className="card">
             {arcanum[key].map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
-          </article>
+          </ArcanumSection>
         ))}
       </section>
 
       <section className="arcanum-poles" aria-label="Ресурс и перекос">
         {(["resource", "distortion"] as const).map((key) => (
-          <div key={key} className="card stack">
-            <h2>{SECTION_TITLES[key]}</h2>
+          <ArcanumSection key={key} title={SECTION_TITLES[key]} className="card">
             <ul>
               {arcanum[key].map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
-          </div>
+          </ArcanumSection>
         ))}
       </section>
 
       <section className="arcanum-poles" aria-label="Практика">
-        <div className="card stack">
-          <h2>{SECTION_TITLES.action}</h2>
+        <ArcanumSection title={SECTION_TITLES.action} className="card">
           <p>{arcanum.action}</p>
-        </div>
-        <div className="card stack">
-          <h2>{SECTION_TITLES.question}</h2>
+        </ArcanumSection>
+        <ArcanumSection title={SECTION_TITLES.question} className="card">
           <p className="arcanum-question">{arcanum.question}</p>
-        </div>
+        </ArcanumSection>
       </section>
 
       <p>
@@ -129,6 +128,7 @@ export default async function ArcanumPage({ params }: Params) {
       </nav>
 
       <ArcanaIndex current={arcanum.number} />
+      <ArcanumSectionsExpander />
     </main>
   );
 }
