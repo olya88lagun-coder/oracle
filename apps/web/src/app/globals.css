@@ -243,7 +243,15 @@ body .stack > * + * { margin-top: 20px; }
   .matrix-purposes { grid-template-columns: repeat(3, 1fr); }
 }
 /* Три ключевые карточки встают в ряд под позициями, когда правой колонке хватает ширины */
-@media (min-width: 1200px) { .matrix-keys { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1200px) {
+  .matrix-keys { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* Узкие карточки в ряд: поля меньше, номер над названием, чтобы длинные имена («Колесо Фортуны») помещались */
+  .matrix-key { padding: 20px; }
+  .matrix-key__art { margin: -20px -20px 0; }
+  .matrix-key__head { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .matrix-key__number { width: 44px; height: 44px; font-size: 20px; }
+  .matrix-key h3 { font-size: 24px; }
+}
 
 /* Калькулятор матрицы: вводная и форма на первом экране, ниже — результат */
 .matrix-hero { display: grid; gap: 24px; align-items: center; }
