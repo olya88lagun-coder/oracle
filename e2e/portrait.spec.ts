@@ -29,8 +29,16 @@ test("a signed-in user saves the birth date and sees it after a reload", async (
   await page.getByRole("button", { name: "Сохранить" }).click();
 
   await expect(page.getByRole("status")).toHaveText("Сохранено.");
+  // Сохранять больше нечего — кнопка уходит, пока дату не изменят
+  await expect(page.getByRole("button", { name: "Сохранить" })).toHaveCount(0);
   await page.reload();
   await expect(page.getByText("7 марта 1990")).toBeVisible();
+  await expect(page.getByRole("status")).toHaveText("Сохранено.");
+  await expect(page.getByRole("button", { name: "Сохранить" })).toHaveCount(0);
+
+  await page.getByRole("textbox", { name: "Дата рождения" }).fill("1990-03-08");
+  await expect(page.getByRole("button", { name: "Сохранить" })).toBeEnabled();
+  await expect(page.getByRole("status")).toHaveText("");
   await context.close();
 });
 
