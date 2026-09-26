@@ -202,18 +202,24 @@ body .stack > * + * { margin-top: 20px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* Результат матрицы: диаграмма слева, справа позиции и три ключевые карточки; затем действие, вопрос, предназначения */
-.matrix-result__title { font-size: clamp(32px, 5vw, 48px); outline: none; }
+.matrix-result__title { font-size: clamp(32px, 5vw, 48px); outline: none; scroll-margin-top: 96px; }
+/* 96px — чтобы после «Рассчитать» над заголовком была видна строка с датой, с воздухом сверху */
+/* Результат отделён от формы заметным отступом, а не общим шагом стопки в 20px */
+body .stack > .matrix-result { margin-top: 56px; }
 .matrix-result__top { display: grid; gap: 24px; align-items: start; }
 .matrix-diagram { margin: 0; }
 .matrix-diagram svg { display: block; width: 100%; max-width: 480px; height: auto; margin-inline: auto; }
+/* На телефоне диаграмма почти во всю ширину: из 16px поля страницы остаётся 8px, чтобы крайние кружки не касались края */
+@media (max-width: 759px) { .matrix-diagram { margin-inline: -8px; } .matrix-diagram svg { max-width: none; } }
 .matrix-diagram__ring { fill: none; stroke: var(--line); stroke-dasharray: 3 5; }
 .matrix-diagram__line { stroke: var(--line-strong); stroke-width: 1; }
 .matrix-point circle { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1; }
-.matrix-point text { fill: var(--ink); font-family: var(--font-display); font-size: 14px; }
+.matrix-point text { fill: var(--ink); font-family: var(--font-display); font-size: 16px; font-weight: 500; }
 .matrix-point--key circle { fill: var(--surface-3); stroke: var(--accent); stroke-width: 2; }
-.matrix-point--key text { fill: var(--accent); font-size: 18px; }
-.matrix-point--main text, .matrix-point--family text { font-size: 16px; }
-.matrix-point--inner text, .matrix-point--line text { fill: var(--ink-soft); font-size: 12px; }
+.matrix-point--key text { fill: var(--accent); font-size: 22px; }
+.matrix-point--main text, .matrix-point--family text { font-size: 18px; }
+/* Числа внутренних точек — светлые и не мельче 14 единиц поля: на телефоне это около 13px */
+.matrix-point--inner text, .matrix-point--line text { fill: var(--ink); font-size: 14px; }
 .matrix-point--line circle { stroke: var(--lavender); }
 /* Ruling 1: visible compact «Позиции» list next to the diagram */
 .matrix-positions h3 { font-size: 20px; margin-bottom: 4px; }
@@ -297,6 +303,7 @@ body .stack > * + * { margin-top: 20px; }
 .link-button { background: none; border: 0; padding: 0; font: inherit; text-decoration: underline; cursor: pointer; }
 .cookie-banner { position: fixed; z-index: 10; inset-inline: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); max-width: 608px; margin-inline: auto; padding: 20px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--surface-2); color: var(--ink); font-size: 14px; box-shadow: var(--shadow); }
 .cookie-banner p { margin: 0 0 14px; }
-body.has-cookie-banner { padding-bottom: 220px; }
+/* Высоту баннера ставит Analytics.tsx; 220px — до первого замера. Плюс 32px: баннер висит в 16px от низа */
+body.has-cookie-banner { padding-bottom: calc(var(--cookie-banner-height, 220px) + 32px); }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } .practice-card:hover .practice-card__art { transform: none; } }

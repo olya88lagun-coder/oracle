@@ -16,6 +16,9 @@ import {
 
 const PURPOSE_POINTS = ["sky", "earth", "personal", "male", "female", "social", "spiritual", "planetary"];
 
+// Зазор между кружками в единицах поля 400×400: на телефоне меньше 4 кружки сливаются
+const MIN_GAP = 4;
+
 describe("diagram layout", () => {
   test("draws every point except the purposes, each once", () => {
     const drawn = DIAGRAM_POINTS.map((p) => p.point).sort();
@@ -29,11 +32,11 @@ describe("diagram layout", () => {
     }
   });
 
-  test("no two circles overlap", () => {
+  test("circles keep a visible gap between each other", () => {
     const overlaps: string[] = [];
     DIAGRAM_POINTS.forEach((a, i) => {
       DIAGRAM_POINTS.slice(i + 1).forEach((b) => {
-        if (Math.hypot(a.x - b.x, a.y - b.y) < a.r + b.r) overlaps.push(`${a.point}/${b.point}`);
+        if (Math.hypot(a.x - b.x, a.y - b.y) < a.r + b.r + MIN_GAP) overlaps.push(`${a.point}/${b.point}`);
       });
     });
     expect(overlaps).toEqual([]);

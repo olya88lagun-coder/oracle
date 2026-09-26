@@ -49,6 +49,7 @@ export const DIAGRAM_SIZE = 400;
 const at = (point: MatrixPoint, x: number, y: number, r: number, tier: DiagramPoint["tier"]): DiagramPoint => ({ point, x, y, r, tier });
 
 // Поле 400×400, центр (200, 200). Основной квадрат — ромб по осям, родовой — по углам; внутренние точки на линиях к центру
+// Точка «сердце» — на диагонали H между H2 и H1, линия денег и отношений идёт поперёк неё
 export const DIAGRAM_POINTS: readonly DiagramPoint[] = [
   at("A", 30, 200, 22, "key"),
   at("B", 200, 30, 20, "main"),
@@ -67,17 +68,17 @@ export const DIAGRAM_POINTS: readonly DiagramPoint[] = [
   at("C2", 282, 200, 13, "inner"),
   at("D1", 200, 328, 13, "inner"),
   at("D2", 200, 282, 13, "inner"),
-  at("F1", 110, 110, 12, "inner"),
-  at("F2", 142, 142, 12, "inner"),
-  at("G1", 290, 110, 12, "inner"),
-  at("G2", 258, 142, 12, "inner"),
-  at("H1", 290, 290, 12, "inner"),
-  at("H2", 258, 258, 12, "inner"),
-  at("I1", 110, 290, 12, "inner"),
-  at("I2", 142, 258, 12, "inner"),
-  at("money", 304, 244, 12, "line"),
-  at("heart", 266, 282, 12, "line"),
-  at("love", 228, 320, 12, "line"),
+  at("F1", 106, 106, 12, "inner"),
+  at("F2", 148, 148, 12, "inner"),
+  at("G1", 294, 106, 12, "inner"),
+  at("G2", 252, 148, 12, "inner"),
+  at("H1", 294, 294, 12, "inner"),
+  at("H2", 252, 252, 12, "inner"),
+  at("I1", 106, 294, 12, "inner"),
+  at("I2", 148, 252, 12, "inner"),
+  at("money", 311, 235, 12, "line"),
+  at("heart", 273, 273, 12, "line"),
+  at("love", 235, 311, 12, "line"),
 ];
 
 export const DIAGRAM_LINES: readonly (readonly [MatrixPoint, MatrixPoint])[] = [

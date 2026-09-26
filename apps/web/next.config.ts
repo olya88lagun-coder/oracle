@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.resolve(process.cwd(), "../.."),
   transpilePackages: ["@oracle/core", "@oracle/content", "@oracle/db"],
   poweredByHeader: false,
+  // Значок разработки в углу перекрывал текст на локальных просмотрах; ошибки сборки Next.js показывает и без него
+  devIndicators: false,
 };
 
 export default nextConfig;
