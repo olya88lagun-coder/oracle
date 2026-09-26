@@ -47,11 +47,17 @@ describe("completeLogin", () => {
 
     expect(await userIdOf(second)).toBe(await userIdOf(first));
   });
+
+  test("returns to the requested page after login", async () => {
+    const outcome = await completeLogin(deps, ANNA, { consent: await giveConsent(deps) }, "/matrica-sudby");
+
+    expect(outcome.ok && outcome.redirectTo).toBe("/matrica-sudby");
+  });
 });
 
 describe("VK ID login", () => {
-  async function finishWith(fetchFn: LoginDeps["fetchFn"], consent: string | null) {
-    const { redirectUrl, stateCookie } = await startVkLogin(deps);
+  async function finishWith(fetchFn: LoginDeps["fetchFn"], consent: string | null, next?: string) {
+    const { redirectUrl, stateCookie } = await startVkLogin(deps, next);
     const state = new URL(redirectUrl).searchParams.get("state");
     deps.fetchFn = fetchFn;
     return finishVkLogin(deps, { code: "code", deviceId: "device", state, stateCookie, cookies: { consent } });
@@ -76,6 +82,17 @@ describe("VK ID login", () => {
 
     const userId = await userIdOf(outcome);
     expect(userId && (await getUser(db, userId))?.displayName).toBe("Аня");
+  });
+
+  test("carries the return path through VK ID in the signed state", async () => {
+    const fetchFn = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ access_token: "at" }))
+      .mockResolvedValueOnce(jsonResponse({ user: { user_id: 778, first_name: "Вера" } }));
+
+    const outcome = await finishWith(fetchFn, await giveConsent(deps), "/matrica-sudby");
+
+    expect(outcome.ok && outcome.redirectTo).toBe("/matrica-sudby");
   });
 
   test("reports the token exchange error with a vk_ prefix", async () => {

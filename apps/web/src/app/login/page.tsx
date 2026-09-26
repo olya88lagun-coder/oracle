@@ -2,14 +2,16 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Scene } from "@/components/Scene";
 import { loginErrorMessage } from "@/lib/login-errors";
+import { safeNextPath } from "@/lib/next-path";
 import { currentUser } from "@/server/viewer";
 import { LoginPanel } from "./LoginPanel";
 
 export const metadata: Metadata = { title: "Вход" };
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const [{ error }, user] = await Promise.all([searchParams, currentUser()]);
-  if (user) redirect("/portret");
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; next?: string }> }) {
+  const [{ error, next }, user] = await Promise.all([searchParams, currentUser()]);
+  const returnTo = safeNextPath(next);
+  if (user) redirect(returnTo);
   const message = loginErrorMessage(error ?? null);
   return (
     <Scene compact>
@@ -22,7 +24,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             {message}
           </p>
         )}
-        <LoginPanel />
+        <LoginPanel next={returnTo} />
       </div>
     </Scene>
   );
