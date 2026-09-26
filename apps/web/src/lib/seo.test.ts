@@ -11,6 +11,12 @@ describe("publicMetadata", () => {
     expect(metadata.openGraph).toMatchObject({ title: "Контакты", url: "/contacts", locale: "ru_RU", siteName: "Твой оракул" });
   });
 
+  test("a page with a picture shares it in link previews", () => {
+    const metadata = publicMetadata({ title: "Сила", description: "d", path: "/p", image: { url: "/arcana/11-sila.webp", alt: "Аркан 11 «Сила»" } });
+
+    expect(metadata.openGraph).toMatchObject({ images: [{ url: "/arcana/11-sila.webp", width: 960, height: 960, alt: "Аркан 11 «Сила»" }] });
+  });
+
   test("an absolute title skips the site-wide template", () => {
     expect(publicMetadata({ title: "Главная", description: "d", path: "/", absoluteTitle: true }).title).toEqual({ absolute: "Главная" });
   });

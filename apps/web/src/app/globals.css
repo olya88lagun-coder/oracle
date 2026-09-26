@@ -175,7 +175,11 @@ body .stack > * + * { margin-top: 20px; }
 
 /* Страница аркана: крупный номер, секции карточками, соседи и сетка всех арканов */
 .arcanum-hero { display: grid; gap: 20px; align-items: center; }
-.arcanum-hero__number { font-family: var(--font-display); font-weight: 300; font-size: clamp(96px, 18vw, 180px); line-height: 0.9; color: var(--accent); }
+/* Иллюстрация аркана с крупным номером поверх; на телефоне — широкая полоса над заголовком */
+.arcanum-hero__art { position: relative; margin: 0; aspect-ratio: 16 / 10; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.arcanum-hero__art img { object-fit: cover; object-position: 50% 40%; }
+.arcanum-hero__art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgb(0 0 0 / 0.55), transparent 45%); pointer-events: none; }
+.arcanum-hero__number { position: absolute; right: 20px; bottom: 8px; z-index: 1; font-family: var(--font-display); font-weight: 300; font-size: clamp(72px, 14vw, 140px); line-height: 0.9; color: var(--accent); text-shadow: 0 2px 24px rgb(0 0 0 / 0.6); }
 .arcanum-hero__keywords { list-style: none; margin: 0; padding: 0; }
 .arcanum-grid { display: grid; gap: 20px; align-items: start; }
 .arcanum-positions, .arcanum-poles { display: grid; gap: 16px; }
@@ -187,7 +191,8 @@ body .stack > * + * { margin-top: 20px; }
 .arcana-index a:hover, .arcana-index a[aria-current="page"] { border-color: var(--line-strong); color: var(--ink); }
 .arcana-index__number { min-width: 24px; font-family: var(--font-display); color: var(--accent); }
 @media (min-width: 760px) {
-  .arcanum-hero { grid-template-columns: auto 1fr; gap: 40px; }
+  .arcanum-hero { grid-template-columns: 1fr minmax(320px, 480px); gap: 48px; }
+  .arcanum-hero__art { order: 2; aspect-ratio: 1; }
   .arcanum-grid { grid-template-columns: 1.4fr 1fr; }
   .arcanum-positions { grid-template-columns: repeat(3, 1fr); }
   .arcanum-poles { grid-template-columns: 1fr 1fr; }
@@ -217,12 +222,18 @@ body .stack > * + * { margin-top: 20px; }
 .matrix-key__head { display: flex; gap: 16px; align-items: center; }
 .matrix-key__number { flex: none; display: grid; place-items: center; width: 56px; height: 56px; border: 1px solid var(--accent-line); border-radius: 50%; color: var(--accent); font-family: var(--font-display); font-size: 26px; }
 .matrix-key h3 { font-size: 26px; }
+/* Иллюстрация аркана во всю ширину верха карточки; название и трактовка — ниже */
+.matrix-key__art { position: relative; margin: -24px -20px 0; aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.matrix-key__art img { object-fit: cover; object-position: 50% 35%; }
+@media (min-width: 760px) { .matrix-key__art { margin: -32px -32px 0; } }
 .matrix-key p { margin: 0; }
 .matrix-today { display: grid; gap: 16px; }
 .matrix-today p { margin: 0; }
 /* Ruling 1: purposes — three small cards instead of a table, same data and links */
 .matrix-purposes { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
 .matrix-purpose p { margin: 4px 0 0; }
+.matrix-purpose { position: relative; padding-right: 96px; }
+.matrix-purpose__art { position: absolute; top: 16px; right: 16px; border-radius: 50%; border: 1px solid var(--accent-line); object-fit: cover; }
 .matrix-purpose a { display: inline-flex; align-items: center; min-height: 44px; }
 .matrix-next { display: flex; gap: 12px; align-items: center; }
 .matrix-next p { margin: 0; color: var(--ink-soft); }
@@ -232,7 +243,7 @@ body .stack > * + * { margin-top: 20px; }
   .matrix-purposes { grid-template-columns: repeat(3, 1fr); }
 }
 /* Три ключевые карточки встают в ряд под позициями, когда правой колонке хватает ширины */
-@media (min-width: 1200px) { .matrix-keys { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1200px) { .matrix-keys { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
 /* Калькулятор матрицы: вводная и форма на первом экране, ниже — результат */
 .matrix-hero { display: grid; gap: 24px; align-items: center; }

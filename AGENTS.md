@@ -21,6 +21,7 @@
 | Калькулятор матрицы | `apps/web/src/app/matrica-sudby/page.tsx`, `apps/web/src/components/matrix/` |
 | Страницы арканов | `apps/web/src/app/matrica-sudby/[arkan]/page.tsx` |
 | Тексты арканов | `packages/content/arcana/*.md` (после правки — `pnpm content:build`) |
+| Иллюстрации арканов | `apps/web/public/arcana/NN-slug.webp` (960 px — страница аркана и превью ссылок) и `NN-slug-480.webp` (карточки результата); путь даёт `arcanumImage` в `apps/web/src/lib/arcana-paths.ts`, тест проверяет, что у всех 22 есть оба файла |
 
 Картинки класть в `apps/web/public/` (папку создать), форматы `webp`/`avif`, выводить через `next/image` с `width`/`height` и осмысленным `alt` (декоративным — `alt=""`).
 

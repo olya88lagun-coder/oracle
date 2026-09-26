@@ -9,6 +9,11 @@ type ArcanumRef = { number: number; slug: string };
 export const arcanumParam = (a: ArcanumRef): string => `arkan-${a.number}-${a.slug}`;
 export const arcanumPath = (a: ArcanumRef): string => `${MATRIX_PATH}/${arcanumParam(a)}`;
 
+// Иллюстрации лежат в public/arcana: 960 px для страницы аркана и превью ссылок, 480 px для карточек результата
+export const ARCANUM_IMAGE_SIZE = 960;
+export const arcanumImage = (a: ArcanumRef, size: "page" | "card" = "page"): string =>
+  `/arcana/${String(a.number).padStart(2, "0")}-${a.slug}${size === "card" ? "-480" : ""}.webp`;
+
 // Номер и slug должны совпасть с одним и тем же арканом — иначе 404, а не страница с чужим текстом
 export function arcanumFromParam(param: string): Arcanum | null {
   const match = PARAM.exec(param);
@@ -32,5 +37,6 @@ export function arcanumJsonLd(a: Arcanum, siteUrl: string): Record<string, unkno
     inLanguage: "ru",
     keywords: a.keywords.join(", "),
     mainEntityOfPage: `${siteUrl}${arcanumPath(a)}`,
+    image: `${siteUrl}${arcanumImage(a)}`,
   };
 }

@@ -1,10 +1,11 @@
 import { ARCANA, arcanumByNumber, SECTION_TITLES } from "@oracle/content";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArcanaIndex } from "@/components/ArcanaIndex";
 import { CalculatorLink } from "@/components/CalculatorLink";
-import { arcanumFromParam, arcanumJsonLd, arcanumParam, arcanumPath, MATRIX_PATH, shortDescription } from "@/lib/arcana-paths";
+import { arcanumFromParam, arcanumImage, arcanumJsonLd, arcanumParam, arcanumPath, MATRIX_PATH, shortDescription } from "@/lib/arcana-paths";
 import { publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
@@ -23,6 +24,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     title: `Аркан ${arcanum.number} ${arcanum.name} в матрице судьбы — значение`,
     description: shortDescription(arcanum.essence[0] ?? arcanum.name),
     path: arcanumPath(arcanum),
+    image: { url: arcanumImage(arcanum), alt: `Аркан ${arcanum.number} «${arcanum.name}»` },
   });
 }
 
@@ -43,10 +45,13 @@ export default async function ArcanumPage({ params }: Params) {
       </nav>
 
       <header className="arcanum-hero">
-        <span className="arcanum-hero__number" aria-hidden="true">
-          {arcanum.number}
-        </span>
-        <div className="stack">
+        <figure className="arcanum-hero__art">
+          <Image src={arcanumImage(arcanum)} alt={`Аркан ${arcanum.number} «${arcanum.name}»`} fill priority unoptimized sizes="(min-width: 900px) 480px, 100vw" />
+          <span className="arcanum-hero__number" aria-hidden="true">
+            {arcanum.number}
+          </span>
+        </figure>
+        <div className="stack arcanum-hero__text">
           <p className="eyebrow eyebrow--line">Аркан {arcanum.number}</p>
           <h1 className="display">{arcanum.name}</h1>
           <ul className="row arcanum-hero__keywords" aria-label="Ключевые слова">

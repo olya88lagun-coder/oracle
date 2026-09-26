@@ -1,6 +1,8 @@
 import { ARCANA } from "@oracle/content";
 import { describe, expect, test } from "vitest";
-import { arcanumFromParam, arcanumJsonLd, arcanumParam, arcanumPath, MATRIX_PATH } from "./arcana-paths";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { arcanumFromParam, arcanumImage, arcanumJsonLd, arcanumParam, arcanumPath, MATRIX_PATH } from "./arcana-paths";
 
 const sila = { number: 11, slug: "sila" };
 
@@ -22,6 +24,20 @@ describe("arcanum paths", () => {
   });
 });
 
+describe("arcanumImage", () => {
+  test("points to the large picture and to the smaller one for cards", () => {
+    expect(arcanumImage(sila)).toBe("/arcana/11-sila.webp");
+    expect(arcanumImage({ number: 1, slug: "mag" }, "card")).toBe("/arcana/01-mag-480.webp");
+  });
+
+  test("every arcanum has both pictures in public/", () => {
+    const missing = ARCANA.flatMap((arcanum) => [arcanumImage(arcanum), arcanumImage(arcanum, "card")]).filter(
+      (src) => !existsSync(join(__dirname, "../../public", src)),
+    );
+    expect(missing).toEqual([]);
+  });
+});
+
 describe("arcanumJsonLd", () => {
   test("describes the page as an Article in Russian", () => {
     const arcanum = ARCANA.find((item) => item.number === 11)!;
@@ -33,6 +49,7 @@ describe("arcanumJsonLd", () => {
       headline: "Аркан 11 «Сила» в матрице судьбы",
       inLanguage: "ru",
       mainEntityOfPage: "https://oracle.test/matrica-sudby/arkan-11-sila",
+      image: "https://oracle.test/arcana/11-sila.webp",
     });
     expect(String(ld.description).length).toBeLessThanOrEqual(160);
   });

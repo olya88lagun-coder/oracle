@@ -1,8 +1,9 @@
 import type { Matrix } from "@oracle/core";
 import { arcanumByNumber, SECTION_TITLES } from "@oracle/content";
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode, Ref } from "react";
-import { arcanumPath } from "@/lib/arcana-paths";
+import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 import { KEY_POINTS, pointTitle, positionRows, PURPOSES } from "@/lib/matrix-view";
 import { MatrixDiagram } from "./MatrixDiagram";
 
@@ -35,6 +36,9 @@ export function MatrixResult({ matrix, dateLabel, headingRef, actions }: Props) 
               const arcanum = arcanumByNumber(matrix[point]);
               return (
                 <li key={point} className="card matrix-key stack">
+                  <div className="matrix-key__art">
+                    <Image src={arcanumImage(arcanum, "card")} alt="" fill unoptimized sizes="(min-width: 1200px) 220px, (min-width: 900px) 45vw, 100vw" />
+                  </div>
                   <div className="matrix-key__head">
                     <span className="matrix-key__number" aria-hidden="true">
                       {arcanum.number}
@@ -79,6 +83,7 @@ export function MatrixResult({ matrix, dateLabel, headingRef, actions }: Props) 
             const arcanum = arcanumByNumber(matrix[point]);
             return (
               <li key={point} className="card matrix-purpose stack">
+                <Image className="matrix-purpose__art" src={arcanumImage(arcanum, "card")} alt="" width={64} height={64} unoptimized />
                 <p className="eyebrow">{label}</p>
                 <p>
                   {arcanum.number} · {arcanum.name}
