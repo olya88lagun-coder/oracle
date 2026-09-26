@@ -13,7 +13,8 @@
     "typecheck": "pnpm -r --parallel typecheck",
     "dev:db": "node packages/db/scripts/dev-db.mjs",
     "dev:web": "pnpm --filter @oracle/web dev",
-    "test:e2e": "playwright test -c e2e/playwright.config.ts"
+    "test:e2e": "playwright test -c e2e/playwright.config.ts",
+    "content:build": "pnpm --filter @oracle/content build"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

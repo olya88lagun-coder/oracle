@@ -5,7 +5,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   outputFileTracingRoot: path.resolve(process.cwd(), "../.."),
-  transpilePackages: ["@oracle/core", "@oracle/db"],
+  transpilePackages: ["@oracle/core", "@oracle/content", "@oracle/db"],
   poweredByHeader: false,
 };
 
