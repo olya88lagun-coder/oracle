@@ -19,44 +19,46 @@ export function MatrixResult({ matrix, dateLabel, headingRef, actions }: Props) 
 
       <div className="matrix-result__top">
         <MatrixDiagram matrix={matrix} />
-        {/* Ruling 1: a visible compact list of positions next to the diagram (A–E plus the love/money line) */}
-        <div className="matrix-positions card stack">
-          <h3>Позиции</h3>
-          <ul className="matrix-positions__list">
-            {positionRows(matrix).map((row) => (
-              <li key={row.point}>{pointTitle(row.point, row.value)}</li>
-            ))}
+        <div className="matrix-result__side stack">
+          {/* Ruling 1: a visible compact list of positions next to the diagram (A–E plus the love/money line) */}
+          <div className="matrix-positions card stack">
+            <h3>Позиции</h3>
+            <ul className="matrix-positions__list">
+              {positionRows(matrix).map((row) => (
+                <li key={row.point}>{pointTitle(row.point, row.value)}</li>
+              ))}
+            </ul>
+          </div>
+
+          <ul className="matrix-keys" aria-label="Ключевые точки">
+            {KEY_POINTS.map(({ point, key, label }) => {
+              const arcanum = arcanumByNumber(matrix[point]);
+              return (
+                <li key={point} className="card matrix-key stack">
+                  <div className="matrix-key__head">
+                    <span className="matrix-key__number" aria-hidden="true">
+                      {arcanum.number}
+                    </span>
+                    <div>
+                      <p className="eyebrow">
+                        {label} · точка {point}
+                      </p>
+                      <h3>
+                        <span className="visually-hidden">Аркан {arcanum.number}, </span>
+                        {arcanum.name}
+                      </h3>
+                    </div>
+                  </div>
+                  {arcanum[key].map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                  <Link href={arcanumPath(arcanum)}>Подробнее об аркане «{arcanum.name}»</Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
-
-      <ul className="matrix-keys" aria-label="Ключевые точки">
-        {KEY_POINTS.map(({ point, key, label }) => {
-          const arcanum = arcanumByNumber(matrix[point]);
-          return (
-            <li key={point} className="card matrix-key stack">
-              <div className="matrix-key__head">
-                <span className="matrix-key__number" aria-hidden="true">
-                  {arcanum.number}
-                </span>
-                <div>
-                  <p className="eyebrow">
-                    {label} · точка {point}
-                  </p>
-                  <h3>
-                    <span className="visually-hidden">Аркан {arcanum.number}, </span>
-                    {arcanum.name}
-                  </h3>
-                </div>
-              </div>
-              {arcanum[key].map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-              <Link href={arcanumPath(arcanum)}>Подробнее об аркане «{arcanum.name}»</Link>
-            </li>
-          );
-        })}
-      </ul>
 
       <div className="matrix-today">
         <div className="card stack">
