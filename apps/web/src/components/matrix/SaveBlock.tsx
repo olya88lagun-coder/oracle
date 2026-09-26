@@ -67,7 +67,11 @@ export function SaveBlock({ state, profileDate, onSave }: Props) {
           </>
         )}
       </p>
-      {state === "saved" && <Link href="/portret">Открыть портрет</Link>}
+      {state === "saved" && (
+        <Link className="touch-link" href="/portret">
+          Открыть портрет
+        </Link>
+      )}
       {state === "error" && (
         <>
           <p className="error" role="alert">

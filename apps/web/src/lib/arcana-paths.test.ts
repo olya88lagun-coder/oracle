@@ -25,13 +25,15 @@ describe("arcanum paths", () => {
 });
 
 describe("arcanumImage", () => {
-  test("points to the large picture and to the smaller one for cards", () => {
+  test("points to the large picture, the card one and the thumbnail", () => {
     expect(arcanumImage(sila)).toBe("/arcana/11-sila.webp");
     expect(arcanumImage({ number: 1, slug: "mag" }, "card")).toBe("/arcana/01-mag-480.webp");
+    expect(arcanumImage({ number: 1, slug: "mag" }, "thumb")).toBe("/arcana/01-mag-160.webp");
   });
 
-  test("every arcanum has both pictures in public/", () => {
-    const missing = ARCANA.flatMap((arcanum) => [arcanumImage(arcanum), arcanumImage(arcanum, "card")]).filter(
+  test("every arcanum has all three pictures in public/", () => {
+    const sizes = ["page", "card", "thumb"] as const;
+    const missing = ARCANA.flatMap((arcanum) => sizes.map((size) => arcanumImage(arcanum, size))).filter(
       (src) => !existsSync(join(__dirname, "../../public", src)),
     );
     expect(missing).toEqual([]);

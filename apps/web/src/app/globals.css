@@ -98,8 +98,11 @@ body .stack > * + * { margin-top: 20px; }
 .input[type="date"] { display: block; min-width: 0; -webkit-appearance: none; appearance: none; }
 .input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 .input:focus { border-color: var(--line-strong); outline: none; box-shadow: 0 0 0 3px var(--focus-ring); }
-.choice { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; font-size: 14px; color: var(--ink-soft); cursor: pointer; }
-.choice input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--accent); }
+.choice { display: flex; align-items: flex-start; gap: 12px; min-height: 44px; padding: 10px 0; font-size: 14px; color: var(--ink-soft); cursor: pointer; }
+/* flex: none — иначе flex сжимал галочку до 13px; нажимать можно и на всю подпись */
+.choice input { flex: none; width: 20px; height: 20px; margin-top: 1px; accent-color: var(--accent); }
+/* Тонкая текстовая ссылка с зоной нажатия от 44px: вид прежний, попасть пальцем легче */
+.touch-link { display: inline-flex; align-items: center; min-height: 44px; }
 
 /* Первый экран главной: широкий кадр на всю ширину, текст стоит на его тёмной левой части */
 .hero { position: relative; max-width: 1600px; margin: -72px auto 0; padding: 0 16px; }
@@ -184,15 +187,35 @@ body .stack > * + * { margin-top: 20px; }
 .arcanum-hero__art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgb(0 0 0 / 0.55), transparent 45%); pointer-events: none; }
 .arcanum-hero__number { position: absolute; right: 20px; bottom: 8px; z-index: 1; font-family: var(--font-display); font-weight: 300; font-size: clamp(72px, 14vw, 140px); line-height: 0.9; color: var(--accent); text-shadow: 0 2px 24px rgb(0 0 0 / 0.6); }
 .arcanum-hero__keywords { list-style: none; margin: 0; padding: 0; }
+/* Секции страницы аркана: на телефоне раскрываются по нажатию, заголовок — зона от 44px */
+.arcanum-section > summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 44px; cursor: pointer; list-style: none; }
+.arcanum-section > summary::-webkit-details-marker { display: none; }
+.arcanum-section > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+.arcanum-section__icon { flex: none; display: grid; place-items: center; width: 28px; height: 28px; color: var(--accent); font-size: 22px; line-height: 1; }
+.arcanum-section__icon::before { content: "+"; }
+.arcanum-section[open] .arcanum-section__icon::before { content: "−"; }
+@media (max-width: 759px) {
+  .arcanum-section.card, .arcanum-section--plain { padding: 6px 16px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: linear-gradient(180deg, var(--surface-2), var(--surface)); }
+  .arcanum-section[open] { padding-bottom: 20px; }
+  .arcanum-section > summary h2 { font-size: 22px; }
+  .arcanum-section:not([open]) > .arcanum-section__body { margin-top: 0; }
+}
+/* На компьютере секции развёрнуты всегда (data-static ставит ArcanumSectionsExpander) */
+.arcanum-section[data-static] > summary { cursor: default; pointer-events: none; min-height: 0; }
+.arcanum-section[data-static] .arcanum-section__icon { display: none; }
 .arcanum-grid { display: grid; gap: 20px; align-items: start; }
 .arcanum-positions, .arcanum-poles { display: grid; gap: 16px; }
 .arcanum-positions h2, .arcanum-poles h2 { font-size: 24px; }
 .arcanum-question { font-family: var(--font-display); font-size: 22px; line-height: 1.35; }
 .arcanum-neighbours { justify-content: space-between; }
-.arcana-index { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
-.arcana-index a { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 12px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink-soft); text-decoration: none; }
-.arcana-index a:hover, .arcana-index a[aria-current="page"] { border-color: var(--line-strong); color: var(--ink); }
-.arcana-index__number { min-width: 24px; font-family: var(--font-display); color: var(--accent); }
+/* Ряд «Все 22 аркана»: карточки с миниатюрой. minmax(0, 1fr) — длинные имена переносятся, а не раздвигают ряд за край */
+.arcana-index { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
+@media (min-width: 1200px) { .arcana-index { grid-template-columns: repeat(11, minmax(0, 1fr)); } }
+.arcana-index a { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; justify-items: center; align-content: start; height: 100%; padding: 6px 6px 10px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink-soft); text-align: center; text-decoration: none; transition: border-color 200ms ease, color 200ms ease; }
+.arcana-index a:hover, .arcana-index a[aria-current="page"] { border-color: var(--accent-line); color: var(--ink); }
+.arcana-index__art { display: block; width: 100%; height: auto; aspect-ratio: 1; border-radius: calc(var(--radius) - 4px); object-fit: cover; }
+.arcana-index__number { font-family: var(--font-display); font-size: 16px; color: var(--accent); }
+.arcana-index__name { font-size: 13px; line-height: 1.25; hyphens: auto; overflow-wrap: break-word; }
 @media (min-width: 760px) {
   .arcanum-hero { grid-template-columns: 1fr minmax(320px, 480px); gap: 48px; }
   .arcanum-hero__art { order: 2; aspect-ratio: 1; }
