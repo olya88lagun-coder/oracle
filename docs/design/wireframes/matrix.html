@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Матрица судьбы — каркас</title>
+<style>
+  :root {
+    --paper: #f4f3f1; --ink: #222; --soft: #666; --faint: #999; --box: #e2e0dc; --box-2: #d3d0cb; --line: #bbb;
+    --hi: #7a6a52; --hi-bg: #efe7da; --note: #fff8d6; --note-line: #e6d27a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.5 system-ui, sans-serif; }
+  header.doc { padding: 32px 40px 8px; max-width: 1600px; margin: 0 auto; }
+  header.doc h1 { margin: 0 0 6px; font-size: 26px; }
+  header.doc p { margin: 4px 0; color: var(--soft); max-width: 900px; }
+  section.screen { max-width: 1600px; margin: 0 auto; padding: 28px 40px 12px; }
+  section.screen > h2 { margin: 0 0 4px; font-size: 20px; }
+  section.screen > p.lead { margin: 0 0 16px; color: var(--soft); max-width: 900px; }
+  .pair { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
+  .frame { background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .frame > .cap { padding: 6px 12px; font-size: 12px; color: var(--faint); border-bottom: 1px solid var(--box); background: #fafafa; }
+  .desk { width: 1040px; }
+  .mob { width: 375px; }
+  .in { padding: 20px; }
+  .desk .in { padding: 28px 40px; }
+  .bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px dashed var(--line); color: var(--soft); font-size: 13px; }
+  .blk { background: var(--box); border-radius: 8px; padding: 14px; color: var(--soft); }
+  .blk + .blk, .stack > * + * { margin-top: 14px; }
+  .t-eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--faint); }
+  .t-h1 { font: 400 40px/1.1 Georgia, serif; margin: 6px 0; color: var(--ink); }
+  .mob .t-h1 { font-size: 30px; }
+  .t-h2 { font: 400 26px/1.2 Georgia, serif; margin: 0; color: var(--ink); }
+  .t-h3 { font: 400 20px/1.2 Georgia, serif; margin: 0; color: var(--ink); }
+  .t-p { color: var(--soft); margin: 4px 0; }
+  .field { display: grid; gap: 6px; max-width: 360px; }
+  .input { height: 48px; border: 1px solid var(--line); border-radius: 12px; background: #fff; display: flex; align-items: center; padding: 0 14px; color: var(--faint); justify-content: space-between; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 22px; border-radius: 999px; background: #333; color: #fff; font-weight: 600; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn.lav { background: #9b8fc0; color: #fff; }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mob .grid3, .mob .grid2 { grid-template-columns: 1fr; }
+  .card { border: 1px solid var(--box-2); border-radius: 14px; padding: 18px; background: #fff; }
+  .card.hi { border-color: var(--hi); background: var(--hi-bg); }
+  .num { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--hi); font: 20px Georgia, serif; color: var(--hi); }
+  .tag { display: inline-block; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; color: var(--soft); }
+  .img { background: repeating-linear-gradient(45deg, #ddd 0 10px, #e6e6e6 10px 20px); border-radius: 10px; display: grid; place-items: center; color: var(--faint); font-size: 12px; }
+  .note { position: relative; background: var(--note); border: 1px solid var(--note-line); border-radius: 8px; padding: 8px 12px; font-size: 13px; color: #5a4b00; }
+  .notes { width: 360px; display: grid; gap: 10px; }
+  .n { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #e0b400; color: #fff; font-size: 12px; font-weight: 700; margin-right: 6px; vertical-align: 1px; }
+  .dim { opacity: .55; }
+  table.pur { width: 100%; border-collapse: collapse; }
+  table.pur td { padding: 10px 8px; border-top: 1px solid var(--box); }
+  table.pur td:first-child { color: var(--soft); }
+  .err { color: #b3261e; font-weight: 600; }
+  .ok { color: #1f7a5a; font-weight: 600; }
+  svg text { font-family: Georgia, serif; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--soft); }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: -2px; }
+</style>
+</head>
+<body>
+
+<header class="doc">
+  <h1>«Матрица судьбы» — каркас экранов (план 2а)</h1>
+  <p>Каркас показывает <b>что где стоит и какие бывают состояния</b>, а не финальный визуал. Цвета, шрифты, картинки и атмосферу рисует Codex в системе сайта (<code>docs/design/visual-direction.md</code>): тёмный фон, бронза и лаванда, антиква в заголовках.</p>
+  <p>Спецификация: <code>docs/superpowers/specs/2026-09-26-matrix-free-design.md</code>. Жёлтые заметки с номерами — требования к поведению; тексты в каркасе — рабочие, финальные согласуются в плане.</p>
+  <p>Пример на всех экранах — дата <b>18.11.1988</b>: личность A = 18 (Луна), центр E = 11 (Сила), задача D = 10 (Колесо Фортуны).</p>
+</header>
+
+<!-- 1. Калькулятор -->
+<section class="screen">
+  <h2>1. <code>/matrica-sudby</code> — первый экран (калькулятор)</h2>
+  <p class="lead">Посадочная для поиска и рекламы: поле ввода видно сразу, без регистрации.</p>
+  <div class="pair">
+    <div class="frame desk">
+      <div class="cap">Компьютер · 1440 px (показан в масштабе)</div>
+      <div class="bar"><span>Твой оракул</span><span>◯ Мой портрет</span></div>
+      <div class="in">
+        <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:center">
+          <div class="stack">
+            <div class="t-eyebrow">Практика · матрица судьбы</div>
+            <div class="t-h1">Матрица судьбы по дате рождения</div>
+            <p class="t-p">22 аркана вашей даты: на что вы опираетесь, как вас видят и какую задачу стоит заметить. Без предсказаний — как зеркало для размышления.</p>
+            <div class="field"><span>Дата рождения</span><div class="input">ДД.ММ.ГГГГ <span>▢</span></div></div>
+            <div class="row"><span class="btn">Рассчитать</span><span class="t-p">Считается в вашем браузере — дату мы не получаем</span></div>
+          </div>
+          <div class="img" style="height:320px">иллюстрация: круг матрицы / геометрия (Codex)</div>
+        </div>
+      </div>
+    </div>
+    <div class="frame mob">
+      <div class="cap">Телефон · 375 px</div>
+      <div class="bar"><span>Твой оракул</span><span>◯</span></div>
+      <div class="img" style="height:180px;border-radius:0">иллюстрация</div>
+      <div class="in stack">
+        <div class="t-eyebrow">Практика · матрица судьбы</div>
+        <div class="t-h1">Матрица судьбы по дате рождения</div>
+        <p class="t-p">22 аркана вашей даты — как зеркало для размышления.</p>
+        <div class="field"><span>Дата рождения</span><div class="input">ДД.ММ.ГГГГ <span>▢</span></div></div>
+        <span class="btn" style="width:100%">Рассчитать</span>
+        <p class="t-p" style="font-size:13px">Считается в вашем браузере — дату мы не получаем</p>
+      </div>
+    </div>
+    <div class="notes">
+      <div class="note"><span class="n">1</span>Если дата уже есть (в браузере или в портрете после входа) — поле заполнено, результат показывается сразу, без нажатия.</div>
+      <div class="note"><span class="n">2</span>Ошибка даты (раньше 1900 или позже сегодня): под полем красная строка с <code>role="alert"</code>: «Проверьте дату: она должна быть настоящей и не позже сегодняшней.» Кнопка остаётся.</div>
+      <div class="note"><span class="n">3</span>Один <code>&lt;h1&gt;</code>. Страница индексируется, у неё свой title и description.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Результат -->
+<section class="screen">
+  <h2>2. <code>/matrica-sudby</code> — результат (ниже на той же странице)</h2>
+  <p class="lead">После «Рассчитать» страница плавно прокручивается к результату (без анимации при «уменьшить движение»). Порядок блоков сверху вниз — как в каркасе.</p>
+  <div class="pair">
+    <div class="frame desk">
+      <div class="cap">Компьютер</div>
+      <div class="in stack">
+        <div class="t-eyebrow">Ваша матрица · 18 ноября 1988</div>
+        <div style="display:grid;grid-template-columns:420px 1fr;gap:32px;align-items:center">
+          <!-- диаграмма -->
+          <svg viewBox="0 0 400 400" width="420" height="420" role="img" aria-label="Диаграмма матрицы">
+            <circle cx="200" cy="200" r="178" fill="none" stroke="#ccc" stroke-dasharray="4 4"/>
+            <polygon points="30,200 200,30 370,200 200,370" fill="none" stroke="#999"/>
+            <polygon points="80,80 320,80 320,320 80,320" fill="none" stroke="#bbb"/>
+            <line x1="30" y1="200" x2="370" y2="200" stroke="#ddd"/><line x1="200" y1="30" x2="200" y2="370" stroke="#ddd"/>
+            <line x1="80" y1="80" x2="320" y2="320" stroke="#eee"/><line x1="320" y1="80" x2="80" y2="320" stroke="#eee"/>
+            <!-- основной квадрат -->
+            <g font-size="16" text-anchor="middle">
+              <circle cx="30" cy="200" r="22" fill="#efe7da" stroke="#7a6a52" stroke-width="2"/><text x="30" y="206" fill="#7a6a52">18</text>
+              <circle cx="200" cy="30" r="20" fill="#fff" stroke="#999"/><text x="200" y="36">11</text>
+              <circle cx="370" cy="200" r="20" fill="#fff" stroke="#999"/><text x="370" y="206">8</text>
+              <circle cx="200" cy="370" r="22" fill="#efe7da" stroke="#7a6a52" stroke-width="2"/><text x="200" y="376" fill="#7a6a52">10</text>
+              <circle cx="200" cy="200" r="26" fill="#efe7da" stroke="#7a6a52" stroke-width="2"/><text x="200" y="206" fill="#7a6a52">11</text>
+            </g>
+            <!-- диагонали -->
+            <g font-size="14" text-anchor="middle">
+              <circle cx="80" cy="80" r="17" fill="#fff" stroke="#bbb"/><text x="80" y="85">11</text>
+              <circle cx="320" cy="80" r="17" fill="#fff" stroke="#bbb"/><text x="320" y="85">19</text>
+              <circle cx="320" cy="320" r="17" fill="#fff" stroke="#bbb"/><text x="320" y="325">18</text>
+              <circle cx="80" cy="320" r="17" fill="#fff" stroke="#bbb"/><text x="80" y="325">10</text>
+            </g>
+            <!-- внутренние точки -->
+            <g font-size="11" text-anchor="middle" fill="#666">
+              <circle cx="70" cy="200" r="12" fill="#fff" stroke="#ccc"/><text x="70" y="204">11</text>
+              <circle cx="115" cy="200" r="12" fill="#fff" stroke="#ccc"/><text x="115" y="204">11</text>
+              <circle cx="200" cy="70" r="12" fill="#fff" stroke="#ccc"/><text x="200" y="74">6</text>
+              <circle cx="200" cy="115" r="12" fill="#fff" stroke="#ccc"/><text x="200" y="119">22</text>
+              <circle cx="330" cy="200" r="12" fill="#fff" stroke="#ccc"/><text x="330" y="204">9</text>
+              <circle cx="285" cy="200" r="12" fill="#fff" stroke="#ccc"/><text x="285" y="204">19</text>
+              <circle cx="200" cy="330" r="12" fill="#fff" stroke="#ccc"/><text x="200" y="334">4</text>
+              <circle cx="200" cy="285" r="12" fill="#fff" stroke="#ccc"/><text x="200" y="289">21</text>
+              <circle cx="108" cy="108" r="11" fill="#fff" stroke="#ddd"/><text x="108" y="112">6</text>
+              <circle cx="140" cy="140" r="11" fill="#fff" stroke="#ddd"/><text x="140" y="144">22</text>
+              <circle cx="292" cy="108" r="11" fill="#fff" stroke="#ddd"/><text x="292" y="112">22</text>
+              <circle cx="260" cy="140" r="11" fill="#fff" stroke="#ddd"/><text x="260" y="144">3</text>
+              <circle cx="292" cy="292" r="11" fill="#fff" stroke="#ddd"/><text x="292" y="296">11</text>
+              <circle cx="260" cy="260" r="11" fill="#fff" stroke="#ddd"/><text x="260" y="264">11</text>
+              <circle cx="108" cy="292" r="11" fill="#fff" stroke="#ddd"/><text x="108" y="296">4</text>
+              <circle cx="140" cy="260" r="11" fill="#fff" stroke="#ddd"/><text x="140" y="264">21</text>
+            </g>
+            <!-- линия любви и денег: X (сердце) между C2 и D2, любовь ближе к D, деньги ближе к C -->
+            <g font-size="11" text-anchor="middle">
+              <circle cx="272" cy="272" r="12" fill="#fff" stroke="#9b8fc0"/><text x="272" y="276" fill="#6b5f95">4</text>
+              <circle cx="236" cy="306" r="12" fill="#fff" stroke="#9b8fc0"/><text x="236" y="310" fill="#6b5f95">7</text>
+              <circle cx="306" cy="236" r="12" fill="#fff" stroke="#9b8fc0"/><text x="306" y="240" fill="#6b5f95">5</text>
+            </g>
+            <g font-size="10" fill="#999" font-family="system-ui">
+              <text x="30" y="236" text-anchor="middle">A</text><text x="200" y="10" text-anchor="middle">B</text>
+              <text x="370" y="236" text-anchor="middle">C</text><text x="200" y="398" text-anchor="middle">D</text>
+              <text x="236" y="192">E</text><text x="236" y="332" text-anchor="middle">♡</text><text x="330" y="236">₽</text>
+            </g>
+          </svg>
+          <div class="stack">
+            <div class="legend"><span><i style="background:#efe7da;border:2px solid #7a6a52"></i>трактуются ниже: A, E, D</span><span><i style="border:1px solid #9b8fc0"></i>линия отношений и денег</span></div>
+            <p class="t-p">Все числа матрицы видны — расчёт не прячем. Наведение/фокус на точку показывает подсказку «Точка B · 11 · Сила».</p>
+            <div class="note"><span class="n">4</span>SVG масштабируется, на 375 px помещается целиком (ширина экрана − 32 px). Для скринридеров под диаграммой — скрытая таблица «точка → номер → название аркана».</div>
+          </div>
+        </div>
+
+        <div class="grid3">
+          <div class="card hi stack"><div class="row"><span class="num">18</span><div><div class="t-eyebrow">Личность · точка A</div><div class="t-h3">Луна</div></div></div><p class="t-p">Текст «В личности» из файла аркана (3–5 предложений).</p><span class="t-p" style="text-decoration:underline">Подробнее об аркане →</span></div>
+          <div class="card hi stack"><div class="row"><span class="num">11</span><div><div class="t-eyebrow">Центр · точка E</div><div class="t-h3">Сила</div></div></div><p class="t-p">Текст «В центре».</p><span class="t-p" style="text-decoration:underline">Подробнее об аркане →</span></div>
+          <div class="card hi stack"><div class="row"><span class="num">10</span><div><div class="t-eyebrow">Задача · точка D</div><div class="t-h3">Колесо Фортуны</div></div></div><p class="t-p">Текст «Как задача» — урок и точка роста.</p><span class="t-p" style="text-decoration:underline">Подробнее об аркане →</span></div>
+        </div>
+
+        <div class="grid2">
+          <div class="blk stack"><div class="t-eyebrow">Действие на сегодня</div><p class="t-p" style="color:#333">Одно маленькое дело — из аркана центра (11, Сила).</p></div>
+          <div class="blk stack"><div class="t-eyebrow">Вопрос для себя</div><p class="t-p" style="color:#333;font-family:Georgia,serif;font-size:18px">«Один вопрос — из аркана центра»</p></div>
+        </div>
+
+        <div class="card">
+          <div class="t-h3" style="margin-bottom:6px">Предназначения</div>
+          <table class="pur">
+            <tr><td>Личное</td><td>11 · Сила</td><td style="text-align:right;text-decoration:underline">об аркане →</td></tr>
+            <tr><td>Социальное</td><td>22 · Шут</td><td style="text-align:right;text-decoration:underline">об аркане →</td></tr>
+            <tr><td>Духовное</td><td>6 · Влюблённые</td><td style="text-align:right;text-decoration:underline">об аркане →</td></tr>
+          </table>
+        </div>
+
+        <div class="card stack">
+          <div class="t-h3">Сохранить в портрет</div>
+          <p class="t-p">Дата сохранится в «Моём портрете» — следующие практики возьмут её оттуда.</p>
+          <div class="row"><span class="btn lav">Сохранить в портрет</span><span class="btn ghost">Поделиться</span></div>
+        </div>
+
+        <div class="blk row" style="justify-content:space-between"><span><span class="tag">Скоро</span> &nbsp;Лила — игра с вашим вопросом</span><span class="dim">иллюстрация Лилы</span></div>
+      </div>
+    </div>
+
+    <div class="frame mob">
+      <div class="cap">Телефон — тот же порядок</div>
+      <div class="in stack">
+        <div class="t-eyebrow">Ваша матрица · 18 ноября 1988</div>
+        <div class="img" style="height:300px">диаграмма на всю ширину</div>
+        <div class="card hi stack"><div class="row"><span class="num">18</span><div><div class="t-eyebrow">Личность</div><div class="t-h3">Луна</div></div></div><p class="t-p">Текст позиции…</p></div>
+        <div class="card hi stack"><div class="row"><span class="num">11</span><div><div class="t-eyebrow">Центр</div><div class="t-h3">Сила</div></div></div><p class="t-p">Текст позиции…</p></div>
+        <div class="card hi stack"><div class="row"><span class="num">10</span><div><div class="t-eyebrow">Задача</div><div class="t-h3">Колесо Фортуны</div></div></div><p class="t-p">Текст позиции…</p></div>
+        <div class="blk">Действие на сегодня</div>
+        <div class="blk">Вопрос для себя</div>
+        <div class="card">Предназначения — 3 строки</div>
+        <div class="card stack"><div class="t-h3">Сохранить в портрет</div><span class="btn lav" style="width:100%">Сохранить в портрет</span><span class="btn ghost" style="width:100%">Поделиться</span></div>
+        <div class="blk"><span class="tag">Скоро</span> Лила</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><span class="n">5</span>Три карточки A/E/D — главное в результате, визуально «родня» карточкам практик на главной, но без больших картинок: номер аркана в круге, название антиквой.</div>
+      <div class="note"><span class="n">6</span>Результат выглядит <b>законченным</b>: никакого «читать дальше за деньги», размытия и замков. Платного блока в 2а нет.</div>
+      <div class="note"><span class="n">7</span>Блок «Сохранить в портрет» — 4 состояния (см. экран 3).</div>
+      <div class="note"><span class="n">8</span>«Поделиться» — системное меню шеринга (на телефоне) или «Ссылка скопирована» (на компьютере). Ссылка ведёт на страницу аркана центра; даты в ссылке нет.</div>
+      <div class="note"><span class="n">9</span>Метрика: <code>matrix_calculated</code> при показе результата, <code>matrix_save_click</code>, <code>matrix_share</code>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Состояния сохранения -->
+<section class="screen">
+  <h2>3. Блок «Сохранить в портрет» — состояния</h2>
+  <p class="lead">Кнопка ведёт на вход (<code>/login?next=/matrica-sudby</code>), после входа человек возвращается сюда и дата сохраняется сама.</p>
+  <div class="pair">
+    <div class="card stack" style="width:320px"><div class="t-eyebrow">а · без входа</div><div class="t-h3">Сохранить в портрет</div><p class="t-p">Дата сохранится в «Моём портрете»…</p><span class="btn lav">Сохранить в портрет</span></div>
+    <div class="card stack" style="width:320px"><div class="t-eyebrow">б · вернулись после входа</div><div class="t-h3">Сохраняем…</div><p class="t-p">Кнопки нет, короткий индикатор.</p></div>
+    <div class="card stack" style="width:320px"><div class="t-eyebrow">в · сохранено / уже был вход</div><div class="t-h3">Дата в портрете</div><p class="ok">✓ Сохранено.</p><span class="t-p" style="text-decoration:underline">Открыть портрет →</span></div>
+    <div class="card stack" style="width:320px"><div class="t-eyebrow">г · ошибка</div><div class="t-h3">Сохранить в портрет</div><p class="err">Не получилось сохранить. Проверьте интернет и попробуйте ещё раз.</p><span class="btn lav">Повторить</span></div>
+  </div>
+  <div class="pair" style="margin-top:12px"><div class="note" style="max-width:900px"><span class="n">10</span>Если в портрете уже другая дата — главной считается портрет: калькулятор показывает её, блок в состоянии «в». Портрет без спроса не перезаписываем. «Сохранено.» — в <code>role="status"</code>, ошибка — в <code>role="alert"</code>.</div></div>
+</section>
+
+<!-- 4. Страница аркана -->
+<section class="screen">
+  <h2>4. <code>/matrica-sudby/arkan-11-sila</code> — страница аркана (22 шт.)</h2>
+  <p class="lead">Справочник для поиска. Каждая страница ведёт в калькулятор.</p>
+  <div class="pair">
+    <div class="frame desk">
+      <div class="cap">Компьютер</div>
+      <div class="bar"><span>Твой оракул</span><span>◯ Мой портрет</span></div>
+      <div class="in stack">
+        <div class="t-p dim">Матрица судьбы › Арканы › 11</div>
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:center">
+          <div class="stack"><div class="t-eyebrow">Аркан 11</div><div class="t-h1">Сила</div><div class="row"><span class="tag">мягкая сила</span><span class="tag">самообладание</span><span class="tag">доверие к себе</span></div></div>
+          <div class="img" style="height:220px">крупное «11» / символ аркана (Codex)</div>
+        </div>
+        <div class="grid2">
+          <div class="stack"><div class="t-h2">Суть</div><p class="t-p">2–3 абзаца.</p></div>
+          <div class="card hi stack"><div class="t-h3">Рассчитать свою матрицу</div><p class="t-p">Узнайте, где этот аркан в вашей дате.</p><span class="btn">Рассчитать</span></div>
+        </div>
+        <div class="grid3">
+          <div class="card"><div class="t-h3">В личности</div><p class="t-p">…</p></div>
+          <div class="card"><div class="t-h3">В центре</div><p class="t-p">…</p></div>
+          <div class="card"><div class="t-h3">Как задача</div><p class="t-p">…</p></div>
+        </div>
+        <div class="grid2">
+          <div class="blk"><b>В ресурсе</b> — 3 пункта</div>
+          <div class="blk"><b>В перекосе</b> — 3 пункта</div>
+        </div>
+        <div class="grid2">
+          <div class="blk">Действие на сегодня</div>
+          <div class="blk">Вопрос для себя</div>
+        </div>
+        <div class="row" style="justify-content:space-between"><span class="btn ghost">← 10 · Колесо Фортуны</span><span class="btn ghost">Все 22 аркана</span><span class="btn ghost">12 · Повешенный →</span></div>
+      </div>
+    </div>
+    <div class="notes">
+      <div class="note"><span class="n">11</span>Статическая страница, индексируется, разметка <code>Article</code>, свой title: «Аркан 11 Сила в матрице судьбы — значение».</div>
+      <div class="note"><span class="n">12</span>На телефоне: блоки в одну колонку, кнопка «Рассчитать» — после «Сути» и ещё раз внизу.</div>
+      <div class="note"><span class="n">13</span>«Все 22 аркана» — сетка ссылок 1…22 (можно отдельным блоком внизу страницы калькулятора).</div>
+      <div class="note"><span class="n">14</span>Метрика: <code>arcana_to_calculator</code> при переходе в калькулятор.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Главная и портрет -->
+<section class="screen">
+  <h2>5. Изменения на главной и в «Моём портрете»</h2>
+  <div class="pair">
+    <div class="frame" style="width:520px">
+      <div class="cap">Главная · карточка практики</div>
+      <div class="in"><div class="card stack" style="position:relative"><div class="img" style="height:120px">текущая картинка «Матрица судьбы»</div><span class="tag" style="border-color:#7a6a52;color:#7a6a52">Открыто</span><div class="t-h3">Матрица судьбы</div><p class="t-p">22 аркана по дате рождения…</p><span class="t-p" style="text-decoration:underline">вся карточка — ссылка на /matrica-sudby</span></div><p class="t-p">Остальные три карточки — как сейчас, «Скоро».</p></div>
+    </div>
+    <div class="frame" style="width:520px">
+      <div class="cap">«Мой портрет» · карточка матрицы (дата сохранена)</div>
+      <div class="in"><div class="card stack"><div class="img" style="height:90px">полоса картинки</div><div class="t-h3">Матрица судьбы</div><div class="row"><span class="num" style="width:36px;height:36px;font-size:16px">18</span><span class="num" style="width:36px;height:36px;font-size:16px">11</span><span class="num" style="width:36px;height:36px;font-size:16px">10</span></div><p class="t-p">Личность · Центр · Задача</p><span class="t-p" style="text-decoration:underline">Открыть расчёт →</span></div><p class="t-p">Без даты — карточка как сейчас, но с «Открыто» и ссылкой.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen" style="padding-bottom:60px">
+  <h2>Общие требования</h2>
+  <div class="note" style="max-width:900px">Текст не меньше 14 px · зоны нажатия от 44 px · контраст WCAG AA · видимый фокус · <code>prefers-reduced-motion</code> · без горизонтальной прокрутки на 375 px · тексты кнопок и полей дословно как в каркасе («Дата рождения», «Рассчитать», «Сохранить в портрет», «Поделиться», «Повторить») — по ним пишутся сквозные тесты.</div>
+</section>
+
+</body>
+</html>
