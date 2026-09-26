@@ -21,6 +21,7 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
   const [profileDate, setProfileDate] = useState(initialProfileDate);
   const [status, setStatus] = useState<SaveStatus>("idle");
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   // Защита от двойного клика: второй запрос попал бы под лимит и показал бы ложную ошибку
   const savingRef = useRef(false);
 
@@ -66,7 +67,10 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
 
   function calculate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const next = parseBirthDate(value, new Date());
+    // Дату читаем из поля: её могли ввести до гидратации, когда onChange ещё не работал и состояние пустое
+    const raw = inputRef.current?.value ?? value;
+    setValue(raw);
+    const next = parseBirthDate(raw, new Date());
     if (!next) {
       // Прежний результат убираем: рядом с ошибкой он выглядел бы как расчёт по новой дате
       setError(DATE_ERROR);
@@ -93,9 +97,9 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
         <form className="card stack matrix-form" onSubmit={calculate} noValidate>
           <div className="field">
             <label htmlFor="matrix-date">Дата рождения</label>
-            <input id="matrix-date" className="input" type="date" min="1900-01-01" value={value} onChange={(event) => setValue(event.target.value)} />
+            <input ref={inputRef} id="matrix-date" className="input" type="date" min="1900-01-01" value={value} onChange={(event) => setValue(event.target.value)} />
           </div>
-          <button type="submit" className="button button--lavender" disabled={!value}>
+          <button type="submit" className="button button--lavender">
             Рассчитать
           </button>
           {error && (

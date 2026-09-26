@@ -112,3 +112,13 @@ test("recalculating with an impossible date drops the previous result", async ({
   await expect(page.getByRole("alert").filter({ hasText: "не позже сегодняшней" })).toBeVisible();
   await expect(result(page)).toHaveCount(0);
 });
+
+test("the result fits a phone screen without horizontal scrolling", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/matrica-sudby");
+  await calculate(page, "1988-11-18");
+  await expect(result(page)).toBeVisible();
+
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});

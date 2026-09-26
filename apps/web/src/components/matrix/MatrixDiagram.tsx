@@ -24,25 +24,28 @@ export function MatrixDiagram({ matrix }: { matrix: Matrix }) {
           </g>
         ))}
       </svg>
-      <table className="visually-hidden">
-        <caption>Точки матрицы</caption>
-        <thead>
-          <tr>
-            <th scope="col">Точка</th>
-            <th scope="col">Аркан</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pointRows(matrix).map((row) => (
-            <tr key={row.point}>
-              <th scope="row">{row.label}</th>
-              <td>
-                {row.value}, {row.name}
-              </td>
+      {/* Таблица для скринридеров обёрнута: сама <table> не сжимается до 1px и давала горизонтальную прокрутку на 375px */}
+      <div className="visually-hidden">
+        <table>
+          <caption>Точки матрицы</caption>
+          <thead>
+            <tr>
+              <th scope="col">Точка</th>
+              <th scope="col">Аркан</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {pointRows(matrix).map((row) => (
+              <tr key={row.point}>
+                <th scope="row">{row.label}</th>
+                <td>
+                  {row.value}, {row.name}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </figure>
   );
 }
