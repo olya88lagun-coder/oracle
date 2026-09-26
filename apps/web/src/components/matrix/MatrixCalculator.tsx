@@ -21,11 +21,15 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
   const [profileDate, setProfileDate] = useState(initialProfileDate);
   const [status, setStatus] = useState<SaveStatus>("idle");
   const headingRef = useRef<HTMLHeadingElement>(null);
+  // Защита от двойного клика: второй запрос попал бы под лимит и показал бы ложную ошибку
+  const savingRef = useRef(false);
 
   const parsed = useMemo(() => (date ? parseBirthDate(date, new Date()) : null), [date]);
   const matrix = useMemo(() => (parsed ? calculateMatrix(parsed) : null), [parsed]);
 
   const save = useCallback(async (iso: string) => {
+    if (savingRef.current) return;
+    savingRef.current = true;
     setStatus("saving");
     try {
       const response = await fetch("/api/profile/birth-date", {
@@ -42,6 +46,8 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
       setStatus("idle");
     } catch {
       setStatus("error");
+    } finally {
+      savingRef.current = false;
     }
   }, []);
 
@@ -62,7 +68,10 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
     event.preventDefault();
     const next = parseBirthDate(value, new Date());
     if (!next) {
+      // Прежний результат убираем: рядом с ошибкой он выглядел бы как расчёт по новой дате
       setError(DATE_ERROR);
+      setDate(null);
+      setStatus("idle");
       return;
     }
     const iso = toIsoDate(next);
