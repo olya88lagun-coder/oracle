@@ -85,6 +85,9 @@ body .stack > * + * { margin-top: 20px; }
 .button--block { width: 100%; }
 .button--lavender { background: var(--lavender); color: var(--lavender-ink); }
 .button--lavender:hover { background: var(--lavender-hover); }
+/* Отметка «Сохранено.» на месте кнопки: та же высота, чтобы форма не прыгала; пустая область статуса не занимает места */
+.saved-note { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; margin: 0; color: var(--good); font-weight: 600; }
+.saved-note:empty { position: absolute; width: 1px; height: 1px; min-height: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .quiet-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-faint); font-size: 14px; }
 .quiet-link:hover { color: var(--ink-soft); }
 
