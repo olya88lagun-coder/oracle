@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DATA_RECIPIENTS, DATA_STORAGE, LEGAL_DATE, LEGAL_VERSIONS, OPERATOR } from "@/lib/legal";
+import { DATA_RECIPIENTS, DATA_STORAGE, LEGAL_DATES, LEGAL_VERSIONS, OPERATOR } from "@/lib/legal";
 import { publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
       <article className="stack">
         <h1 className="display">Политика обработки персональных данных</h1>
         <p className="muted">
-          Редакция {LEGAL_VERSIONS.privacy} от {LEGAL_DATE}
+          Редакция {LEGAL_VERSIONS.privacy} от {LEGAL_DATES.privacy}
         </p>
         <p>
           Политика описывает, как сайт {host} обрабатывает персональные данные, и составлена по Федеральному закону от 27.07.2006 № 152-ФЗ
@@ -37,6 +37,10 @@ export default function PrivacyPage() {
           <li>технические cookie для входа и, только с вашего согласия, cookie Яндекс.Метрики;</li>
           <li>IP-адрес запроса — кратковременно, в памяти сервера, чтобы защитить сайт от перегрузки; в базе не хранится;</li>
         </ul>
+        <p>
+          Калькуляторы практик считают прямо в вашем браузере. Дату рождения, введённую без входа, сайт хранит только на вашем устройстве
+          (в хранилище браузера) и получает её, только когда вы сохраняете дату в портрет. Выход и удаление данных стирают и эту копию.
+        </p>
 
         <h2>3. Зачем</h2>
         <ul>

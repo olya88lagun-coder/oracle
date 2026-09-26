@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { browserStorage, clearStoredBirthDate } from "@/lib/birth-date-storage";
 
 export function DeleteForm() {
   const [confirmed, setConfirmed] = useState(false);
@@ -13,6 +14,7 @@ export function DeleteForm() {
     try {
       const response = await fetch("/api/me/delete", { method: "POST" });
       if (response.ok) {
+        clearStoredBirthDate(browserStorage());
         window.location.assign("/?deleted=1");
         return;
       }

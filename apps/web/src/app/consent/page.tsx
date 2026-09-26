@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DATA_STORAGE, DISCLAIMER, LEGAL_DATE, LEGAL_VERSIONS, LOGIN_CONSENT_RECIPIENTS, OPERATOR } from "@/lib/legal";
+import { DATA_STORAGE, DISCLAIMER, LEGAL_DATES, LEGAL_VERSIONS, LOGIN_CONSENT_RECIPIENTS, OPERATOR } from "@/lib/legal";
 import { publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
@@ -17,7 +17,7 @@ export default function ConsentPage() {
       <article className="stack">
         <h1 className="display">Согласие на обработку персональных данных</h1>
         <p className="muted">
-          Редакция {LEGAL_VERSIONS.consent} от {LEGAL_DATE}
+          Редакция {LEGAL_VERSIONS.consent} от {LEGAL_DATES.consent}
         </p>
         <p>
           Отмечая согласие на сайте {host}, я свободно, своей волей и в своём интересе даю {OPERATOR.name} (ИНН {OPERATOR.inn}, далее —

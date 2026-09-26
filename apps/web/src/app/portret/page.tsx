@@ -2,6 +2,7 @@ import { formatBirthDateRu, toIsoDate } from "@oracle/core";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { LogoutButton } from "@/components/LogoutButton";
 import { Scene } from "@/components/Scene";
 import { PRACTICES } from "@/lib/practices";
 import { getDb } from "@/server/db";
@@ -88,11 +89,7 @@ export default async function PortraitPage() {
       </section>
 
       <div className="portrait-actions">
-        <form action="/api/auth/logout" method="post">
-          <button type="submit" className="button button--ghost">
-            Выйти
-          </button>
-        </form>
+        <LogoutButton />
         <Link href="/portret/delete" className="quiet-link">
           Удалить мои данные
         </Link>
