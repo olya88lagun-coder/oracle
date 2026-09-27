@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Лила — каркас</title>
+<style>
+  :root {
+    --paper: #f4f3f1; --ink: #222; --soft: #666; --faint: #999; --box: #e2e0dc; --box-2: #d3d0cb; --line: #bbb;
+    --hi: #7a6a52; --hi-bg: #efe7da; --note: #fff8d6; --note-line: #e6d27a;
+    --board: #fbf7ef; --arrow: #a8844f; --snake: #b07a86;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.5 system-ui, sans-serif; }
+  header.doc { padding: 32px 40px 8px; max-width: 1600px; margin: 0 auto; }
+  header.doc h1 { margin: 0 0 6px; font-size: 26px; }
+  header.doc p { margin: 4px 0; color: var(--soft); max-width: 900px; }
+  section.screen { max-width: 1600px; margin: 0 auto; padding: 28px 40px 12px; }
+  section.screen > h2 { margin: 0 0 4px; font-size: 20px; }
+  section.screen > p.lead { margin: 0 0 16px; color: var(--soft); max-width: 900px; }
+  .pair { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
+  .frame { background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .frame > .cap { padding: 6px 12px; font-size: 12px; color: var(--faint); border-bottom: 1px solid var(--box); background: #fafafa; }
+  .desk { width: 1040px; }
+  .mob { width: 375px; }
+  .in { padding: 20px; }
+  .desk .in { padding: 28px 40px; }
+  .bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px dashed var(--line); color: var(--soft); font-size: 13px; }
+  .blk { background: var(--box); border-radius: 8px; padding: 14px; color: var(--soft); }
+  .blk + .blk, .stack > * + * { margin-top: 14px; }
+  .t-eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--faint); }
+  .t-h1 { font: 400 40px/1.1 Georgia, serif; margin: 6px 0; color: var(--ink); }
+  .mob .t-h1 { font-size: 30px; }
+  .t-h2 { font: 400 26px/1.2 Georgia, serif; margin: 0; color: var(--ink); }
+  .t-h3 { font: 400 20px/1.2 Georgia, serif; margin: 0; color: var(--ink); }
+  .t-p { color: var(--soft); margin: 4px 0; }
+  .t-q { font: 400 18px/1.4 Georgia, serif; color: var(--ink); margin: 4px 0; }
+  .field { display: grid; gap: 6px; }
+  .input { min-height: 48px; border: 1px solid var(--line); border-radius: 12px; background: #fff; display: flex; align-items: center; padding: 0 14px; color: var(--faint); justify-content: space-between; }
+  .input.area { min-height: 88px; align-items: flex-start; padding-top: 12px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px; border-radius: 999px; background: #333; color: #fff; font-weight: 600; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn.lav { background: #9b8fc0; color: #fff; }
+  .btn.sm { min-height: 44px; padding: 0 16px; }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .mob .grid3, .mob .grid2, .mob .grid4 { grid-template-columns: 1fr; }
+  .card { border: 1px solid var(--box-2); border-radius: 14px; padding: 18px; background: #fff; }
+  .card.hi { border-color: var(--hi); background: var(--hi-bg); }
+  .num { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--hi); font: 20px Georgia, serif; color: var(--hi); flex: none; }
+  .tag { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; color: var(--soft); background: #fff; }
+  .img { background: repeating-linear-gradient(45deg, #ddd 0 10px, #e6e6e6 10px 20px); border-radius: 10px; display: grid; place-items: center; color: var(--faint); font-size: 12px; text-align: center; padding: 8px; }
+  .note { position: relative; background: var(--note); border: 1px solid var(--note-line); border-radius: 8px; padding: 8px 12px; font-size: 13px; color: #5a4b00; }
+  .notes { width: 360px; display: grid; gap: 10px; }
+  .n { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #e0b400; color: #fff; font-size: 12px; font-weight: 700; margin-right: 6px; vertical-align: 1px; }
+  .dim { opacity: .55; }
+  .ok { color: #1f7a5a; font-weight: 600; }
+  .move { background: #f3efe8; border-left: 3px solid var(--hi); border-radius: 6px; padding: 10px 12px; color: #444; }
+  .path { font: 16px/1.6 Georgia, serif; color: var(--ink); letter-spacing: .02em; }
+  .path .up { color: #1f7a5a; } .path .down { color: #9a3d52; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--soft); }
+  .legend i { display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: 3px; }
+  .dice { display: grid; grid-template-columns: repeat(6, 44px); gap: 8px; }
+  .dice span { display: grid; place-items: center; height: 44px; border: 1px solid var(--line); border-radius: 10px; font: 18px Georgia, serif; background: #fff; }
+  .sticky { border-top: 1px solid var(--box); padding: 12px 20px; background: #fafafa; }
+  .sheet { border-top-left-radius: 18px; border-top-right-radius: 18px; border: 1px solid var(--box-2); border-bottom: 0; background: #fff; padding: 12px 20px 20px; box-shadow: 0 -6px 20px rgba(0,0,0,.08); }
+  .grab { width: 44px; height: 4px; border-radius: 2px; background: var(--box-2); margin: 0 auto 12px; }
+  .cells72 { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; }
+  .cells72 span { display: grid; place-items: center; min-height: 44px; border: 1px solid var(--box-2); border-radius: 8px; font: 15px Georgia, serif; color: var(--soft); background: #fff; }
+  svg.board text { font-family: Georgia, serif; }
+</style>
+</head>
+<body>
+
+<header class="doc">
+  <h1>«Лила» — каркас экранов</h1>
+  <p>Каркас показывает <b>что где стоит и какие бывают состояния</b>, а не финальный визуал. Цвета, рисунок поля и атмосферу рисует Codex в системе сайта (<code>docs/design/visual-direction.md</code>). Поле — светлый лист цвета слоновой кости на тёмной сцене, стрелы — бронзовые линии, змеи — приглушённый рисунок (свой, не копия конкурента).</p>
+  <p>Решения — в спеке <code>docs/superpowers/specs/2026-09-24-oracle-site-structure-design.md</code>, §7 «Интерфейс игры». Жёлтые заметки — требования к поведению; тексты в каркасе рабочие, тексты клеток — из собственного справочника (вычитка владелицей).</p>
+  <p>Пример на всех экранах — вопрос <b>«Почему мне трудно выбрать одно направление?»</b>, путь 6 → 8 → 10 ↑23.</p>
+</header>
+
+<!-- 1. Посадочная -->
+<section class="screen">
+  <h2>1. <code>/lila</code> — посадочная</h2>
+  <p class="lead">Вход из поиска и рекламы. Поле вопроса на первом экране, без регистрации — как у калькулятора матрицы.</p>
+  <div class="pair">
+    <div class="frame desk">
+      <div class="cap">Компьютер · 1440 px (показан в масштабе)</div>
+      <div class="bar"><span>Твой оракул</span><span>◯ Мой портрет</span></div>
+      <div class="in stack">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center">
+          <div class="stack">
+            <div class="t-eyebrow">Практика · Лила</div>
+            <div class="t-h1">Игра Лила онлайн с вашим вопросом</div>
+            <p class="t-p">72 клетки, змеи и стрелы. Каждая клетка — повод посмотреть на свой вопрос с новой стороны. Не предсказание — способ подумать.</p>
+            <div class="field"><span>Ваш вопрос</span><div class="input area">С чем вы хотите разобраться?</div></div>
+            <div class="row"><span class="tag">Работа</span><span class="tag">Отношения</span><span class="tag">Деньги</span><span class="tag">Выбор</span><span class="tag">Перемены</span><span class="tag">О себе</span><span class="tag">Состояние</span><span class="tag">Семья</span></div>
+            <div class="row"><span class="btn">Начать игру</span><span class="t-p">Без регистрации · займёт 20–40 минут</span></div>
+          </div>
+          <div data-board="preview" data-current="23"></div>
+        </div>
+
+        <div class="card stack">
+          <div class="t-eyebrow">Пример хода</div>
+          <div class="move">Выпало 2. Вы прошли с 8 на 10 «Очищение», стрела подняла на 23 «Небесный план».</div>
+          <div class="row"><span class="num">23</span><div class="t-h3">Небесный план</div></div>
+          <p class="t-p">«О чём это» — 2–3 предложения из справочника.</p>
+          <p class="t-q">«О чём задуматься» — один вопрос</p>
+        </div>
+
+        <div class="grid4">
+          <div class="blk"><b>1. Вопрос</b><br>Один, личный, про себя</div>
+          <div class="blk"><b>2. Рождение</b><br>Игра начинается с шестёрки</div>
+          <div class="blk"><b>3. Путь</b><br>Кубик, змеи и стрелы</div>
+          <div class="blk"><b>4. Итог</b><br>Путь и ваши заметки</div>
+        </div>
+
+        <div class="grid2">
+          <div class="card stack">
+            <div class="t-h3">Как устроено</div>
+            <p class="t-p">Тексты 72 клеток написаны заранее и вычитаны. Змеи и стрелы — по классической схеме Хариша Джохари. Проводник (платно) связывает смысл клетки с вашим вопросом, но смысл клеток не выдумывает.</p>
+          </div>
+          <div class="card hi stack">
+            <div class="t-h3">Сессия с проводником</div>
+            <p class="t-p">Реплика на каждый ход, связь с вашим вопросом, итоговый вывод. Можно подключить в любой момент игры.</p>
+            <div class="row"><span class="btn">Сыграть с проводником · 490 ₽</span></div>
+          </div>
+        </div>
+
+        <div class="card stack">
+          <div class="t-h3">Все 72 клетки</div>
+          <div class="cells72" data-cells72></div>
+        </div>
+        <div class="blk">Частые вопросы — аккордеон (5–8 вопросов), разметка <code>FAQPage</code></div>
+      </div>
+    </div>
+
+    <div class="frame mob">
+      <div class="cap">Телефон · 375 px</div>
+      <div class="bar"><span>Твой оракул</span><span>◯</span></div>
+      <div class="in stack">
+        <div class="t-eyebrow">Практика · Лила</div>
+        <div class="t-h1">Игра Лила онлайн с вашим вопросом</div>
+        <p class="t-p">72 клетки, змеи и стрелы — способ посмотреть на свой вопрос с новой стороны.</p>
+        <div class="field"><span>Ваш вопрос</span><div class="input area">С чем вы хотите разобраться?</div></div>
+        <div class="row" style="gap:8px"><span class="tag">Работа</span><span class="tag">Отношения</span><span class="tag">Деньги</span><span class="tag">Выбор</span><span class="tag">ещё…</span></div>
+        <span class="btn" style="width:100%">Начать игру</span>
+        <div data-board="mini" data-current="23"></div>
+        <div class="blk">Пример хода</div>
+        <div class="blk">Как проходит игра — 4 шага</div>
+        <div class="blk">Как устроено</div>
+        <div class="card hi">Сессия с проводником · 490 ₽</div>
+        <div class="blk">Все 72 клетки — сетка 6 × 12</div>
+        <div class="blk">Частые вопросы</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><span class="n">1</span>Тема-подсказка подставляет в поле пример вопроса («Работа» → «Куда мне двигаться дальше в работе?»), его можно править. Под полем — подсказка: личный, про себя, открытый («что», «как», «почему»), а не «да или нет».</div>
+      <div class="note"><span class="n">2</span>Вопрос от 10 до 300 символов. Пустой или короткий: <code>role="alert"</code> «Сформулируйте вопрос хотя бы в несколько слов.»</div>
+      <div class="note"><span class="n">3</span>Поле на посадочной — картинка-превью; каждая клетка в сетке «Все 72 клетки» — ссылка на <code>/lila/kletki/&lt;slug&gt;</code>. Это перелинковка для поиска.</div>
+      <div class="note"><span class="n">4</span>Один платный блок на странице. Один <code>&lt;h1&gt;</code>, свой title: «Игра Лила онлайн — 72 клетки, змеи и стрелы | Твой оракул».</div>
+      <div class="note"><span class="n">5</span>Метрика: <code>lila_start</code> при нажатии «Начать игру» с валидным вопросом. Текст вопроса в Метрику не уходит.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Старт -->
+<section class="screen">
+  <h2>2. Старт: рождение и намерение</h2>
+  <p class="lead">Левая колонка экрана игры (на телефоне — под полем). Три состояния подряд.</p>
+  <div class="pair">
+    <div class="card stack" style="width:320px">
+      <div class="t-eyebrow">а · ждём шестёрку</div>
+      <div class="t-h3">Рождение</div>
+      <p class="t-p">По правилам Лилы путь начинается, когда выпадет 6. Сделайте спокойный вдох и вспомните свой вопрос.</p>
+      <span class="btn">Бросить кубик</span>
+      <span class="btn ghost">Свой кубик</span>
+    </div>
+    <div class="card stack" style="width:320px">
+      <div class="t-eyebrow">б · промах</div>
+      <div class="move">Выпало 2. Для рождения нужна 6.</div>
+      <span class="btn">Бросить ещё раз</span>
+      <span class="btn ghost">Начать сразу</span>
+      <p class="t-p" style="font-size:13px">«Начать сразу» появляется после первого промаха и ставит фишку на 6.</p>
+    </div>
+    <div class="card hi stack" style="width:320px">
+      <div class="t-eyebrow">в · выпала 6</div>
+      <div class="row"><span class="num">6</span><div class="t-h3">Вы родились в игре</div></div>
+      <p class="t-p">Ваш вопрос:</p>
+      <p class="t-q">«Почему мне трудно выбрать одно направление?»</p>
+      <span class="t-p" style="text-decoration:underline">Изменить вопрос</span>
+      <span class="btn">Зафиксировать намерение</span>
+    </div>
+    <div class="card stack" style="width:320px">
+      <div class="t-eyebrow">«Свой кубик»</div>
+      <p class="t-p">Сколько выпало на вашем кубике?</p>
+      <div class="dice"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+      <span class="t-p" style="text-decoration:underline">Бросить здесь</span>
+    </div>
+  </div>
+  <div class="pair" style="margin-top:12px">
+    <div class="note" style="max-width:900px"><span class="n">6</span>После «Зафиксировать намерение» вопрос не редактируется — он показан в шапке игры. На этом шаге AI не работает ни в бесплатной, ни в платной игре. Метрика: <code>lila_born</code>.</div>
+  </div>
+</section>
+
+<!-- 3. Экран игры -->
+<section class="screen">
+  <h2>3. Экран игры — ход</h2>
+  <p class="lead">Клетка 23 после стрелы с 10. Бесплатная игра: тексты клеток из справочника, без AI.</p>
+  <div class="pair">
+    <div class="frame desk">
+      <div class="cap">Компьютер</div>
+      <div class="bar"><span>Твой оракул</span><span>«Почему мне трудно выбрать одно направление?» · ход 3</span><span>◯</span></div>
+      <div class="in">
+        <div style="display:grid;grid-template-columns:400px 1fr;gap:28px;align-items:start">
+          <div class="stack">
+            <div class="row"><span class="num">23</span><div><div class="t-eyebrow">Клетка 23</div><div class="t-h3">Небесный план</div></div></div>
+            <p class="t-p">«О чём это» — 2–3 предложения из справочника клетки.</p>
+            <div class="card stack"><div class="t-eyebrow">О чём задуматься</div><p class="t-q">«Один вопрос из справочника клетки»</p></div>
+            <span class="t-p" style="text-decoration:underline">О значении клетки ▾</span>
+            <div class="field"><span>Заметка для себя</span><div class="input area">Что откликается?</div></div>
+            <div class="card hi stack"><div class="t-h3">Проводник</div><p class="t-p">Свяжет каждую клетку с вашим вопросом и подведёт итог игры.</p><span class="btn sm">Подключить · 490 ₽</span></div>
+          </div>
+          <div class="stack">
+            <div class="row"><span class="btn">Бросить кубик</span><span class="btn ghost">Свой кубик</span></div>
+            <div class="move">Выпало 2. Вы прошли с 8 на 10 «Очищение», стрела подняла на 23 «Небесный план».</div>
+            <div data-board="full" data-current="23" data-trail="6,8,10,23"></div>
+            <div class="legend"><span><i style="background:var(--arrow)"></i>стрела</span><span><i style="background:var(--snake)"></i>змея</span><span>● текущая клетка</span><span>◎ цель — 68</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="frame mob">
+      <div class="cap">Телефон</div>
+      <div class="bar"><span>Ход 3 · клетка 23</span><span>Поле целиком ⤢</span></div>
+      <div class="in stack">
+        <div data-board="mini" data-current="23" data-trail="6,8,10,23"></div>
+        <div class="move">Выпало 2. С 8 на 10, стрела подняла на 23.</div>
+        <div class="row"><span class="num">23</span><div class="t-h3">Небесный план</div></div>
+        <p class="t-p">«О чём это» — 2–3 предложения.</p>
+        <div class="card"><div class="t-eyebrow">О чём задуматься</div><p class="t-q">«Вопрос клетки»</p></div>
+        <span class="t-p" style="text-decoration:underline">О значении клетки ▾</span>
+        <div class="field"><span>Заметка для себя</span><div class="input area">Что откликается?</div></div>
+        <div class="card hi row" style="justify-content:space-between"><span>Проводник</span><span class="btn sm">490 ₽</span></div>
+      </div>
+      <div class="sticky row"><span class="btn" style="flex:1">Бросить кубик</span><span class="btn ghost sm">Свой</span></div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><span class="n">7</span>Фишка идёт по клеткам, по стреле и змее — скользит (≈1 с на ход). При <code>prefers-reduced-motion</code> — сразу на итоговую клетку. Строка «что произошло» — в <code>role="status"</code>.</div>
+      <div class="note"><span class="n">8</span>Номера, названия, подсветка и фишка — текст и SVG поверх картинки поля, не часть картинки. Змеи не закрывают номера и названия.</div>
+      <div class="note"><span class="n">9</span>Телефон: на поле только номера (названия крупнее 14 px не влезут). «Поле целиком» — полноэкранное поле с увеличением, клетки от 44 px, с названиями; нажатие на клетку — шторка (экран 4). Кнопка броска прилипает к низу экрана.</div>
+      <div class="note"><span class="n">10</span>Для скринридеров у поля — скрытый список клеток: «23, Небесный план — вы здесь», «12, Зависть — змея на 8», «10, Очищение — стрела на 23».</div>
+      <div class="note"><span class="n">11</span>Заметка сохраняется при вводе (у гостя — в браузере, после входа — в аккаунте). Заметки и вопрос в Метрику не уходят. Метрика хода: <code>lila_move</code> (номер хода и клетки, без текста).</div>
+      <div class="note"><span class="n">12</span>Выпало больше, чем осталось до 72, — фишка стоит на месте: «Выпало 5 — до конца поля меньше шагов, вы остаётесь на 70.» Точные правила бросков фиксируются в плане этапа.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Шторка и проводник -->
+<section class="screen">
+  <h2>4. Шторка клетки и ход с проводником</h2>
+  <div class="pair">
+    <div class="frame mob">
+      <div class="cap">Телефон · нажатие на клетку в «Поле целиком»</div>
+      <div class="img" style="height:260px;border-radius:0">полноэкранное поле (затемнено)</div>
+      <div class="sheet stack">
+        <div class="grab"></div>
+        <div class="row"><span class="num">12</span><div class="t-h3">Зависть</div></div>
+        <p class="t-p">Змея: с 12 вниз на 8 «Алчность».</p>
+        <p class="t-p">«О чём это» — коротко.</p>
+        <span class="t-p" style="text-decoration:underline">Страница клетки →</span>
+        <span class="btn ghost" style="width:100%">Закрыть</span>
+      </div>
+    </div>
+
+    <div class="frame" style="width:440px">
+      <div class="cap">Ход с проводником (платная сессия)</div>
+      <div class="in stack">
+        <div class="row"><span class="num">23</span><div class="t-h3">Небесный план</div></div>
+        <span class="t-p" style="text-decoration:underline">О значении клетки ▾</span>
+        <div class="card stack">
+          <div class="t-eyebrow">Проводник</div>
+          <p class="t-p" style="color:#333">2–3 предложения: как смысл клетки звучит в вашем вопросе про выбор направления. Суть вопроса пересказана, не процитирована.</p>
+          <p class="t-q">Один вопрос проводника.</p>
+        </div>
+        <div class="card" style="margin-left:40px"><p class="t-p" style="color:#333">Ответ игрока</p></div>
+        <div class="card stack"><div class="t-eyebrow">Проводник</div><p class="t-p" style="color:#333">Короткий отклик.</p></div>
+        <div class="field"><div class="input">Ваш ответ…</div><span class="t-p" style="font-size:13px">Осталось сообщений на этом ходу: 2</span></div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><span class="n">13</span>Проводник: обращение на «вы», нейтральный род, без дословного повтора вопроса, без видимой разметки <code>**</code> — ответ модели по JSON-схеме с проверкой полей.</div>
+      <div class="note"><span class="n">14</span>Лимит N сообщений игрока на ход (число — по замеру себестоимости, спека §5). Лимит исчерпан: «Вернёмся к этому на следующей клетке.» — поле ввода скрыто, кнопка броска доступна.</div>
+      <div class="note"><span class="n">15</span>Проводник, подключённый посреди игры, видит весь пройденный путь и заметки. Метрика: <code>lila_guide_click</code>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Финал -->
+<section class="screen">
+  <h2>5. Финал — клетка 68</h2>
+  <div class="pair">
+    <div class="frame desk" style="width:760px">
+      <div class="cap">Итог (бесплатно)</div>
+      <div class="in stack">
+        <div class="t-eyebrow">Путь завершён · 24 хода</div>
+        <div class="t-h2">Космическое сознание</div>
+        <div class="path">6 → 8 → 10 <span class="up">↑23</span> → 29 <span class="down">↓6</span> → … → 54 <span class="up">↑68</span></div>
+        <div class="row"><span class="tag">стрел: 4</span><span class="tag">змей: 3</span><span class="tag">клеток: 21</span></div>
+        <div class="t-q">«Почему мне трудно выбрать одно направление?»</div>
+        <div class="card stack">
+          <div class="t-h3">Ваш путь по клеткам</div>
+          <p class="t-p">Список пройденных клеток: номер, название, вопрос клетки и ваша заметка (если есть). Змеи и стрелы отмечены.</p>
+        </div>
+        <div class="card stack"><div class="t-h3">Сохранить в портрет</div><div class="row"><span class="btn lav">Войти и сохранить</span><span class="btn ghost">Поделиться</span></div></div>
+        <div class="card hi stack"><div class="t-h3">Итоговый вывод проводника</div><p class="t-p">Проводник прочитает весь путь и ваши заметки и сведёт их к вашему вопросу.</p><span class="btn sm">Получить вывод · 490 ₽</span></div>
+        <div class="row"><span class="btn ghost">Новая игра</span></div>
+      </div>
+    </div>
+    <div class="notes">
+      <div class="note"><span class="n">16</span>Бесплатный итог выглядит законченным — без размытия и замков. В платной сессии вместо блока с ценой — вывод проводника.</div>
+      <div class="note"><span class="n">17</span>«Поделиться» — картинка и ссылка с путём одной строкой, без вопроса и заметок. Ссылка ведёт на <code>/lila</code>.</div>
+      <div class="note"><span class="n">18</span>Метрика: <code>lila_finish</code>, <code>lila_save_click</code>, <code>lila_share</code>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Страница клетки -->
+<section class="screen">
+  <h2>6. <code>/lila/kletki/nebesnyj-plan</code> — страница клетки (72 шт.)</h2>
+  <div class="pair">
+    <div class="frame desk">
+      <div class="cap">Компьютер</div>
+      <div class="bar"><span>Твой оракул</span><span>◯ Мой портрет</span></div>
+      <div class="in stack">
+        <div class="t-p dim">Лила › Клетки › 23</div>
+        <div style="display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:center">
+          <div class="stack"><div class="t-eyebrow">Клетка 23</div><div class="t-h1">Небесный план</div><p class="t-p">сварга-лока</p></div>
+          <div data-board="locator" data-current="23"></div>
+        </div>
+        <div class="grid2">
+          <div class="stack"><div class="t-h2">О чём это</div><p class="t-p">2–3 абзаца.</p><div class="t-h3">О чём задуматься</div><p class="t-p">2–3 вопроса.</p></div>
+          <div class="stack">
+            <div class="card stack"><div class="t-h3">Связи</div><p class="t-p">Сюда ведёт стрела с 10 «Очищение».</p></div>
+            <div class="card hi stack"><div class="t-h3">Сыграть со своим вопросом</div><span class="btn">Начать игру</span></div>
+          </div>
+        </div>
+        <div class="row" style="justify-content:space-between"><span class="btn ghost">← 22 · План Дхармы</span><span class="btn ghost">Все 72 клетки</span><span class="btn ghost">24 · Плохая компания →</span></div>
+      </div>
+    </div>
+    <div class="notes">
+      <div class="note"><span class="n">19</span>Статическая страница, индексируется, разметка <code>Article</code>, title: «Клетка 23 Небесный план в игре Лила — значение».</div>
+      <div class="note"><span class="n">20</span>Мини-поле справа — где клетка на доске и её змея/стрела. Декоративное: у SVG <code>aria-hidden</code>, связи продублированы текстом.</div>
+      <div class="note"><span class="n">21</span>Тексты — только собственные, по смыслу источника (спека §7). На телефоне блоки в одну колонку, «Начать игру» — после «О чём это» и внизу.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Портрет -->
+<section class="screen">
+  <h2>7. «Мой портрет» — карточка Лилы</h2>
+  <div class="pair">
+    <div class="card stack" style="width:320px"><div class="t-eyebrow">незаконченная игра</div><div class="t-h3">Лила</div><p class="t-p">«Почему мне трудно выбрать…» · ход 11 · клетка 41</p><span class="btn lav">Продолжить</span></div>
+    <div class="card stack" style="width:320px"><div class="t-eyebrow">завершённые</div><div class="t-h3">Лила · 2 игры</div><p class="t-p">Список: вопрос, дата, путь одной строкой, ссылка на итог.</p><span class="t-p" style="text-decoration:underline">Новая игра →</span></div>
+    <div class="note" style="width:320px"><span class="n">22</span>Гостевая игра из браузера после входа переносится в аккаунт. «Удалить мои данные» удаляет и игры: вопросы, заметки, реплики проводника.</div>
+  </div>
+</section>
+
+<section class="screen" style="padding-bottom:60px">
+  <h2>Общие требования</h2>
+  <div class="note" style="max-width:900px">Текст не меньше 14 px · зоны нажатия от 44 px · контраст WCAG AA · видимый фокус · <code>prefers-reduced-motion</code> · без горизонтальной прокрутки на 375 px · обращение на «вы», нейтральный род · тексты кнопок («Начать игру», «Бросить кубик», «Свой кубик», «Начать сразу», «Зафиксировать намерение», «Войти и сохранить», «Поделиться», «Продолжить») закрепляются в плане — по ним пишутся сквозные тесты.</div>
+</section>
+
+<script>
+  const NAMES = ["Рождение","Майя","Гнев","Жадность","Физический план","Заблуждение","Тщеславие","Алчность","Чувственный план",
+    "Очищение","Развлечения","Зависть","Ничтожность","Астральный план","План фантазии","Ревность","Сострадание","План радости",
+    "План кармы","Благотворительность","Искупление","План Дхармы","Небесный план","Плохая компания","Хорошая компания","Печаль","Самоотверженное служение",
+    "Истинная религиозность","Отсутствие религиозности","Хорошие тенденции","План святости","План равновесия","План ароматов","План вкуса","Чистилище","Ясность сознания",
+    "Джняна","Прана-лока","Апана-лока","Вьяна-лока","Человеческий план","План Агни","Рождение человека","Неведение","Правильное знание",
+    "Различение","План нейтральности","Солнечный план","Лунный план","План аскетизма","Земля","План насилия","План жидкостей","Духовная преданность",
+    "Эгоизм","Изначальные вибрации","План газов","План сияния","План реальности","Позитивный интеллект","Негативный интеллект","Счастье","Тамас",
+    "Феноменальный план","Внутреннее пространство","План блаженства","Космическое благо","Космическое сознание","План Абсолюта","Саттвагуна","Раджогуна","Тамогуна"];
+  const SNAKES = [[12,8],[16,4],[24,7],[29,6],[44,9],[52,35],[55,3],[61,13],[63,2],[72,51]];
+  const ARROWS = [[10,23],[17,69],[20,32],[22,60],[27,41],[28,50],[37,66],[45,67],[46,62],[54,68]];
+  const C = 100;
+  function pos(n) {
+    const row = Math.floor((n - 1) / 9), i = (n - 1) % 9;
+    const col = row % 2 === 0 ? i : 8 - i;
+    return { x: col * C, y: (7 - row) * C, cx: col * C + C / 2, cy: (7 - row) * C + C / 2 };
+  }
+  function board(el) {
+    const mode = el.dataset.board, current = +el.dataset.current || 0;
+    const trail = (el.dataset.trail || "").split(",").filter(Boolean).map(Number);
+    const withNames = mode === "full" || mode === "preview";
+    let s = `<svg class="board" viewBox="0 0 900 800" width="100%" role="img" aria-label="Поле Лилы, 72 клетки" style="display:block;background:var(--board);border:1px solid var(--box-2);border-radius:12px">`;
+    for (let n = 1; n <= 72; n++) {
+      const p = pos(n), isCur = n === current, isGoal = n === 68, inTrail = trail.includes(n);
+      s += `<rect x="${p.x}" y="${p.y}" width="${C}" height="${C}" fill="${isCur ? "#efe7da" : inTrail ? "#f6f0e4" : "none"}" stroke="#e3dccf"/>`;
+      if (isGoal) s += `<rect x="${p.x + 5}" y="${p.y + 5}" width="${C - 10}" height="${C - 10}" fill="none" stroke="#7a6a52" stroke-width="2" stroke-dasharray="6 4" rx="6"/>`;
+      s += `<text x="${p.cx}" y="${p.y + (withNames ? 34 : 60)}" text-anchor="middle" font-size="${withNames ? 24 : 34}" fill="${isCur ? "#7a6a52" : "#555"}">${n}</text>`;
+      if (withNames) {
+        const words = NAMES[n - 1].split(" ");
+        const lines = words.length > 1 && NAMES[n - 1].length > 10 ? [words.slice(0, Math.ceil(words.length / 2)).join(" "), words.slice(Math.ceil(words.length / 2)).join(" ")] : [NAMES[n - 1]];
+        lines.forEach((l, k) => { s += `<text x="${p.cx}" y="${p.y + 58 + k * 16}" text-anchor="middle" font-size="13" fill="#777">${l}</text>`; });
+      }
+    }
+    if (trail.length > 1) {
+      s += `<polyline points="${trail.map(n => `${pos(n).cx},${pos(n).cy + 30}`).join(" ")}" fill="none" stroke="#7a6a52" stroke-width="2" stroke-dasharray="3 5" opacity=".6"/>`;
+    }
+    ARROWS.forEach(([a, b]) => {
+      const p = pos(a), q = pos(b);
+      s += `<line x1="${p.cx}" y1="${p.cy}" x2="${q.cx}" y2="${q.cy}" stroke="var(--arrow)" stroke-width="3" opacity=".55" marker-end="url(#ah)"/>`;
+    });
+    SNAKES.forEach(([a, b]) => {
+      const p = pos(a), q = pos(b), mx = (p.cx + q.cx) / 2 + 60, my = (p.cy + q.cy) / 2;
+      s += `<path d="M${p.cx - 20},${p.cy + 20} Q${mx},${my} ${q.cx + 20},${q.cy - 20}" fill="none" stroke="var(--snake)" stroke-width="8" stroke-linecap="round" opacity=".35"/>`;
+    });
+    if (current) { const p = pos(current); s += `<circle cx="${p.x + C - 22}" cy="${p.y + C - 22}" r="14" fill="#6b5f95" stroke="#fff" stroke-width="3"/>`; }
+    s += `<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--arrow)"/></marker></defs></svg>`;
+    el.innerHTML = s;
+  }
+  document.querySelectorAll("[data-board]").forEach(board);
+  document.querySelectorAll("[data-cells72]").forEach(el => {
+    el.innerHTML = Array.from({ length: 72 }, (_, i) => `<span title="${NAMES[i]}">${i + 1}</span>`).join("");
+  });
+</script>
+</body>
+</html>
