@@ -1,6 +1,6 @@
 import type { StoredChapter } from "@oracle/db";
 import { describe, expect, test } from "vitest";
-import { EMAIL_ERROR, EMAIL_PATTERN, formatIsoDate, offerState, orderedChapters, purchaseErrorMessage, reportPath } from "./report-offer";
+import { EMAIL_ERROR, EMAIL_PATTERN, formatIsoDate, offerState, orderedChapters, purchaseErrorMessage, reportPath, teaserText } from "./report-offer";
 
 const DATE = "1988-11-18";
 const BASE = { enabled: true, signedIn: true, date: DATE, profileDate: DATE, paid: [] };
@@ -35,6 +35,12 @@ describe("purchase helpers", () => {
     expect(purchaseErrorMessage("invalid_email")).toBe(EMAIL_ERROR);
     expect(purchaseErrorMessage("payment_failed")).toMatch(/Попробуйте ещё раз/);
     expect(purchaseErrorMessage(undefined)).toMatch(/Попробуйте ещё раз/);
+  });
+
+  test("the teaser keeps short texts and cuts long ones on a word boundary", () => {
+    expect(teaserText("Коротко.", 20)).toBe("Коротко.");
+    expect(teaserText("Колесница в отношениях — это движение, общие цели", 30)).toBe("Колесница в отношениях — это…");
+    expect(teaserText("Колесница в отношениях — это движение, общие цели", 25)).toBe("Колесница в отношениях…");
   });
 
   test("dates are shown as dd.mm.yyyy", () => {

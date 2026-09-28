@@ -43,3 +43,12 @@ export function orderedChapters(chapters: readonly StoredChapter[]): StoredChapt
 }
 
 export const chapterAnchor = (id: ChapterId) => `chapter-${id}`;
+
+const TEASER_LIMIT = 220;
+
+// Начало главы для блока продажи: обрезаем по границе слова, чтобы обрыв выглядел как «продолжение следует», а не как ошибка
+export function teaserText(text: string, limit: number = TEASER_LIMIT): string {
+  if (text.length <= limit) return text;
+  const cut = text.slice(0, limit);
+  return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[\s,.;:—–-]+$/, "")}…`;
+}

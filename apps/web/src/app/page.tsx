@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { PRACTICES } from "@/lib/practices";
+import { MATRIX_PATH } from "@/lib/arcana-paths";
+import { FREE_MATRIX_CTA, FREE_RESULT_PROMISE, FREE_RESULT_TERMS, PRACTICES } from "@/lib/practices";
 import { publicMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
@@ -29,6 +30,18 @@ export default function HomePage() {
             «Твой оракул» помогает исследовать личный вопрос через символы матрицы судьбы, Лилы, таро и натальной карты. Мы не предсказываем будущее —
             помогаем увидеть, что происходит сейчас.
           </p>
+          <div className="hero__cta stack">
+            <p>
+              <Link className="button button--lavender" href={MATRIX_PATH}>
+                {FREE_MATRIX_CTA}
+              </Link>
+            </p>
+            <p className="hero__promise">
+              {FREE_RESULT_PROMISE}
+              <br />
+              <span className="muted">{FREE_RESULT_TERMS}</span>
+            </p>
+          </div>
         </div>
       </section>
 
@@ -51,10 +64,20 @@ export default function HomePage() {
                     )}
                   </h3>
                   <p>{practice.summary}</p>
+                  {/* Вся карточка — ссылка (растянутая practice-card__link); это надпись-подсказка, а не вторая ссылка */}
+                  {practice.href && <span className="button button--lavender practice-card__cta">Рассчитать бесплатно</span>}
                 </div>
               </li>
             ))}
           </ul>
+          <div className="home-start">
+            <p className="lead">Начните с матрицы судьбы — бесплатно откроются три ключевые позиции: Личность, Центр и Задача.</p>
+            <p>
+              <Link className="button button--lavender" href={MATRIX_PATH}>
+                {FREE_MATRIX_CTA}
+              </Link>
+            </p>
+          </div>
         </section>
 
         <section className="card card--accent card--portrait stack">
@@ -63,7 +86,10 @@ export default function HomePage() {
           </div>
           <p className="eyebrow">Мой портрет</p>
           <h2>Одна дата рождения — для всех практик</h2>
-          <p className="muted">Сохраните дату один раз: каждая новая практика откроется в портрете сразу, без повторного ввода.</p>
+          <p className="muted">
+            Ваше личное пространство с результатами практик. Сохраните дату один раз: каждая новая практика откроется в портрете сразу, без повторного
+            ввода.
+          </p>
           <p>
             <Link className="button" href="/portret">
               Открыть портрет

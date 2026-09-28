@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type
 import { reachGoal } from "@/lib/analytics";
 import { browserStorage, pickBirthDate, readStoredBirthDate, storeBirthDate } from "@/lib/birth-date-storage";
 import { DATE_ERROR, saveBlockState, sessionStore, takeSaveIntent, type SaveStatus } from "@/lib/matrix-save";
+import { FREE_RESULT_PROMISE } from "@/lib/practices";
 import { offerState, type PaidReport } from "@/lib/report-offer";
 import { MatrixResult } from "./MatrixResult";
 import { ReportOffer } from "./ReportOffer";
@@ -113,6 +114,7 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
               {error}
             </p>
           )}
+          <p className="matrix-form__promise">{FREE_RESULT_PROMISE}</p>
           <p className="muted">Считается в вашем браузере — дату мы не получаем.</p>
         </form>
       </section>

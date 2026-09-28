@@ -1,5 +1,13 @@
 import { describe, expect, test } from "vitest";
-import { PRACTICES } from "./practices";
+import { FREE_MATRIX_CTA, FREE_RESULT_PROMISE, FREE_RESULT_TERMS, PRACTICES } from "./practices";
+
+describe("free entry texts", () => {
+  test("promise exactly the three free positions and name the action once", () => {
+    expect(FREE_MATRIX_CTA).toBe("Рассчитать матрицу бесплатно");
+    expect(FREE_RESULT_PROMISE).toMatch(/Личность, Центр и Задача/);
+    expect(FREE_RESULT_TERMS).toMatch(/без регистрации/);
+  });
+});
 
 describe("PRACTICES", () => {
   test("lists the four practices of the spec in launch order", () => {

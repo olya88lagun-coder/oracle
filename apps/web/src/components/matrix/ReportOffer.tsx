@@ -4,17 +4,15 @@ import { MATRIX_REPORT_PRICE_KOPECKS, reportChapters, type Matrix } from "@oracl
 import { arcanumByNumber } from "@oracle/content";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { reachGoal } from "@/lib/analytics";
 import { arcanumImage, MATRIX_PATH } from "@/lib/arcana-paths";
 import { loginHref } from "@/lib/next-path";
-import { EMAIL_ERROR, EMAIL_PATTERN, purchaseErrorMessage, reportPath, type OfferState } from "@/lib/report-offer";
+import { EMAIL_ERROR, EMAIL_PATTERN, purchaseErrorMessage, reportPath, teaserText, type OfferState } from "@/lib/report-offer";
 
 type Props = { state: Exclude<OfferState, { kind: "hidden" }>; matrix: Matrix; onSaveDate: () => Promise<boolean> };
 
 const PRICE = `${MATRIX_REPORT_PRICE_KOPECKS / 100} ₽`;
-const SAMPLE =
-  "«Колесница в точке любви и Император в сердце матрицы могут говорить о том, что в близости вам важны движение и ясные договорённости…»";
 // Для рода и предназначений в оглавлении хватает номеров: названия четырёх арканов не помещаются в строку на телефоне
 const NUMBERS_ONLY = new Set(["family"]);
 
@@ -88,23 +86,51 @@ function BuyForm({ onSaveDate }: { onSaveDate: Props["onSaveDate"] }) {
   );
 }
 
+// Цель «блок продажи показан» — один раз за показ страницы, когда блок хотя бы наполовину на экране
+function useOfferViewGoal() {
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        reachGoal("report_offer_view");
+        observer.disconnect();
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
+
 export function ReportOffer({ state, matrix, onSaveDate }: Props) {
   const center = arcanumByNumber(matrix.E);
+  const love = arcanumByNumber(matrix.love);
+  const ref = useOfferViewGoal();
   return (
-    <section className="card report-offer" aria-labelledby="report-offer-title">
+    <section ref={ref} className="card report-offer" aria-labelledby="report-offer-title">
       <div className="stack report-offer__main">
         <p className="eyebrow">Разбор всей матрицы</p>
         <h2 id="report-offer-title" className="report-offer__title">
           Разбор всей матрицы — {PRICE}
         </h2>
-        <p className="lead">Семь глав о вашей матрице: как точки связаны между собой, где ресурс и где перекос, и итог — ваш сценарий с экспериментом на 7 дней.</p>
+        <p className="lead">
+          Посмотрите, как ваши ключевые позиции работают вместе: в отношениях, в деньгах и деле, в опыте семьи и в предназначении, — и какой сценарий
+          может повторяться. В конце — эксперимент на 7 дней.
+        </p>
         <ChapterList matrix={matrix} />
       </div>
       <div className="stack report-offer__side">
         <Image className="report-offer__art" src={arcanumImage(center, "card")} alt="" width={480} height={480} sizes="(min-width: 960px) 380px, 100vw" unoptimized />
         <div className="report-offer__sample stack">
-          <p className="eyebrow">Как читается глава — пример</p>
-          <p>{SAMPLE}</p>
+          <p className="eyebrow">Начало главы «Отношения»</p>
+          <p className="report-offer__teaser">
+            Ваша точка любви — {love.number} {love.name}. {teaserText(love.love.join(" "), 280)}
+          </p>
+          <p className="muted">Продолжение и то, как эта точка связана с сердцем матрицы, — в полном разборе.</p>
         </div>
         <p className="muted">Готов за 1–2 минуты, хранится в «Моём портрете».</p>
         {state.kind === "guest" && (

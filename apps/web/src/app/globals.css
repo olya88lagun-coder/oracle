@@ -672,3 +672,13 @@ body.has-cookie-banner { padding-bottom: calc(var(--cookie-banner-height, 220px)
 .portrait-reports__tag { margin-left: 10px; vertical-align: middle; }
 
 @media (prefers-reduced-motion: reduce) { .report-waiting__orbit::after { animation: none; } }
+
+/* Пакет конверсии: призыв на главной, обещание результата, начало главы в блоке продажи */
+.hero__cta { margin-top: 24px; gap: 12px; }
+.hero__cta > * { margin: 0; }
+.hero__promise { font-size: 17px; color: var(--ink); }
+.practice-card__cta { width: fit-content; margin-top: 14px; white-space: nowrap; pointer-events: none; }
+.home-start { display: grid; gap: 16px; justify-items: start; margin-top: 8px; }
+.home-start > * { margin: 0; }
+.matrix-form__promise { margin: 0; color: var(--ink); font-weight: 600; }
+.report-offer__teaser { position: relative; color: var(--ink); -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
