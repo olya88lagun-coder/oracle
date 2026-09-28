@@ -45,11 +45,11 @@ async function pay(url: string, outcome: "succeeded" | "canceled" = "succeeded")
 }
 
 describe("startPurchase", () => {
-  test("creates a 290 ₽ payment for the portrait date with the receipt e-mail", async () => {
+  test("creates a 390 ₽ payment for the portrait date with the receipt e-mail", async () => {
     const url = await buy(" a@b.ru ");
 
     const payment = store.get(paymentOf(url))!;
-    expect(payment.amountKopecks).toBe(29_000);
+    expect(payment.amountKopecks).toBe(39_000);
     expect(await getPurchase(db, payment.purchaseId!)).toMatchObject({ birthDate: DATE, receiptEmail: "a@b.ru", status: "pending", userId });
   });
 
@@ -121,7 +121,7 @@ describe("syncPayment", () => {
     store.set(id, { ...store.get(id)!, status: "succeeded", paid: true, amountKopecks: 100 });
 
     expect((await syncPayment(deps, id))?.status).toBe("pending");
-    store.set(id, { ...store.get(id)!, amountKopecks: 29_000, purchaseId: "00000000-0000-4000-8000-000000000000" });
+    store.set(id, { ...store.get(id)!, amountKopecks: 39_000, purchaseId: "00000000-0000-4000-8000-000000000000" });
     expect((await syncPayment(deps, id))?.status).toBe("pending");
     expect(enqueue).not.toHaveBeenCalled();
   });

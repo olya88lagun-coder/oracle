@@ -3,7 +3,7 @@ import type { Matrix, MatrixPoint } from "./matrix";
 export const MATRIX_REPORT_PRODUCT = "matrix_report";
 export type Product = typeof MATRIX_REPORT_PRODUCT;
 // Единственное место с ценой: блок продажи, оферта и платёж читают её отсюда
-export const MATRIX_REPORT_PRICE_KOPECKS = 29_000;
+export const MATRIX_REPORT_PRICE_KOPECKS = 39_000;
 
 // Главы платного разбора матрицы: порядок задаёт и оглавление, и порядок генерации
 export const CHAPTER_IDS = ["core", "task", "love", "money", "family", "purpose", "scenario"] as const;

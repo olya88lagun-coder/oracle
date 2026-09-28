@@ -9,11 +9,11 @@ async function calculate(page: Page, iso = DATE) {
   await page.getByRole("button", { name: "Рассчитать" }).click();
 }
 
-const offer = (page: Page) => page.getByRole("region", { name: "Разбор всей матрицы — 290 ₽" });
+const offer = (page: Page) => page.getByRole("region", { name: "Разбор всей матрицы — 390 ₽" });
 
 async function buyAndPay(page: Page, outcome: "Оплатить" | "Отменить" = "Оплатить") {
   await offer(page).getByRole("textbox", { name: "E-mail для чека" }).fill("test@example.ru");
-  await offer(page).getByRole("button", { name: "Купить разбор — 290 ₽" }).click();
+  await offer(page).getByRole("button", { name: "Купить разбор — 390 ₽" }).click();
   await expect(page).toHaveURL(/\/dev\/pay\//);
   await page.getByRole("button", { name: outcome }).click();
   await expect(page).toHaveURL(/\/portret\/razbor\/[0-9a-f-]{36}$/);
@@ -39,7 +39,7 @@ test("a signed-in visitor buys the report, waits and reads it; the portrait list
   await page.goto("/matrica-sudby");
   await calculate(page);
 
-  await offer(page).getByRole("button", { name: "Купить разбор — 290 ₽" }).click();
+  await offer(page).getByRole("button", { name: "Купить разбор — 390 ₽" }).click();
   await expect(offer(page).getByRole("alert")).toContainText("e-mail");
 
   await buyAndPay(page);

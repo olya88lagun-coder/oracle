@@ -32,8 +32,8 @@ describe("reportChapters", () => {
 });
 
 describe("product", () => {
-  test("costs 290 rubles and has one generation job per purchase", () => {
-    expect(MATRIX_REPORT_PRICE_KOPECKS).toBe(29_000);
+  test("costs 390 rubles and has one generation job per purchase", () => {
+    expect(MATRIX_REPORT_PRICE_KOPECKS).toBe(39_000);
     expect(generateReportJobKey({ purchaseId: "p1" })).toBe("generate-report:p1");
   });
 });

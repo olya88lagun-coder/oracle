@@ -42,7 +42,7 @@ export const LOGIN_CONSENT_RECIPIENTS = DATA_RECIPIENTS.filter((recipient) => re
 
 const KOPECKS_IN_RUBLE = 100;
 
-// «290 ₽» для оферты и контактов; цена хранится в копейках в @oracle/core
+// «390 ₽» для оферты и контактов; цена хранится в копейках в @oracle/core
 export function formatRubles(kopecks: number): string {
   return `${(kopecks / KOPECKS_IN_RUBLE).toLocaleString("ru-RU")} ₽`;
 }
