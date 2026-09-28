@@ -93,6 +93,17 @@ export default async function ArcanumPage({ params }: Params) {
         ))}
       </section>
 
+      {/* Две колонки, как у ресурса и перекоса: у позиций выше сетка на три карточки */}
+      <section className="arcanum-poles arcanum-life" aria-label="Аркан в отношениях и в деньгах">
+        {(["love", "money"] as const).map((key) => (
+          <ArcanumSection key={key} title={SECTION_TITLES[key]} className="card">
+            {arcanum[key].map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </ArcanumSection>
+        ))}
+      </section>
+
       <section className="arcanum-poles" aria-label="Ресурс и перекос">
         {(["resource", "distortion"] as const).map((key) => (
           <ArcanumSection key={key} title={SECTION_TITLES[key]} className="card">

@@ -29,7 +29,7 @@ export function findStopPhrases(text: string): string[] {
 }
 
 const arcanumText = (a: Arcanum) =>
-  [a.name, ...a.keywords, ...a.essence, ...a.personality, ...a.center, ...a.task, ...a.resource, ...a.distortion, a.action, a.question].join("\n");
+  [a.name, ...a.keywords, ...a.essence, ...a.personality, ...a.center, ...a.task, ...a.love, ...a.money, ...a.resource, ...a.distortion, a.action, a.question].join("\n");
 
 export function checkArcana(entries: readonly { file: string; arcanum: Arcanum }[], expectedCount: number = ARCANA_COUNT): string[] {
   const errors: string[] = [];

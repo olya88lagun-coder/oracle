@@ -5,6 +5,8 @@ export const SECTION_TITLES = {
   personality: "В личности",
   center: "В центре",
   task: "Как задача",
+  love: "В отношениях",
+  money: "В деньгах и деле",
   resource: "В ресурсе",
   distortion: "В перекосе",
   action: "Действие на сегодня",
@@ -22,6 +24,8 @@ export type Arcanum = {
   readonly personality: readonly string[];
   readonly center: readonly string[];
   readonly task: readonly string[];
+  readonly love: readonly string[];
+  readonly money: readonly string[];
   readonly resource: readonly string[];
   readonly distortion: readonly string[];
   readonly action: string;
@@ -110,6 +114,8 @@ export function parseArcanum(source: string, file: string): Arcanum {
     personality: prose("personality"),
     center: prose("center"),
     task: prose("task"),
+    love: prose("love"),
+    money: prose("money"),
     resource,
     distortion,
     action,

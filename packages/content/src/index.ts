@@ -1,8 +1,11 @@
 import { parseArcanum, type Arcanum } from "./arcana";
 import raw from "./generated/arcana.json";
+import positionsRaw from "./generated/positions.json";
+import { parsePositions } from "./positions";
 
 export { ArcanumFormatError, parseArcanum, SECTION_TITLES, type Arcanum } from "./arcana";
 export { checkArcana, findStopPhrases, STOP_PHRASES } from "./check";
+export { parsePositions, PositionsFormatError } from "./positions";
 
 export function loadArcana(sources: Readonly<Record<string, string>>): { file: string; arcanum: Arcanum }[] {
   return Object.keys(sources)
@@ -24,3 +27,6 @@ export function arcanumByNumber(number: number): Arcanum {
 export function arcanumBySlug(slug: string): Arcanum | undefined {
   return ARCANA.find((item) => item.slug === slug);
 }
+
+// Что показывает каждая глава платного разбора: вход для ИИ и вступление глав без ИИ
+export const POSITIONS = parsePositions(positionsRaw.positions);
