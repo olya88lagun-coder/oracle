@@ -1,4 +1,5 @@
-import { CHAPTER_IDS, type ChapterId } from "@oracle/core";
+import { CHAPTER_IDS, type ChapterId, type ReportChapter } from "@oracle/core";
+import { arcanumByNumber } from "@oracle/content";
 import type { StoredChapter } from "@oracle/db";
 
 export const reportPath = (purchaseId: string) => `/portret/razbor/${purchaseId}`;
@@ -51,4 +52,10 @@ export function teaserText(text: string, limit: number = TEASER_LIMIT): string {
   if (text.length <= limit) return text;
   const cut = text.slice(0, limit);
   return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[\s,.;:—–-]+$/, "")}…`;
+}
+
+// Подпись под названием главы в оглавлениях: «7 Колесница · 4 Император»
+export function chapterArcanaLabel(chapter: ReportChapter): string {
+  if (chapter.id === "scenario") return "итог по методике ORACLE";
+  return chapter.arcana.map((number) => `${number} ${arcanumByNumber(number).name}`).join(" · ");
 }

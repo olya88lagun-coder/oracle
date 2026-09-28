@@ -1,6 +1,6 @@
 import type { StoredChapter } from "@oracle/db";
 import { describe, expect, test } from "vitest";
-import { EMAIL_ERROR, EMAIL_PATTERN, formatIsoDate, offerState, orderedChapters, purchaseErrorMessage, reportPath, teaserText } from "./report-offer";
+import { EMAIL_ERROR, EMAIL_PATTERN, formatIsoDate, chapterArcanaLabel, offerState, orderedChapters, purchaseErrorMessage, reportPath, teaserText } from "./report-offer";
 
 const DATE = "1988-11-18";
 const BASE = { enabled: true, signedIn: true, date: DATE, profileDate: DATE, paid: [] };
@@ -41,6 +41,11 @@ describe("purchase helpers", () => {
     expect(teaserText("Коротко.", 20)).toBe("Коротко.");
     expect(teaserText("Колесница в отношениях — это движение, общие цели", 30)).toBe("Колесница в отношениях — это…");
     expect(teaserText("Колесница в отношениях — это движение, общие цели", 25)).toBe("Колесница в отношениях…");
+  });
+
+  test("table of contents names the arcana of a chapter and the method of the last one", () => {
+    expect(chapterArcanaLabel({ id: "love", title: "Отношения", arcana: [7, 4] })).toBe("7 Колесница · 4 Император");
+    expect(chapterArcanaLabel({ id: "scenario", title: "Ваш сценарий", arcana: [11] })).toBe("итог по методике ORACLE");
   });
 
   test("dates are shown as dd.mm.yyyy", () => {

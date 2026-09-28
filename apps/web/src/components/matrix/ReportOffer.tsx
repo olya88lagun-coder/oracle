@@ -8,27 +8,22 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { reachGoal } from "@/lib/analytics";
 import { arcanumImage, MATRIX_PATH } from "@/lib/arcana-paths";
 import { loginHref } from "@/lib/next-path";
-import { EMAIL_ERROR, EMAIL_PATTERN, purchaseErrorMessage, reportPath, teaserText, type OfferState } from "@/lib/report-offer";
+import { chapterArcanaLabel, EMAIL_ERROR, EMAIL_PATTERN, purchaseErrorMessage, reportPath, teaserText, type OfferState } from "@/lib/report-offer";
 
 type Props = { state: Exclude<OfferState, { kind: "hidden" }>; matrix: Matrix; onSaveDate: () => Promise<boolean> };
 
 const PRICE = `${MATRIX_REPORT_PRICE_KOPECKS / 100} ₽`;
-// Для рода и предназначений в оглавлении хватает номеров: названия четырёх арканов не помещаются в строку на телефоне
-const NUMBERS_ONLY = new Set(["family"]);
 
 function ChapterList({ matrix }: { matrix: Matrix }) {
   return (
     <ol className="report-toc">
       {reportChapters(matrix).map((chapter, index) => (
         <li key={chapter.id}>
-          <span>
-            {index + 1}. {chapter.title}
+          <span className="report-toc__number" aria-hidden="true">
+            {index + 1}
           </span>
-          <span className="muted">
-            {chapter.id === "scenario"
-              ? "итог по методике ORACLE"
-              : chapter.arcana.map((number) => (NUMBERS_ONLY.has(chapter.id) ? number : `${number} ${arcanumByNumber(number).name}`)).join(" · ")}
-          </span>
+          <span className="report-toc__title">{chapter.title}</span>
+          <span className="report-toc__arcana">{chapterArcanaLabel(chapter)}</span>
         </li>
       ))}
     </ol>

@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 import { DISCLAIMER } from "@/lib/legal";
-import { chapterAnchor, formatIsoDate, orderedChapters } from "@/lib/report-offer";
+import { chapterAnchor, chapterArcanaLabel, formatIsoDate, orderedChapters } from "@/lib/report-offer";
 
 type Props = { matrix: Matrix; birthDate: string; chapters: readonly StoredChapter[] };
 
@@ -39,12 +39,16 @@ export function ReportView({ matrix, birthDate, chapters }: Props) {
           <p className="lead">Семь глав о том, как устроена ваша матрица. Это материал для размышления, а не предсказание.</p>
           <nav className="card report-contents" aria-labelledby="report-contents">
             <h2 id="report-contents">Оглавление</h2>
-            <ol>
+            <ol className="report-toc">
               {toc.map((chapter, index) => (
                 <li key={chapter.id}>
-                  <a href={`#${chapterAnchor(chapter.id)}`}>
-                    {index + 1}. {chapter.title}
+                  <span className="report-toc__number" aria-hidden="true">
+                    {index + 1}
+                  </span>
+                  <a className="report-toc__title" href={`#${chapterAnchor(chapter.id)}`}>
+                    {chapter.title}
                   </a>
+                  <span className="report-toc__arcana">{chapterArcanaLabel(chapter)}</span>
                 </li>
               ))}
             </ol>
