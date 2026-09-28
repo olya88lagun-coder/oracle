@@ -13,6 +13,7 @@
     "typecheck": "pnpm -r --parallel typecheck",
     "dev:db": "node packages/db/scripts/dev-db.mjs",
     "dev:web": "pnpm --filter @oracle/web dev",
+    "dev:worker": "pnpm --filter @oracle/worker dev",
     "test:e2e": "playwright test -c e2e/playwright.config.ts",
     "content:build": "pnpm --filter @oracle/content build"
   },

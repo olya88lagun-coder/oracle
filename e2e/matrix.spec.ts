@@ -140,6 +140,6 @@ test("on a wide screen every arcanum section stays open", async ({ page }) => {
   await page.goto("/matrica-sudby/arkan-11-sila");
 
   const sections = page.locator("details.arcanum-section");
-  await expect(sections).toHaveCount(8);
+  await expect(sections).toHaveCount(10);
   await expect(sections.and(page.locator(":not([open])"))).toHaveCount(0);
 });

@@ -58,7 +58,7 @@ pnpm test
 
 Локальный запуск для просмотра: скопировать `apps/web/.env.development.example` в `apps/web/.env.development.local`, затем в одном терминале `pnpm dev:db`, в другом `pnpm dev:web` → http://localhost:3000. Вход без VK — открыть http://localhost:3000/api/dev/login?name=Тест (работает только локально, с `DEV_LOGIN=1`), после него откроется портрет.
 
-Сквозные тесты (нужен установленный Chrome и запущенные `dev:db` + `dev:web`):
+Сквозные тесты (нужен установленный Chrome и запущенные `dev:db`, `dev:web` и `dev:worker`; в `.env.development.local` — `PAYMENTS=fake` и `PAID_REPORTS=on`, как в примере):
 
 ```bash
 pnpm test:e2e
