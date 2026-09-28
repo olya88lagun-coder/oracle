@@ -1,6 +1,22 @@
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, test } from "vitest";
-import { authIdentities, birthProfiles, createTestDb, deleteUserData, getUser, saveBirthDate, seedUser, users, type Database } from "./testing";
+import {
+  attachPayment,
+  authIdentities,
+  birthProfiles,
+  createPurchase,
+  createTestDb,
+  deleteUserData,
+  getPurchase,
+  getReport,
+  getUser,
+  markPurchaseSucceeded,
+  saveBirthDate,
+  saveReport,
+  seedUser,
+  users,
+  type Database,
+} from "./testing";
 
 let db: Database;
 
@@ -37,5 +53,31 @@ describe("deleteUserData", () => {
 
     expect(await deleteUserData(db, userId)).toEqual({ deleted: false });
     expect(await deleteUserData(db, "not-a-uuid")).toEqual({ deleted: false });
+  });
+
+  test("removes reports and wipes the date and e-mail from purchases but keeps the payment record", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-4" });
+    const { userId: otherId } = await seedUser(db, { externalId: "vk-5" });
+    const paidAt = new Date("2026-09-28T10:00:00Z");
+    const mine = await createPurchase(db, { userId, product: "matrix_report", birthDate: "1988-11-18", receiptEmail: "a@b.ru", amountKopecks: 29_000 });
+    await attachPayment(db, mine.id, { paymentId: "pay-1", confirmationUrl: "https://pay.test/1" });
+    await markPurchaseSucceeded(db, mine.id, paidAt);
+    await saveReport(db, { purchaseId: mine.id, chapters: [] });
+    const theirs = await createPurchase(db, { userId: otherId, product: "matrix_report", birthDate: "1990-05-14", receiptEmail: "c@d.ru", amountKopecks: 29_000 });
+    await saveReport(db, { purchaseId: theirs.id, chapters: [] });
+
+    await deleteUserData(db, userId);
+
+    expect(await getReport(db, mine.id)).toBeNull();
+    expect(await getPurchase(db, mine.id)).toMatchObject({
+      birthDate: null,
+      receiptEmail: null,
+      status: "succeeded",
+      amountKopecks: 29_000,
+      paidAt,
+      yookassaPaymentId: "pay-1",
+    });
+    expect(await getReport(db, theirs.id)).not.toBeNull();
+    expect(await getPurchase(db, theirs.id)).toMatchObject({ birthDate: "1990-05-14", receiptEmail: "c@d.ru" });
   });
 });
