@@ -1,0 +1,45 @@
+import { CHAPTER_IDS, type ChapterId } from "@oracle/core";
+import type { StoredChapter } from "@oracle/db";
+
+export const reportPath = (purchaseId: string) => `/portret/razbor/${purchaseId}`;
+
+export type PaidReport = { birthDate: string; purchaseId: string };
+export type OfferState = { kind: "hidden" } | { kind: "guest" } | { kind: "save_first" } | { kind: "buy" } | { kind: "open"; purchaseId: string };
+
+// Разбор покупается для даты портрета: если в портрете другая дата, сначала её нужно сменить — без спроса портрет не перезаписываем
+export function offerState(p: { enabled: boolean; signedIn: boolean; date: string | null; profileDate: string | null; paid: readonly PaidReport[] }): OfferState {
+  if (!p.enabled || !p.date) return { kind: "hidden" };
+  if (!p.signedIn) return { kind: "guest" };
+  const paid = p.paid.find((report) => report.birthDate === p.date);
+  if (paid) return { kind: "open", purchaseId: paid.purchaseId };
+  if (p.profileDate && p.profileDate !== p.date) return { kind: "save_first" };
+  return { kind: "buy" };
+}
+
+export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const EMAIL_ERROR = "Проверьте e-mail: на него придёт чек.";
+
+const PURCHASE_ERRORS: Readonly<Record<string, string>> = {
+  invalid_email: EMAIL_ERROR,
+  no_birth_date: "Не получилось сохранить дату в портрет. Попробуйте ещё раз.",
+  rate_limited: "Слишком много попыток подряд. Подождите минуту и попробуйте снова.",
+  unauthorized: "Сессия закончилась — войдите ещё раз.",
+};
+
+export function purchaseErrorMessage(error: unknown): string {
+  return (typeof error === "string" && PURCHASE_ERRORS[error]) || "Не получилось перейти к оплате. Попробуйте ещё раз чуть позже.";
+}
+
+// «18.11.1988» — дата, по которой куплен разбор
+export function formatIsoDate(iso: string): string {
+  const [year, month, day] = iso.split("-");
+  return `${day}.${month}.${year}`;
+}
+
+// Главы в порядке оглавления; глава, которой почему-то нет, просто пропускается
+export function orderedChapters(chapters: readonly StoredChapter[]): StoredChapter[] {
+  const byId = new Map(chapters.map((chapter) => [chapter.id, chapter]));
+  return CHAPTER_IDS.flatMap((id) => (byId.has(id) ? [byId.get(id)!] : []));
+}
+
+export const chapterAnchor = (id: ChapterId) => `chapter-${id}`;

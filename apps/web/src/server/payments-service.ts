@@ -14,6 +14,7 @@ import {
   type PurchaseRecord,
 } from "@oracle/db";
 import { z } from "zod";
+import { reportPath } from "../lib/report-offer";
 import type { PaymentGateway } from "./payments/gateway";
 
 export type PaymentsDeps = { db: Database; gateway: PaymentGateway; appUrl: string; now: () => Date; enqueueGenerate: (job: GenerateReportJob) => Promise<void> };
@@ -27,7 +28,7 @@ const DESCRIPTION_MAX = 128;
 const DESCRIPTION = "Разбор матрицы судьбы — «Твой оракул»";
 const emailSchema = z.email().max(254);
 
-export const reportPath = (purchaseId: string) => `/portret/razbor/${purchaseId}`;
+export { reportPath };
 
 // Описание видно в кабинете ЮKassa: по нему владелица отправляет чек «Мой налог». Лимит ЮKassa — 128 знаков
 export function paymentDescription(email: string): string {
