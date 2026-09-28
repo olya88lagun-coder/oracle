@@ -100,6 +100,6 @@ export async function listPaidPurchases(db: Database, userId: string): Promise<P
     .from(purchases)
     .leftJoin(reports, eq(reports.purchaseId, purchases.id))
     .where(and(eq(purchases.userId, userId), eq(purchases.status, "succeeded"), isNotNull(purchases.birthDate)))
-    .orderBy(desc(purchases.paidAt));
+    .orderBy(desc(purchases.paidAt), desc(purchases.createdAt));
   return rows.map((row) => ({ id: row.id, birthDate: row.birthDate!, ready: row.reportId !== null, paidAt: row.paidAt! }));
 }
