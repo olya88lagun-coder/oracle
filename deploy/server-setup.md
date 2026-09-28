@@ -139,3 +139,25 @@ docker compose up -d web
 ```
 0 4 * * * find /opt/oracle/backups -name 'pre-*.sql.gz' -mtime +30 -delete
 ```
+
+## Воркер платных разборов (план 2б)
+
+Сделать **до мержа** PR плана 2б: деплой запускает `docker compose up web worker`, а файл compose на сервере обновляется только вручную.
+
+С компьютера, из папки репозитория:
+
+```bash
+scp deploy/docker-compose.yml root@200.169.178.231:/opt/oracle/
+```
+
+На сервере:
+
+```bash
+mkdir -p /opt/oracle/certs
+```
+
+В `/opt/oracle/.env` дописать строки из раздела «платные разборы» и «воркер» файла `deploy/env.example` (`PAYMENTS=off`, `PAID_REPORTS=off`, `AI_PROVIDER=none`). Ключи ЮKassa и GigaChat добавляются позже, при включении продаж.
+
+Сертификат для GigaChat (нужен, когда `AI_PROVIDER=gigachat`): скачать корневой сертификат Минцифры с https://www.gosuslugi.ru/crt и положить в `/opt/oracle/certs/russian_trusted_root_ca.pem`, в `.env` — `NODE_EXTRA_CA_CERTS=/certs/russian_trusted_root_ca.pem`, затем `docker compose up -d worker`.
+
+Лог воркера: `docker logs --since 30m oracle-worker-1` — после старта в нём строка `"worker started"`, после каждой оплаты — `"report generated"` с пометкой `sources` (`ai` или `fallback` по главам).

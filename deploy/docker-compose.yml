@@ -10,6 +10,17 @@ services:
       shared:
         aliases: [oracle-web]
 
+  worker:
+    image: ghcr.io/${GHCR_OWNER}/oracle-worker:latest
+    env_file: .env
+    restart: unless-stopped
+    mem_limit: 250m
+    stop_grace_period: 30s
+    # Корневой сертификат Минцифры для GigaChat (NODE_EXTRA_CA_CERTS=/certs/russian_trusted_root_ca.pem); без GigaChat каталог может быть пустым
+    volumes:
+      - ./certs:/certs:ro
+    networks: [shared]
+
   migrate:
     image: ghcr.io/${GHCR_OWNER}/oracle-migrate:latest
     env_file: .env

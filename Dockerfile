@@ -13,6 +13,9 @@ ENV NEXT_TELEMETRY_DISABLED=1 NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
 RUN test -n "$NEXT_PUBLIC_SITE_URL" || (echo "NEXT_PUBLIC_SITE_URL build arg is required" >&2 && exit 1)
 RUN pnpm --filter @oracle/web build
 
+FROM deps AS build-worker
+RUN pnpm --filter @oracle/worker build
+
 # pnpm держит зависимости пакета симлинками в корневой node_modules/.pnpm, поэтому копируются оба каталога
 FROM node:${NODE_VERSION} AS migrate
 WORKDIR /app
@@ -21,6 +24,14 @@ COPY --from=deps /repo/node_modules ./node_modules
 COPY --from=deps /repo/packages/db ./packages/db
 USER node
 CMD ["node", "packages/db/scripts/migrate.mjs"]
+
+# Воркер — один бандл (apps/worker/scripts/build.mjs): тексты арканов и зависимости уже внутри, node_modules не нужны
+FROM node:${NODE_VERSION} AS worker
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=build-worker /repo/apps/worker/dist ./apps/worker/dist
+USER node
+CMD ["node", "apps/worker/dist/main.mjs"]
 
 FROM node:${NODE_VERSION} AS web
 WORKDIR /app
