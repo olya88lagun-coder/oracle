@@ -111,6 +111,7 @@ jobs:
           curl -fsS "$SITE/robots.txt" > "$tmp/robots.txt"
           curl -fsS "$SITE/matrica-sudby" > "$tmp/matrix.html"
           curl -fsS "$SITE/matrica-sudby/arkan-11-sila" > "$tmp/arcanum.html"
+          curl -fsS "$SITE/oferta" > "$tmp/offer.html"
 
           assert_contains() {
             local needle="$1"
@@ -152,11 +153,15 @@ jobs:
           assert_contains 'content="index, follow"' "$tmp/matrix.html" "matrix indexable"
           assert_contains 'application/ld+json' "$tmp/arcanum.html" "arcanum article markup"
           assert_contains "$SITE/matrica-sudby/arkan-22-shut" "$tmp/sitemap.xml" "sitemap arcana"
+          assert_contains 'ИНН' "$tmp/offer.html" "offer names the seller"
+          assert_contains "$SITE/oferta" "$tmp/sitemap.xml" "sitemap offer"
 
           assert_status "404" "unknown arcanum is 404" "$SITE/matrica-sudby/arkan-11-mag"
           assert_status "404" "dev login is off in production" "$SITE/api/dev/login"
           assert_status "200" "home images are served" "$SITE/practices/matrix.webp"
           assert_status "403" "profile API checks the origin" -X POST "$SITE/api/profile/birth-date" -d '{}'
+          assert_status "404 403" "payment notifications only from YooKassa" -X POST "$SITE/api/yookassa/notification" -d '{}'
+          assert_status "404" "fake payments are off in production" "$SITE/dev/pay/x"
 
           if ! docker logs --since 5m oracle-worker-1 2>&1 | grep -q '"worker started"'; then
             echo "SMOKE TEST FAILED: worker did not start"
