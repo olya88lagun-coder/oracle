@@ -1,4 +1,5 @@
 import { calculateMatrix, formatBirthDateRu, toIsoDate } from "@oracle/core";
+import { listPaidPurchases } from "@oracle/db";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,6 +7,7 @@ import { LogoutButton } from "@/components/LogoutButton";
 import { Scene } from "@/components/Scene";
 import { PRACTICES } from "@/lib/practices";
 import { keyArcana } from "@/lib/matrix-view";
+import { formatIsoDate, reportPath } from "@/lib/report-offer";
 import { getDb } from "@/server/db";
 import { loadPortrait } from "@/server/profile-service";
 import { currentUser } from "@/server/viewer";
@@ -49,6 +51,7 @@ export default async function PortraitPage() {
 
   const { birthDate } = await loadPortrait({ db: getDb(), now: () => new Date() }, user.id);
   const keys = birthDate ? keyArcana(calculateMatrix(birthDate)) : null;
+  const reports = await listPaidPurchases(getDb(), user.id);
   return (
     <Scene>
       <div className="scene__intro stack">
@@ -108,6 +111,25 @@ export default async function PortraitPage() {
           ))}
         </ul>
       </section>
+
+      {reports.length > 0 && (
+        <section className="card stack portrait-reports" aria-labelledby="reports">
+          <h2 id="reports">Разборы</h2>
+          <ul className="portrait-reports__list">
+            {reports.map((report) => (
+              <li key={report.id}>
+                <span>
+                  Разбор матрицы судьбы · по дате {formatIsoDate(report.birthDate)}
+                  {!report.ready && <span className="tag portrait-reports__tag">готовится</span>}
+                </span>
+                <Link className="button button--ghost" href={reportPath(report.id)}>
+                  Открыть разбор
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div className="portrait-actions">
         <LogoutButton />

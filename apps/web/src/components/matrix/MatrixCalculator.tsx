@@ -6,15 +6,19 @@ import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type
 import { reachGoal } from "@/lib/analytics";
 import { browserStorage, pickBirthDate, readStoredBirthDate, storeBirthDate } from "@/lib/birth-date-storage";
 import { DATE_ERROR, saveBlockState, sessionStore, takeSaveIntent, type SaveStatus } from "@/lib/matrix-save";
+import { FREE_RESULT_PROMISE } from "@/lib/practices";
+import { offerState, type PaidReport } from "@/lib/report-offer";
 import { MatrixResult } from "./MatrixResult";
+import { ReportOffer } from "./ReportOffer";
 import { SaveBlock } from "./SaveBlock";
 import { ShareButton } from "./ShareButton";
 
-type Props = { signedIn: boolean; profileDate: string | null; intro: ReactNode };
+// paidReports: продажа разбора включена; paid — уже купленные разборы этого пользователя (по датам)
+type Props = { signedIn: boolean; profileDate: string | null; intro: ReactNode; paidReports: boolean; paid: readonly PaidReport[] };
 
 const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, intro }: Props) {
+export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, intro, paidReports, paid }: Props) {
   const [value, setValue] = useState("");
   const [date, setDate] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -28,8 +32,9 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
   const parsed = useMemo(() => (date ? parseBirthDate(date, new Date()) : null), [date]);
   const matrix = useMemo(() => (parsed ? calculateMatrix(parsed) : null), [parsed]);
 
-  const save = useCallback(async (iso: string) => {
-    if (savingRef.current) return;
+  // true — дата в портрете; покупка разбора ждёт этого ответа
+  const save = useCallback(async (iso: string): Promise<boolean> => {
+    if (savingRef.current) return false;
     savingRef.current = true;
     setStatus("saving");
     try {
@@ -40,13 +45,15 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
       });
       if (!response.ok) {
         setStatus("error");
-        return;
+        return false;
       }
       reachGoal("birth_date_saved");
       setProfileDate(iso);
       setStatus("idle");
+      return true;
     } catch {
       setStatus("error");
+      return false;
     } finally {
       savingRef.current = false;
     }
@@ -107,6 +114,7 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
               {error}
             </p>
           )}
+          <p className="matrix-form__promise">{FREE_RESULT_PROMISE}</p>
           <p className="muted">Считается в вашем браузере — дату мы не получаем.</p>
         </form>
       </section>
@@ -116,6 +124,7 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
           matrix={matrix}
           dateLabel={formatBirthDateRu(parsed)}
           headingRef={headingRef}
+          offer={<OfferSlot state={offerState({ enabled: paidReports, signedIn, date, profileDate, paid })} matrix={matrix} onSaveDate={() => (profileDate === date ? Promise.resolve(true) : save(date))} />}
           actions={
             <div className="matrix-actions">
               <SaveBlock state={saveBlockState({ signedIn, profileDate, date, status })} profileDate={profileDate} onSave={() => void save(date)} />
@@ -126,4 +135,8 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
       )}
     </>
   );
+}
+
+function OfferSlot({ state, ...rest }: { state: ReturnType<typeof offerState> } & Omit<Parameters<typeof ReportOffer>[0], "state">) {
+  return state.kind === "hidden" ? null : <ReportOffer state={state} {...rest} />;
 }

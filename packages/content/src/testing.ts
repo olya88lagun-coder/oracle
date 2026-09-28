@@ -7,6 +7,8 @@ export function sampleArcanumSource(p: SampleArcanum = {}): string {
     ["В личности", "Как это видно в характере."],
     ["В центре", "На что можно опереться."],
     ["Как задача", "Какой урок стоит заметить."],
+    ["В отношениях", "Что важно в близости."],
+    ["В деньгах и деле", "Как устроено отношение к делу."],
     ["В ресурсе", "- спокойствие\n- ясность\n- тепло"],
     ["В перекосе", "- спешка\n- контроль\n- обида"],
     ["Действие на сегодня", "Сделайте одно маленькое дело."],
@@ -27,4 +29,13 @@ export function sampleArcanumSource(p: SampleArcanum = {}): string {
     p.extra ?? "",
     body,
   ].join("\n");
+}
+
+// Корректный positions.md; главу можно выбросить (drop) или заменить её текст (text)
+export function samplePositionsSource(p: { drop?: string; text?: Record<string, string> } = {}): string {
+  const ids = ["core", "task", "love", "money", "family", "purpose", "scenario"];
+  return ids
+    .filter((id) => id !== p.drop)
+    .map((id) => `## ${id}\n\n${p.text?.[id] ?? `Что показывает глава ${id}.`}`)
+    .join("\n\n");
 }

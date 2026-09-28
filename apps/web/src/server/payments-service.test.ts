@@ -1,0 +1,216 @@
+import type { GenerateReportJob } from "@oracle/core";
+import { createTestDb, getPurchase, saveBirthDate, saveReport, seedUser, type Database } from "@oracle/db/testing";
+import { afterEach, beforeEach, describe, expect, test, vi, type Mock } from "vitest";
+import { createFakeGateway, type FakeGateway } from "./payments/fake";
+import type { GatewayPayment } from "./payments/gateway";
+import { getPurchaseView, paymentDescription, retryPurchase, startPurchase, syncPayment, type PaymentsDeps } from "./payments-service";
+
+const APP_URL = "http://localhost:3000";
+const DATE = "1988-11-18";
+
+let db: Database;
+let store: Map<string, GatewayPayment>;
+let gateway: FakeGateway;
+let deps: PaymentsDeps;
+let enqueue: Mock<(job: GenerateReportJob) => Promise<void>>;
+let userId: string;
+let now: Date;
+
+beforeEach(async () => {
+  db = await createTestDb();
+  store = new Map();
+  gateway = createFakeGateway({ appUrl: APP_URL, store });
+  enqueue = vi.fn<(job: GenerateReportJob) => Promise<void>>().mockResolvedValue(undefined);
+  now = new Date();
+  deps = { db, gateway, appUrl: APP_URL, now: () => now, enqueueGenerate: enqueue };
+  ({ userId } = await seedUser(db, { externalId: "vk-1" }));
+  await saveBirthDate(db, userId, DATE, now);
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
+const paymentOf = (url: string) => url.split("/dev/pay/")[1]!;
+
+async function buy(email = "a@b.ru") {
+  const outcome = await startPurchase(deps, { userId, email });
+  if (!outcome.ok) throw new Error(outcome.error);
+  return outcome.url;
+}
+
+async function pay(url: string, outcome: "succeeded" | "canceled" = "succeeded") {
+  gateway.complete(paymentOf(url), outcome);
+  return syncPayment(deps, paymentOf(url));
+}
+
+describe("startPurchase", () => {
+  test("creates a 390 ₽ payment for the portrait date with the receipt e-mail", async () => {
+    const url = await buy(" a@b.ru ");
+
+    const payment = store.get(paymentOf(url))!;
+    expect(payment.amountKopecks).toBe(39_000);
+    expect(await getPurchase(db, payment.purchaseId!)).toMatchObject({ birthDate: DATE, receiptEmail: "a@b.ru", status: "pending", userId });
+  });
+
+  test.each([undefined, "", "not-an-email", 42, `${"a".repeat(250)}@b.ru`])("rejects the e-mail %s without creating anything", async (email) => {
+    expect(await startPurchase(deps, { userId, email })).toEqual({ ok: false, error: "invalid_email" });
+    expect(store.size).toBe(0);
+  });
+
+  test("needs a birth date in the portrait", async () => {
+    const { userId: noDate } = await seedUser(db, { externalId: "vk-2" });
+
+    expect(await startPurchase(deps, { userId: noDate, email: "a@b.ru" })).toEqual({ ok: false, error: "no_birth_date" });
+  });
+
+  test("reuses the open payment for the same date and e-mail within 30 minutes", async () => {
+    const first = await buy();
+
+    expect(await buy()).toBe(first);
+    expect(store.size).toBe(1);
+    now = new Date(now.getTime() + 31 * 60_000);
+    expect(await buy()).not.toBe(first);
+  });
+
+  test("starts a new payment when the e-mail or the portrait date changed", async () => {
+    const first = await buy();
+
+    expect(await buy("c@d.ru")).not.toBe(first);
+    await saveBirthDate(db, userId, "1990-05-14", now);
+    expect(await buy("c@d.ru")).not.toBe(first);
+    expect(store.size).toBe(3);
+  });
+
+  test("does not sell the same date twice", async () => {
+    const url = await buy();
+    const paid = await pay(url);
+
+    expect(await startPurchase(deps, { userId, email: "a@b.ru" })).toEqual({ ok: false, error: "already_paid", purchaseId: paid!.id });
+  });
+
+  test("cancels the purchase and hides details when the gateway fails", async () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    deps = { ...deps, gateway: { ...gateway, createPayment: () => Promise.reject(new Error("503")) } };
+
+    expect(await startPurchase(deps, { userId, email: "a@b.ru" })).toEqual({ ok: false, error: "payment_failed" });
+    expect(JSON.stringify(error.mock.calls)).not.toMatch(/a@b\.ru|1988/);
+  });
+});
+
+describe("syncPayment", () => {
+  test("marks a paid purchase and queues one generation job", async () => {
+    const url = await buy();
+
+    const purchase = await pay(url);
+    await syncPayment(deps, paymentOf(url));
+
+    expect(purchase?.status).toBe("succeeded");
+    expect(enqueue.mock.calls).toEqual([[{ purchaseId: purchase!.id }]]);
+  });
+
+  test("marks a canceled payment", async () => {
+    expect((await pay(await buy(), "canceled"))?.status).toBe("canceled");
+    expect(enqueue).not.toHaveBeenCalled();
+  });
+
+  test("ignores a payment whose purchase id or amount does not match", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    const url = await buy();
+    const id = paymentOf(url);
+    store.set(id, { ...store.get(id)!, status: "succeeded", paid: true, amountKopecks: 100 });
+
+    expect((await syncPayment(deps, id))?.status).toBe("pending");
+    store.set(id, { ...store.get(id)!, amountKopecks: 39_000, purchaseId: "00000000-0000-4000-8000-000000000000" });
+    expect((await syncPayment(deps, id))?.status).toBe("pending");
+    expect(enqueue).not.toHaveBeenCalled();
+  });
+
+  test("returns null for an unknown payment", async () => {
+    expect(await syncPayment(deps, "fake-unknown")).toBeNull();
+  });
+
+  test("a second payment of the same date is marked paid but gets no report", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const first = await buy();
+    const second = await buy("c@d.ru");
+
+    const firstPaid = await pay(first);
+    const secondPaid = await pay(second);
+
+    expect(secondPaid?.status).toBe("succeeded");
+    expect(enqueue.mock.calls).toEqual([[{ purchaseId: firstPaid!.id }]]);
+    expect(warn).toHaveBeenCalledWith("duplicate paid purchase — refund manually", { purchaseId: secondPaid!.id });
+  });
+});
+
+describe("getPurchaseView", () => {
+  test("hides purchases of other users and unknown ids", async () => {
+    const url = await buy();
+    const { userId: other } = await seedUser(db, { externalId: "vk-2" });
+    const purchaseId = store.get(paymentOf(url))!.purchaseId!;
+
+    expect(await getPurchaseView(deps, { purchaseId, userId: other })).toBeNull();
+    expect(await getPurchaseView(deps, { purchaseId: "nope", userId })).toBeNull();
+  });
+
+  test("walks from pending to generating to ready", async () => {
+    const url = await buy();
+    const purchaseId = store.get(paymentOf(url))!.purchaseId!;
+
+    expect(await getPurchaseView(deps, { purchaseId, userId })).toMatchObject({ status: "pending", birthDate: DATE });
+    gateway.complete(paymentOf(url), "succeeded");
+    expect(await getPurchaseView(deps, { purchaseId, userId })).toMatchObject({ status: "generating" });
+    expect(enqueue).toHaveBeenCalledTimes(2);
+    await saveReport(db, { purchaseId, chapters: [] });
+    expect(await getPurchaseView(deps, { purchaseId, userId })).toMatchObject({ status: "ready", duplicateOf: null });
+  });
+
+  test("keeps waiting when the gateway is unreachable", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const url = await buy();
+    const purchaseId = store.get(paymentOf(url))!.purchaseId!;
+    deps = { ...deps, gateway: { ...gateway, getPayment: () => Promise.reject(new Error("timeout")) } };
+
+    expect(await getPurchaseView(deps, { purchaseId, userId })).toMatchObject({ status: "pending" });
+  });
+
+  test("points a duplicate payment to the first report", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    const firstUrl = await buy();
+    const secondUrl = await buy("c@d.ru");
+    const first = await pay(firstUrl);
+    const second = await pay(secondUrl);
+
+    expect(await getPurchaseView(deps, { purchaseId: second!.id, userId })).toMatchObject({ duplicateOf: first!.id });
+  });
+});
+
+describe("retryPurchase", () => {
+  test("starts a new payment for a canceled purchase with the same e-mail", async () => {
+    const canceled = await pay(await buy(), "canceled");
+
+    const outcome = await retryPurchase(deps, { userId, purchaseId: canceled!.id });
+
+    expect(outcome.ok).toBe(true);
+    const payment = store.get(paymentOf((outcome as { url: string }).url))!;
+    expect(await getPurchase(db, payment.purchaseId!)).toMatchObject({ receiptEmail: "a@b.ru", birthDate: DATE, status: "pending" });
+  });
+
+  test("refuses pending, foreign and unknown purchases", async () => {
+    const url = await buy();
+    const pendingId = store.get(paymentOf(url))!.purchaseId!;
+    const { userId: other } = await seedUser(db, { externalId: "vk-2" });
+
+    expect(await retryPurchase(deps, { userId, purchaseId: pendingId })).toEqual({ ok: false, error: "not_found" });
+    expect(await retryPurchase(deps, { userId: other, purchaseId: pendingId })).toEqual({ ok: false, error: "not_found" });
+    expect(await retryPurchase(deps, { userId, purchaseId: 7 })).toEqual({ ok: false, error: "not_found" });
+  });
+});
+
+describe("paymentDescription", () => {
+  test("shows the e-mail and stays within the YooKassa limit of 128 characters", () => {
+    expect(paymentDescription("a@b.ru")).toBe("Разбор матрицы судьбы — «Твой оракул», чек: a@b.ru");
+    expect(paymentDescription(`${"x".repeat(120)}@b.ru`)).toBe("Разбор матрицы судьбы — «Твой оракул», чек: см. метаданные");
+  });
+});

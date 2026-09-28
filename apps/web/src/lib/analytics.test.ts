@@ -82,6 +82,6 @@ describe("reachGoal", () => {
   });
 
   test("the funnel goals of plans 1 and 2a", () => {
-    expect(GOALS).toEqual(["login", "birth_date_saved", "matrix_calculated", "matrix_save_click", "matrix_share", "arcana_to_calculator"]);
+    expect(GOALS).toEqual(["login", "birth_date_saved", "matrix_calculated", "matrix_save_click", "matrix_share", "arcana_to_calculator", "report_offer_view", "report_offer_click", "report_paid", "report_opened"]);
   });
 });

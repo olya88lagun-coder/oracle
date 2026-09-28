@@ -7,9 +7,9 @@ import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 import { KEY_POINTS, pointTitle, positionRows, PURPOSES } from "@/lib/matrix-view";
 import { MatrixDiagram } from "./MatrixDiagram";
 
-type Props = { matrix: Matrix; dateLabel: string; headingRef?: Ref<HTMLHeadingElement>; actions?: ReactNode };
+type Props = { matrix: Matrix; dateLabel: string; headingRef?: Ref<HTMLHeadingElement>; actions?: ReactNode; offer?: ReactNode };
 
-export function MatrixResult({ matrix, dateLabel, headingRef, actions }: Props) {
+export function MatrixResult({ matrix, dateLabel, headingRef, actions, offer }: Props) {
   const center = arcanumByNumber(matrix.E);
   return (
     <section className="matrix-result stack" aria-labelledby="matrix-result-title">
@@ -98,6 +98,8 @@ export function MatrixResult({ matrix, dateLabel, headingRef, actions }: Props) 
       </section>
 
       {actions}
+
+      {offer}
 
       <aside className="card matrix-next">
         <span className="tag">Скоро</span>

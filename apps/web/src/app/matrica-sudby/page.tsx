@@ -4,7 +4,9 @@ import { ArcanaIndex } from "@/components/ArcanaIndex";
 import { MatrixCalculator } from "@/components/matrix/MatrixCalculator";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { publicMetadata } from "@/lib/seo";
+import { listPaidPurchases } from "@oracle/db";
 import { getDb } from "@/server/db";
+import { salesEnabled } from "@/server/payments-deps";
 import { loadPortrait } from "@/server/profile-service";
 import { currentUser } from "@/server/viewer";
 
@@ -19,12 +21,15 @@ export default async function MatrixPage() {
   const user = await currentUser();
   const portrait = user ? await loadPortrait({ db: getDb(), now: () => new Date() }, user.id) : null;
   const profileDate = portrait?.birthDate ? toIsoDate(portrait.birthDate) : null;
+  const paid = user ? (await listPaidPurchases(getDb(), user.id)).map((purchase) => ({ birthDate: purchase.birthDate, purchaseId: purchase.id })) : [];
 
   return (
     <main className="page page--wide stack matrix-page">
       <MatrixCalculator
         signedIn={Boolean(user)}
         profileDate={profileDate}
+        paidReports={salesEnabled()}
+        paid={paid}
         intro={
           <div className="stack">
             <p className="eyebrow eyebrow--line">Практика · матрица судьбы</p>

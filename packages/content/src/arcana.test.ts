@@ -15,6 +15,8 @@ describe("parseArcanum", () => {
       personality: ["Как это видно в характере."],
       center: ["На что можно опереться."],
       task: ["Какой урок стоит заметить."],
+      love: ["Что важно в близости."],
+      money: ["Как устроено отношение к делу."],
       resource: ["спокойствие", "ясность", "тепло"],
       distortion: ["спешка", "контроль", "обида"],
       action: "Сделайте одно маленькое дело.",
@@ -33,6 +35,8 @@ describe("parseArcanum", () => {
     ["bad slug", sampleArcanumSource({ slug: "Сила" }), /slug/],
     ["too few keywords", sampleArcanumSource({ keywords: "одно; два" }), /keywords/],
     ["missing section", sampleArcanumSource({ drop: "В центре" }), /В центре/],
+    ["missing love section", sampleArcanumSource({ drop: "В отношениях" }), /В отношениях/],
+    ["missing money section", sampleArcanumSource({ drop: "В деньгах и деле" }), /В деньгах и деле/],
     ["text before the first section", sampleArcanumSource({ extra: "лишний текст\n" }), /до первой секции/],
   ])("rejects %s", (_case, source, message) => {
     expect(() => parseArcanum(source, "11-sila.md")).toThrow(ArcanumFormatError);

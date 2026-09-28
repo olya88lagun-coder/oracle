@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Разбор матрицы — каркас</title>
+<style>
+  :root {
+    --paper: #f4f3f1; --ink: #222; --soft: #666; --faint: #999; --box: #e2e0dc; --box-2: #d3d0cb; --line: #bbb;
+    --hi: #7a6a52; --hi-bg: #efe7da; --note: #fff8d6; --note-line: #e6d27a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.5 system-ui, sans-serif; }
+  header.doc { padding: 32px 40px 8px; max-width: 1600px; margin: 0 auto; }
+  header.doc h1 { margin: 0 0 6px; font-size: 26px; }
+  header.doc p { margin: 4px 0; color: var(--soft); max-width: 900px; }
+  section.screen { max-width: 1600px; margin: 0 auto; padding: 28px 40px 12px; }
+  section.screen > h2 { margin: 0 0 4px; font-size: 20px; }
+  section.screen > p.lead { margin: 0 0 16px; color: var(--soft); max-width: 900px; }
+  .pair { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
+  .frame { background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .frame > .cap { padding: 6px 12px; font-size: 12px; color: var(--faint); border-bottom: 1px solid var(--box); background: #fafafa; }
+  .desk { width: 1040px; }
+  .mob { width: 375px; }
+  .in { padding: 20px; }
+  .desk .in { padding: 28px 40px; }
+  .bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px dashed var(--line); color: var(--soft); font-size: 13px; }
+  .blk { background: var(--box); border-radius: 8px; padding: 14px; color: var(--soft); }
+  .blk + .blk, .stack > * + * { margin-top: 14px; }
+  .t-eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--faint); }
+  .t-h1 { font: 400 40px/1.1 Georgia, serif; margin: 6px 0; color: var(--ink); }
+  .mob .t-h1 { font-size: 30px; }
+  .t-h2 { font: 400 26px/1.2 Georgia, serif; margin: 0; color: var(--ink); }
+  .t-h3 { font: 400 20px/1.2 Georgia, serif; margin: 0; color: var(--ink); }
+  .t-p { color: var(--soft); margin: 4px 0; }
+  .field { display: grid; gap: 6px; max-width: 360px; }
+  .input { height: 48px; border: 1px solid var(--line); border-radius: 12px; background: #fff; display: flex; align-items: center; padding: 0 14px; color: var(--faint); justify-content: space-between; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 22px; border-radius: 999px; background: #333; color: #fff; font-weight: 600; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn.lav { background: #9b8fc0; color: #fff; }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mob .grid3, .mob .grid2 { grid-template-columns: 1fr; }
+  .card { border: 1px solid var(--box-2); border-radius: 14px; padding: 18px; background: #fff; }
+  .card.hi { border-color: var(--hi); background: var(--hi-bg); }
+  .num { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--hi); font: 20px Georgia, serif; color: var(--hi); }
+  .tag { display: inline-block; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; color: var(--soft); }
+  .img { background: repeating-linear-gradient(45deg, #ddd 0 10px, #e6e6e6 10px 20px); border-radius: 10px; display: grid; place-items: center; color: var(--faint); font-size: 12px; }
+  .note { position: relative; background: var(--note); border: 1px solid var(--note-line); border-radius: 8px; padding: 8px 12px; font-size: 13px; color: #5a4b00; }
+  .notes { width: 360px; display: grid; gap: 10px; }
+  .n { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #e0b400; color: #fff; font-size: 12px; font-weight: 700; margin-right: 6px; vertical-align: 1px; }
+  .dim { opacity: .55; }
+  table.pur { width: 100%; border-collapse: collapse; }
+  table.pur td { padding: 10px 8px; border-top: 1px solid var(--box); }
+  table.pur td:first-child { color: var(--soft); }
+  .err { color: #b3261e; font-weight: 600; }
+  .ok { color: #1f7a5a; font-weight: 600; }
+  svg text { font-family: Georgia, serif; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--soft); }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: -2px; }
+</style>
+</head>
+<body>
+
+<header class="doc">
+  <h1>Платный разбор матрицы — каркас экранов (план 2б)</h1>
+  <p>Каркас показывает <b>что где стоит и какие бывают состояния</b>, а не финальный визуал. Цвета, шрифты, картинки и атмосферу рисует Codex в системе сайта (<code>docs/design/visual-direction.md</code>) — так же, как макеты 2а в <code>docs/design/mockups/</code>.</p>
+  <p>Спецификация: <code>docs/superpowers/specs/2026-09-28-matrix-paid-design.md</code>. Жёлтые заметки с номерами — требования к поведению. Тексты кнопок и полей — дословно (по ним пишутся сквозные тесты), остальные тексты — рабочие.</p>
+  <p>Пример на всех экранах — дата <b>18.11.1988</b>: личность 18 Луна, центр 11 Сила, задача 10 Колесо Фортуны, любовь 7 Колесница, деньги 5 Иерофант, сердце 4 Император, род 11 · 19 · 18 · 10, предназначения 11 · 22 · 6.</p>
+</header>
+
+<!-- 1. Блок продажи -->
+<section class="screen">
+  <h2>1. <code>/matrica-sudby</code> — блок продажи под бесплатным результатом</h2>
+  <p class="lead">Единственный платный блок на странице. Стоит после предназначений и блока сохранения, перед «Скоро — Лила». Бесплатный результат выше не меняется и выглядит законченным.</p>
+  <div class="pair">
+    <div class="frame desk">
+      <div class="cap">Компьютер · 1440 px · вошедший, дата в портрете</div>
+      <div class="in stack">
+        <div class="blk dim">… бесплатный результат как сейчас: диаграмма, три ключевые карточки, действие и вопрос, предназначения, «Сохранено.» …</div>
+        <div class="card hi stack">
+          <div class="t-eyebrow">Разбор всей матрицы</div>
+          <div class="t-h2">Разбор всей матрицы — 290 ₽</div>
+          <p class="t-p">Семь глав о вашей матрице: как точки связаны между собой, где ресурс и где перекос, и итог — ваш сценарий с экспериментом на 7 дней.</p>
+          <div class="grid2">
+            <table class="pur">
+              <tr><td>1. Личность и центр</td><td>18 Луна · 11 Сила</td></tr>
+              <tr><td>2. Задача и точка роста</td><td>10 Колесо Фортуны</td></tr>
+              <tr><td>3. Отношения</td><td>7 Колесница · 4 Император</td></tr>
+              <tr><td>4. Деньги и дело</td><td>5 Иерофант · 4 Император</td></tr>
+              <tr><td>5. Род</td><td>11 · 19 · 18 · 10</td></tr>
+              <tr><td>6. Предназначения</td><td>11 Сила · 22 Шут · 6 Влюблённые</td></tr>
+              <tr><td>7. Ваш сценарий</td><td>итог по методике ORACLE</td></tr>
+            </table>
+            <div class="stack">
+              <div class="blk"><div class="t-eyebrow">Как читается глава — пример</div><p class="t-p" style="font-style:italic">«Колесница в точке любви и Император в сердце матрицы могут говорить о том, что в близости вам важны движение и ясные договорённости…» (один статичный абзац, одинаковый для всех)</p></div>
+              <p class="t-p">Готов за 1–2 минуты, хранится в «Моём портрете».</p>
+              <div class="field"><span>E-mail для чека</span><div class="input">name@example.ru</div></div>
+              <div class="row"><span class="btn lav">Купить разбор — 290 ₽</span></div>
+              <p class="t-p" style="font-size:13px">Оплата через ЮKassa. Нажимая кнопку, вы принимаете <u>оферту</u>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="blk dim">Скоро — Лила: игра с вашим вопросом</div>
+      </div>
+    </div>
+    <div class="frame mob">
+      <div class="cap">Телефон · 375 px · гость</div>
+      <div class="in stack">
+        <div class="card hi stack">
+          <div class="t-eyebrow">Разбор всей матрицы</div>
+          <div class="t-h3">Разбор всей матрицы — 290 ₽</div>
+          <p class="t-p">Семь глав о вашей матрице…</p>
+          <table class="pur">
+            <tr><td>1. Личность и центр</td><td>18 · 11</td></tr>
+            <tr><td>2. Задача</td><td>10</td></tr>
+            <tr><td>3. Отношения</td><td>7 · 4</td></tr>
+            <tr><td>4. Деньги и дело</td><td>5 · 4</td></tr>
+            <tr><td>5. Род</td><td>11 · 19 · 18 · 10</td></tr>
+            <tr><td>6. Предназначения</td><td>11 · 22 · 6</td></tr>
+            <tr><td>7. Ваш сценарий</td><td>итог</td></tr>
+          </table>
+          <div class="blk"><p class="t-p" style="font-style:italic">Пример главы — один абзац…</p></div>
+          <p class="t-p">Готов за 1–2 минуты, хранится в «Моём портрете».</p>
+          <span class="btn lav" style="width:100%">Войти и купить разбор</span>
+        </div>
+      </div>
+    </div>
+    <div class="notes">
+      <div class="note"><span class="n">1</span>Кнопка по состоянию: гость — «Войти и купить разбор» (→ <code>/login?next=/matrica-sudby</code>, поля e-mail нет); вошедший — поле «E-mail для чека» + «Купить разбор — 290 ₽»; разбор этой даты уже куплен — вместо поля и кнопки ссылка-кнопка «Открыть разбор».</div>
+      <div class="note"><span class="n">2</span>Оглавление считается из матрицы на странице: на телефоне можно оставить только числа, на компьютере — число и название.</div>
+      <div class="note"><span class="n">3</span>Неверный e-mail или сбой создания платежа — красная строка под полем, <code>role="alert"</code>; кнопка остаётся. Пока платёж создаётся, кнопка неактивна, текст тот же.</div>
+      <div class="note"><span class="n">4</span>Никаких таймеров, «осталось N», всплывающих окон. Блок не крупнее бесплатного результата и не перебивает его цветом.</div>
+      <div class="note"><span class="n">5</span>Метрика: <code>report_offer_click</code> при нажатии кнопки (обе версии).</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Ожидание -->
+<section class="screen">
+  <h2>2. <code>/portret/razbor/[id]</code> — после оплаты: ожидание</h2>
+  <p class="lead">Сюда ЮKassa возвращает человека. Страница сама опрашивает статус раз в 3 секунды и без перезагрузки переходит к следующему состоянию.</p>
+  <div class="pair">
+    <div class="frame mob">
+      <div class="cap">Телефон · а) оплата ещё подтверждается</div>
+      <div class="in stack">
+        <div class="t-eyebrow">Разбор матрицы судьбы</div>
+        <div class="t-h1">Ждём подтверждения оплаты</div>
+        <p class="t-p">Обычно это несколько секунд. Страницу можно не обновлять.</p>
+        <div class="img" style="height:120px">спокойная анимация ожидания (без мигания)</div>
+      </div>
+    </div>
+    <div class="frame mob">
+      <div class="cap">Телефон · б) разбор готовится</div>
+      <div class="in stack">
+        <div class="t-eyebrow">Разбор матрицы судьбы · по дате 18.11.1988</div>
+        <div class="t-h1">Готовим разбор</div>
+        <p class="t-p">Обычно 1–2 минуты. Мы связываем тексты ваших арканов в семь глав. Можно уйти — разбор будет в «Моём портрете».</p>
+        <div class="img" style="height:120px">та же анимация + иллюстрация аркана центра (11 Сила)</div>
+        <table class="pur"><tr><td>Личность и центр</td><td>18 · 11</td></tr><tr><td>…</td><td>…</td></tr></table>
+      </div>
+    </div>
+    <div class="frame mob">
+      <div class="cap">Телефон · в) оплата не прошла</div>
+      <div class="in stack">
+        <div class="t-eyebrow">Разбор матрицы судьбы</div>
+        <div class="t-h1">Оплата не прошла</div>
+        <p class="t-p err">Деньги не списаны. Можно попробовать ещё раз.</p>
+        <span class="btn lav" style="width:100%">Попробовать снова</span>
+        <span class="t-p" style="text-decoration:underline">Вернуться к матрице</span>
+      </div>
+    </div>
+    <div class="notes">
+      <div class="note"><span class="n">6</span>Заголовок меняется, <code>&lt;h1&gt;</code> один. Текст статуса — в <code>role="status"</code>, ошибка — <code>role="alert"</code>.</div>
+      <div class="note"><span class="n">7</span>Анимация медленная, с <code>prefers-reduced-motion</code> (тогда статичная картинка). На компьютере — та же колонка по центру, шириной как текст разбора.</div>
+      <div class="note"><span class="n">8</span>«Попробовать снова» создаёт новую покупку той же даты и сразу ведёт в ЮKassa (e-mail берётся из прошлой покупки).</div>
+      <div class="note"><span class="n">9</span>Страница закрыта от индексации, видна только владельцу покупки; чужой id — 404.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Готовый разбор -->
+<section class="screen">
+  <h2>3. <code>/portret/razbor/[id]</code> — готовый разбор</h2>
+  <p class="lead">Длинное чтение: 6 глав по 1200–2500 знаков и итоговая глава. Главное — удобно читать с телефона: ширина текста, ритм заголовков, оглавление.</p>
+  <div class="pair">
+    <div class="frame desk">
+      <div class="cap">Компьютер · 1440 px</div>
+      <div class="bar"><span>Твой оракул</span><span>◯ Мой портрет</span></div>
+      <div class="in stack">
+        <div class="grid2" style="grid-template-columns: 360px 1fr; align-items:center">
+          <div class="img" style="height:360px">иллюстрация аркана центра<br>11-sila.webp (960 px)</div>
+          <div class="stack">
+            <div class="t-eyebrow">Разбор матрицы судьбы · по дате 18.11.1988</div>
+            <div class="t-h1">Ваш центр — Сила</div>
+            <p class="t-p">Семь глав о том, как устроена ваша матрица. Это материал для размышления, а не предсказание.</p>
+            <table class="pur">
+              <tr><td>1. Личность и центр</td><td>18 Луна · 11 Сила</td></tr>
+              <tr><td>2. Задача и точка роста</td><td>10 Колесо Фортуны</td></tr>
+              <tr><td>3. Отношения</td><td>7 Колесница · 4 Император</td></tr>
+              <tr><td>4. Деньги и дело</td><td>5 Иерофант · 4 Император</td></tr>
+              <tr><td>5. Род</td><td>11 · 19 · 18 · 10</td></tr>
+              <tr><td>6. Предназначения</td><td>11 · 22 · 6</td></tr>
+              <tr><td>7. Ваш сценарий</td><td></td></tr>
+            </table>
+          </div>
+        </div>
+        <div style="max-width:680px; margin: 24px auto 0" class="stack">
+          <div class="t-eyebrow">Глава 1</div>
+          <div class="t-h2">Личность и центр</div>
+          <div class="row"><span class="tag">18 Луна</span><span class="tag">11 Сила</span></div>
+          <div class="blk">абзац текста</div><div class="blk">абзац текста</div><div class="blk">абзац текста</div>
+          <div class="blk dim">… главы 2–6 так же …</div>
+          <div class="t-eyebrow">Глава 7</div>
+          <div class="t-h2">Ваш сценарий</div>
+          <div class="grid2">
+            <div class="card"><b>Паттерн</b><p class="t-p">…</p></div>
+            <div class="card"><b>Напряжение</b><p class="t-p">…</p></div>
+            <div class="card"><b>Ресурс</b><p class="t-p">…</p></div>
+            <div class="card"><b>Слепая зона</b><p class="t-p">…</p></div>
+          </div>
+          <div class="card hi"><b>Точка изменения</b><p class="t-p">…</p></div>
+          <div class="card hi"><b>Эксперимент на 7 дней</b><p class="t-p">…</p></div>
+          <div class="card"><b>Вопрос для себя</b><p class="t-p" style="font:18px Georgia, serif">…?</p></div>
+          <p class="t-p" style="font-size:13px">Дисклеймер: «Твой оракул» — инструмент самопознания…</p>
+          <span class="t-p" style="text-decoration:underline">← Мой портрет</span>
+        </div>
+      </div>
+    </div>
+    <div class="frame mob">
+      <div class="cap">Телефон · 375 px</div>
+      <div class="in stack">
+        <div class="img" style="height:220px">иллюстрация 11 Сила</div>
+        <div class="t-eyebrow">Разбор матрицы судьбы · 18.11.1988</div>
+        <div class="t-h1">Ваш центр — Сила</div>
+        <details open><summary class="t-p">Оглавление</summary><table class="pur"><tr><td>1. Личность и центр</td></tr><tr><td>2. Задача</td></tr><tr><td>…</td></tr><tr><td>7. Ваш сценарий</td></tr></table></details>
+        <div class="t-eyebrow">Глава 1</div>
+        <div class="t-h2">Личность и центр</div>
+        <div class="row"><span class="tag">18 Луна</span><span class="tag">11 Сила</span></div>
+        <div class="blk">абзац</div><div class="blk">абзац</div>
+        <div class="blk dim">…</div>
+        <div class="t-h2">Ваш сценарий</div>
+        <div class="card"><b>Паттерн</b><p class="t-p">…</p></div>
+        <div class="card hi"><b>Эксперимент на 7 дней</b><p class="t-p">…</p></div>
+      </div>
+    </div>
+    <div class="notes">
+      <div class="note"><span class="n">10</span>Обложка: иллюстрация аркана центра, <code>&lt;h1&gt;</code> «Ваш центр — Сила», дата покупки «по дате …», оглавление — ссылки-якоря на главы.</div>
+      <div class="note"><span class="n">11</span>Под заголовком глав 1–6 — метки арканов, каждая — ссылка на страницу аркана.</div>
+      <div class="note"><span class="n">12</span>Текст глав — обычные абзацы, строка ~60–70 знаков, кегль для чтения не меньше 16 px на телефоне.</div>
+      <div class="note"><span class="n">13</span>Глава 7 — семь именованных блоков; «Точку изменения» и «Эксперимент» можно выделить, «Вопрос для себя» — антиквой, как в бесплатном результате.</div>
+      <div class="note"><span class="n">14</span>Глава, собранная без ИИ (запасной вариант), визуально не отличается.</div>
+      <div class="note"><span class="n">15</span>Метрика: <code>report_opened</code> при показе готового разбора; <code>report_paid</code> — когда страница впервые увидела оплату.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Портрет и подвал -->
+<section class="screen">
+  <h2>4. «Мой портрет» — карточка «Разборы» и подвал</h2>
+  <div class="pair">
+    <div class="frame" style="width:520px">
+      <div class="cap">«Мой портрет» · есть покупки</div>
+      <div class="in"><div class="card stack"><div class="t-h3">Разборы</div>
+        <div class="row" style="justify-content:space-between"><span>Разбор матрицы судьбы · по дате 18.11.1988</span><span class="btn ghost">Открыть разбор</span></div>
+        <div class="row" style="justify-content:space-between"><span>Разбор матрицы судьбы · по дате 03.02.1990 <span class="tag">готовится</span></span><span class="btn ghost">Открыть разбор</span></div>
+      </div><p class="t-p">Без покупок карточки нет. Стоит после карточки матрицы.</p></div>
+    </div>
+    <div class="frame" style="width:520px">
+      <div class="cap">Подвал</div>
+      <div class="in"><div class="row"><span>Мой портрет</span><span>Контакты</span><span>Политика обработки данных</span><span><b>Оферта</b></span><span>Согласие</span><span>Настройки cookie</span></div><p class="t-p">Новая ссылка «Оферта» — рядом с политикой. Остальное как сейчас.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="screen" style="padding-bottom:60px">
+  <h2>Общие требования</h2>
+  <div class="note" style="max-width:900px">Текст не меньше 14 px (текст разбора — не меньше 16 px) · зоны нажатия от 44 px · контраст WCAG AA · видимый фокус · <code>prefers-reduced-motion</code> · без горизонтальной прокрутки на 375 px · тексты дословно: «Разбор всей матрицы — 290 ₽», «Войти и купить разбор», «Купить разбор — 290 ₽», «Открыть разбор», «Попробовать снова», поле «E-mail для чека», «Оферта».</div>
+</section>
+
+</body>
+</html>

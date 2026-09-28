@@ -16,6 +16,14 @@ test("the home page leads to the open matrix calculator", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Матрица судьбы по дате рождения");
 });
 
+test("the first screen of the home page offers the free matrix", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Рассчитать матрицу бесплатно" }).first().click();
+
+  await expect(page).toHaveURL(/\/matrica-sudby$/);
+  await expect(page.getByText("Бесплатно — три ключевые позиции: Личность, Центр и Задача.")).toBeVisible();
+});
+
 test("a visitor gets the matrix without login and the browser remembers the date", async ({ page }) => {
   await page.goto("/matrica-sudby");
   await calculate(page, "1988-11-18");
@@ -140,6 +148,6 @@ test("on a wide screen every arcanum section stays open", async ({ page }) => {
   await page.goto("/matrica-sudby/arkan-11-sila");
 
   const sections = page.locator("details.arcanum-section");
-  await expect(sections).toHaveCount(8);
+  await expect(sections).toHaveCount(10);
   await expect(sections.and(page.locator(":not([open])"))).toHaveCount(0);
 });

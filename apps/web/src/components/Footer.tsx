@@ -6,6 +6,7 @@ const LINKS = [
   { href: "/portret", label: "Мой портрет" },
   { href: "/contacts", label: "Контакты" },
   { href: "/privacy", label: "Политика обработки данных" },
+  { href: "/oferta", label: "Оферта" },
   { href: "/consent", label: "Согласие" },
 ] as const;
 

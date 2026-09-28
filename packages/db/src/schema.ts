@@ -1,8 +1,11 @@
-import { date, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { date, index, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const authProviderEnum = pgEnum("auth_provider", ["vk"]);
+export const productEnum = pgEnum("product", ["matrix_report"]);
+export const purchaseStatusEnum = pgEnum("purchase_status", ["pending", "succeeded", "canceled"]);
 
 export type AuthProvider = (typeof authProviderEnum.enumValues)[number];
+export type PurchaseStatus = (typeof purchaseStatusEnum.enumValues)[number];
 
 const createdAt = () => timestamp("created_at", { withTimezone: true }).notNull().defaultNow();
 
@@ -39,4 +42,36 @@ export const birthProfiles = pgTable("birth_profiles", {
     .references(() => users.id, { onDelete: "cascade" }),
   birthDate: date("birth_date", { mode: "string" }).notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const purchases = pgTable(
+  "purchases",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    // Пользователь при удалении данных только помечается, поэтому ссылка всегда жива: запись об оплате нужна для налогового учёта
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    product: productEnum("product").notNull(),
+    // Снимок даты на момент покупки: смена даты в портрете разбор не трогает. Дата и e-mail стираются при удалении данных
+    birthDate: date("birth_date", { mode: "string" }),
+    receiptEmail: text("receipt_email"),
+    amountKopecks: integer("amount_kopecks").notNull(),
+    status: purchaseStatusEnum("status").notNull().default("pending"),
+    yookassaPaymentId: text("yookassa_payment_id").unique(),
+    confirmationUrl: text("confirmation_url"),
+    createdAt: createdAt(),
+    paidAt: timestamp("paid_at", { withTimezone: true }),
+  },
+  (t) => [index("purchases_user_idx").on(t.userId, t.createdAt)],
+);
+
+export const reports = pgTable("reports", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  purchaseId: uuid("purchase_id")
+    .notNull()
+    .unique()
+    .references(() => purchases.id, { onDelete: "cascade" }),
+  chapters: jsonb("chapters").notNull(),
+  createdAt: createdAt(),
 });

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { DATA_RECIPIENTS, DISCLAIMER, DOCUMENT_PATHS, LEGAL_VERSIONS, LOGIN_CONSENT_RECIPIENTS, OPERATOR } from "./legal";
+import { DATA_RECIPIENTS, DISCLAIMER, DOCUMENT_PATHS, formatRubles, LEGAL_VERSIONS, LOGIN_CONSENT_RECIPIENTS, OPERATOR } from "./legal";
 
 describe("legal constants", () => {
   test("the operator has a name, a 12-digit INN of a self-employed person and an e-mail", () => {
@@ -25,12 +25,27 @@ describe("legal constants", () => {
     expect(LOGIN_CONSENT_RECIPIENTS.map((recipient) => recipient.name)).not.toContain("Яндекс.Метрика");
   });
 
+  test("payment and report recipients work under the offer and stay out of the login consent", () => {
+    const contract = DATA_RECIPIENTS.filter((recipient) => recipient.basis === "contract").map((recipient) => recipient.name);
+
+    expect(contract).toEqual(["ЮKassa (НКО «ЮМани» (ООО))", "GigaChat (ПАО Сбербанк)"]);
+    expect(LOGIN_CONSENT_RECIPIENTS).toEqual([]);
+  });
+
+  test("the text service gets no name, birth date or contacts", () => {
+    expect(DATA_RECIPIENTS.find((recipient) => recipient.name.startsWith("GigaChat"))?.what).toMatch(/без имени, даты рождения и контактов/);
+  });
+
   test("the disclaimer rules out predictions and professional advice", () => {
     expect(DISCLAIMER).toMatch(/не предсказани/);
     expect(DISCLAIMER).toMatch(/консультаци/);
   });
 
   test("documents live at stable addresses", () => {
-    expect(DOCUMENT_PATHS).toEqual(["/contacts", "/privacy", "/consent"]);
+    expect(DOCUMENT_PATHS).toEqual(["/contacts", "/privacy", "/consent", "/oferta"]);
+  });
+
+  test("prices are shown in rubles", () => {
+    expect(formatRubles(29_000)).toBe("290 ₽");
   });
 });

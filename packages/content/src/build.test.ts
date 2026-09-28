@@ -3,7 +3,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "vitest";
-import { collectArcana } from "../scripts/build-arcana.mjs";
+import { collectArcana, collectPositions } from "../scripts/build-arcana.mjs";
+import positionsRaw from "./generated/positions.json";
 import raw from "./generated/arcana.json";
 import { loadArcana } from "./index";
 import { sampleArcanumSource } from "./testing";
@@ -21,6 +22,10 @@ describe("collectArcana", () => {
   test("the committed arcana.json matches the markdown files — run pnpm content:build after editing texts", () => {
     const dir = fileURLToPath(new URL("../arcana", import.meta.url));
     expect(raw).toEqual(collectArcana(dir));
+  });
+
+  test("the committed positions.json matches positions.md — run pnpm content:build after editing texts", () => {
+    expect(positionsRaw).toEqual(collectPositions(fileURLToPath(new URL("../positions.md", import.meta.url))));
   });
 });
 

@@ -44,7 +44,7 @@ jobs:
           printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
-      - name: Deploy web
+      - name: Deploy web and worker
         if: steps.config.outputs.configured == 'true'
         shell: bash
         run: |
@@ -57,7 +57,7 @@ jobs:
           SITE="${2:?site url is required}"
           cd /opt/oracle
           owner="$(grep -E '^GHCR_OWNER=' .env | cut -d= -f2)"
-          targets=(web migrate)
+          targets=(web worker migrate)
 
           # images.yml собирает образы параллельно — ждём, пока появятся все с тегом этого коммита
           for target in "${targets[@]}"; do
@@ -85,7 +85,7 @@ jobs:
           # Скрипт приходит на сервер через stdin (bash -s). Без -T и </dev/null compose run
           # дочитает остаток скрипта как свой ввод, и bash молча завершится после миграции.
           docker compose run --rm -T migrate </dev/null
-          docker compose up -d --force-recreate web
+          docker compose up -d --force-recreate web worker
 
           for attempt in $(seq 1 30); do
             health="$(docker inspect -f '{{.State.Health.Status}}' oracle-web-1 2>/dev/null || true)"
@@ -111,6 +111,7 @@ jobs:
           curl -fsS "$SITE/robots.txt" > "$tmp/robots.txt"
           curl -fsS "$SITE/matrica-sudby" > "$tmp/matrix.html"
           curl -fsS "$SITE/matrica-sudby/arkan-11-sila" > "$tmp/arcanum.html"
+          curl -fsS "$SITE/oferta" > "$tmp/offer.html"
 
           assert_contains() {
             local needle="$1"
@@ -152,11 +153,21 @@ jobs:
           assert_contains 'content="index, follow"' "$tmp/matrix.html" "matrix indexable"
           assert_contains 'application/ld+json' "$tmp/arcanum.html" "arcanum article markup"
           assert_contains "$SITE/matrica-sudby/arkan-22-shut" "$tmp/sitemap.xml" "sitemap arcana"
+          assert_contains 'ИНН' "$tmp/offer.html" "offer names the seller"
+          assert_contains "$SITE/oferta" "$tmp/sitemap.xml" "sitemap offer"
 
           assert_status "404" "unknown arcanum is 404" "$SITE/matrica-sudby/arkan-11-mag"
           assert_status "404" "dev login is off in production" "$SITE/api/dev/login"
           assert_status "200" "home images are served" "$SITE/practices/matrix.webp"
           assert_status "403" "profile API checks the origin" -X POST "$SITE/api/profile/birth-date" -d '{}'
+          assert_status "404 403" "payment notifications only from YooKassa" -X POST "$SITE/api/yookassa/notification" -d '{}'
+          assert_status "404" "fake payments are off in production" "$SITE/dev/pay/x"
+
+          if ! docker logs --since 5m oracle-worker-1 2>&1 | grep -q '"worker started"'; then
+            echo "SMOKE TEST FAILED: worker did not start"
+            docker logs --since 5m oracle-worker-1 2>&1 | tail -20 || true
+            exit 1
+          fi
 
           echo "Deployment and smoke tests passed."
 

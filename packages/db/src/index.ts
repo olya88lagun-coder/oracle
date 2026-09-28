@@ -4,3 +4,6 @@ export * from "./client";
 export * from "./users";
 export * from "./profiles";
 export * from "./delete-user";
+export * from "./purchases";
+export * from "./reports";
+export * from "./job-id";

@@ -9,3 +9,8 @@ export const PRACTICES: readonly Practice[] = [
   { slug: "tarot", title: "Таро", summary: "Расклад на вопрос и карта дня: символы как зеркало, а не приговор.", href: null },
   { slug: "natal", title: "Натальная карта", summary: "Настоящий расчёт по дате, времени и месту рождения.", href: null },
 ];
+
+// Один призыв для бесплатного входа по всему сайту и одно обещание результата
+export const FREE_MATRIX_CTA = "Рассчитать матрицу бесплатно";
+export const FREE_RESULT_PROMISE = "Бесплатно — три ключевые позиции: Личность, Центр и Задача.";
+export const FREE_RESULT_TERMS = "По дате рождения · без регистрации · около минуты";
