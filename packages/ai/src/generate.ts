@@ -1,9 +1,9 @@
 import type { Matrix } from "@oracle/core";
 import { fallbackChapter } from "./fallback";
 import { buildChapterInputs, buildScenarioInput, type ChapterInput } from "./input";
-import { buildPrompt, type Prompt } from "./prompt";
+import { buildPrompt } from "./prompt";
 import { validateChapter } from "./validate";
-import type { GeneratedChapter, ReportWriter } from "./writer";
+import type { GeneratedChapter, Prompt, ReportWriter } from "./writer";
 
 export type GenerateLog = (message: string, extra: Record<string, unknown>) => void;
 export type GenerateOptions = { timeoutMs?: number; attempts?: number; log?: GenerateLog };
