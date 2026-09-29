@@ -1,5 +1,5 @@
 import { and, eq, inArray, isNull } from "drizzle-orm";
-import { authIdentities, birthProfiles, purchases, reports, users } from "./schema";
+import { authIdentities, birthProfiles, lilaGames, purchases, reports, users } from "./schema";
 import type { Database } from "./types";
 import { isUuid } from "./uuid";
 
@@ -18,6 +18,8 @@ export async function deleteUserData(db: Database, userId: string): Promise<{ de
     await tx.delete(authIdentities).where(eq(authIdentities.userId, userId));
     // Разборы удаляются; в покупках остаются сумма, статус, дата оплаты и номер платежа — они нужны для налогового учёта
     await tx.delete(reports).where(inArray(reports.purchaseId, tx.select({ id: purchases.id }).from(purchases).where(eq(purchases.userId, userId))));
+    // Партии Лилы (намерения и записи) удаляются вместе с ходами
+    await tx.delete(lilaGames).where(eq(lilaGames.userId, userId));
     await tx.update(purchases).set({ birthDate: null, receiptEmail: null }).where(eq(purchases.userId, userId));
     return { deleted: true };
   });

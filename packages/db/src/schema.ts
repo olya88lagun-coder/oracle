@@ -1,4 +1,5 @@
-import { date, index, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { boolean, date, index, integer, jsonb, pgEnum, pgTable, primaryKey, smallint, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const authProviderEnum = pgEnum("auth_provider", ["vk"]);
 export const productEnum = pgEnum("product", ["matrix_report"]);
@@ -75,3 +76,54 @@ export const reports = pgTable("reports", {
   chapters: jsonb("chapters").notNull(),
   createdAt: createdAt(),
 });
+
+export const lilaModeEnum = pgEnum("lila_mode", ["free", "guided"]);
+export const lilaStatusEnum = pgEnum("lila_status", ["awaiting_payment", "active", "finished", "abandoned"]);
+export const lilaTransitionEnum = pgEnum("lila_transition", ["none", "snake", "arrow"]);
+
+export type LilaMode = (typeof lilaModeEnum.enumValues)[number];
+export type LilaGameStatus = (typeof lilaStatusEnum.enumValues)[number];
+
+export const lilaGames = pgTable(
+  "lila_games",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    mode: lilaModeEnum("mode").notNull().default("free"),
+    status: lilaStatusEnum("status").notNull().default("active"),
+    intention: text("intention").notNull(),
+    position: smallint("position").notNull().default(0),
+    movesCount: smallint("moves_count").notNull().default(0),
+    purchaseId: uuid("purchase_id")
+      .unique()
+      .references(() => purchases.id),
+    createdAt: createdAt(),
+    finishedAt: timestamp("finished_at", { withTimezone: true }),
+  },
+  (t) => [
+    // Одна активная партия на человека
+    uniqueIndex("lila_games_one_active_uq").on(t.userId).where(sql`${t.status} = 'active'`),
+    index("lila_games_user_idx").on(t.userId, t.createdAt),
+  ],
+);
+
+export const lilaMoves = pgTable(
+  "lila_moves",
+  {
+    gameId: uuid("game_id")
+      .notNull()
+      .references(() => lilaGames.id, { onDelete: "cascade" }),
+    n: smallint("n").notNull(),
+    roll: smallint("roll").notNull(),
+    fromCell: smallint("from_cell").notNull(),
+    landedCell: smallint("landed_cell").notNull(),
+    toCell: smallint("to_cell").notNull(),
+    transition: lilaTransitionEnum("transition").notNull(),
+    customDie: boolean("custom_die").notNull().default(false),
+    note: text("note"),
+    createdAt: createdAt(),
+  },
+  (t) => [primaryKey({ columns: [t.gameId, t.n] })],
+);
