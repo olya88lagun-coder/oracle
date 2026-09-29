@@ -52,7 +52,7 @@ export function reportChapters(matrix: Matrix): ReportChapter[] {
 export const QUEUES = { generateReport: "generate-report" } as const;
 export type GenerateReportJob = { purchaseId: string };
 // Внутри задачи до трёх попыток модели на каждую из семи глав и сборка из блоков; повтор pg-boss — только на случай сбоя базы
-export const GENERATE_JOB_OPTIONS = { retryLimit: 2, retryDelay: 30, retryBackoff: true, expireInSeconds: 900 } as const;
+export const GENERATE_JOB_OPTIONS = { retryLimit: 2, retryDelay: 30, retryBackoff: true, expireInSeconds: 1500 } as const;
 
 export function generateReportJobKey(job: GenerateReportJob): string {
   return `generate-report:${job.purchaseId}`;

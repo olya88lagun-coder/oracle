@@ -3,7 +3,7 @@ import { calculateMatrix, parseBirthDate, type GenerateReportJob } from "@oracle
 import { findPaidPurchase, getPurchase, getReport, saveReport, type Database } from "@oracle/db";
 import type { Logger } from "./log";
 
-export type GenerateDeps = { db: Database; writer: ReportWriter | null; log: Logger; now?: () => Date };
+export type GenerateDeps = { db: Database; writer: ReportWriter | null; log: Logger; concurrency?: number; now?: () => Date };
 
 export async function runGenerate(job: GenerateReportJob, deps: GenerateDeps): Promise<void> {
   if (await getReport(deps.db, job.purchaseId)) return;
@@ -25,6 +25,7 @@ export async function runGenerate(job: GenerateReportJob, deps: GenerateDeps): P
     return;
   }
   const chapters = await generateReport(deps.writer, calculateMatrix(birthDate), {
+    concurrency: deps.concurrency,
     log: (message, extra) => deps.log("warn", message, { purchaseId: purchase.id, ...extra }),
   });
   const { created } = await saveReport(deps.db, { purchaseId: purchase.id, chapters });

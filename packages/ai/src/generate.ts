@@ -6,10 +6,12 @@ import { validateChapter } from "./validate";
 import type { GeneratedChapter, Prompt, ReportWriter } from "./writer";
 
 export type GenerateLog = (message: string, extra: Record<string, unknown>) => void;
-export type GenerateOptions = { timeoutMs?: number; attempts?: number; log?: GenerateLog };
+export type GenerateOptions = { timeoutMs?: number; attempts?: number; concurrency?: number; log?: GenerateLog };
 
 export const GENERATION_TIMEOUT_MS = 60_000;
 export const GENERATION_ATTEMPTS = 3;
+// Бесплатный тариф GigaChat принимает один запрос за раз, поэтому по умолчанию главы пишутся по очереди
+export const GENERATION_CONCURRENCY = 1;
 
 class TimeoutError extends Error {}
 
@@ -51,8 +53,22 @@ export async function generateChapter(writer: ReportWriter | null, input: Chapte
 
 const opening = (chapter: GeneratedChapter) => chapter.paragraphs?.[0] ?? "";
 
+// Порядок результатов совпадает с порядком входа; одновременно идёт не больше `limit` задач
+async function mapLimited<T, R>(items: readonly T[], limit: number, task: (item: T) => Promise<R>): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let next = 0;
+  const worker = async () => {
+    while (next < items.length) {
+      const index = next++;
+      results[index] = await task(items[index]!);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(Math.max(1, limit), items.length) }, worker));
+  return results;
+}
+
 export async function generateReport(writer: ReportWriter | null, matrix: Matrix, options: GenerateOptions = {}): Promise<GeneratedChapter[]> {
-  const chapters = await Promise.all(buildChapterInputs(matrix).map((input) => generateChapter(writer, input, options)));
+  const chapters = await mapLimited(buildChapterInputs(matrix), options.concurrency ?? GENERATION_CONCURRENCY, (input) => generateChapter(writer, input, options));
   const scenario = await generateChapter(writer, buildScenarioInput(matrix, chapters.map(opening)), options);
   return [...chapters, scenario];
 }

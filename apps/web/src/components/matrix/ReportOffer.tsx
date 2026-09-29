@@ -127,7 +127,7 @@ export function ReportOffer({ state, matrix, onSaveDate }: Props) {
           </p>
           <p className="muted">Продолжение и то, как эта точка связана с сердцем матрицы, — в полном разборе.</p>
         </div>
-        <p className="muted">Готов за 1–2 минуты, хранится в «Моём портрете».</p>
+        <p className="muted">Готов за несколько минут, хранится в «Моём портрете».</p>
         {state.kind === "guest" && (
           <p>
             <a className="button button--lavender" href={loginHref(MATRIX_PATH)} onClick={() => reachGoal("report_offer_click")}>

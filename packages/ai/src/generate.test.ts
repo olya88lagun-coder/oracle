@@ -60,6 +60,29 @@ describe("generateReport", () => {
     expect(log).toHaveBeenCalledTimes(14);
   });
 
+  test("writes the chapters one at a time by default and in parallel when asked", async () => {
+    const run = async (concurrency?: number) => {
+      let active = 0;
+      let peak = 0;
+      const fake = writer(async (prompt) => {
+        active += 1;
+        peak = Math.max(peak, active);
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        active -= 1;
+        return isScenario(prompt) ? SCENARIO_ANSWER : proseAnswer();
+      });
+      const chapters = await generateReport(fake, EXAMPLE_MATRIX, { concurrency });
+      return { peak, ids: chapters.map((chapter) => chapter.id) };
+    };
+
+    const sequential = await run();
+    const parallel = await run(3);
+
+    expect(sequential.peak).toBe(1);
+    expect(parallel.peak).toBe(3);
+    expect(parallel.ids).toEqual([...CHAPTER_IDS]);
+  });
+
   test("logs provider errors without the answer", async () => {
     const log = vi.fn();
     const broken = writer(() => Promise.reject(new Error("GigaChat responded 500")));
