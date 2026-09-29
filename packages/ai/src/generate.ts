@@ -13,10 +13,10 @@ export const GENERATION_ATTEMPTS = 3;
 // Бесплатный тариф GigaChat принимает один запрос за раз, поэтому по умолчанию главы пишутся по очереди
 export const GENERATION_CONCURRENCY = 1;
 
-class TimeoutError extends Error {}
+export class TimeoutError extends Error {}
 
 // Сигнал отменяет запрос у провайдера; гонка с таймером страхует, если провайдер сигнал не слушает
-async function completeWithTimeout(writer: ReportWriter, prompt: Prompt, timeoutMs: number): Promise<string> {
+export async function completeWithTimeout(writer: ReportWriter, prompt: Prompt, timeoutMs: number): Promise<string> {
   const controller = new AbortController();
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_, reject) => {

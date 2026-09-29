@@ -5,3 +5,8 @@ export { buildPrompt } from "./prompt";
 export { createGigaChatWriter, GIGACHAT_CHAT_URL, GIGACHAT_OAUTH_URL } from "./providers/gigachat";
 export { extractJson, validateChapter, type ValidationFailure } from "./validate";
 export type { GeneratedChapter, Prompt, ReportWriter } from "./writer";
+export { buildConclusionInputs, buildGuideInput, type ConclusionInput, type GuideCells, type GuideInput, type GuideMoveData } from "./lila-input";
+export { fallbackConclusionChapter, type GeneratedConclusionChapter } from "./lila-fallback";
+export { generateConclusion, generateGuideText } from "./lila-generate";
+export { buildConclusionPrompt, buildGuidePrompt } from "./lila-prompt";
+export { validateConclusionChapter, validateGuideText } from "./lila-validate";

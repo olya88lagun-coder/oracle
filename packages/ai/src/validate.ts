@@ -55,10 +55,10 @@ export function describeAnswer(raw: string): Record<string, unknown> {
 
 const cleanText = (value: unknown): string | null => (typeof value === "string" && value.trim() ? value.trim() : null);
 
-const MARKDOWN_START = /^(#{1,6}\s|[-*•]\s|\d+[.)]\s)/;
+export const MARKDOWN_START = /^(#{1,6}\s|[-*•]\s|\d+[.)]\s)/;
 
 // Абзацы разделены пустой строкой; если модель поставила только одиночные переводы строк, абзацем считается строка
-function splitParagraphs(text: string): string[] {
+export function splitParagraphs(text: string): string[] {
   const clean = text.trim();
   const join = (block: string) => block.replace(/\s*\n\s*/g, " ").trim();
   const byBlankLine = clean.split(/\n\s*\n/).map(join).filter(Boolean);
