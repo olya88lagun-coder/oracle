@@ -1,5 +1,5 @@
 import type { LilaConclusionChapterId } from "@oracle/core";
-import { and, desc, eq, inArray, isNull } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { getLilaGame, type LilaGameRecord, type LilaGameWithMoves } from "./lila";
 import { lilaConclusions, lilaGames, lilaMoves, purchases } from "./schema";
 import type { Database } from "./types";
@@ -51,7 +51,17 @@ export async function getAwaitingLilaGame(db: Database, userId: string): Promise
 
 export async function abandonAwaitingLilaGames(db: Database, userId: string): Promise<void> {
   if (!isUuid(userId)) return;
-  await db.update(lilaGames).set({ status: "abandoned" }).where(and(eq(lilaGames.userId, userId), eq(lilaGames.status, "awaiting_payment")));
+  // Оплаченную партию не бросаем, даже если она ждёт окончания другой: человек за неё заплатил
+  await db
+    .update(lilaGames)
+    .set({ status: "abandoned" })
+    .where(
+      and(
+        eq(lilaGames.userId, userId),
+        eq(lilaGames.status, "awaiting_payment"),
+        sql`not exists (select 1 from ${purchases} where ${purchases.id} = ${lilaGames.purchaseId} and ${purchases.status} = 'succeeded')`,
+      ),
+    );
 }
 
 // «Попробовать снова» после отмены платежа: та же партия получает новую покупку.

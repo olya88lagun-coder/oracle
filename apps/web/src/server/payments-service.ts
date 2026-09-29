@@ -11,6 +11,7 @@ import {
   getAwaitingLilaGame,
   getBirthDate,
   getLilaGameByPurchase,
+  getPaidWaitingLilaGame,
   getPurchase,
   getPurchaseByPaymentId,
   getReport,
@@ -98,6 +99,9 @@ export async function startLilaPurchase(deps: PaymentsDeps, p: { userId: string;
   const intention = normalizeIntention(p.intention);
   if (!intention) return { ok: false, error: "invalid_intention" };
   if (await getActiveLilaGame(deps.db, p.userId)) return { ok: false, error: "active_game" };
+  // Уже оплаченная партия ждёт своей очереди: вторую сессию не продаём, страница ожидания её запустит
+  const paidWaiting = await getPaidWaitingLilaGame(deps.db, p.userId);
+  if (paidWaiting?.purchaseId) return { ok: false, error: "already_paid", purchaseId: paidWaiting.purchaseId };
 
   const waiting = await getAwaitingLilaGame(deps.db, p.userId);
   if (waiting?.purchaseId) {

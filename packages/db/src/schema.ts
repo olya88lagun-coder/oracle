@@ -106,6 +106,8 @@ export const lilaGames = pgTable(
   (t) => [
     // Одна активная партия на человека
     uniqueIndex("lila_games_one_active_uq").on(t.userId).where(sql`${t.status} = 'active'`),
+    // И одна ждущая оплаты: двойной клик «Начать с проводником» не создаёт две партии и два платежа
+    uniqueIndex("lila_games_one_awaiting_uq").on(t.userId).where(sql`${t.status} = 'awaiting_payment'`),
     index("lila_games_user_idx").on(t.userId, t.createdAt),
   ],
 );

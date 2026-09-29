@@ -1,5 +1,7 @@
-import { LILA_SESSION_PRODUCT } from "@oracle/core";
+import { LILA_SESSION_PRODUCT, MATRIX_REPORT_PRODUCT } from "@oracle/core";
+import { getPurchase } from "@oracle/db";
 import { NextResponse, type NextRequest } from "next/server";
+import { getDb } from "@/server/db";
 import { loginDeps } from "@/server/deps";
 import { isSameOrigin, SESSION_COOKIE } from "@/server/http";
 import { getCurrentUser } from "@/server/login-service";
@@ -24,9 +26,11 @@ export async function POST(request: NextRequest) {
   const body: unknown = await request.json().catch(() => null);
   const { email, retry, product, intention } =
     typeof body === "object" && body !== null ? (body as { email?: unknown; retry?: unknown; product?: unknown; intention?: unknown }) : {};
-  const lila = product === LILA_SESSION_PRODUCT;
+  // При повторной попытке продукт берётся из самой покупки, а не из тела запроса: иначе выключенный продукт можно купить через чужой переключатель
+  const retried = typeof retry === "string" ? await getPurchase(getDb(), retry) : null;
+  const lila = (retried?.product ?? product) === LILA_SESSION_PRODUCT;
   const deps = paymentsDeps();
-  if (!salesEnabled(lila ? LILA_SESSION_PRODUCT : undefined) || !deps) return NextResponse.json({ ok: false, error: "not_found" }, { status: 404 });
+  if (!salesEnabled(lila ? LILA_SESSION_PRODUCT : MATRIX_REPORT_PRODUCT) || !deps) return NextResponse.json({ ok: false, error: "not_found" }, { status: 404 });
   const login = loginDeps();
   if (!isSameOrigin(request, login.env.APP_URL)) return NextResponse.json({ ok: false, error: "bad_origin" }, { status: 403 });
   if (!purchaseLimiter.allow(clientKeyFromHeaders(request.headers))) return NextResponse.json({ ok: false, error: "rate_limited" }, { status: 429 });

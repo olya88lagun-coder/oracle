@@ -255,6 +255,18 @@ describe("Lila session purchase", () => {
     expect((await getLilaGameByPurchase(db, firstPurchase!.id))!.status).toBe("abandoned");
   });
 
+  test("does not sell a second session while a paid one waits for the active game to end", async () => {
+    const url = await buyLila();
+    const other = await createLilaGame(db, { userId, intention: "Свободная" });
+    await pay(url);
+    if (!other.ok) throw new Error("no game");
+    await finishLilaGame(db, { gameId: other.game.id, userId, now });
+    const purchaseId = store.get(paymentOf(url))!.purchaseId!;
+    expect(await startLilaPurchase(deps, { userId, email: "a@b.ru", intention })).toEqual({ ok: false, error: "already_paid", purchaseId });
+    expect((await getLilaGameByPurchase(db, purchaseId))!.status).toBe("awaiting_payment");
+    expect(store.size).toBe(1);
+  });
+
   test("a paid purchase activates the game and does not queue a report", async () => {
     const url = await buyLila();
     await pay(url);

@@ -48,6 +48,15 @@ describe("awaiting games", () => {
     expect((await getLilaGame(db, game.id))!.status).toBe("abandoned");
   });
 
+  test("cannot be two at once for one user, and a paid one is never abandoned", async () => {
+    const { purchase: p, game } = await awaiting();
+    const second = await createLilaGame(db, { userId, intention: "Ещё", mode: "guided", status: "awaiting_payment" });
+    expect(second.ok).toBe(false);
+    await markPurchaseSucceeded(db, p.id, new Date());
+    await abandonAwaitingLilaGames(db, userId);
+    expect((await getLilaGame(db, game.id))!.status).toBe("awaiting_payment");
+  });
+
   test("get a new purchase on retry, only after the old one was canceled and only for their owner", async () => {
     const { purchase: old, game } = await awaiting();
     const next = await purchase();
