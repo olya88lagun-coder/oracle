@@ -1,11 +1,15 @@
 import { lilaCellByNumber } from "@oracle/content/lila";
 import type { GameView, MoveView } from "@/lib/lila-view";
 
-function describe(move: MoveView): string {
+function route(move: MoveView): string {
   if (move.wasted) return "пауза";
-  const arrival = `«${lilaCellByNumber(move.to).name}»`;
-  if (move.landed === move.to) return `клетка ${move.to} ${arrival}`;
-  return `${move.transition === "snake" ? "змея" : "стрела"}: ${move.landed} → ${move.to} ${arrival}`;
+  return move.landed === move.to ? String(move.to) : `${move.landed} → ${move.to}`;
+}
+
+function cells(move: MoveView): string {
+  if (move.wasted) return `выпало ${move.roll}`;
+  const arrival = lilaCellByNumber(move.to).name;
+  return move.landed === move.to ? arrival : `${lilaCellByNumber(move.landed).name} · ${arrival}`;
 }
 
 export function MoveHistory({ game }: { game: GameView }) {
@@ -14,11 +18,19 @@ export function MoveHistory({ game }: { game: GameView }) {
     <ol className="lila-history" reversed>
       {[...game.moves].reverse().map((move) => (
         <li key={move.n} className="lila-history__item">
-          <p>
-            <strong>Ход {move.n}</strong> · выпало {move.roll}
-            {move.customDie && " (свой кубик)"} · {describe(move)}
+          <p className="lila-history__row">
+            <strong className="lila-history__n">
+              <span className="lila-history__label">Ход </span>
+              {move.n}
+            </strong>
+            <span className="lila-history__route">
+              {move.transition === "snake" ? "змея " : move.transition === "arrow" ? "стрела " : ""}
+              {route(move)}
+              {move.customDie && " · свой кубик"}
+            </span>
+            <span className="lila-history__cells">{cells(move)}</span>
           </p>
-          {move.note && <p className="muted">Запись: {move.note}</p>}
+          {move.note && <p className="muted lila-history__note">Запись: {move.note}</p>}
         </li>
       ))}
     </ol>

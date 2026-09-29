@@ -50,15 +50,21 @@ export default async function LilaCellPage({ params }: Params) {
         </Link>{" "}
         › Клетка {cell.number}
       </nav>
-      <header className="lila-cell-page__hero">
-        <CellArt cell={cell} size="page" available={availableCellImages()} priority />
-        <div className="stack">
-          <p className="eyebrow eyebrow--line">Клетка {cell.number}</p>
+      <div className="lila-cell-layout">
+        <header className="lila-cell-layout__head stack">
+          <p className="eyebrow">
+            Клетка {cell.number}
+            {target !== undefined && ` · ${snakeTo !== undefined ? "змея" : "стрела"} → ${target}`}
+          </p>
           <h1 className="display">{cell.name}</h1>
           <p className="lead">{cell.about}</p>
-        </div>
-      </header>
+        </header>
 
+        <div className="lila-cell-layout__art">
+          <CellArt cell={cell} size="page" available={availableCellImages()} priority />
+        </div>
+
+        <div className="lila-cell-layout__body stack">
       <section className="card stack" aria-labelledby="questions">
         <h2 id="questions">Вопросы для размышления</h2>
         <ol>
@@ -85,10 +91,8 @@ export default async function LilaCellPage({ params }: Params) {
         </section>
       )}
 
-      <Board current={cell.number} variant="locator" />
-
       <p className="row">
-        <Link className="button button--lavender" href={LILA_GAME_PATH}>
+        <Link className="button" href={LILA_GAME_PATH}>
           Играть
         </Link>
         <Link className="button button--ghost" href={lilaCellPath(previous)}>
@@ -98,6 +102,12 @@ export default async function LilaCellPage({ params }: Params) {
           {next.number} · {next.name} →
         </Link>
       </p>
+        </div>
+
+        <div className="card lila-cell-layout__board">
+          <Board current={cell.number} variant="locator" />
+        </div>
+      </div>
     </main>
   );
 }

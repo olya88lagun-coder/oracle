@@ -103,7 +103,7 @@ export function GamePlay({ initial, api, images, onClosed }: Props) {
             </div>
           )}
         </div>
-        <div className="lila-play__board" hidden={tab === "history"}>
+        <div className="card lila-play__board" hidden={tab === "history"}>
           <Board current={game.position} trail={trailOf(game)} variant="full" />
           <Board current={game.position} trail={trailOf(game)} variant="compact" />
         </div>
