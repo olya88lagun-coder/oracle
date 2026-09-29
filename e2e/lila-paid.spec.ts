@@ -7,7 +7,11 @@ const INTENTION = "Почему мне трудно принять решени�
 
 async function ownRoll(page: Page, value: number) {
   const group = page.getByRole("group", { name: "Что выпало на вашем кубике" });
-  if (!(await group.isVisible())) await page.getByRole("button", { name: "Играю со своим кубиком" }).click();
+  // Страница после оплаты может ещё гидратироваться: первый клик по «Играю со своим кубиком» тогда не срабатывает, поэтому повторяем
+  await expect(async () => {
+    if (!(await group.isVisible())) await page.getByRole("button", { name: "Играю со своим кубиком" }).click();
+    await expect(group).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 20_000 });
   await group.getByRole("button", { name: `Выпало ${value}` }).click();
 }
 
