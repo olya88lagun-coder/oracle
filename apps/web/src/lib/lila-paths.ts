@@ -9,6 +9,7 @@ type CellRef = { number: number; slug: string };
 
 export const lilaParam = (cell: CellRef): string => `${String(cell.number).padStart(2, "0")}-${cell.slug}`;
 export const lilaCellPath = (cell: CellRef): string => `${LILA_PATH}/kletki/${lilaParam(cell)}`;
+export const lilaPaymentPath = (purchaseId: string): string => `${LILA_GAME_PATH}/oplata/${purchaseId}`;
 export const lilaHistoryPath = (gameId: string): string => `/portret/lila/${gameId}`;
 
 // Номер и slug должны совпасть с одной и той же клеткой — иначе 404, а не страница с чужим текстом

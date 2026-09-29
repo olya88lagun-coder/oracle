@@ -2,9 +2,11 @@
 
 import { lilaCellByNumber } from "@oracle/content/lila";
 import { LILA_CELL_COUNT } from "@oracle/core";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { reachGoal } from "@/lib/analytics";
 import { lilaErrorMessage, type ApiResult, type GameApi } from "@/lib/lila-api";
+import { lilaHistoryPath } from "@/lib/lila-paths";
 import { describeTurn, openedCells, rollSummary, trailOf } from "@/lib/lila-turn";
 import type { GameView } from "@/lib/lila-view";
 import { Board } from "./Board";
@@ -20,8 +22,16 @@ const TABS: readonly { id: Tab; label: string }[] = [
   { id: "history", label: "История" },
 ];
 
+const GUIDE_POLL_MS = 3000;
+// Дольше ждать абзац не стоит: блок «Проводник пишет…» исчезает без ошибки, партия идёт дальше
+const GUIDE_WAIT_MS = 45_000;
+
 export function GamePlay({ initial, api, images, onClosed }: Props) {
+  const router = useRouter();
   const [game, setGame] = useState(initial);
+  const [waitedTooLong, setWaitedTooLong] = useState(false);
+  const apiRef = useRef(api);
+  apiRef.current = api;
   const [tab, setTab] = useState<Tab>("turn");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,12 +54,30 @@ export function GamePlay({ initial, api, images, onClosed }: Props) {
   const turn = lastIndex >= 0 ? describeTurn(game, lastIndex, lilaCellByNumber) : null;
   const last = lastIndex >= 0 ? game.moves[lastIndex]! : null;
 
+  // Абзацы пишет воркер уже после хода: пока у какого-то хода он не готов, перечитываем партию раз в три секунды
+  const anyGuidePending = game.moves.some((move) => move.guidePending);
+  useEffect(() => {
+    setWaitedTooLong(false);
+  }, [game.movesCount]);
+  useEffect(() => {
+    if (!anyGuidePending || waitedTooLong) return;
+    const started = Date.now();
+    const timer = setInterval(async () => {
+      if (Date.now() - started > GUIDE_WAIT_MS) return setWaitedTooLong(true);
+      const result = await apiRef.current.refresh();
+      if (result.ok) setGame(result.game);
+    }, GUIDE_POLL_MS);
+    return () => clearInterval(timer);
+  }, [anyGuidePending, waitedTooLong, game.movesCount]);
+
   async function finish() {
     setBusy(true);
     const result = await api.finish();
     setBusy(false);
     if (!result.ok) return setError(lilaErrorMessage(result.error));
     reachGoal("lila_finish");
+    // У платной партии после завершения ждёт итог: он на странице партии в портрете
+    if (result.game.mode === "guided") return router.push(lilaHistoryPath(result.game.id));
     onClosed(result.game);
   }
 
@@ -77,6 +105,7 @@ export function GamePlay({ initial, api, images, onClosed }: Props) {
             images={images}
             editable={game.status === "active" && last !== null}
             onSaveNote={(note) => run(() => api.saveNote(game.movesCount, note))}
+            guide={game.mode === "guided" && last ? { text: last.guideText, pending: last.guidePending, waitedTooLong } : null}
           />
           {game.canFinish && !confirming && (
             <button type="button" className={game.position === 68 ? "button button--lavender" : "button button--ghost"} onClick={() => setConfirming(true)}>

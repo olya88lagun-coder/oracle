@@ -3,15 +3,17 @@
 import { LILA_INTENTION_MAX_CHARS } from "@oracle/core";
 import { useState } from "react";
 import { LILA_THEMES } from "@/lib/lila-themes";
+import { GuidedOffer } from "./GuidedOffer";
 
-type Props = { busy: boolean; error: string | null; onStart: (intention: string) => void };
+type Props = { busy: boolean; error: string | null; onStart: (intention: string) => void; guided?: { signedIn: boolean } | null };
 
 const MIN_CHARS = 3;
 
-export function IntentionForm({ busy, error, onStart }: Props) {
+export function IntentionForm({ busy, error, onStart, guided = null }: Props) {
   const [text, setText] = useState("");
   const ready = text.trim().length >= MIN_CHARS;
   return (
+    <div className="stack">
     <form
       className="card stack lila-setup"
       onSubmit={(event) => {
@@ -40,8 +42,10 @@ export function IntentionForm({ busy, error, onStart }: Props) {
         </p>
       )}
       <button type="submit" className="button button--lavender" disabled={!ready || busy}>
-        Играть
+        {guided ? "Играть без проводника" : "Играть"}
       </button>
     </form>
+    {guided && <GuidedOffer intention={text} signedIn={guided.signedIn} />}
+    </div>
   );
 }
