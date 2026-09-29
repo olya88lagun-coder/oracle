@@ -1,7 +1,8 @@
 import { MATRIX_PATH } from "./arcana-paths";
+import { LILA_GAME_PATH } from "./lila-paths";
 
 // Куда можно вернуть человека после входа. Только точные внутренние пути — иначе вход стал бы открытым редиректом
-export const SAFE_NEXT_PATHS = ["/portret", MATRIX_PATH] as const;
+export const SAFE_NEXT_PATHS = ["/portret", MATRIX_PATH, LILA_GAME_PATH] as const;
 export const DEFAULT_NEXT_PATH = "/portret";
 
 export function safeNextPath(value: unknown): string {

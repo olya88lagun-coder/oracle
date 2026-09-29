@@ -1,5 +1,5 @@
 import { LILA_CELLS, type LilaCell } from "@oracle/content/lila";
-import { shortDescription } from "./arcana-paths";
+import { shortDescription } from "./short-description";
 
 export const LILA_PATH = "/lila";
 export const LILA_GAME_PATH = "/lila/igra";

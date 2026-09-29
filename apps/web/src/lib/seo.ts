@@ -5,7 +5,7 @@ import { DOCUMENT_PATHS } from "./legal";
 import { SITE_NAME } from "./site";
 
 // Личные страницы: вход, портрет и всё, что под ними. В поиск не попадают
-export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret"];
+export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", "/lila/igra"];
 
 // Практики и их справочники; следующие планы добавят свои
 export const PUBLIC_PATHS: string[] = ["/", MATRIX_PATH, ...ARCANA.map(arcanumPath), ...DOCUMENT_PATHS];

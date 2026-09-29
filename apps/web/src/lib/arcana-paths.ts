@@ -1,8 +1,8 @@
 import { ARCANA, type Arcanum } from "@oracle/content";
+import { shortDescription } from "./short-description";
 
 export const MATRIX_PATH = "/matrica-sudby";
 const PARAM = /^arkan-([1-9]|1\d|2[0-2])-([a-z]+(?:-[a-z]+)*)$/;
-const DESCRIPTION_LIMIT = 160;
 
 type ArcanumRef = { number: number; slug: string };
 
@@ -24,11 +24,7 @@ export function arcanumFromParam(param: string): Arcanum | null {
   return arcanum && arcanum.slug === match[2] ? arcanum : null;
 }
 
-export function shortDescription(text: string): string {
-  if (text.length <= DESCRIPTION_LIMIT) return text;
-  const cut = text.slice(0, DESCRIPTION_LIMIT - 1);
-  return `${cut.slice(0, cut.lastIndexOf(" "))}…`;
-}
+export { shortDescription };
 
 export function arcanumJsonLd(a: Arcanum, siteUrl: string): Record<string, unknown> {
   return {
