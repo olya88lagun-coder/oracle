@@ -38,11 +38,45 @@ describe("validateChapter", () => {
 
     expect(facts).toMatchObject({ paragraphs: 2, textChars: expect.any(Number), chars: expect.any(Number) });
     expect(String(facts.head).length).toBeLessThanOrEqual(16);
-    expect(describeAnswer("просто текст")).toEqual({ chars: 12, head: "просто текст", tail: "просто текст" });
+    expect(describeAnswer("просто текст")).toEqual({ chars: 12, head: "просто текст", tail: "просто текст", paragraphs: 1, textChars: 12 });
+  });
+
+  test("accepts plain text paragraphs separated by blank lines, with the model's own quotes", () => {
+    const first = `Аркан 11 Сила — это "тихая сила" и мягкая настойчивость. ${"а".repeat(500)}`;
+    const raw = [first, "б".repeat(400), "в".repeat(400)].join("\n\n");
+
+    const result = validateChapter(core, raw);
+
+    expect(result.ok && result.chapter.paragraphs).toEqual([first, "б".repeat(400), "в".repeat(400)]);
+  });
+
+  test("takes single line breaks as paragraph breaks when there are no blank lines", () => {
+    const result = validateChapter(core, ["а".repeat(400), "б".repeat(400), "в".repeat(400)].join("\n"));
+
+    expect(result.ok && result.chapter.paragraphs).toHaveLength(3);
+  });
+
+  test("joins lines of one paragraph that the model wrapped", () => {
+    const wrapped = `${"а".repeat(200)}\n${"а".repeat(200)}`;
+    const raw = [wrapped, "б".repeat(400), "в".repeat(400)].join("\n\n");
+
+    const result = validateChapter(core, raw);
+
+    expect(result.ok && result.chapter.paragraphs?.[0]).toBe(`${"а".repeat(200)} ${"а".repeat(200)}`);
   });
 
   test.each([
-    ["not json", "просто текст", "not_json"],
+    ["an empty answer", "  \n ", "not_json"],
+    ["broken JSON", '{"paragraphs": ["а" "б"]}', "not_json"],
+    ["one block of text", "а".repeat(1600), "length"],
+    ["a markdown heading", ["# Глава 1", "б".repeat(500), "в".repeat(500), "г".repeat(500)].join("\n\n"), "schema"],
+    ["a bullet list", ["- " + "а".repeat(400), "- " + "б".repeat(400), "- " + "в".repeat(400)].join("\n"), "schema"],
+    ["bold text", ["**Личность** " + "а".repeat(400), "б".repeat(400), "в".repeat(400)].join("\n\n"), "schema"],
+  ])("rejects a plain-text chapter with %s", (_case, raw, reason) => {
+    expect(validateChapter(core, raw)).toEqual({ ok: false, reason });
+  });
+
+  test.each([
     ["no paragraphs", JSON.stringify({ text: "…" }), "schema"],
     ["an empty paragraph", JSON.stringify({ paragraphs: ["a", " ", "b"] }), "schema"],
     ["two paragraphs", proseAnswer(2, 8), "length"],
@@ -73,8 +107,10 @@ describe("buildPrompt", () => {
     const prompt = buildPrompt(core);
 
     expect(prompt.system).toMatch(/на «вы»/);
-    expect(prompt.system).toMatch(/paragraphs/);
+    expect(prompt.system).toMatch(/между абзацами пустая строка/);
+    expect(prompt.system).not.toMatch(/JSON-объект/);
     expect(JSON.parse(prompt.user)).toEqual(core);
     expect(buildPrompt(scenario).system).toMatch(/blindSpot/);
+    expect(buildPrompt(scenario).system).toMatch(/JSON-объект/);
   });
 });

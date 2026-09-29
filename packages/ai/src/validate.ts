@@ -44,9 +44,9 @@ export function extractJson(raw: string): unknown {
 // Во входе модели нет личных данных, поэтому эти знаки безопасны; целиком текст в лог не идёт
 export function describeAnswer(raw: string): Record<string, unknown> {
   const facts: Record<string, unknown> = { chars: raw.length, head: raw.slice(0, 16), tail: raw.slice(-16) };
-  const value = extractJson(raw);
-  if (typeof value === "object" && value !== null && Array.isArray((value as { paragraphs?: unknown }).paragraphs)) {
-    const paragraphs = (value as { paragraphs: unknown[] }).paragraphs.filter((item): item is string => typeof item === "string");
+  const found = proseParagraphs(raw);
+  if (found.ok) {
+    const paragraphs = found.items.filter((item): item is string => typeof item === "string");
     facts.paragraphs = paragraphs.length;
     facts.textChars = paragraphs.join("").length;
   }
@@ -55,9 +55,36 @@ export function describeAnswer(raw: string): Record<string, unknown> {
 
 const cleanText = (value: unknown): string | null => (typeof value === "string" && value.trim() ? value.trim() : null);
 
-function readProse(value: Record<string, unknown>): { ok: true; paragraphs: string[] } | { ok: false; reason: ValidationFailure } {
-  if (!Array.isArray(value.paragraphs)) return { ok: false, reason: "schema" };
-  const paragraphs = value.paragraphs.map(cleanText);
+const MARKDOWN_START = /^(#{1,6}\s|[-*•]\s|\d+[.)]\s)/;
+
+// Абзацы разделены пустой строкой; если модель поставила только одиночные переводы строк, абзацем считается строка
+function splitParagraphs(text: string): string[] {
+  const clean = text.trim();
+  const join = (block: string) => block.replace(/\s*\n\s*/g, " ").trim();
+  const byBlankLine = clean.split(/\n\s*\n/).map(join).filter(Boolean);
+  const byLine = clean.split("\n").map((line) => line.trim()).filter(Boolean);
+  return byBlankLine.length >= PROSE_LIMITS.minParagraphs || byBlankLine.length >= byLine.length ? byBlankLine : byLine;
+}
+
+// Глава приходит обычным текстом; JSON вида {"paragraphs": [...]} тоже принимаем — так отвечали ранние версии промпта
+function proseParagraphs(raw: string): { ok: true; items: unknown[] } | { ok: false; reason: ValidationFailure } {
+  const trimmed = raw.replace(/^```\w*\s*$/gm, "").trim();
+  if (!trimmed) return { ok: false, reason: "not_json" };
+  if (trimmed.startsWith("{")) {
+    const value = extractJson(trimmed);
+    if (typeof value !== "object" || value === null) return { ok: false, reason: "not_json" };
+    const paragraphs = (value as { paragraphs?: unknown }).paragraphs;
+    return Array.isArray(paragraphs) ? { ok: true, items: paragraphs } : { ok: false, reason: "schema" };
+  }
+  const items = splitParagraphs(trimmed);
+  if (items.some((item) => MARKDOWN_START.test(item) || item.includes("**"))) return { ok: false, reason: "schema" };
+  return { ok: true, items };
+}
+
+function readProse(raw: string): { ok: true; paragraphs: string[] } | { ok: false; reason: ValidationFailure } {
+  const found = proseParagraphs(raw);
+  if (!found.ok) return found;
+  const paragraphs = found.items.map(cleanText);
   if (paragraphs.some((paragraph) => paragraph === null)) return { ok: false, reason: "schema" };
   const texts = paragraphs as string[];
   const chars = texts.join("").length;
@@ -76,10 +103,14 @@ function readScenario(value: Record<string, unknown>): { ok: true; scenario: Rec
 }
 
 export function validateChapter(input: ChapterInput, raw: string): Validation {
-  const value = extractJson(raw);
-  if (typeof value !== "object" || value === null) return { ok: false, reason: "not_json" };
-  const record = value as Record<string, unknown>;
-  const read = input.chapter === "scenario" ? readScenario(record) : readProse(record);
+  let read: ReturnType<typeof readProse> | ReturnType<typeof readScenario>;
+  if (input.chapter === "scenario") {
+    const value = extractJson(raw);
+    if (typeof value !== "object" || value === null) return { ok: false, reason: "not_json" };
+    read = readScenario(value as Record<string, unknown>);
+  } else {
+    read = readProse(raw);
+  }
   if (!read.ok) return read;
   const chapter: GeneratedChapter =
     "scenario" in read ? { id: input.chapter, source: "ai", scenario: read.scenario } : { id: input.chapter, source: "ai", paragraphs: read.paragraphs };
