@@ -20,7 +20,7 @@ await boss.createQueue(QUEUES.generateReport);
 await boss.work<GenerateReportJob>(QUEUES.generateReport, async ([job]) => {
   if (!job) return;
   try {
-    await runGenerate(job.data, { db, writer, log });
+    await runGenerate(job.data, { db, writer, log, concurrency: env.aiConcurrency });
   } catch (error) {
     // pg-boss пометит задачу для повтора, но в лог контейнера без этого ничего не попадёт.
     // У ошибок Drizzle в тексте только запрос, а причина (ECONNRESET, нарушение ограничения) лежит в cause

@@ -5,7 +5,7 @@ import { readWorkerEnv } from "./env";
 const BASE = { DATABASE_URL: "postgres://u:p@db/oracle" };
 
 test("works without an AI provider — reports are built from the blocks", () => {
-  expect(readWorkerEnv(BASE)).toEqual({ DATABASE_URL: BASE.DATABASE_URL, poolMax: 3, ai: { provider: "none" } });
+  expect(readWorkerEnv(BASE)).toEqual({ DATABASE_URL: BASE.DATABASE_URL, poolMax: 3, ai: { provider: "none" }, aiConcurrency: 1 });
   expect(createWriter({ provider: "none" }, fetch)).toBeNull();
 });
 
@@ -15,6 +15,11 @@ test("reads GigaChat with its defaults", () => {
   expect(env.ai).toEqual({ provider: "gigachat", authKey: "auth", scope: "GIGACHAT_API_PERS", model: "GigaChat" });
   expect(env.poolMax).toBe(1);
   expect(createWriter(env.ai, fetch)?.name).toBe("gigachat");
+});
+
+test("chapters are written one at a time unless AI_CONCURRENCY says otherwise", () => {
+  expect(readWorkerEnv({ ...BASE, AI_CONCURRENCY: "3" }).aiConcurrency).toBe(3);
+  expect(() => readWorkerEnv({ ...BASE, AI_CONCURRENCY: "0" })).toThrow(/AI_CONCURRENCY/);
 });
 
 test("names missing or invalid variables without printing values", () => {
