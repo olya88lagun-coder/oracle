@@ -5,8 +5,9 @@ export const EXAMPLE_MATRIX: Matrix = calculateMatrix({ year: 1988, month: 11, d
 
 const LONG = "Этот абзац нужен для проверки длины и повторяет простую мысль о том, что матрица — повод присмотреться к себе. ";
 
+// Так модель отвечает по промпту: абзацы обычным текстом через пустую строку
 export function proseAnswer(paragraphs = 4, repeat = 4): string {
-  return JSON.stringify({ paragraphs: Array.from({ length: paragraphs }, () => LONG.repeat(repeat).trim()) });
+  return Array.from({ length: paragraphs }, () => LONG.repeat(repeat).trim()).join("\n\n");
 }
 
 export const SCENARIO_ANSWER = JSON.stringify({
