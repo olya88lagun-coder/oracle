@@ -2,7 +2,7 @@ import type { Matrix } from "@oracle/core";
 import { fallbackChapter } from "./fallback";
 import { buildChapterInputs, buildScenarioInput, type ChapterInput } from "./input";
 import { buildPrompt } from "./prompt";
-import { validateChapter } from "./validate";
+import { describeAnswer, validateChapter } from "./validate";
 import type { GeneratedChapter, Prompt, ReportWriter } from "./writer";
 
 export type GenerateLog = (message: string, extra: Record<string, unknown>) => void;
@@ -38,15 +38,18 @@ export async function generateChapter(writer: ReportWriter | null, input: Chapte
   const attempts = options.attempts ?? GENERATION_ATTEMPTS;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     let reason: string;
+    let facts: Record<string, unknown> = {};
     try {
-      const checked = validateChapter(input, await completeWithTimeout(writer, prompt, options.timeoutMs ?? GENERATION_TIMEOUT_MS));
+      const raw = await completeWithTimeout(writer, prompt, options.timeoutMs ?? GENERATION_TIMEOUT_MS);
+      const checked = validateChapter(input, raw);
       if (checked.ok) return checked.chapter;
       reason = checked.reason;
+      facts = describeAnswer(raw);
     } catch (error) {
       reason = error instanceof TimeoutError ? "timeout" : `error: ${String(error)}`;
     }
-    // Текст ответа в лог не пишется: в нём может оказаться то, что проверка как раз не пропустила
-    options.log?.("chapter attempt rejected", { chapter: input.chapter, writer: writer.name, attempt, reason });
+    // Текст ответа в лог не пишется: в нём может оказаться то, что проверка как раз не пропустила; только размеры и края
+    options.log?.("chapter attempt rejected", { chapter: input.chapter, writer: writer.name, attempt, reason, ...facts });
   }
   return fallbackChapter(input);
 }

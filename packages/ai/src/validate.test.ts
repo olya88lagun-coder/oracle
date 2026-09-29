@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { buildChapterInputs, buildScenarioInput } from "./input";
 import { buildPrompt } from "./prompt";
 import { EXAMPLE_MATRIX, proseAnswer, SCENARIO_ANSWER } from "./testing";
-import { validateChapter } from "./validate";
+import { describeAnswer, validateChapter } from "./validate";
 
 const core = buildChapterInputs(EXAMPLE_MATRIX)[0]!;
 const scenario = buildScenarioInput(EXAMPLE_MATRIX, []);
@@ -14,6 +14,31 @@ describe("validateChapter", () => {
     expect(result.ok && result.chapter.id).toBe("core");
     expect(result.ok && result.chapter.source).toBe("ai");
     expect(result.ok && result.chapter.paragraphs).toHaveLength(4);
+  });
+
+  test("accepts paragraphs that contain raw line breaks and tabs inside the JSON strings", () => {
+    const paragraph = "а".repeat(200);
+    const raw = `{"paragraphs": ["${paragraph}\n${paragraph}", "${"б".repeat(300)}\t${"б".repeat(300)}", "${"в".repeat(400)}"]}`;
+
+    const result = validateChapter(core, raw);
+
+    expect(result.ok && result.chapter.paragraphs).toEqual([`${paragraph}\n${paragraph}`, `${"б".repeat(300)}\t${"б".repeat(300)}`, "в".repeat(400)]);
+  });
+
+  test("keeps escaped quotes and backslashes while repairing line breaks", () => {
+    const raw = `{"paragraphs": ["${"а".repeat(400)} \\"цитата\\" и слеш \\\\\n${"а".repeat(400)}", "${"б".repeat(400)}", "${"в".repeat(400)}"]}`;
+
+    const result = validateChapter(core, raw);
+
+    expect(result.ok && result.chapter.paragraphs?.[0]).toContain('"цитата" и слеш \\');
+  });
+
+  test("describes a rejected answer by size and edges without keeping the text", () => {
+    const facts = describeAnswer(proseAnswer(2, 8));
+
+    expect(facts).toMatchObject({ paragraphs: 2, textChars: expect.any(Number), chars: expect.any(Number) });
+    expect(String(facts.head).length).toBeLessThanOrEqual(16);
+    expect(describeAnswer("просто текст")).toEqual({ chars: 12, head: "просто текст", tail: "просто текст" });
   });
 
   test.each([

@@ -83,6 +83,18 @@ describe("generateReport", () => {
     expect(parallel.ids).toEqual([...CHAPTER_IDS]);
   });
 
+  test("logs the size and edges of a rejected answer, not its text", async () => {
+    const log = vi.fn();
+    const rambling = writer(() => Promise.resolve("Вот ваш разбор без всякого JSON, просто длинный текст"));
+
+    await generateReport(rambling, EXAMPLE_MATRIX, { attempts: 1, log });
+
+    expect(log).toHaveBeenCalledWith(
+      "chapter attempt rejected",
+      expect.objectContaining({ reason: "not_json", chars: 53, head: "Вот ваш разбор б", tail: "то длинный текст" }),
+    );
+  });
+
   test("logs provider errors without the answer", async () => {
     const log = vi.fn();
     const broken = writer(() => Promise.reject(new Error("GigaChat responded 500")));
