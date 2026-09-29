@@ -50,3 +50,16 @@ describe("normalizeNote", () => {
     expect(normalizeNote(7)).toBe("invalid");
   });
 });
+
+describe("guide paragraphs in the game view", () => {
+  test("a guided move without a paragraph yet is pending; a wasted move, a saved paragraph or a free game is not", () => {
+    const base = { id: "g", intention: "Что мне важно?", position: 1, movesCount: 2, status: "active" as const };
+    const real = { n: 1, roll: 6, from: 0, landed: 1, to: 1, transition: "none" as const, customDie: false, note: null };
+    const wasted = { ...real, n: 2, roll: 3, from: 1, landed: 1, to: 1 };
+    const guided = toGameView({ ...base, mode: "guided", moves: [{ ...real, guideSource: null }, { ...wasted, guideSource: null }] });
+    expect(guided.moves.map((m) => m.guidePending)).toEqual([true, false]);
+    expect(toGameView({ ...base, mode: "guided", moves: [{ ...real, guideSource: "ai", guideText: "Абзац." }] }).moves[0]).toMatchObject({ guidePending: false, guideText: "Абзац." });
+    expect(toGameView({ ...base, mode: "guided", moves: [{ ...real, guideSource: "none" }] }).moves[0]).toMatchObject({ guidePending: false, guideText: null });
+    expect(toGameView({ ...base, mode: "free", moves: [{ ...real, guideSource: null }] }).moves[0]!.guidePending).toBe(false);
+  });
+});

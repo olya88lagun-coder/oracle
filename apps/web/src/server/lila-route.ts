@@ -6,11 +6,12 @@ import { getEnv } from "./env";
 import { isSameOrigin, SESSION_COOKIE } from "./http";
 import { defaultRandomRoll, type LilaDeps, type LilaError, type LilaResult } from "./lila-service";
 import { getCurrentUser } from "./login-service";
+import { enqueueConclusion, enqueueGuideMove } from "./queue";
 import { lilaLimiter } from "./rate-limit";
 
 const STATUS: Record<LilaError, number> = { invalid: 400, not_found: 404, not_active: 409, limit: 409, at_goal: 409, too_early: 409, active_exists: 409 };
 
-export const lilaDeps = (): LilaDeps => ({ db: getDb(), randomRoll: defaultRandomRoll, now: () => new Date() });
+export const lilaDeps = (): LilaDeps => ({ db: getDb(), randomRoll: defaultRandomRoll, now: () => new Date(), enqueueGuide: enqueueGuideMove, enqueueConclusion });
 
 const NO_STORE = { "cache-control": "no-store" };
 

@@ -1,10 +1,16 @@
-import { isLilaRoll, LILA_MAX_MOVES } from "@oracle/core";
-import { addLilaMove, createLilaGame, finishLilaGame, getActiveLilaGame, getLilaGameForUser, importLilaGame, saveLilaNote, type Database } from "@oracle/db";
+import { isLilaRoll, LILA_MAX_MOVES, type ConclusionJob, type GuideMoveJob } from "@oracle/core";
+import { addLilaMove, createLilaGame, finishLilaGame, getActiveLilaGame, getLilaConclusion, getLilaGame, getLilaGameForUser, importLilaGame, saveLilaNote, type Database } from "@oracle/db";
 import { randomInt } from "node:crypto";
 import { z } from "zod";
 import { normalizeIntention, normalizeNote, toGameView, type GameSource, type GameView } from "../lib/lila-view";
 
-export type LilaDeps = { db: Database; randomRoll: () => number; now: () => Date };
+export type LilaDeps = {
+  db: Database;
+  randomRoll: () => number;
+  now: () => Date;
+  enqueueGuide?: (job: GuideMoveJob) => Promise<void>;
+  enqueueConclusion?: (job: ConclusionJob) => Promise<void>;
+};
 export type LilaError = "invalid" | "not_found" | "not_active" | "limit" | "at_goal" | "too_early" | "active_exists";
 export type LilaResult = { ok: true; game: GameView } | { ok: false; error: LilaError };
 
@@ -27,7 +33,11 @@ export async function rollGame(deps: LilaDeps, p: { userId: string; gameId: stri
   if (custom && !isLilaRoll(p.customRoll)) return fail("invalid");
   const roll = custom ? (p.customRoll as number) : deps.randomRoll();
   const moved = await addLilaMove(deps.db, { gameId: p.gameId, userId: p.userId, roll, customDie: custom });
-  return moved.ok ? ok(moved.game) : fail(moved.error);
+  if (!moved.ok) return fail(moved.error);
+  const last = moved.game.moves.at(-1);
+  // Проводник пишет только про настоящие ходы платной партии; ход уже записан, задача лишь догрузит абзац (в очередь уходят id партии и номер хода)
+  if (moved.game.mode === "guided" && last && last.landed !== last.from) await deps.enqueueGuide?.({ gameId: moved.game.id, n: last.n });
+  return ok(moved.game);
 }
 
 export async function gameById(deps: LilaDeps, p: { userId: string; gameId: string }): Promise<LilaResult> {
@@ -44,7 +54,22 @@ export async function saveNote(deps: LilaDeps, p: { userId: string; gameId: stri
 
 export async function finishGame(deps: LilaDeps, p: { userId: string; gameId: string }): Promise<LilaResult> {
   const done = await finishLilaGame(deps.db, { gameId: p.gameId, userId: p.userId, now: deps.now() });
-  return done.ok ? gameById(deps, p) : fail(done.error);
+  if (!done.ok) return fail(done.error);
+  if (done.status === "finished") {
+    const game = await getLilaGame(deps.db, p.gameId);
+    if (game?.mode === "guided") await deps.enqueueConclusion?.({ gameId: game.id });
+  }
+  return gameById(deps, p);
+}
+
+// Итог платной партии готов или ещё пишется; чужая, бесплатная и незавершённая партии неотличимы от несуществующей
+export async function conclusionStatus(deps: LilaDeps, p: { userId: string; gameId: string }): Promise<"pending" | "ready" | null> {
+  const game = await getLilaGameForUser(deps.db, p.gameId, p.userId);
+  if (!game || game.mode !== "guided" || game.status !== "finished") return null;
+  if (await getLilaConclusion(deps.db, game.id)) return "ready";
+  // Задача могла не встать в очередь — тот же id не создаст дубль
+  await deps.enqueueConclusion?.({ gameId: game.id });
+  return "pending";
 }
 
 export async function activeGame(deps: LilaDeps, p: { userId: string }): Promise<GameView | null> {

@@ -3,10 +3,21 @@ import { canFinishLila, canRollLila, LILA_GOAL_CELL, LILA_INTENTION_MAX_CHARS, L
 const INTENTION_MIN_CHARS = 3;
 
 export type GameStatus = "awaiting_payment" | "active" | "finished" | "abandoned";
-type MoveSource = { n: number; roll: number; from: number; landed: number; to: number; transition: LilaTransition; customDie: boolean; note: string | null };
+type MoveSource = {
+  n: number;
+  roll: number;
+  from: number;
+  landed: number;
+  to: number;
+  transition: LilaTransition;
+  customDie: boolean;
+  note: string | null;
+  guideText?: string | null;
+  guideSource?: "ai" | "none" | null;
+};
 export type GameSource = { id: string; mode: "free" | "guided"; status: GameStatus; intention: string; position: number; movesCount: number; moves: readonly MoveSource[] };
 
-export type MoveView = MoveSource & { entered: boolean; reachedGoal: boolean; wasted: boolean };
+export type MoveView = Omit<MoveSource, "guideText" | "guideSource"> & { entered: boolean; reachedGoal: boolean; wasted: boolean; guideText: string | null; guidePending: boolean };
 export type GameView = {
   id: string;
   mode: "free" | "guided";
@@ -19,8 +30,9 @@ export type GameView = {
   canFinish: boolean;
 };
 
-// Настоящий ход всегда меняет клетку, поэтому «встали там же» — это пустой ход
-export const toMoveView = (move: MoveSource): MoveView => ({
+// Настоящий ход всегда меняет клетку, поэтому «встали там же» — это пустой ход.
+// Абзац проводника ещё пишется, пока у настоящего хода платной партии нет ни текста, ни отметки «не получился»
+export const toMoveView = (move: MoveSource, mode: "free" | "guided" = "free"): MoveView => ({
   n: move.n,
   roll: move.roll,
   from: move.from,
@@ -32,6 +44,8 @@ export const toMoveView = (move: MoveSource): MoveView => ({
   entered: move.from === 0 && move.landed === 1,
   reachedGoal: move.to === LILA_GOAL_CELL && move.landed !== move.from,
   wasted: move.landed === move.from,
+  guideText: move.guideText ?? null,
+  guidePending: mode === "guided" && move.landed !== move.from && (move.guideSource ?? null) === null,
 });
 
 export function toGameView(game: GameSource): GameView {
@@ -44,7 +58,7 @@ export function toGameView(game: GameSource): GameView {
     intention: game.intention,
     position: game.position,
     movesCount: game.movesCount,
-    moves: game.moves.map(toMoveView),
+    moves: game.moves.map((move) => toMoveView(move, game.mode)),
     canRoll: active && canRollLila(state),
     canFinish: active && canFinishLila(state),
   };
