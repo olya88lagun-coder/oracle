@@ -1,6 +1,6 @@
 import type { LilaCell } from "@oracle/content/lila";
 import { describe, expect, test } from "vitest";
-import { describeGameFacts, describeTurn, openedCells, trailOf } from "./lila-turn";
+import { describeGameFacts, describeTurn, openedCells, rollSummary, trailOf } from "./lila-turn";
 import { toGameView } from "./lila-view";
 
 const cellOf = (n: number): LilaCell => ({
@@ -65,5 +65,13 @@ describe("describeGameFacts", () => {
     const moves = [move(1, 0, 1, 1, 6), move(2, 1, 12, 8, 6, "snake"), move(3, 8, 10, 23, 2, "arrow")];
     expect(describeGameFacts(view(moves))).toBe("3 хода · 1 змея · 1 стрела · открыто клеток 5");
     expect(describeGameFacts(view([]))).toBe("0 ходов · 0 змей · 0 стрел · открыто клеток 0");
+  });
+});
+
+describe("rollSummary", () => {
+  test("names the roll and the cell it led to, or a pause", () => {
+    expect(rollSummary(describeTurn(view([move(1, 0, 1, 1, 6)]), 0, cellOf))).toBe("Выпало 6 — Клетка 1.");
+    expect(rollSummary(describeTurn(view([move(1, 0, 1, 1, 6), move(2, 1, 12, 8, 6, "snake")]), 1, cellOf))).toBe("Выпало 6 — Клетка 8.");
+    expect(rollSummary(describeTurn(view([move(1, 0, 0, 0, 3)]), 0, cellOf))).toBe("Выпало 3 — пауза.");
   });
 });

@@ -61,6 +61,13 @@ export function describeGameFacts(view: GameView): string {
   ].join(" · ");
 }
 
+// «Выпало 6 — Рождение.» — подпись у кубика: видна и на вкладке поля, где панели хода нет
+export function rollSummary(turn: Turn): string {
+  if (turn.kind === "wait") return `Выпало ${turn.roll} — пауза.`;
+  const finalCell = turn.arrival ?? turn.landed;
+  return finalCell ? `Выпало ${turn.roll} — ${finalCell.name}.` : `Выпало ${turn.roll}.`;
+}
+
 export const openedCells = (view: GameView): number => lilaVisitCounts(view.moves.map((move) => ({ landed: move.landed, to: move.to, wasted: move.wasted }))).size;
 
 export function trailOf(view: GameView): number[] {

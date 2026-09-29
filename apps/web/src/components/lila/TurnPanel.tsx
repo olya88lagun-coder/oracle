@@ -26,7 +26,7 @@ export function TurnPanel({ turn, moveNumber, note, images, editable, onSaveNote
   const finalCell = turn.arrival ?? turn.landed;
   return (
     <section className="card stack lila-turn" aria-labelledby="turn-title">
-      <p role="status" className="eyebrow">
+      <p className="eyebrow">
         Ход {moveNumber} · выпало {turn.roll}
         {turn.visit > 1 && ` · вы здесь уже были (${turn.visit}-й раз)`}
       </p>
