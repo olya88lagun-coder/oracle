@@ -93,9 +93,12 @@ export function GameShell({ initialGame, signedIn, images }: Props) {
     <div className="stack">
       {signedIn && guest && <SaveGameBanner guest={guest} hasActive onSave={(replace) => void save(replace)} onDiscard={discard} />}
       {!signedIn && (
-        <p className="muted lila-guest-hint">
-          Партия хранится только в этом браузере. <Link href={loginHref(LILA_GAME_PATH)}>Войти и сохранить партию</Link> в «Моём портрете» можно через VK ID.
-        </p>
+        <div className="lila-guest-hint">
+          <p className="muted">Партия хранится только в этом браузере. Через VK ID её можно сохранить в «Моём портрете».</p>
+          <Link className="touch-link" href={loginHref(LILA_GAME_PATH)}>
+            Войти и сохранить партию
+          </Link>
+        </div>
       )}
       {error && (
         <p className="error" role="alert">

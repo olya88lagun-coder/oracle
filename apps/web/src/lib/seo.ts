@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { ARCANA } from "@oracle/content";
+import { LILA_CELLS } from "@oracle/content/lila";
 import { ARCANUM_IMAGE_SIZE, arcanumPath, MATRIX_PATH } from "./arcana-paths";
+import { lilaCellPath, LILA_PATH } from "./lila-paths";
 import { DOCUMENT_PATHS } from "./legal";
 import { SITE_NAME } from "./site";
 
@@ -8,7 +10,7 @@ import { SITE_NAME } from "./site";
 export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", "/lila/igra"];
 
 // Практики и их справочники; следующие планы добавят свои
-export const PUBLIC_PATHS: string[] = ["/", MATRIX_PATH, ...ARCANA.map(arcanumPath), ...DOCUMENT_PATHS];
+export const PUBLIC_PATHS: string[] = ["/", MATRIX_PATH, ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), ...DOCUMENT_PATHS];
 
 type PreviewImage = { url: string; alt: string };
 

@@ -693,3 +693,64 @@ a.report-toc__title:hover { color: var(--accent); }
 .home-start > * { margin: 0; }
 .matrix-form__promise { margin: 0; color: var(--ink); font-weight: 600; }
 .report-offer__teaser { position: relative; color: var(--ink); -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
+
+/* Лила: функциональная раскладка (план 3а). Визуальная отделка — по макетам Codex, Задача 11 */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--accent); }
+.lila-play__bar { display: grid; gap: 8px; }
+.lila-tabs { gap: 0; border-bottom: 1px solid var(--line); }
+.lila-tabs__tab {
+  flex: 1;
+  min-height: 44px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--ink-soft);
+  font: inherit;
+  cursor: pointer;
+}
+.lila-tabs__tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+.lila-play__layout { display: grid; gap: 20px; }
+.lila-play__board { display: grid; gap: 12px; }
+.lila-board--full { display: none; }
+@media (min-width: 721px) {
+  .lila-board--full { display: block; }
+  .lila-board--compact { display: none; }
+}
+@media (min-width: 1024px) {
+  .lila-tabs { display: none; }
+  .lila-play__layout { grid-template-columns: minmax(340px, 420px) minmax(0, 1fr); align-items: start; }
+  /* Вкладки нужны только на телефоне: на компьютере ход и поле всегда рядом, история — ниже на всю ширину */
+  .lila-play__layout > [hidden] { display: block !important; }
+  .lila-play__layout > :last-child { grid-column: 1 / -1; }
+}
+.lila-turn__cell { display: grid; grid-template-columns: 96px 1fr; gap: 16px; align-items: center; }
+.lila-art, .lila-fallback { width: 100%; height: auto; aspect-ratio: 1; border-radius: var(--radius); }
+.lila-fallback {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 4px;
+  background: linear-gradient(160deg, var(--lila-paper), #d9c7a6);
+  color: var(--lila-paper-ink);
+  border: 1px solid var(--lila-paper-line);
+}
+.lila-fallback__number { font-family: var(--font-display, serif); font-size: clamp(28px, 6vw, 44px); line-height: 1; }
+.lila-fallback__mark { font-size: 18px; color: var(--lila-paper-soft); }
+.lila-turn__transition { font-style: italic; color: var(--accent-soft); }
+.lila-dice__face { justify-content: center; min-width: 44px; padding: 0; }
+.lila-history { display: grid; gap: 12px; padding-left: 0; list-style: none; }
+.lila-cell-grid { display: grid; gap: 4px 16px; padding-left: 0; list-style: none; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.lila-cell-page__hero { display: grid; gap: 24px; }
+@media (min-width: 900px) { .lila-cell-page__hero { grid-template-columns: minmax(0, 420px) 1fr; align-items: center; } }

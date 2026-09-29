@@ -38,6 +38,14 @@ describe("paths", () => {
     expect(PUBLIC_PATHS).toEqual(expect.arrayContaining(["/contacts", "/privacy", "/consent"]));
   });
 
+  test("the Lila landing and all 72 cell pages are public, the game itself is not", () => {
+    expect(PUBLIC_PATHS).toContain("/lila");
+    expect(PUBLIC_PATHS).toContain("/lila/kletki/12-zavist");
+    expect(PUBLIC_PATHS.filter((path) => path.startsWith("/lila/kletki/"))).toHaveLength(72);
+    expect(PUBLIC_PATHS).not.toContain("/lila/igra");
+    expect(PRIVATE_PATHS).toContain("/lila/igra");
+  });
+
   test("the matrix calculator and the 22 arcana pages are public", () => {
     expect(PUBLIC_PATHS).toContain("/matrica-sudby");
     expect(PUBLIC_PATHS).toContain("/matrica-sudby/arkan-11-sila");
