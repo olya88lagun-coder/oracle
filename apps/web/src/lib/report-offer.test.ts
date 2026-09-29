@@ -37,6 +37,11 @@ describe("purchase helpers", () => {
     expect(purchaseErrorMessage(undefined)).toMatch(/Попробуйте ещё раз/);
   });
 
+  test("Lila purchase errors say what to fix", () => {
+    expect(purchaseErrorMessage("invalid_intention")).toMatch(/от 3 до 300 знаков/);
+    expect(purchaseErrorMessage("active_game")).toMatch(/уже идёт партия/);
+  });
+
   test("the teaser keeps short texts and cuts long ones on a word boundary", () => {
     expect(teaserText("Коротко.", 20)).toBe("Коротко.");
     expect(teaserText("Колесница в отношениях — это движение, общие цели", 30)).toBe("Колесница в отношениях — это…");

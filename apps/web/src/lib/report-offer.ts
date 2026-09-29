@@ -22,6 +22,8 @@ export const EMAIL_ERROR = "Проверьте e-mail: на него придё�
 
 const PURCHASE_ERRORS: Readonly<Record<string, string>> = {
   invalid_email: EMAIL_ERROR,
+  invalid_intention: "Проверьте намерение: от 3 до 300 знаков.",
+  active_game: "В портрете уже идёт партия. Завершите её, чтобы начать новую.",
   no_birth_date: "Не получилось сохранить дату в портрет. Попробуйте ещё раз.",
   rate_limited: "Слишком много попыток подряд. Подождите минуту и попробуйте снова.",
   unauthorized: "Сессия закончилась — войдите ещё раз.",

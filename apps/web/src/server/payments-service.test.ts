@@ -1,9 +1,9 @@
 import type { GenerateReportJob } from "@oracle/core";
-import { createTestDb, getPurchase, saveBirthDate, saveReport, seedUser, type Database } from "@oracle/db/testing";
+import { createLilaGame, createTestDb, finishLilaGame, getActiveLilaGame, getLilaGameByPurchase, getPurchase, saveBirthDate, saveReport, seedUser, type Database } from "@oracle/db/testing";
 import { afterEach, beforeEach, describe, expect, test, vi, type Mock } from "vitest";
 import { createFakeGateway, type FakeGateway } from "./payments/fake";
 import type { GatewayPayment } from "./payments/gateway";
-import { getPurchaseView, paymentDescription, retryPurchase, startPurchase, syncPayment, type PaymentsDeps } from "./payments-service";
+import { getLilaPurchaseView, getPurchaseView, paymentDescription, purchaseReturnPath, retryPurchase, startLilaPurchase, startPurchase, syncPayment, type PaymentsDeps } from "./payments-service";
 
 const APP_URL = "http://localhost:3000";
 const DATE = "1988-11-18";
@@ -212,5 +212,90 @@ describe("paymentDescription", () => {
   test("shows the e-mail and stays within the YooKassa limit of 128 characters", () => {
     expect(paymentDescription("a@b.ru")).toBe("Разбор матрицы судьбы — «Твой оракул», чек: a@b.ru");
     expect(paymentDescription(`${"x".repeat(120)}@b.ru`)).toBe("Разбор матрицы судьбы — «Твой оракул», чек: см. метаданные");
+  });
+});
+
+describe("Lila session purchase", () => {
+  const intention = "Что мне важно увидеть?";
+  const buyLila = async (email = "a@b.ru") => {
+    const outcome = await startLilaPurchase(deps, { userId, email, intention });
+    if (!outcome.ok) throw new Error(outcome.error);
+    return outcome.url;
+  };
+
+  test("creates a 490 ₽ payment and a game waiting for it", async () => {
+    const url = await buyLila();
+    const payment = store.get(paymentOf(url))!;
+    expect(payment.amountKopecks).toBe(49_000);
+    const purchase = await getPurchase(db, payment.purchaseId!);
+    expect(purchase).toMatchObject({ product: "lila_session", birthDate: null, receiptEmail: "a@b.ru", status: "pending" });
+    expect(await getLilaGameByPurchase(db, purchase!.id)).toMatchObject({ mode: "guided", status: "awaiting_payment", intention });
+  });
+
+  test("rejects a bad e-mail, a bad intention and an already active game without creating a payment", async () => {
+    expect(await startLilaPurchase(deps, { userId, email: "нет", intention })).toEqual({ ok: false, error: "invalid_email" });
+    expect(await startLilaPurchase(deps, { userId, email: "a@b.ru", intention: "да" })).toEqual({ ok: false, error: "invalid_intention" });
+    await createLilaGame(db, { userId, intention: "Свободная" });
+    expect(await startLilaPurchase(deps, { userId, email: "a@b.ru", intention })).toEqual({ ok: false, error: "active_game" });
+    expect(store.size).toBe(0);
+  });
+
+  test("reuses the open payment for the same e-mail and intention within 30 minutes", async () => {
+    const first = await buyLila();
+    expect(await buyLila()).toBe(first);
+    expect(store.size).toBe(1);
+    now = new Date(now.getTime() + 31 * 60_000);
+    expect(await buyLila()).not.toBe(first);
+  });
+
+  test("a new intention abandons the previous waiting game", async () => {
+    const first = await buyLila();
+    await startLilaPurchase(deps, { userId, email: "a@b.ru", intention: "Совсем другое намерение" });
+    const firstPurchase = await getPurchase(db, store.get(paymentOf(first))!.purchaseId!);
+    expect((await getLilaGameByPurchase(db, firstPurchase!.id))!.status).toBe("abandoned");
+  });
+
+  test("a paid purchase activates the game and does not queue a report", async () => {
+    const url = await buyLila();
+    await pay(url);
+    expect(await getActiveLilaGame(db, userId)).toMatchObject({ mode: "guided", status: "active", intention });
+    expect(enqueue).not.toHaveBeenCalled();
+    const purchaseId = store.get(paymentOf(url))!.purchaseId!;
+    expect(await getLilaPurchaseView(deps, { purchaseId, userId })).toMatchObject({ status: "ready" });
+  });
+
+  test("a canceled payment keeps the game waiting, and «try again» gives it a new payment", async () => {
+    const url = await buyLila();
+    await pay(url, "canceled");
+    const purchaseId = store.get(paymentOf(url))!.purchaseId!;
+    expect(await getLilaPurchaseView(deps, { purchaseId, userId })).toMatchObject({ status: "canceled" });
+    const retried = await retryPurchase(deps, { userId, purchaseId });
+    if (!retried.ok) throw new Error(retried.error);
+    expect(retried.url).not.toBe(url);
+    const game = (await getLilaGameByPurchase(db, store.get(paymentOf(retried.url))!.purchaseId!))!;
+    expect(game.status).toBe("awaiting_payment");
+    const stranger = (await seedUser(db, { externalId: "vk-9" })).userId;
+    expect(await retryPurchase(deps, { userId: stranger, purchaseId })).toEqual({ ok: false, error: "not_found" });
+  });
+
+  test("a paid purchase is «blocked» while another game is active, then becomes ready", async () => {
+    const url = await buyLila();
+    const other = await createLilaGame(db, { userId, intention: "Свободная" });
+    await pay(url);
+    const purchaseId = store.get(paymentOf(url))!.purchaseId!;
+    expect(await getLilaPurchaseView(deps, { purchaseId, userId })).toMatchObject({ status: "blocked" });
+    if (!other.ok) throw new Error("no game");
+    await finishLilaGame(db, { gameId: other.game.id, userId, now });
+    expect(await getLilaPurchaseView(deps, { purchaseId, userId })).toMatchObject({ status: "ready" });
+  });
+
+  test("hides the purchase from another user and picks the return page by product", async () => {
+    const url = await buyLila();
+    await pay(url);
+    const purchaseId = store.get(paymentOf(url))!.purchaseId!;
+    const stranger = (await seedUser(db, { externalId: "vk-8" })).userId;
+    expect(await getLilaPurchaseView(deps, { purchaseId, userId: stranger })).toBeNull();
+    expect(purchaseReturnPath({ id: purchaseId, product: "lila_session" })).toBe(`/lila/igra/oplata/${purchaseId}`);
+    expect(purchaseReturnPath({ id: purchaseId, product: "matrix_report" })).toBe(`/portret/razbor/${purchaseId}`);
   });
 });

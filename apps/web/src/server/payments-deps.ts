@@ -1,3 +1,4 @@
+import { LILA_SESSION_PRODUCT, MATRIX_REPORT_PRODUCT, type Product } from "@oracle/core";
 import { getDb } from "./db";
 import { getEnv, type PaymentsConfig } from "./env";
 import { createFakeGateway, type FakeGateway } from "./payments/fake";
@@ -31,10 +32,11 @@ export function purchaseViewDeps(): PaymentsDeps {
   return paymentsDeps() ?? { db: getDb(), gateway: DISABLED_GATEWAY, appUrl: env.APP_URL, now: () => new Date(), enqueueGenerate };
 }
 
-// Продажа видна только при включённом переключателе и настроенном шлюзе
-export function salesEnabled(): boolean {
+// Продажа видна только при включённом переключателе продукта и настроенном шлюзе
+export function salesEnabled(product: Product = MATRIX_REPORT_PRODUCT): boolean {
   const env = getEnv();
-  return env.paidReports && env.payments !== null;
+  if (env.payments === null) return false;
+  return product === LILA_SESSION_PRODUCT ? env.paidLila : env.paidReports;
 }
 
 export function fakeGateway(): FakeGateway | null {

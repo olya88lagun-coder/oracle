@@ -6,7 +6,7 @@ import { completeLogin, giveConsent, type LoginDeps } from "./login-service";
 import { loadPortrait, saveBirthDateForSession, type ProfileDeps } from "./profile-service";
 
 const NOW = new Date("2026-09-24T12:00:00Z");
-const ENV: AppEnv = { APP_URL: "https://oracle.test", DATABASE_URL: "postgres://unused", SESSION_SECRET: "s".repeat(40), VK_CLIENT_ID: "555", payments: null, paidReports: false };
+const ENV: AppEnv = { APP_URL: "https://oracle.test", DATABASE_URL: "postgres://unused", SESSION_SECRET: "s".repeat(40), VK_CLIENT_ID: "555", payments: null, paidReports: false, paidLila: false };
 
 let db: Database;
 let deps: ProfileDeps;
