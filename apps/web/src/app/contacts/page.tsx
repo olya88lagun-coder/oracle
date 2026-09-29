@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { MATRIX_REPORT_PRICE_KOPECKS } from "@oracle/core";
+import { LILA_SESSION_PRICE_KOPECKS, MATRIX_REPORT_PRICE_KOPECKS } from "@oracle/core";
 import { DISCLAIMER, formatRubles, OPERATOR } from "@/lib/legal";
 import { publicMetadata } from "@/lib/seo";
 
@@ -34,6 +34,11 @@ export default function ContactsPage() {
           Разбор покупается на странице <Link href="/matrica-sudby">матрицы судьбы</Link> после входа через VK ID. Оплата — на странице ЮKassa способами,
           которые она предлагает. Разбор готов в течение нескольких минут после оплаты и хранится в «Моём портрете». Чек «Мой налог» приходит на e-mail,
           указанный при покупке. Условия, порядок оказания и возвраты — в <Link href="/oferta">оферте</Link>.
+        </p>
+        <p>
+          «Сессия Лилы с проводником» — одна партия игры «Лила» с короткими абзацами проводника на ходах и итоговым выводом с файлом PDF. Стоимость —{" "}
+          {formatRubles(LILA_SESSION_PRICE_KOPECKS)} за партию. Оплата — до начала партии, на странице <Link href="/lila/igra">игры</Link>, после входа
+          через VK ID; чек и условия возврата — как для разбора, подробности в <Link href="/oferta">оферте</Link>.
         </p>
         <p className="muted">{DISCLAIMER}</p>
       </article>

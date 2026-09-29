@@ -158,6 +158,8 @@ mkdir -p /opt/oracle/certs
 
 В `/opt/oracle/.env` дописать строки из раздела «платные разборы» и «воркер» файла `deploy/env.example` (`PAYMENTS=off`, `PAID_REPORTS=off`, `AI_PROVIDER=none`). Ключи ЮKassa и GigaChat добавляются позже, при включении продаж.
 
+Платная сессия Лилы (план 3б): в `/opt/oracle/.env` дописать `PAID_LILA=off`; переключатель работает независимо от `PAID_REPORTS`, а платежи и ключи используются те же. Включать `PAID_LILA=on` только после того, как владелица утвердила оферту и правило возврата и проверено уведомление Роскомнадзора (в платной партии GigaChat получает намерение и записи мыслей).
+
 Сертификат для GigaChat (нужен, когда `AI_PROVIDER=gigachat`): скачать корневой сертификат Минцифры с https://www.gosuslugi.ru/crt и положить в `/opt/oracle/certs/russian_trusted_root_ca.pem`, в `.env` — `NODE_EXTRA_CA_CERTS=/certs/russian_trusted_root_ca.pem`, затем `docker compose up -d worker`.
 
 Лог воркера: `docker logs --since 30m oracle-worker-1` — после старта в нём строка `"worker started"`, после каждой оплаты — `"report generated"` с пометкой `sources` (`ai` или `fallback` по главам).
