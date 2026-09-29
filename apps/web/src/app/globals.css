@@ -402,35 +402,28 @@ body.has-cookie-banner { padding-bottom: calc(var(--cookie-banner-height, 220px)
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.lila-board__arrow {
+.lila-board__arrow path {
   fill: none;
   stroke: var(--lila-arrow);
-  stroke-width: 2.2;
+  stroke-width: 2.4;
   stroke-linecap: round;
-  opacity: 0.64;
+  opacity: 0.85;
 }
+.lila-board__arrow circle { fill: var(--lila-arrow); opacity: 0.85; }
 .lila-board__snake-body {
-  fill: none;
-  stroke: var(--lila-snake);
-  stroke-width: 8;
-  stroke-linecap: round;
-  opacity: 0.45;
-}
-.lila-board__snake--1 .lila-board__snake-body { stroke: var(--lila-snake-2); }
-.lila-board__snake--2 .lila-board__snake-body { stroke: var(--lila-snake-3); }
-.lila-board__snake-head path,
-.lila-board__snake-tail {
-  fill: var(--lila-snake);
-  stroke: none;
-  opacity: 0.58;
-}
-.lila-board__snake-head circle { fill: rgba(36, 27, 20, 0.72); }
-.lila-board__snake-tail {
   fill: none;
   stroke: var(--lila-snake);
   stroke-width: 4;
   stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.78;
 }
+.lila-board__snake--1 .lila-board__snake-body { stroke: var(--lila-snake-2); }
+.lila-board__snake--2 .lila-board__snake-body { stroke: var(--lila-snake-3); }
+.lila-board__snake-head { fill: var(--lila-snake); opacity: 0.92; }
+.lila-board__snake--1 .lila-board__snake-head { fill: var(--lila-snake-2); }
+.lila-board__snake--2 .lila-board__snake-head { fill: var(--lila-snake-3); }
+.lila-board__snake-eye { fill: #fff7e2; }
 .lila-board__cells {
   z-index: 2;
   display: grid;
@@ -440,69 +433,78 @@ body.has-cookie-banner { padding-bottom: calc(var(--cookie-banner-height, 220px)
 .lila-board__cell {
   position: relative;
   display: grid;
-  align-content: center;
-  justify-items: center;
+  place-items: center;
   min-width: 0;
   min-height: 0;
-  padding: clamp(3px, 0.7vw, 8px);
-  border: 1px solid var(--lila-paper-line);
-  background: var(--lila-paper-cell);
+  padding: 0;
+  border: 1px solid rgba(91, 62, 34, 0.1);
+  background: rgba(255, 250, 239, 0.34);
   text-align: center;
   text-shadow: 0 1px 0 rgba(255, 249, 235, 0.72);
 }
-.lila-board__cell:focus-visible {
-  z-index: 5;
-  outline: 2px solid var(--lila-current);
-  outline-offset: -3px;
-}
-.lila-board__cell--trail { background: rgba(255, 246, 224, 0.68); }
+.lila-board__cell--alt { background: rgba(226, 205, 168, 0.26); }
+.lila-board__cell:hover { background: rgba(253, 239, 207, 0.72); }
+.lila-board__cell--trail { background: rgba(255, 246, 224, 0.78); }
 .lila-board__cell--current {
-  background: color-mix(in srgb, var(--lila-current) 30%, var(--lila-paper-cell-strong));
-  box-shadow: inset 0 0 0 2px rgba(86, 58, 117, 0.38);
+  background: color-mix(in srgb, var(--lila-current) 34%, var(--lila-paper-cell-strong));
+  box-shadow: inset 0 0 0 2px rgba(86, 58, 117, 0.42);
 }
 .lila-board__cell--goal {
-  box-shadow: inset 0 0 0 2px var(--lila-goal), inset 0 0 0 6px rgba(203, 166, 118, 0.16);
+  box-shadow: inset 0 0 0 2px var(--lila-goal), inset 0 0 0 6px rgba(203, 166, 118, 0.18);
 }
+/* Начало змеи и стрелы — маленький значок в углу клетки */
+.lila-board__cell--snake::before,
+.lila-board__cell--arrow::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border: 4px solid transparent;
+  pointer-events: none;
+}
+.lila-board__cell--snake::before { border-top: 6px solid var(--lila-snake-2); }
+.lila-board__cell--arrow::before { border-bottom: 6px solid var(--lila-arrow); top: 3px; }
 .lila-board__number {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.9em;
+  padding: 0.22em 0.1em;
+  border-radius: 999px;
+  /* Пергаментная подложка: линии змей и стрел не перечёркивают цифры */
+  background: radial-gradient(closest-side, rgba(251, 245, 231, 0.96) 68%, rgba(251, 245, 231, 0) 100%);
   font-family: var(--font-display);
-  font-size: clamp(16px, 2.1vw, 25px);
+  font-size: clamp(15px, 2.3vw, 27px);
   line-height: 1;
   color: var(--lila-paper-ink);
+  font-variant-numeric: lining-nums;
 }
-.lila-board__name {
-  max-width: 100%;
-  margin-top: 5px;
-  color: var(--lila-paper-soft);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.12;
-  overflow-wrap: anywhere;
-}
-.lila-board__cell--number-only::after {
+/* Название клетки — во всплывающей подсказке; привязка к краю поля, чтобы её не обрезало */
+.lila-board__cell::after {
   content: attr(data-name);
   position: absolute;
-  left: 50%;
-  bottom: calc(100% + 8px);
   z-index: 6;
   width: max-content;
-  max-width: 220px;
-  padding: 8px 10px;
+  max-width: 200px;
+  padding: 8px 12px;
   border: 1px solid rgba(91, 62, 34, 0.28);
   border-radius: 10px;
-  background: rgba(35, 25, 17, 0.94);
+  background: rgba(35, 25, 17, 0.95);
   color: var(--ink);
   font-size: 14px;
-  line-height: 1.2;
+  line-height: 1.25;
   text-shadow: none;
-  transform: translateX(-50%) translateY(4px);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 160ms ease, transform 160ms ease;
 }
-.lila-board__cell--number-only:hover::after,
-.lila-board__cell--number-only:focus-visible::after {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
+.lila-board__cell[data-tip-y="above"]::after { bottom: calc(100% + 6px); }
+.lila-board__cell[data-tip-y="below"]::after { top: calc(100% + 6px); }
+.lila-board__cell[data-tip-x="center"]::after { left: 50%; transform: translateX(-50%); }
+.lila-board__cell[data-tip-x="start"]::after { left: 0; }
+.lila-board__cell[data-tip-x="end"]::after { right: 0; }
+.lila-board__cell:hover::after { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .lila-board__cell { transition: background 160ms ease; }
+  .lila-board__cell::after { transition: opacity 160ms ease; }
 }
 .lila-board__token {
   z-index: 4;
@@ -559,10 +561,6 @@ body.has-cookie-banner { padding-bottom: calc(var(--cookie-banner-height, 220px)
 .lila-board--locator .lila-board__cell {
   padding: 0;
 }
-.lila-board--compact .lila-board__name,
-.lila-board--locator .lila-board__name {
-  display: none;
-}
 .lila-board--compact .lila-board__number,
 .lila-board--locator .lila-board__number {
   font-size: clamp(14px, 4.2vw, 20px);
@@ -605,9 +603,9 @@ body.has-cookie-banner { padding-bottom: calc(var(--cookie-banner-height, 220px)
     margin-inline: -4px;
     width: calc(100% + 8px);
   }
-  .lila-board__arrow { stroke-width: 1.7; }
-  .lila-board__snake-body { stroke-width: 5.4; }
-  .lila-board__cell--number-only::after {
+  .lila-board__arrow path { stroke-width: 1.8; }
+  .lila-board__snake-body { stroke-width: 3; }
+  .lila-board__cell::after {
     display: none;
   }
 }

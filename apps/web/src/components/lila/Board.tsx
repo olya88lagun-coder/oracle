@@ -37,7 +37,6 @@ export function Board({ current, trail = [], variant = "full" }: BoardProps) {
   const safeCurrent = isLilaCellNumber(current) ? current : 1;
   const safeTrail = trail.filter(isLilaCellNumber);
   const currentPoint = centerPoint(safeCurrent);
-  const showNames = variant === "full";
   const isLocator = variant === "locator";
   const classes = ["lila-board", `lila-board--${variant}`].join(" ");
 
@@ -56,32 +55,26 @@ export function Board({ current, trail = [], variant = "full" }: BoardProps) {
             </marker>
           </defs>
           {safeTrail.length > 1 ? <path className="lila-board__trail" d={trailPath(safeTrail)} /> : null}
-          {ARROWS.map((line) => (
-            <path
-              key={`arrow-${line.from}-${line.to}`}
-              className="lila-board__arrow"
-              d={connectionPath(line, 0)}
-              markerEnd={`url(#${arrowMarkerId})`}
-            />
+          {ARROWS.map((line, index) => (
+            <g key={`arrow-${line.from}-${line.to}`} className="lila-board__arrow">
+              <path d={arrowPath(line, index % 2 === 0 ? 16 : -16)} markerEnd={`url(#${arrowMarkerId})`} />
+            </g>
           ))}
           {SNAKES.map((line, index) => (
-            <g key={`snake-${line.from}-${line.to}`} className={`lila-board__snake lila-board__snake--${index % 3}`}>
-              <path className="lila-board__snake-body" d={connectionPath(line, index % 2 === 0 ? 42 : -42)} />
-              <SnakeHead at={centerPoint(line.from)} />
-              <SnakeTail at={centerPoint(line.to)} />
-            </g>
+            <Snake key={`snake-${line.from}-${line.to}`} line={line} tone={index % 3} bend={index % 2 === 0 ? 34 : -34} />
           ))}
         </svg>
 
-        <div className="lila-board__cells" aria-hidden={isLocator ? "true" : undefined}>
+        {/* Названия и переходы читает список ниже: сами клетки для экранных программ скрыты */}
+        <div className="lila-board__cells" aria-hidden="true">
           {CELLS.map((cell) => {
-            const position = cellPosition(cell.number);
             const relation = lineForCell(cell.number);
             const isCurrent = cell.number === safeCurrent;
             const isGoal = cell.number === GOAL_CELL;
             const isTrail = safeTrail.includes(cell.number);
-            const shouldShowName = showNames && cell.name.length <= 18;
-            const label = cellLabel(cell.number);
+            const position = cellPosition(cell.number);
+            const tipX = position.col < 2 ? "start" : position.col > BOARD_COLUMNS - 3 ? "end" : "center";
+            const tipY = position.row < 2 ? "below" : "above";
 
             return (
               <div
@@ -92,18 +85,16 @@ export function Board({ current, trail = [], variant = "full" }: BoardProps) {
                   isGoal ? "lila-board__cell--goal" : "",
                   isTrail ? "lila-board__cell--trail" : "",
                   relation ? `lila-board__cell--${relation.kind}` : "",
-                  shouldShowName ? "" : "lila-board__cell--number-only",
+                  (position.row + position.col) % 2 === 1 ? "lila-board__cell--alt" : "",
                 ]
                   .filter(Boolean)
                   .join(" ")}
                 style={{ gridColumn: position.col + 1, gridRow: position.row + 1 }}
-                tabIndex={shouldShowName ? undefined : 0}
-                aria-label={label}
                 data-name={cell.name}
-                title={cell.name}
+                data-tip-x={tipX}
+                data-tip-y={tipY}
               >
                 <span className="lila-board__number">{cell.number}</span>
-                {shouldShowName ? <span className="lila-board__name">{cell.name}</span> : null}
               </div>
             );
           })}
@@ -142,17 +133,45 @@ export function Board({ current, trail = [], variant = "full" }: BoardProps) {
   );
 }
 
-function SnakeHead({ at }: { at: Point }) {
-  return (
-    <g className="lila-board__snake-head" transform={`translate(${at.x - 12} ${at.y + 16}) rotate(-18)`}>
-      <path d="M 0 7 C 6 -4 23 -3 30 7 C 22 17 7 18 0 7 Z" />
-      <circle cx="21" cy="5.5" r="1.7" />
-    </g>
-  );
+const SNAKE_WAVES = 3.5;
+const SNAKE_AMPLITUDE = 9;
+const SNAKE_STEPS = 32;
+const HEAD_INDEX = 3;
+
+// Змея — волнистая линия от головы (клетка змеи) к хвосту; волна затухает к концам, чтобы линия выглядела как тело, а не как помеха
+function snakePoints(line: LilaConnection, bend: number): Point[] {
+  const from = centerPoint(line.from);
+  const to = centerPoint(line.to);
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const length = Math.hypot(dx, dy) || 1;
+  const normal = { x: -dy / length, y: dx / length };
+  return Array.from({ length: SNAKE_STEPS + 1 }, (_, step) => {
+    const t = step / SNAKE_STEPS;
+    const arc = 4 * t * (1 - t) * bend;
+    const wave = Math.sin(t * Math.PI * 2 * SNAKE_WAVES) * SNAKE_AMPLITUDE * Math.sin(Math.PI * t);
+    const offset = arc + wave;
+    return { x: from.x + dx * t + normal.x * offset, y: from.y + dy * t + normal.y * offset };
+  });
 }
 
-function SnakeTail({ at }: { at: Point }) {
-  return <path className="lila-board__snake-tail" d={`M ${at.x + 18} ${at.y - 14} q 22 -10 34 8`} />;
+function Snake({ line, tone, bend }: { line: LilaConnection; tone: number; bend: number }) {
+  const points = snakePoints(line, bend);
+  // Голова стоит рядом с клеткой змеи, а не под номером, и смотрит на неё
+  const head = points[HEAD_INDEX]!;
+  const toward = points[HEAD_INDEX - 2]!;
+  const angle = (Math.atan2(toward.y - head.y, toward.x - head.x) * 180) / Math.PI;
+  const d = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(" ");
+  return (
+    <g className={`lila-board__snake lila-board__snake--${tone}`}>
+      <path className="lila-board__snake-body" d={d} />
+      <g transform={`translate(${head.x.toFixed(1)} ${head.y.toFixed(1)}) rotate(${angle.toFixed(1)})`}>
+        <ellipse className="lila-board__snake-head" cx="3" cy="0" rx="12" ry="8.5" />
+        <circle className="lila-board__snake-eye" cx="8" cy="-3.6" r="1.7" />
+        <circle className="lila-board__snake-eye" cx="8" cy="3.6" r="1.7" />
+      </g>
+    </g>
+  );
 }
 
 function centerPoint(number: LilaCellNumber): Point {
@@ -164,13 +183,22 @@ function centerPoint(number: LilaCellNumber): Point {
   };
 }
 
-function connectionPath(line: LilaConnection, bend: number) {
+const ARROW_START = 0.11;
+const ARROW_END = 0.84;
+const ARROW_STEPS = 24;
+
+// Стрела идёт по лёгкой дуге и не доходит до центров клеток: начало и наконечник остаются видны рядом с номерами, а не под ними
+function arrowPath(line: LilaConnection, bend: number) {
   const from = centerPoint(line.from);
   const to = centerPoint(line.to);
-  const midX = (from.x + to.x) / 2 + bend;
-  const midY = (from.y + to.y) / 2 - Math.abs(bend) * 0.35;
-
-  return `M ${from.x} ${from.y} Q ${midX} ${midY} ${to.x} ${to.y}`;
+  const control = { x: (from.x + to.x) / 2 + bend, y: (from.y + to.y) / 2 - Math.abs(bend) * 0.35 };
+  return Array.from({ length: ARROW_STEPS + 1 }, (_, step) => {
+    const t = ARROW_START + ((ARROW_END - ARROW_START) * step) / ARROW_STEPS;
+    const u = 1 - t;
+    const x = u * u * from.x + 2 * u * t * control.x + t * t * to.x;
+    const y = u * u * from.y + 2 * u * t * control.y + t * t * to.y;
+    return `${step === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(" ");
 }
 
 function trailPath(trail: LilaCellNumber[]) {
