@@ -1,7 +1,9 @@
 import type { ChapterInput } from "./input";
 import type { Prompt } from "./writer";
 
-export const PROSE_LIMITS = { minParagraphs: 3, maxParagraphs: 5, minChars: 1200, maxChars: 2500 } as const;
+// Границы проверки ответа. Модель недобирает объём на 10–20 %, поэтому просим больше, чем требуем: главы по 1000–1200 знаков её отклоняли
+export const PROSE_LIMITS = { minParagraphs: 3, maxParagraphs: 5, minChars: 900, maxChars: 2500 } as const;
+const PROSE_ASKED_CHARS = { min: 1400, max: 2200 } as const;
 export const SCENARIO_FIELD_MAX_CHARS = 700;
 
 const RULES = [
@@ -17,7 +19,7 @@ const NAMING_RULE = "Называй арканы по номеру и назва
 // Главы модель пишет обычным текстом: в JSON её собственные кавычки ломали разбор ответа
 const PROSE_ANSWER = [
   `${NAMING_RULE} Ответ — только текст главы: без заголовков, списков, Markdown, JSON и пояснений.`,
-  `Формат: ${PROSE_LIMITS.minParagraphs}–${PROSE_LIMITS.maxParagraphs} абзацев, между абзацами пустая строка, вместе ${PROSE_LIMITS.minChars}–${PROSE_LIMITS.maxChars} знаков. Первый абзац — что показывает эта часть матрицы именно у этого человека; дальше — как арканы проявляются вместе, где ресурс и где перекос; последний — что с этим можно делать.`,
+  `Формат: ${PROSE_LIMITS.minParagraphs}–${PROSE_LIMITS.maxParagraphs} абзацев, между абзацами пустая строка, вместе ${PROSE_ASKED_CHARS.min}–${PROSE_ASKED_CHARS.max} знаков. Первый абзац — что показывает эта часть матрицы именно у этого человека; дальше — как арканы проявляются вместе, где ресурс и где перекос; последний — что с этим можно делать.`,
 ].join("\n\n");
 
 const SCENARIO_ANSWER = [
