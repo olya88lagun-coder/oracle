@@ -50,6 +50,14 @@ test("a signed-in visitor buys the report, waits and reads it; the portrait list
   await noHorizontalScroll(page);
   const reportUrl = page.url();
 
+  const pdfUrl = `/api/reports/${new URL(reportUrl).pathname.split("/").pop()}/pdf`;
+  await expect(page.getByRole("link", { name: "Скачать PDF" })).toHaveAttribute("href", pdfUrl);
+  const pdf = await page.request.get(pdfUrl);
+  expect(pdf.status()).toBe(200);
+  expect(pdf.headers()["content-type"]).toBe("application/pdf");
+  expect(pdf.headers()["content-disposition"]).toContain("attachment");
+  expect((await pdf.body()).subarray(0, 5).toString()).toBe("%PDF-");
+
   await page.goto("/matrica-sudby");
   await expect(offer(page).getByRole("link", { name: "Открыть разбор" })).toHaveAttribute("href", new URL(reportUrl).pathname);
   await page.goto("/portret");
@@ -58,7 +66,11 @@ test("a signed-in visitor buys the report, waits and reads it; the portrait list
   const { context: strangerContext, page: stranger } = await signIn(browser, uniqueName("Чужой"));
   const foreign = await stranger.goto(reportUrl);
   expect(foreign?.status()).toBe(404);
+  expect((await stranger.request.get(pdfUrl)).status()).toBe(404);
   await strangerContext.close();
+  const guest = await browser.newContext();
+  expect((await guest.request.get(new URL(pdfUrl, reportUrl).toString())).status()).toBe(401);
+  await guest.close();
 
   await context.close();
 });

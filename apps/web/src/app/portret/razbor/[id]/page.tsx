@@ -38,7 +38,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   return (
     <main className="page page--wide">
       <ReportGoals purchaseId={view.id} paid opened />
-      <ReportView matrix={matrix} birthDate={view.birthDate} chapters={report.chapters} />
+      <ReportView matrix={matrix} birthDate={view.birthDate} chapters={report.chapters} purchaseId={view.id} />
     </main>
   );
 }

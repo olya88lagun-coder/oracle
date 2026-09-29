@@ -6,8 +6,9 @@ import Link from "next/link";
 import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 import { DISCLAIMER } from "@/lib/legal";
 import { chapterAnchor, chapterArcanaLabel, formatIsoDate, orderedChapters } from "@/lib/report-offer";
+import { ReportPdfLink } from "./ReportPdfLink";
 
-type Props = { matrix: Matrix; birthDate: string; chapters: readonly StoredChapter[] };
+type Props = { matrix: Matrix; birthDate: string; chapters: readonly StoredChapter[]; purchaseId: string };
 
 const HIGHLIGHTED = new Set(["turningPoint", "experiment"]);
 
@@ -25,7 +26,7 @@ function Scenario({ chapter }: { chapter: StoredChapter }) {
   );
 }
 
-export function ReportView({ matrix, birthDate, chapters }: Props) {
+export function ReportView({ matrix, birthDate, chapters, purchaseId }: Props) {
   const center = arcanumByNumber(matrix.E);
   const toc = reportChapters(matrix);
   const arcanaOf = new Map(toc.map((chapter) => [chapter.id, chapter.arcana]));
@@ -37,6 +38,9 @@ export function ReportView({ matrix, birthDate, chapters }: Props) {
           <p className="eyebrow">Разбор матрицы судьбы · по дате {formatIsoDate(birthDate)}</p>
           <h1 className="display report-cover__title">Ваш центр — {center.name}</h1>
           <p className="lead">Семь глав о том, как устроена ваша матрица. Это материал для размышления, а не предсказание.</p>
+          <p>
+            <ReportPdfLink purchaseId={purchaseId} />
+          </p>
           <nav className="card report-contents" aria-labelledby="report-contents">
             <h2 id="report-contents">Оглавление</h2>
             <ol className="report-toc">
