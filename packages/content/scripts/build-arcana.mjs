@@ -17,6 +17,10 @@ export function collectPositions(file) {
   return { positions: readText(file) };
 }
 
+export function collectLila(file) {
+  return { cells: readText(file) };
+}
+
 function write(output, data) {
   mkdirSync(dirname(output), { recursive: true });
   writeFileSync(output, `${JSON.stringify(data, null, 2)}\n`, "utf8");
@@ -27,4 +31,5 @@ if (import.meta.main) {
   const root = join(dirname(fileURLToPath(import.meta.url)), "..");
   write(join(root, "src", "generated", "arcana.json"), collectArcana(join(root, "arcana")));
   write(join(root, "src", "generated", "positions.json"), collectPositions(join(root, "positions.md")));
+  write(join(root, "src", "generated", "lila.json"), collectLila(join(root, "lila-cells.md")));
 }

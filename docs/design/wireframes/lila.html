@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Лила — каркас</title>
+<style>
+  :root {
+    --paper: #f4f3f1; --ink: #222; --soft: #666; --faint: #999; --box: #e2e0dc; --box-2: #d3d0cb; --line: #bbb;
+    --hi: #7a6a52; --hi-bg: #efe7da; --note: #fff8d6; --note-line: #e6d27a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.5 system-ui, sans-serif; }
+  header.doc { padding: 32px 40px 8px; max-width: 1600px; margin: 0 auto; }
+  header.doc h1 { margin: 0 0 6px; font-size: 26px; }
+  header.doc p { margin: 4px 0; color: var(--soft); max-width: 900px; }
+  section.screen { max-width: 1700px; margin: 0 auto; padding: 28px 40px 12px; }
+  section.screen > h2 { margin: 0 0 4px; font-size: 20px; }
+  section.screen > p.lead { margin: 0 0 16px; color: var(--soft); max-width: 900px; }
+  .pair { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
+  .frame { background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .frame > .cap { padding: 6px 12px; font-size: 12px; color: var(--faint); border-bottom: 1px solid var(--box); background: #fafafa; }
+  .desk { width: 1040px; }
+  .mob { width: 375px; }
+  .in { padding: 20px; }
+  .desk .in { padding: 28px 40px; }
+  .blk { background: var(--box); border-radius: 8px; padding: 14px; color: var(--soft); }
+  .stack > * + * { margin-top: 14px; }
+  .t-eyebrow { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--faint); }
+  .t-h1 { font: 400 40px/1.1 Georgia, serif; margin: 6px 0; }
+  .mob .t-h1 { font-size: 30px; }
+  .t-h2 { font: 400 26px/1.2 Georgia, serif; margin: 0; }
+  .t-h3 { font: 400 20px/1.2 Georgia, serif; margin: 0; }
+  .t-p { color: var(--soft); margin: 4px 0; }
+  .input { min-height: 48px; border: 1px solid var(--line); border-radius: 12px; background: #fff; display: flex; align-items: center; padding: 8px 14px; color: var(--faint); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px; border-radius: 999px; background: #333; color: #fff; font-weight: 600; text-align: center; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn.lav { background: #9b8fc0; color: #fff; }
+  .btn.sm { min-height: 44px; padding: 0 16px; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .split { display: grid; grid-template-columns: 420px 1fr; gap: 24px; align-items: start; }
+  .mob .grid2 { grid-template-columns: 1fr; }
+  .card { border: 1px solid var(--box-2); border-radius: 14px; padding: 18px; background: #fff; }
+  .card.hi { border-color: var(--hi); background: var(--hi-bg); }
+  .tag { display: inline-block; padding: 3px 10px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; color: var(--soft); }
+  .chip { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; }
+  .img { background: repeating-linear-gradient(45deg, #ddd 0 10px, #e6e6e6 10px 20px); border-radius: 10px; display: grid; place-items: center; color: var(--faint); font-size: 12px; text-align: center; padding: 8px; }
+  .board { background: #ece4d2; border: 1px solid var(--hi); border-radius: 10px; display: grid; place-items: center; color: var(--hi); text-align: center; padding: 12px; }
+  .note { background: var(--note); border: 1px solid var(--note-line); border-radius: 8px; padding: 8px 12px; font-size: 13px; color: #5a4b00; }
+  .notes { width: 360px; display: grid; gap: 10px; }
+  .n { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #e0b400; color: #fff; font-size: 12px; font-weight: 700; margin-right: 6px; }
+  .dim { opacity: .55; }
+  .tabs { display: flex; border-bottom: 1px solid var(--box-2); }
+  .tabs span { flex: 1; text-align: center; padding: 12px 0; min-height: 44px; color: var(--soft); }
+  .tabs span.on { color: var(--ink); border-bottom: 2px solid var(--hi); font-weight: 600; }
+  .dock { position: sticky; bottom: 0; padding: 10px 20px; background: #fff; border-top: 1px solid var(--box-2); }
+  .states { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .err { color: #b3261e; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header class="doc">
+  <h1>Лила — каркас экранов (план 3)</h1>
+  <p>Каркас показывает <b>что где стоит и какие бывают состояния</b>, а не финальный визуал. Цвета, шрифты, картинки и атмосферу рисует Codex в системе сайта (<code>docs/design/visual-direction.md</code>).</p>
+  <p>Спецификация: <code>docs/superpowers/specs/2026-09-29-lila-design.md</code>. Жёлтые заметки с номерами — требования к поведению. Тексты кнопок и полей — дословно (по ним пишутся тесты), остальные — рабочие.</p>
+  <p><b>Поле уже нарисовано</b> и лежит в master: компонент <code>Board</code> (<code>apps/web/src/components/lila/</code>) в трёх вариантах — <i>full</i> (компьютер, номера и короткие названия), <i>compact</i> (телефон, только номера), <i>locator</i> (мини-поле на странице клетки). Посмотреть: <code>/dev/lila-board</code>. На каркасе вместо поля — коричневая заглушка; заново поле не рисуем.</p>
+  <p>Пример партии: намерение «Почему мне трудно принять решение о работе?», 14-й ход, фишка на клетке 8 «Алчность» (пришла по змее с 12 «Зависть»).</p>
+</header>
+
+<!-- 1 -->
+<section class="screen">
+  <h2>1. <code>/lila</code> — вход и справочник</h2>
+  <p class="lead">Страница для поиска и рекламы. Один <code>&lt;h1&gt;</code>. Гость может начать игру сразу, без входа.</p>
+  <div class="pair">
+    <div class="frame desk"><div class="cap">Компьютер · 1440 px</div><div class="in stack">
+      <div class="grid2">
+        <div class="stack">
+          <div class="t-eyebrow">Практика</div>
+          <div class="t-h1">Лила — игра с вашим намерением</div>
+          <p class="t-p">Сформулируйте намерение, бросайте кубик и проходите путь по 72 клеткам: у каждой — тема, вопрос и, при желании, ваша запись.</p>
+          <div class="row"><span class="btn lav">Играть</span><span class="btn ghost">Как это устроено</span></div>
+          <p class="t-p">Без регистрации · партия сохраняется в браузере</p>
+        </div>
+        <div class="img" style="min-height:280px">иллюстрация практики (<code>practices/lila.webp</code>) или мини-поле <i>locator</i></div>
+      </div>
+      <div class="card"><div class="t-h3">Как играть</div><p class="t-p">Четыре шага в ряд: намерение → кубик → клетка и вопрос → запись мысли. Ниже — змеи и стрелы, цель 68.</p></div>
+      <div class="card"><div class="t-h3">Змеи и стрелы</div><p class="t-p">Что это значит на поле, без мистики: «возвращение к теме» и «переход к другому состоянию». Мини-поле <i>full</i> со схемой.</p></div>
+      <div class="card hi"><div class="t-h3">С проводником — 490 ₽</div><p class="t-p">Короткий абзац на каждом ходу и итоговый вывод. Один спокойный блок, без таймеров.</p></div>
+      <div class="card"><div class="t-h3">72 клетки</div><p class="t-p">Сетка ссылок 9×8: номер и название → <code>/lila/kletki/…</code>.</p></div>
+      <div class="blk">Дисклеймер (<code>DISCLAIMER</code>), подвал.</div>
+    </div></div>
+    <div class="frame mob"><div class="cap">Телефон · 375 px</div><div class="in stack">
+      <div class="t-h1">Лила — игра с вашим намерением</div>
+      <p class="t-p">Сформулируйте намерение…</p>
+      <span class="btn lav" style="width:100%">Играть</span>
+      <div class="card"><div class="t-h3">Как играть</div><p class="t-p">Вертикально четыре шага.</p></div>
+      <div class="card hi"><div class="t-h3">С проводником — 490 ₽</div></div>
+      <div class="card"><div class="t-h3">72 клетки</div><p class="t-p">Список из 72 строк «номер · название» или сетка по 3 в ряд; нажатая зона от 44 px.</p></div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><span class="n">1</span>Кнопка «Играть» ведёт на <code>/lila/igra</code>. Гостю вход не нужен.</div>
+      <div class="note"><span class="n">2</span>Блок «С проводником» — единственный платный на странице, не ярче основного.</div>
+      <div class="note"><span class="n">3</span>Если у вошедшего есть активная партия: вместо «Играть» — «Продолжить партию».</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="screen">
+  <h2>2. <code>/lila/igra</code> — выбор намерения и режима</h2>
+  <p class="lead">Первый шаг любой партии. Слева намерение, справа выбор режима. Гость видит «Войти и начать с проводником».</p>
+  <div class="pair">
+    <div class="frame desk"><div class="cap">Компьютер · вошедший, <code>PAID_LILA=on</code></div><div class="in stack">
+      <div class="t-h2">Какой вопрос вы хотите исследовать?</div>
+      <div class="row"><span class="chip">Отношения</span><span class="chip">Работа</span><span class="chip">Выбор</span><span class="chip">Деньги</span><span class="chip">Перемены</span><span class="chip">О себе</span></div>
+      <div class="input" style="min-height:96px;align-items:flex-start">Или напишите своё намерение… <span style="margin-left:auto">0 / 300</span></div>
+      <p class="t-p">Лучше одно личное и конкретное. Например: «Почему мне трудно принять решение о работе?»</p>
+      <div class="grid2">
+        <div class="card stack"><div class="t-h3">Играть без проводника</div><p class="t-p">Тексты клеток, вопросы, история. Записи остаются в вашем браузере.</p><span class="btn ghost">Играть без проводника</span></div>
+        <div class="card hi stack"><div class="t-h3">С проводником — 490 ₽</div>
+          <div class="blk"><div class="t-eyebrow">Так выглядит абзац проводника</div><p class="t-p" style="font-style:italic">«На клетке «Алчность» стоит заметить, как сравнение с другими может связываться с вашим вопросом о работе…» (статичный пример)</p></div>
+          <p class="t-p" style="font-size:13px">Намерение и записи, которые вы оставите в этой партии, передаются сервису подготовки текста (GigaChat, ПАО Сбербанк).</p>
+          <div><div class="t-p">E-mail для чека</div><div class="input">name@example.ru</div></div>
+          <span class="btn lav">Начать с проводником — 490 ₽</span></div>
+      </div>
+    </div></div>
+    <div class="frame mob"><div class="cap">Телефон · 375 px · гость</div><div class="in stack">
+      <div class="t-h3">Какой вопрос вы хотите исследовать?</div>
+      <div class="row"><span class="chip">Отношения</span><span class="chip">Работа</span><span class="chip">Выбор</span><span class="chip">Деньги</span><span class="chip">Перемены</span><span class="chip">О себе</span></div>
+      <div class="input" style="min-height:96px;align-items:flex-start">Своё намерение… 0 / 300</div>
+      <span class="btn lav" style="width:100%">Играть</span>
+      <div class="card hi"><div class="t-h3">С проводником — 490 ₽</div><p class="t-p">Короткий пример абзаца.</p><span class="btn ghost" style="width:100%">Войти и начать с проводником</span></div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><span class="n">1</span>Чип темы подставляет готовую формулировку в поле; поле можно править. Пусто — «Играть» неактивна.</div>
+      <div class="note"><span class="n">2</span>У гостя вместо оплаты — «Войти и начать с проводником» (→ <code>/login?next=/lila/igra</code>), поля e-mail нет. При <code>PAID_LILA=off</code> платного блока нет вовсе.</div>
+      <div class="note"><span class="n">3</span>Есть активная партия: экран предлагает «Продолжить партию» и «Завершить партию» — новую начать нельзя, пока не закрыта старая.</div>
+      <div class="note"><span class="n">4</span>Ошибка оплаты — <code>role="alert"</code>, кнопка остаётся. После нажатия — уход на ЮKassa, возврат на экран «Ждём подтверждения оплаты» (тот же паттерн, что в <code>matrix-paid-waiting</code>), затем партия.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="screen">
+  <h2>3. <code>/lila/igra</code> — партия, экран хода</h2>
+  <p class="lead">Главный экран. Компьютер: слева панель хода, справа поле <i>full</i>. Телефон: вкладки «Ход · Поле · История», кнопка броска закреплена внизу.</p>
+  <div class="pair">
+    <div class="frame desk"><div class="cap">Компьютер · платная партия, ход 14</div><div class="in">
+      <div class="row" style="justify-content:space-between;margin-bottom:14px"><span class="tag">Намерение: Почему мне трудно принять решение о работе?</span><span>Ходов 14 · Открыто клеток: 11 из 72</span></div>
+      <div class="split">
+        <div class="stack">
+          <div class="card stack">
+            <div class="t-eyebrow">Клетка 12 · змея → 8</div>
+            <div class="t-h3">Зависть</div>
+            <p class="t-p">О чём это: короткий текст клетки на 2–3 предложения.</p>
+            <div class="blk" style="padding:10px">Змея: вы возвращаетесь к теме…</div>
+            <div class="row"><div class="img" style="width:96px;height:96px">клетка 8</div><div><div class="t-eyebrow">Клетка 8</div><div class="t-h3">Алчность</div></div></div>
+            <p class="t-p"><b>Вопрос:</b> второй визит — «вы здесь снова…»</p>
+            <div class="input" style="min-height:72px;align-items:flex-start">Записать мысль (по желанию) <span style="margin-left:auto">0 / 500</span></div>
+            <div class="blk"><div class="t-eyebrow">Проводник</div>Проводник пишет… → абзац 250–600 знаков</div>
+          </div>
+          <div class="row"><span class="btn lav" style="flex:1">Бросить кубик</span><span class="btn ghost">Играю со своим кубиком</span></div>
+        </div>
+        <div class="board" style="min-height:520px">Поле 9×8 — компонент <code>Board</code>, вариант <i>full</i><br>фишка на 8, след пути, полная схема — кнопкой</div>
+      </div>
+    </div></div>
+    <div class="frame mob"><div class="cap">Телефон · 375 px · вкладка «Ход»</div>
+      <div class="tabs"><span class="on">Ход</span><span>Поле</span><span>История</span></div>
+      <div class="in stack">
+        <span class="tag">Намерение ▾</span>
+        <div class="img" style="height:150px">иллюстрация клетки 8</div>
+        <div class="t-eyebrow">Клетка 12 · змея → 8</div><div class="t-h3">Алчность</div>
+        <p class="t-p">О чём это…</p><p class="t-p"><b>Вопрос:</b> …</p>
+        <div class="input" style="min-height:72px;align-items:flex-start">Записать мысль</div>
+        <div class="blk">Проводник пишет…</div>
+      </div>
+      <div class="dock"><span class="btn lav" style="width:100%">Бросить кубик</span><div class="t-p" style="text-align:center;margin-top:6px">Играю со своим кубиком</div></div>
+    </div>
+    <div class="notes">
+      <div class="note"><span class="n">1</span>Панель хода всегда показывает: намерение (свёрнуто в тег на телефоне), счётчики «Ходов» и «Открыто клеток», текст клетки, вопрос, поле записи.</div>
+      <div class="note"><span class="n">2</span>Змея или стрела: сначала клетка падения (12) и строка перехода, затем итоговая клетка (8) с иллюстрацией и вопросом. Фишка едет по клеткам и скользит по змее/стреле; <code>prefers-reduced-motion</code> — без анимации, сразу на месте.</div>
+      <div class="note"><span class="n">3</span>«Играю со своим кубиком» открывает выбор 1–6 (шесть кнопок от 44 px) вместо броска.</div>
+      <div class="note"><span class="n">4</span>Абзац проводника — только в платной партии, под вопросом, «Проводник пишет…» → текст. Нет ответа за ~30 с — блок исчезает без ошибки.</div>
+      <div class="note"><span class="n">5</span>Статус хода («Выпало 4, клетка 8») — <code>role="status"</code>. Вкладка «Поле» на телефоне — вариант <i>compact</i>.</div>
+      <div class="note"><span class="n">6</span>«Завершить партию» — вторичная кнопка в шапке, активна с 10 хода (после 68 — главная).</div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="screen">
+  <h2>4. Состояния хода</h2>
+  <p class="lead">Показать на компьютере и на телефоне, можно одной картинкой на ширину (карточка хода + подпись).</p>
+  <div class="states">
+    <div class="card"><div class="t-eyebrow">a · до первой шестёрки</div><div class="t-h3">Пауза перед началом</div><p class="t-p">«Сделайте вдох и ещё раз вернитесь к намерению. Начать можно, только когда выпадет шесть.» Кнопка «Бросить кубик».</p></div>
+    <div class="card"><div class="t-eyebrow">b · вход в игру</div><div class="t-h3">Клетка 1 · Рождение</div><p class="t-p">Шестёрка. Обычная карточка клетки.</p></div>
+    <div class="card"><div class="t-eyebrow">c · пустой ход</div><div class="t-h3">Стоим на месте</div><p class="t-p">«Выпало 5, а до цели 3. Что вы замечаете, пока ждёте?» Один вопрос, без ошибки; поле записи доступно.</p></div>
+    <div class="card"><div class="t-eyebrow">d · стрела</div><div class="t-h3">Клетка 10 → 23</div><p class="t-p">Строка перехода стрелы, потом клетка 23.</p></div>
+    <div class="card"><div class="t-eyebrow">e · повторный визит</div><div class="t-h3">Метка «Вы здесь уже были»</div><p class="t-p">Второй/третий вопрос клетки; ниже «Ваша прошлая запись» (если была).</p></div>
+    <div class="card"><div class="t-eyebrow">f · цель 68</div><div class="t-h3">Космическое Сознание</div><p class="t-p">Кнопка «Завершить партию» становится главной; кубик скрыт.</p></div>
+    <div class="card"><div class="t-eyebrow">g · ошибка</div><div class="t-h3 err">Не удалось бросить</div><p class="t-p"><code>role="alert"</code>, кнопка «Попробовать снова».</p></div>
+    <div class="card"><div class="t-eyebrow">h · лимит 120 ходов</div><div class="t-h3">Партия достигла лимита</div><p class="t-p">Бросок недоступен, остаётся «Завершить партию».</p></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="screen">
+  <h2>5. Завершение и итог — <code>/portret/lila/[id]</code></h2>
+  <p class="lead">Итог платной партии и история любой сохранённой партии. <code>noindex</code>, только владелец.</p>
+  <div class="pair">
+    <div class="frame desk"><div class="cap">Компьютер</div><div class="in stack">
+      <div class="t-eyebrow">Партия Лилы</div>
+      <div class="t-h1">Почему мне трудно принять решение о работе?</div>
+      <p class="t-p">14 ходов · 3 змеи · 1 стрела · пройдено 11 клеток · <span class="tag">с проводником</span></p>
+      <div class="board" style="min-height:220px">Поле <i>full</i>: пройденный путь линией</div>
+      <div class="card stack"><div class="t-h3">Итоговый вывод</div>
+        <p class="t-p">Четыре главы обычным текстом: «Намерение и путь», «Что повторялось», «Что вы замечали», «Вывод и шаг на неделю». Шрифт 16+ px.</p>
+        <p class="t-p">Состояния: «Готовим итог» (<code>role="status"</code>) → готов; запасной итог выглядит так же.</p><span class="btn ghost sm">Скачать PDF</span></div>
+      <div class="card stack"><div class="t-h3">Ходы</div>
+        <p class="t-p">Список: № хода · выпало · клетка · переход · запись · абзац проводника (свёрнут).</p></div>
+      <div class="blk">Дисклеймер.</div>
+    </div></div>
+    <div class="frame mob"><div class="cap">Телефон</div><div class="in stack">
+      <div class="t-h2">Почему мне трудно принять решение…</div>
+      <p class="t-p">14 ходов · 3 змеи · 1 стрела</p>
+      <div class="board" style="min-height:150px">Поле <i>compact</i></div>
+      <div class="card"><div class="t-h3">Итоговый вывод</div><p class="t-p">Главы; «Скачать PDF».</p></div>
+      <div class="card"><div class="t-h3">Ходы</div><p class="t-p">Список ходов.</p></div>
+    </div></div>
+    <div class="notes">
+      <div class="note"><span class="n">1</span>Бесплатная партия: вместо итогового вывода — «Партия завершена» и список ходов с записями (без ИИ).</div>
+      <div class="note"><span class="n">2</span>Момент завершения (экран после кнопки «Завершить партию»): подтверждение «После завершения ходить нельзя», затем переход сюда.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="screen">
+  <h2>6. <code>/lila/kletki/&lt;NN-slug&gt;</code> — справочная страница клетки (SEO)</h2>
+  <p class="lead">72 страницы по образцу страниц арканов. Один <code>&lt;h1&gt;</code>, индексируются.</p>
+  <div class="pair">
+    <div class="frame desk"><div class="cap">Компьютер</div><div class="in"><div class="grid2">
+      <div class="stack">
+        <div class="t-eyebrow">Клетка 12 · змея → 8</div>
+        <div class="t-h1">Зависть</div>
+        <p class="t-p">О чём это: 2–3 предложения.</p>
+        <div class="card"><div class="t-h3">Вопросы для размышления</div><p class="t-p">Три вопроса: первый визит, второй, третий и дальше (метки визитов).</p></div>
+        <div class="card"><div class="t-h3">Змея: 12 → 8</div><p class="t-p">Строка перехода и ссылки на клетки 12 и 8.</p></div>
+        <div class="row"><span class="btn lav">Играть</span><span class="btn ghost">← 11 · Развлечения</span><span class="btn ghost">13 · Ничтожность →</span></div>
+      </div>
+      <div class="stack"><div class="img" style="min-height:320px">иллюстрация клетки 960 px</div><div class="board" style="min-height:160px">Поле <i>locator</i>: где на поле клетка 12</div></div>
+    </div></div></div>
+    <div class="frame mob"><div class="cap">Телефон</div><div class="in stack">
+      <div class="img" style="height:190px">иллюстрация клетки</div>
+      <div class="t-eyebrow">Клетка 12 · змея → 8</div><div class="t-h1">Зависть</div>
+      <p class="t-p">О чём это…</p>
+      <div class="card"><div class="t-h3">Вопросы для размышления</div><p class="t-p">Три вопроса; на телефоне 2–3 в <code>&lt;details&gt;</code>.</p></div>
+      <div class="board" style="min-height:120px"><i>locator</i></div>
+      <span class="btn lav" style="width:100%">Играть</span>
+    </div></div>
+    <div class="notes">
+      <div class="note"><span class="n">1</span>Если картинки клетки ещё нет — запасная карточка (номер, значок змеи/стрелы, оттенок ряда поля); её тоже нужно нарисовать.</div>
+      <div class="note"><span class="n">2</span>Клетки без змеи и стрелы: блок перехода не показывается.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="screen">
+  <h2>7. «Мой портрет» и главная</h2>
+  <div class="pair">
+    <div class="frame" style="width:520px"><div class="cap">«Мой портрет» · карточка «Мои партии»</div><div class="in stack">
+      <div class="card stack"><div class="t-h3">Мои партии</div>
+        <div class="row" style="justify-content:space-between"><span>Идёт · «Почему мне трудно…» · ход 14 <span class="tag">с проводником</span></span><span class="btn ghost sm">Продолжить партию</span></div>
+        <div class="row" style="justify-content:space-between"><span>Завершена · «Что мне важно…» · 42 хода</span><span class="btn ghost sm">Открыть партию</span></div>
+      </div><p class="t-p">Без партий карточки нет. Стоит после «Разборов».</p></div></div>
+    <div class="frame" style="width:520px"><div class="cap">Главная · карточка практики</div><div class="in stack">
+      <div class="card"><div class="t-h3">Лила</div><p class="t-p">Игра с вашим намерением</p><span class="tag">Открыто</span></div>
+      <p class="t-p">Метка «Скоро» меняется на «Открыто». Карточка на главной и в списке практик; текст в <code>practices.ts</code>.</p></div></div>
+    <div class="frame" style="width:520px"><div class="cap">Гостевая партия → портрет</div><div class="in stack">
+      <div class="card hi"><div class="t-h3">Сохранить партию в портрет</div><p class="t-p">После входа: «Сохранить партию». Если активная уже есть — выбор, какую оставить.</p><span class="btn lav">Сохранить партию</span></div></div></div>
+  </div>
+</section>
+
+<section class="screen" style="padding-bottom:60px">
+  <h2>Общие требования</h2>
+  <div class="note" style="max-width:1000px">Текст не меньше 14 px (тексты клеток, вопросы и итог — 16 px) · зоны нажатия от 44 px · контраст WCAG AA · видимый фокус · <code>prefers-reduced-motion</code> (фишка, змеи, кубик) · без горизонтальной прокрутки на 375 px · <b>тексты дословно:</b> «Играть», «Бросить кубик», «Играю со своим кубиком», «Сохранить партию», «Продолжить партию», «Завершить партию», «Начать с проводником — 490 ₽», «Играть без проводника», «Войти и начать с проводником», «Скачать PDF», «Открыто клеток», «E-mail для чека», «Попробовать снова», «Оферта». Никаких таймеров, «осталось N», всплывающих окон с оплатой.</div>
+</section>
+
+</body>
+</html>

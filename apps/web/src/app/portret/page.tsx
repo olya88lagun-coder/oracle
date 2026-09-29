@@ -1,11 +1,12 @@
 import { calculateMatrix, formatBirthDateRu, toIsoDate } from "@oracle/core";
-import { listPaidPurchases } from "@oracle/db";
+import { listLilaGames, listPaidPurchases } from "@oracle/db";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { LogoutButton } from "@/components/LogoutButton";
 import { Scene } from "@/components/Scene";
 import { PRACTICES } from "@/lib/practices";
+import { LILA_GAME_PATH, lilaHistoryPath } from "@/lib/lila-paths";
 import { keyArcana } from "@/lib/matrix-view";
 import { formatIsoDate, reportPath } from "@/lib/report-offer";
 import { getDb } from "@/server/db";
@@ -52,6 +53,7 @@ export default async function PortraitPage() {
   const { birthDate } = await loadPortrait({ db: getDb(), now: () => new Date() }, user.id);
   const keys = birthDate ? keyArcana(calculateMatrix(birthDate)) : null;
   const reports = await listPaidPurchases(getDb(), user.id);
+  const games = await listLilaGames(getDb(), user.id);
   return (
     <Scene>
       <div className="scene__intro stack">
@@ -85,7 +87,7 @@ export default async function PortraitPage() {
               </div>
               <div className="portrait-practice__body">
                 <h3>{practice.title}</h3>
-                {practice.href && keys ? (
+                {practice.slug === "matrix" && keys ? (
                   <ul className="portrait-keys" aria-label="Ключевые арканы">
                     {keys.map((key) => (
                       <li key={key.point}>
@@ -101,7 +103,7 @@ export default async function PortraitPage() {
                 )}
                 {practice.href ? (
                   <Link className="button button--ghost portrait-practice__cta" href={practice.href}>
-                    {keys ? "Открыть расчёт" : "Рассчитать матрицу"}
+                    {practice.slug !== "matrix" ? "Играть" : keys ? "Открыть расчёт" : "Рассчитать матрицу"}
                   </Link>
                 ) : (
                   <span className="tag">Скоро</span>
@@ -124,6 +126,24 @@ export default async function PortraitPage() {
                 </span>
                 <Link className="button button--ghost" href={reportPath(report.id)}>
                   Открыть разбор
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {games.length > 0 && (
+        <section className="card stack portrait-reports" aria-labelledby="games">
+          <h2 id="games">Мои партии</h2>
+          <ul className="portrait-reports__list">
+            {games.map((game) => (
+              <li key={game.id}>
+                <span>
+                  {game.status === "active" ? "Идёт" : "Завершена"} · «{game.intention}» · ходов {game.movesCount}
+                </span>
+                <Link className="button button--ghost" href={game.status === "active" ? LILA_GAME_PATH : lilaHistoryPath(game.id)}>
+                  {game.status === "active" ? "Продолжить партию" : "Открыть партию"}
                 </Link>
               </li>
             ))}

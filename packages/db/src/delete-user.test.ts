@@ -5,13 +5,18 @@ import {
   authIdentities,
   birthProfiles,
   createPurchase,
+  addLilaMove,
+  createLilaGame,
   createTestDb,
   deleteUserData,
+  getLilaGame,
   getPurchase,
   getReport,
   getUser,
+  listLilaGames,
   markPurchaseSucceeded,
   saveBirthDate,
+  saveLilaNote,
   saveReport,
   seedUser,
   users,
@@ -22,6 +27,24 @@ let db: Database;
 
 beforeEach(async () => {
   db = await createTestDb();
+});
+
+describe("deleteUserData and Lila games", () => {
+  test("removes the intention, the moves and the notes of every game of the user, and leaves other users alone", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-lila" });
+    const { userId: otherId } = await seedUser(db, { externalId: "vk-lila-2" });
+    const created = await createLilaGame(db, { userId, intention: "Личное намерение" });
+    const other = await createLilaGame(db, { userId: otherId, intention: "Чужое" });
+    if (!created.ok || !other.ok) throw new Error("no game");
+    await addLilaMove(db, { gameId: created.game.id, userId, roll: 6, customDie: false });
+    await saveLilaNote(db, { gameId: created.game.id, userId, n: 1, note: "Личная запись" });
+
+    await deleteUserData(db, userId);
+
+    expect(await getLilaGame(db, created.game.id)).toBeNull();
+    expect(await listLilaGames(db, userId)).toEqual([]);
+    expect((await getLilaGame(db, other.game.id))?.intention).toBe("Чужое");
+  });
 });
 
 describe("deleteUserData", () => {
