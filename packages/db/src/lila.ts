@@ -15,6 +15,8 @@ export type LilaMoveRecord = {
   transition: LilaTransition;
   customDie: boolean;
   note: string | null;
+  guideText: string | null;
+  guideSource: "ai" | "none" | null;
   createdAt: Date;
 };
 export type LilaGameRecord = {
@@ -44,6 +46,8 @@ const toMove = (row: typeof lilaMoves.$inferSelect): LilaMoveRecord => ({
   transition: row.transition,
   customDie: row.customDie,
   note: row.note,
+  guideText: row.guideText,
+  guideSource: row.guideSource,
   createdAt: row.createdAt,
 });
 
@@ -55,11 +59,11 @@ async function withMoves(db: Database, game: LilaGameRecord): Promise<LilaGameWi
 // Одна активная партия на человека держится частичным уникальным индексом: вторая вставка просто ничего не вернёт
 export async function createLilaGame(
   db: Database,
-  p: { userId: string; intention: string; mode?: LilaMode; status?: "active" | "awaiting_payment" },
+  p: { userId: string; intention: string; mode?: LilaMode; status?: "active" | "awaiting_payment"; purchaseId?: string },
 ): Promise<{ ok: true; game: LilaGameRecord } | { ok: false; error: "active_exists" }> {
   const [row] = await db
     .insert(lilaGames)
-    .values({ userId: p.userId, intention: p.intention, mode: p.mode ?? "free", status: p.status ?? "active" })
+    .values({ userId: p.userId, intention: p.intention, mode: p.mode ?? "free", status: p.status ?? "active", purchaseId: p.purchaseId ?? null })
     .onConflictDoNothing()
     .returning();
   return row ? { ok: true, game: toGame(row) } : { ok: false, error: "active_exists" };

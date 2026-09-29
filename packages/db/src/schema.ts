@@ -2,7 +2,8 @@ import { sql } from "drizzle-orm";
 import { boolean, date, index, integer, jsonb, pgEnum, pgTable, primaryKey, smallint, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const authProviderEnum = pgEnum("auth_provider", ["vk"]);
-export const productEnum = pgEnum("product", ["matrix_report"]);
+export const productEnum = pgEnum("product", ["matrix_report", "lila_session"]);
+export const guideSourceEnum = pgEnum("guide_source", ["ai", "none"]);
 export const purchaseStatusEnum = pgEnum("purchase_status", ["pending", "succeeded", "canceled"]);
 
 export type AuthProvider = (typeof authProviderEnum.enumValues)[number];
@@ -123,7 +124,20 @@ export const lilaMoves = pgTable(
     transition: lilaTransitionEnum("transition").notNull(),
     customDie: boolean("custom_die").notNull().default(false),
     note: text("note"),
+    // Абзац проводника: null в guide_source — ещё пишется; «none» — не получился или не нужен (пустой ход, нет ключа)
+    guideText: text("guide_text"),
+    guideSource: guideSourceEnum("guide_source"),
     createdAt: createdAt(),
   },
   (t) => [primaryKey({ columns: [t.gameId, t.n] })],
 );
+
+export const lilaConclusions = pgTable("lila_conclusions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  gameId: uuid("game_id")
+    .notNull()
+    .unique()
+    .references(() => lilaGames.id, { onDelete: "cascade" }),
+  chapters: jsonb("chapters").notNull(),
+  createdAt: createdAt(),
+});

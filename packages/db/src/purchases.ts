@@ -22,6 +22,7 @@ export type PaidPurchase = { id: string; birthDate: string; ready: boolean; paid
 
 type PurchaseRow = typeof purchases.$inferSelect;
 type DateOfProduct = { userId: string; product: Product; birthDate: string };
+type NewPurchase = { userId: string; product: Product; birthDate?: string | null; receiptEmail: string; amountKopecks: number };
 
 const toRecord = (row: PurchaseRow): PurchaseRecord => ({ ...row, product: row.product as Product });
 
@@ -30,11 +31,11 @@ const sameDate = (p: DateOfProduct) => and(eq(purchases.userId, p.userId), eq(pu
 // Дата уже проверена parseBirthDate, e-mail — сервисом покупок: сюда приходят готовые значения
 export async function createPurchase(
   db: Database,
-  p: DateOfProduct & { receiptEmail: string; amountKopecks: number },
+  p: NewPurchase,
 ): Promise<PurchaseRecord> {
   const [row] = await db
     .insert(purchases)
-    .values({ userId: p.userId, product: p.product, birthDate: p.birthDate, receiptEmail: p.receiptEmail, amountKopecks: p.amountKopecks })
+    .values({ userId: p.userId, product: p.product, birthDate: p.birthDate ?? null, receiptEmail: p.receiptEmail, amountKopecks: p.amountKopecks })
     .returning();
   return toRecord(row!);
 }

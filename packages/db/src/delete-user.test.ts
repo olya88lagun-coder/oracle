@@ -10,13 +10,17 @@ import {
   createTestDb,
   deleteUserData,
   getLilaGame,
+  getLilaConclusion,
   getPurchase,
   getReport,
   getUser,
   listLilaGames,
   markPurchaseSucceeded,
   saveBirthDate,
+  saveLilaConclusion,
+  saveLilaGuide,
   saveLilaNote,
+  activateLilaGameForPurchase,
   saveReport,
   seedUser,
   users,
@@ -44,6 +48,26 @@ describe("deleteUserData and Lila games", () => {
     expect(await getLilaGame(db, created.game.id)).toBeNull();
     expect(await listLilaGames(db, userId)).toEqual([]);
     expect((await getLilaGame(db, other.game.id))?.intention).toBe("Чужое");
+  });
+});
+
+describe("deleteUserData and paid Lila sessions", () => {
+  test("removes the game, the guide paragraphs and the conclusion but keeps the payment record without the e-mail", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-lila-paid" });
+    const purchase = await createPurchase(db, { userId, product: "lila_session", receiptEmail: "a@b.ru", amountKopecks: 49_000 });
+    const created = await createLilaGame(db, { userId, intention: "Личное", mode: "guided", status: "awaiting_payment", purchaseId: purchase.id });
+    if (!created.ok) throw new Error("no game");
+    await markPurchaseSucceeded(db, purchase.id, new Date());
+    await activateLilaGameForPurchase(db, purchase.id);
+    await addLilaMove(db, { gameId: created.game.id, userId, roll: 6, customDie: false });
+    await saveLilaGuide(db, { gameId: created.game.id, n: 1, text: "Абзац." });
+    await saveLilaConclusion(db, { gameId: created.game.id, chapters: [{ id: "path", source: "fallback", paragraphs: ["Итог."] }] });
+
+    await deleteUserData(db, userId);
+
+    expect(await getLilaGame(db, created.game.id)).toBeNull();
+    expect(await getLilaConclusion(db, created.game.id)).toBeNull();
+    expect(await getPurchase(db, purchase.id)).toMatchObject({ amountKopecks: 49_000, status: "succeeded", receiptEmail: null });
   });
 });
 
