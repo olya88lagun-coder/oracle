@@ -114,3 +114,16 @@ describe("buildPrompt", () => {
     expect(buildPrompt(scenario).system).toMatch(/JSON-объект/);
   });
 });
+
+describe("chapter length", () => {
+  test("accepts a chapter of about a thousand characters, which the model often returns", () => {
+    const result = validateChapter(core, ["а".repeat(330), "б".repeat(330), "в".repeat(330)].join("\n\n"));
+
+    expect(result.ok).toBe(true);
+  });
+
+  test("asks the model for more than the check requires", () => {
+    expect(buildPrompt(core).system).toMatch(/вместе 1400–2200 знаков/);
+    expect(validateChapter(core, ["а".repeat(250), "б".repeat(250), "в".repeat(250)].join("\n\n"))).toEqual({ ok: false, reason: "length" });
+  });
+});
