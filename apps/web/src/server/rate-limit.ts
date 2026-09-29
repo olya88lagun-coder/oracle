@@ -4,6 +4,7 @@ const MAX_TRACKED_KEYS = 10_000;
 const MINUTE_MS = 60_000;
 const PROFILE_SAVES_PER_MINUTE = 20;
 const PURCHASES_PER_MINUTE = 10;
+const REPORT_PDFS_PER_MINUTE = 10;
 
 // Память процесса: на одном контейнере web этого достаточно, чтобы не дать засыпать базу запросами
 export function createRateLimiter(p: { limit: number; windowMs: number; now?: () => number }): RateLimiter {
@@ -28,6 +29,8 @@ export function createRateLimiter(p: { limit: number; windowMs: number; now?: ()
 export const profileLimiter = createRateLimiter({ limit: PROFILE_SAVES_PER_MINUTE, windowMs: MINUTE_MS });
 // Каждая попытка покупки создаёт платёж в ЮKassa — лимит строже, чем у сохранения даты
 export const purchaseLimiter = createRateLimiter({ limit: PURCHASES_PER_MINUTE, windowMs: MINUTE_MS });
+// Сборка PDF занимает процессор и память контейнера web, поэтому скачивания ограничены по пользователю
+export const reportPdfLimiter = createRateLimiter({ limit: REPORT_PDFS_PER_MINUTE, windowMs: MINUTE_MS });
 
 // Caddy заменяет X-Forwarded-For, пришедший от клиента, поэтому первый адрес — настоящий
 export function clientKeyFromHeaders(headers: Headers): string {
