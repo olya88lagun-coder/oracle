@@ -21,7 +21,7 @@ export function lilaCellFromParam(param: string): LilaCell | null {
 
 // Иллюстрации в public/lila: 960 px — страница клетки и превью ссылок, 480 px — карточка хода, 160 px — сетка клеток.
 // Пока картинки добавляются пачками, у клетки без файла показывается запасная карточка; когда готовы все 72, установить true
-export const LILA_IMAGES_READY = false;
+export const LILA_IMAGES_READY = true;
 const IMAGE_SUFFIX = { page: "", card: "-480", thumb: "-160" } as const;
 export type LilaImageSize = keyof typeof IMAGE_SUFFIX;
 export const lilaImageFile = (cell: CellRef, size: LilaImageSize = "page"): string => `${lilaParam(cell)}${IMAGE_SUFFIX[size]}.webp`;

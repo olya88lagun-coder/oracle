@@ -2,6 +2,7 @@ import { LILA_ARROWS, LILA_SNAKES } from "@oracle/core";
 import { LILA_CELLS } from "@oracle/content/lila";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "vitest";
 import { ARROWS, CELLS, SNAKES } from "@/components/lila/board-data";
 import { lilaCellDescription, lilaCellFromParam, lilaCellImage, lilaCellJsonLd, lilaCellPath, lilaHistoryPath, lilaImageFile, LILA_IMAGES_READY, lilaParam } from "./lila-paths";
@@ -45,7 +46,7 @@ describe("sources of truth", () => {
   });
 
   test("every cell has its three illustrations once LILA_IMAGES_READY is set", () => {
-    const dir = join(process.cwd(), "public", "lila");
+    const dir = join(fileURLToPath(new URL("../../public", import.meta.url)), "lila");
     const missing = LILA_CELLS.flatMap((cell) => (["page", "card", "thumb"] as const).map((size) => lilaImageFile(cell, size))).filter((file) => !existsSync(join(dir, file)));
     // Картинки добавляются пачками: до готовности всех 72 тест только сообщает, чего не хватает
     if (!LILA_IMAGES_READY) return;
