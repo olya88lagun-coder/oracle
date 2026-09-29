@@ -1,6 +1,6 @@
 import type { LilaCell } from "@oracle/content/lila";
 import { describe, expect, test } from "vitest";
-import { describeTurn, openedCells, trailOf } from "./lila-turn";
+import { describeGameFacts, describeTurn, openedCells, trailOf } from "./lila-turn";
 import { toGameView } from "./lila-view";
 
 const cellOf = (n: number): LilaCell => ({
@@ -57,5 +57,13 @@ describe("openedCells and trailOf", () => {
   });
   test("the trail lists the cells the piece went through without repeats in a row", () => {
     expect(trailOf(view(moves.slice(0, 2)))).toEqual([1, 12, 8]);
+  });
+});
+
+describe("describeGameFacts", () => {
+  test("counts moves, snakes, arrows and opened cells with the right plural forms", () => {
+    const moves = [move(1, 0, 1, 1, 6), move(2, 1, 12, 8, 6, "snake"), move(3, 8, 10, 23, 2, "arrow")];
+    expect(describeGameFacts(view(moves))).toBe("3 хода · 1 змея · 1 стрела · открыто клеток 5");
+    expect(describeGameFacts(view([]))).toBe("0 ходов · 0 змей · 0 стрел · открыто клеток 0");
   });
 });

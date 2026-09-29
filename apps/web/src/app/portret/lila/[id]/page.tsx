@@ -7,7 +7,7 @@ import { MoveHistory } from "@/components/lila/MoveHistory";
 import { Scene } from "@/components/Scene";
 import { DISCLAIMER } from "@/lib/legal";
 import { LILA_GAME_PATH } from "@/lib/lila-paths";
-import { trailOf } from "@/lib/lila-turn";
+import { describeGameFacts, trailOf } from "@/lib/lila-turn";
 import { toGameView } from "@/lib/lila-view";
 import { getDb } from "@/server/db";
 import { requireUser } from "@/server/viewer";
@@ -26,7 +26,7 @@ export default async function LilaHistoryPage({ params }: { params: Promise<{ id
         <p className="eyebrow eyebrow--line">Партия Лилы</p>
         <h1 className="display">{game.intention}</h1>
         <p className="muted">
-          Ходов {game.movesCount} · {game.status === "active" ? "партия идёт" : "партия завершена"}
+          {describeGameFacts(game)} · {game.status === "active" ? "партия идёт" : "партия завершена"}
         </p>
         {game.status === "active" && (
           <p>
@@ -36,8 +36,10 @@ export default async function LilaHistoryPage({ params }: { params: Promise<{ id
           </p>
         )}
       </div>
-      <Board current={game.position} trail={trailOf(game)} variant="full" />
-      <Board current={game.position} trail={trailOf(game)} variant="compact" />
+      <div className="card lila-play__board">
+        <Board current={game.position} trail={trailOf(game)} variant="full" />
+        <Board current={game.position} trail={trailOf(game)} variant="compact" />
+      </div>
       <section className="card stack" aria-labelledby="moves">
         <h2 id="moves">Ходы</h2>
         <MoveHistory game={game} />
