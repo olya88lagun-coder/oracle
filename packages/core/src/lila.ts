@@ -63,7 +63,8 @@ export function lilaVisitCounts(moves: readonly LilaMoveCells[]): Map<number, nu
 }
 
 // Первый визит — первый вопрос клетки, второй — второй, третий и дальше — третий
-export const lilaQuestionIndex = (visits: number): 0 | 1 | 2 => (Math.min(Math.max(visits, 1), VISITS_BEFORE_REPEAT_QUESTIONS) - 1) as 0 | 1 | 2;
+export const lilaQuestionIndex = (visits: number): 0 | 1 | 2 =>
+  (Math.min(Math.max(Number.isFinite(visits) ? visits : 1, 1), VISITS_BEFORE_REPEAT_QUESTIONS) - 1) as 0 | 1 | 2;
 
 export function replayLila(rolls: readonly number[]): { position: number; results: LilaRollResult[] } {
   let position = 0;

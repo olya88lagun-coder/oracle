@@ -80,6 +80,31 @@ describe("applyLilaRoll", () => {
   });
 });
 
+describe("edges of the field", () => {
+  test("above the goal the player walks forward inside 69-72 and cannot pass 72", () => {
+    expect(applyLilaRoll(69, 1)).toMatchObject({ landed: 70, to: 70, wasted: false });
+    expect(applyLilaRoll(69, 2)).toMatchObject({ landed: 71, to: 71, wasted: false });
+    expect(applyLilaRoll(71, 2)).toMatchObject({ wasted: true, to: 71 });
+  });
+
+  test("passing the goal is a wasted move, not a step to 69-72", () => {
+    expect(applyLilaRoll(66, 6)).toMatchObject({ wasted: true, to: 66 });
+    expect(applyLilaRoll(67, 2)).toMatchObject({ wasted: true, to: 67 });
+    expect(applyLilaRoll(65, 4)).toMatchObject({ wasted: true, to: 65 });
+    expect(applyLilaRoll(60, 6)).toMatchObject({ landed: 66, to: 66, wasted: false });
+  });
+
+  test("every snake head and arrow start gives its transition and destination", () => {
+    for (const [head, tail] of Object.entries(LILA_SNAKES)) {
+      const from = Number(head) - 1;
+      expect(applyLilaRoll(from === 68 ? 67 : from, 1)).toMatchObject({ landed: Number(head), to: tail, transition: "snake" });
+    }
+    for (const [start, end] of Object.entries(LILA_ARROWS)) {
+      expect(applyLilaRoll(Number(start) - 1, 1)).toMatchObject({ landed: Number(start), to: end, transition: "arrow" });
+    }
+  });
+});
+
 describe("visits and questions", () => {
   test("count both the landing cell and the arrival cell, but not wasted moves", () => {
     const moves = [
@@ -94,6 +119,24 @@ describe("visits and questions", () => {
         [8, 1],
       ]),
     );
+  });
+
+  test("a repeated cell is counted again, including the landing cell of a snake", () => {
+    const moves = [
+      { landed: 12, to: 8, wasted: false },
+      { landed: 12, to: 8, wasted: false },
+      { landed: 12, to: 8, wasted: false },
+    ];
+    expect(lilaVisitCounts(moves)).toEqual(
+      new Map([
+        [12, 3],
+        [8, 3],
+      ]),
+    );
+  });
+
+  test("the question index tolerates a non-finite count", () => {
+    expect(lilaQuestionIndex(Number.NaN)).toBe(0);
   });
 
   test("the question changes on the second and third visit and then stays", () => {
@@ -116,6 +159,12 @@ describe("replayLila", () => {
     expect(results.at(-1)).toMatchObject({ landed: 54, transition: "arrow", reachedGoal: true });
   });
 
+  test("a game without sixes never leaves the start", () => {
+    const { position, results } = replayLila([1, 2, 3, 4, 5]);
+    expect(position).toBe(0);
+    expect(results.every((r) => r.wasted)).toBe(true);
+  });
+
   test("rejects an invalid roll and any roll after the goal", () => {
     expect(() => replayLila([6, 9])).toThrow(RangeError);
     expect(() => replayLila([6, 3, 6, 5, 4, 1])).toThrow(RangeError);
@@ -127,6 +176,10 @@ describe("game limits", () => {
     expect(canRollLila({ position: 20, movesCount: 5 })).toBe(true);
     expect(canRollLila({ position: 68, movesCount: 5 })).toBe(false);
     expect(canRollLila({ position: 20, movesCount: 120 })).toBe(false);
+  });
+
+  test("neither the goal nor the move limit allows a roll", () => {
+    expect(canRollLila({ position: 68, movesCount: 120 })).toBe(false);
   });
 
   test("finishing is possible at the goal or from ten moves", () => {
