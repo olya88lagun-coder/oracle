@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { addLilaMove, createLilaGame, finishLilaGame, getActiveLilaGame, getLilaGame, importLilaGame, listLilaGames, saveLilaNote } from "./lila";
+import { addLilaMove, createLilaGame, finishLilaGame, getActiveLilaGame, getLilaGame, getLilaGameForUser, importLilaGame, listLilaGames, saveLilaNote } from "./lila";
 import { createTestDb, seedUser } from "./testing";
 import type { Database } from "./types";
 
@@ -69,6 +69,13 @@ describe("addLilaMove", () => {
     expect(await roll(game.id, 6)).toEqual({ ok: false, error: "not_active" });
   });
 
+  test("rejects a roll outside 1-6 and a broken user id without an exception", async () => {
+    const game = await start();
+    expect(await roll(game.id, 7)).toEqual({ ok: false, error: "invalid" });
+    expect(await roll(game.id, 1.5)).toEqual({ ok: false, error: "invalid" });
+    expect(await addLilaMove(db, { gameId: game.id, userId: "not-a-uuid", roll: 6, customDie: false })).toEqual({ ok: false, error: "not_found" });
+  });
+
   test("stops at the move limit", async () => {
     const game = await start();
     for (let i = 0; i < 120; i += 1) expect((await roll(game.id, 1)).ok).toBe(true);
@@ -129,6 +136,16 @@ describe("finishLilaGame", () => {
   });
 });
 
+describe("getLilaGameForUser", () => {
+  test("returns the game to its owner only", async () => {
+    const game = await start();
+    const other = (await seedUser(db, { externalId: "lila-5" })).userId;
+    expect((await getLilaGameForUser(db, game.id, userId))?.id).toBe(game.id);
+    expect(await getLilaGameForUser(db, game.id, other)).toBeNull();
+    expect(await getLilaGameForUser(db, game.id, "not-a-uuid")).toBeNull();
+  });
+});
+
 describe("getActiveLilaGame", () => {
   test("returns the active game with its moves, or null", async () => {
     expect(await getActiveLilaGame(db, userId)).toBeNull();
@@ -162,6 +179,13 @@ describe("importLilaGame", () => {
     const replaced = await importLilaGame(db, { userId, intention: "Из браузера", moves, replaceActive: true });
     expect(replaced.ok).toBe(true);
     expect((await getLilaGame(db, existing.id))!.status).toBe("abandoned");
+  });
+
+  test("a failed import leaves the active game as it was", async () => {
+    const existing = await start("Уже идёт");
+    const result = await importLilaGame(db, { userId, intention: "Из браузера", moves, replaceActive: false });
+    expect(result).toEqual({ ok: false, error: "active_exists" });
+    expect((await getLilaGame(db, existing.id))!.status).toBe("active");
   });
 
   test("rejects impossible rolls, too many moves and long notes without changing anything", async () => {

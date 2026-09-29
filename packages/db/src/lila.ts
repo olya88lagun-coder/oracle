@@ -1,4 +1,4 @@
-import { applyLilaRoll, canFinishLila, canRollLila, LILA_GOAL_CELL, LILA_MAX_MOVES, LILA_NOTE_MAX_CHARS, type LilaRollResult, type LilaTransition } from "@oracle/core";
+import { applyLilaRoll, canFinishLila, canRollLila, isLilaRoll, LILA_GOAL_CELL, LILA_MAX_MOVES, LILA_NOTE_MAX_CHARS, type LilaRollResult, type LilaTransition } from "@oracle/core";
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { lilaGames, lilaMoves, type LilaGameStatus, type LilaMode } from "./schema";
 import type { Database } from "./types";
@@ -32,6 +32,8 @@ export type LilaGameRecord = {
 export type LilaGameWithMoves = LilaGameRecord & { moves: LilaMoveRecord[] };
 export type ImportedMove = { roll: number; customDie: boolean; note: string | null };
 
+class ActiveExists extends Error {}
+
 const toGame = (row: typeof lilaGames.$inferSelect): LilaGameRecord => row;
 const toMove = (row: typeof lilaMoves.$inferSelect): LilaMoveRecord => ({
   n: row.n,
@@ -63,9 +65,21 @@ export async function createLilaGame(
   return row ? { ok: true, game: toGame(row) } : { ok: false, error: "active_exists" };
 }
 
+// Без проверки владельца: только для внутренних задач и тестов. Для запросов пользователя — getLilaGameForUser
 export async function getLilaGame(db: Database, gameId: string): Promise<LilaGameWithMoves | null> {
   if (!isUuid(gameId)) return null;
   const [row] = await db.select().from(lilaGames).where(eq(lilaGames.id, gameId)).limit(1);
+  return row ? withMoves(db, toGame(row)) : null;
+}
+
+// Чужая и несуществующая партия неотличимы
+export async function getLilaGameForUser(db: Database, gameId: string, userId: string): Promise<LilaGameWithMoves | null> {
+  if (!isUuid(gameId) || !isUuid(userId)) return null;
+  const [row] = await db
+    .select()
+    .from(lilaGames)
+    .where(and(eq(lilaGames.id, gameId), eq(lilaGames.userId, userId)))
+    .limit(1);
   return row ? withMoves(db, toGame(row)) : null;
 }
 
@@ -89,14 +103,15 @@ export async function listLilaGames(db: Database, userId: string): Promise<LilaG
   return rows.map(toGame);
 }
 
-type MoveError = "not_found" | "not_active" | "limit" | "at_goal";
+type MoveError = "invalid" | "not_found" | "not_active" | "limit" | "at_goal";
 
 // Строка партии блокируется на время хода: два одновременных броска получают разные номера
 export async function addLilaMove(
   db: Database,
   p: { gameId: string; userId: string; roll: number; customDie: boolean },
 ): Promise<{ ok: true; game: LilaGameWithMoves } | { ok: false; error: MoveError }> {
-  if (!isUuid(p.gameId)) return { ok: false, error: "not_found" };
+  if (!isUuid(p.gameId) || !isUuid(p.userId)) return { ok: false, error: "not_found" };
+  if (!isLilaRoll(p.roll)) return { ok: false, error: "invalid" };
   const outcome = await db.transaction(async (tx): Promise<{ ok: true } | { ok: false; error: MoveError }> => {
     const [game] = await tx
       .select()
@@ -128,13 +143,15 @@ export async function addLilaMove(
 }
 
 export async function saveLilaNote(db: Database, p: { gameId: string; userId: string; n: number; note: string | null }): Promise<boolean> {
-  if (!isUuid(p.gameId) || (p.note !== null && p.note.length > LILA_NOTE_MAX_CHARS)) return false;
+  if (!isUuid(p.gameId) || !isUuid(p.userId) || !Number.isInteger(p.n) || p.n < 1 || (p.note !== null && p.note.length > LILA_NOTE_MAX_CHARS)) return false;
   return db.transaction(async (tx) => {
+    // Строка блокируется, чтобы запись не легла в партию, которую в этот момент завершают
     const [game] = await tx
       .select({ id: lilaGames.id })
       .from(lilaGames)
       .where(and(eq(lilaGames.id, p.gameId), eq(lilaGames.userId, p.userId), eq(lilaGames.status, "active")))
-      .limit(1);
+      .limit(1)
+      .for("update");
     if (!game) return false;
     const updated = await tx
       .update(lilaMoves)
@@ -149,7 +166,7 @@ export async function finishLilaGame(
   db: Database,
   p: { gameId: string; userId: string; now: Date },
 ): Promise<{ ok: true; status: "finished" | "abandoned" } | { ok: false; error: "not_found" | "not_active" | "too_early" }> {
-  if (!isUuid(p.gameId)) return { ok: false, error: "not_found" };
+  if (!isUuid(p.gameId) || !isUuid(p.userId)) return { ok: false, error: "not_found" };
   return db.transaction(async (tx) => {
     const [game] = await tx
       .select()
@@ -173,6 +190,7 @@ export async function importLilaGame(
   db: Database,
   p: { userId: string; intention: string; moves: readonly ImportedMove[]; replaceActive: boolean },
 ): Promise<{ ok: true; game: LilaGameWithMoves } | { ok: false; error: "active_exists" | "invalid" }> {
+  if (!isUuid(p.userId)) return { ok: false, error: "invalid" };
   if (p.moves.length > LILA_MAX_MOVES || p.moves.some((move) => move.note !== null && move.note.length > LILA_NOTE_MAX_CHARS)) return { ok: false, error: "invalid" };
   let position = 0;
   const results: LilaRollResult[] = [];
@@ -186,7 +204,9 @@ export async function importLilaGame(
     return { ok: false, error: "invalid" };
   }
 
-  const gameId = await db.transaction(async (tx) => {
+  // Неудавшийся перенос не должен оставить старую партию брошенной: при конфликте транзакция откатывается целиком
+  const gameId = await db
+    .transaction(async (tx) => {
     if (p.replaceActive) {
       await tx
         .update(lilaGames)
@@ -198,7 +218,7 @@ export async function importLilaGame(
       .values({ userId: p.userId, intention: p.intention, mode: "free", status: "active", position, movesCount: results.length })
       .onConflictDoNothing()
       .returning({ id: lilaGames.id });
-    if (!row) return null;
+    if (!row) throw new ActiveExists();
     if (results.length > 0) {
       await tx.insert(lilaMoves).values(
         results.map((result, index) => ({
@@ -215,7 +235,11 @@ export async function importLilaGame(
       );
     }
     return row.id;
-  });
+    })
+    .catch((error: unknown) => {
+      if (error instanceof ActiveExists) return null;
+      throw error;
+    });
   if (!gameId) return { ok: false, error: "active_exists" };
   return { ok: true, game: (await getLilaGame(db, gameId))! };
 }
