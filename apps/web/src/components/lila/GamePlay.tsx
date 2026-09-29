@@ -5,7 +5,7 @@ import { LILA_CELL_COUNT } from "@oracle/core";
 import { useState } from "react";
 import { reachGoal } from "@/lib/analytics";
 import { lilaErrorMessage, type ApiResult, type GameApi } from "@/lib/lila-api";
-import { describeTurn, openedCells, trailOf } from "@/lib/lila-turn";
+import { describeTurn, openedCells, rollSummary, trailOf } from "@/lib/lila-turn";
 import type { GameView } from "@/lib/lila-view";
 import { Board } from "./Board";
 import { DiceControls } from "./DiceControls";
@@ -78,12 +78,6 @@ export function GamePlay({ initial, api, images, onClosed }: Props) {
             editable={game.status === "active" && last !== null}
             onSaveNote={(note) => run(() => api.saveNote(game.movesCount, note))}
           />
-          {game.canRoll && <DiceControls busy={busy} onRoll={(value) => void run(() => api.roll(value))} />}
-          {error && (
-            <p className="error" role="alert">
-              {error}
-            </p>
-          )}
           {game.canFinish && !confirming && (
             <button type="button" className={game.position === 68 ? "button button--lavender" : "button button--ghost"} onClick={() => setConfirming(true)}>
               Завершить партию
@@ -103,11 +97,23 @@ export function GamePlay({ initial, api, images, onClosed }: Props) {
             </div>
           )}
         </div>
+        {/* Кубик над полем и виден на любой вкладке, кроме истории: бросок и движение фишки — на одном экране */}
+        <div className="card lila-play__dice" hidden={tab === "history"}>
+          {game.canRoll && <DiceControls busy={busy} onRoll={(value) => void run(() => api.roll(value))} />}
+          <p role="status" className="lila-play__roll">
+            {turn ? rollSummary(turn) : "Бросьте кубик. Чтобы начать путь, нужна шестёрка."}
+          </p>
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
+        </div>
         <div className="card lila-play__board" hidden={tab === "history"}>
           <Board current={game.position} trail={trailOf(game)} variant="full" />
           <Board current={game.position} trail={trailOf(game)} variant="compact" />
         </div>
-        <div hidden={tab !== "history"}>
+        <div className="lila-play__history" hidden={tab !== "history"}>
           <MoveHistory game={game} />
         </div>
       </div>

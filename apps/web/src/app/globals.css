@@ -641,7 +641,15 @@ a.report-toc__title:hover { color: var(--accent); }
 .lila-tabs { gap: 0; border-bottom: 1px solid var(--line); }
 .lila-tabs__tab { flex: 1; min-height: 44px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--ink-soft); font: inherit; cursor: pointer; }
 .lila-tabs__tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
-.lila-play__layout { display: grid; gap: 20px; }
+/* На телефоне блоки идут друг за другом: кубик, ход, поле, история (видимость — по вкладкам) */
+.lila-play__layout { display: grid; gap: 20px; grid-template-areas: "dice" "side" "board" "history"; }
+.lila-play__side { grid-area: side; }
+.lila-play__dice { grid-area: dice; display: grid; gap: 12px; padding: 16px 20px; }
+.lila-play__board { grid-area: board; }
+.lila-play__history { grid-area: history; }
+.lila-play__roll { margin: 0; color: var(--ink-soft); }
+/* hidden не работает у блоков со своим display: скрываем явно (вкладки на телефоне) */
+.lila-play__layout > [hidden] { display: none; }
 .lila-play__board { display: grid; gap: 12px; justify-items: center; padding: 16px; }
 .lila-play__board .lila-board { width: 100%; max-width: 640px; }
 .lila-board--full { display: none; }
@@ -651,10 +659,13 @@ a.report-toc__title:hover { color: var(--accent); }
 }
 @media (min-width: 1024px) {
   .lila-tabs { display: none; }
-  .lila-play__layout { grid-template-columns: minmax(340px, 440px) minmax(0, 1fr); align-items: start; }
-  /* Вкладки нужны только на телефоне: на компьютере ход и поле всегда рядом, история — ниже на всю ширину */
+  .lila-play__layout {
+    grid-template-columns: minmax(340px, 440px) minmax(0, 1fr);
+    grid-template-areas: "side dice" "side board" "history history";
+    align-items: start;
+  }
+  /* Вкладки нужны только на телефоне: на компьютере ход и поле всегда рядом, кубик над полем, история — ниже на всю ширину */
   .lila-play__layout > [hidden] { display: grid !important; }
-  .lila-play__layout > :last-child { grid-column: 1 / -1; }
 }
 .lila-turn { gap: 16px; }
 .lila-turn__cell { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: center; }
@@ -679,13 +690,11 @@ a.report-toc__title:hover { color: var(--accent); }
 .lila-fallback__number { font-family: var(--font-display); font-size: clamp(28px, 6vw, 44px); line-height: 1; }
 .lila-fallback__mark { font-size: 18px; color: var(--lila-paper-soft); }
 .lila-dice { gap: 12px; }
+.lila-dice > .row { gap: 12px; }
 .lila-dice__face { justify-content: center; min-width: 44px; padding: 0; }
-@media (max-width: 1023px) {
-  /* На телефоне кубик закреплён внизу экрана, как на макете */
-  .lila-dice { position: sticky; bottom: 0; z-index: 2; margin-inline: -20px; padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(180deg, transparent, var(--bg, #0a090e) 28%); }
-  .lila-dice > .row { display: grid; gap: 4px; justify-items: center; }
-  .lila-dice > .row .button--lavender { width: 100%; }
-  .lila-dice > .row .button--ghost { min-height: 44px; background: transparent; box-shadow: none; color: var(--ink-soft); font-weight: 400; }
+@media (max-width: 519px) {
+  .lila-dice > .row { display: grid; }
+  .lila-dice > .row .button { width: 100%; }
 }
 .lila-guest-hint { display: grid; gap: 0; }
 .lila-history { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
