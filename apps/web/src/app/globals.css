@@ -591,21 +591,41 @@ a.report-toc__title:hover { color: var(--accent); }
 .lila-tile {
   display: grid;
   align-content: start;
-  gap: 2px;
-  min-height: 64px;
+  gap: 8px;
   height: 100%;
-  padding: 10px 12px;
+  padding: 6px 6px 10px;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--surface);
   color: var(--ink-soft);
   font-size: 14px;
   line-height: 1.25;
   text-decoration: none;
-  overflow-wrap: anywhere;
 }
 .lila-tile:hover { border-color: var(--line-strong); color: var(--ink); }
-.lila-tile__number { font-family: var(--font-display); font-size: 20px; line-height: 1.1; color: var(--accent-soft); }
+.lila-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lila-tile__art { position: relative; display: block; border-radius: 10px; overflow: hidden; }
+.lila-tile__art .lila-art, .lila-tile__art .lila-fallback { display: block; width: 100%; height: auto; aspect-ratio: 1; border-radius: 0; }
+/* Номер клетки — на картинке, на тёмной плашке, чтобы читался на любой иллюстрации */
+.lila-tile__number {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  min-width: 28px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(10, 9, 14, 0.78);
+  color: var(--accent-soft);
+  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 1.1;
+  text-align: center;
+}
+.lila-tile__name { padding-inline: 4px; hyphens: auto; overflow-wrap: break-word; }
+@media (prefers-reduced-motion: no-preference) {
+  .lila-tile__art .lila-art { transition: transform 300ms ease; }
+  .lila-tile:hover .lila-tile__art .lila-art { transform: scale(1.04); }
+}
 .lila-tile__sep { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* Выбор намерения */

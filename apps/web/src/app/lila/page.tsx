@@ -3,10 +3,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Board } from "@/components/lila/Board";
+import { CellArt } from "@/components/lila/CellArt";
 import { Scene } from "@/components/Scene";
 import { DISCLAIMER } from "@/lib/legal";
 import { lilaCellPath, LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
 import { publicMetadata } from "@/lib/seo";
+import { availableCellImages } from "@/server/lila-images";
 
 export const metadata: Metadata = publicMetadata({
   title: "Лила онлайн — игра с намерением, поле из 72 клеток",
@@ -16,6 +18,7 @@ export const metadata: Metadata = publicMetadata({
 });
 
 export default function LilaPage() {
+  const images = availableCellImages();
   return (
     <Scene>
       <div className="lila-hero">
@@ -60,7 +63,10 @@ export default function LilaPage() {
           {LILA_CELLS.map((cell) => (
             <li key={cell.number}>
               <Link className="lila-tile" href={lilaCellPath(cell)}>
-                <span className="lila-tile__number">{cell.number}</span>
+                <span className="lila-tile__art">
+                  <CellArt cell={cell} size="thumb" available={images} decorative />
+                  <span className="lila-tile__number">{cell.number}</span>
+                </span>
                 <span className="lila-tile__sep"> · </span>
                 <span className="lila-tile__name">{cell.name}</span>
               </Link>
