@@ -181,6 +181,13 @@ describe("importLilaGame", () => {
     expect((await getLilaGame(db, existing.id))!.status).toBe("abandoned");
   });
 
+  test("never replaces a guided game, even when replace is requested", async () => {
+    const guided = await createLilaGame(db, { userId, intention: "С проводником", mode: "guided" });
+    if (!guided.ok) throw new Error("no game");
+    expect(await importLilaGame(db, { userId, intention: "Из браузера", moves, replaceActive: true })).toEqual({ ok: false, error: "active_exists" });
+    expect((await getLilaGame(db, guided.game.id))!.status).toBe("active");
+  });
+
   test("a failed import leaves the active game as it was", async () => {
     const existing = await start("Уже идёт");
     const result = await importLilaGame(db, { userId, intention: "Из браузера", moves, replaceActive: false });

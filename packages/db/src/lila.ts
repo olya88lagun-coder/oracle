@@ -207,11 +207,12 @@ export async function importLilaGame(
   // Неудавшийся перенос не должен оставить старую партию брошенной: при конфликте транзакция откатывается целиком
   const gameId = await db
     .transaction(async (tx) => {
+    // Заменяется только бесплатная партия: платную (с проводником) перенос из браузера бросить не может — она даст active_exists
     if (p.replaceActive) {
       await tx
         .update(lilaGames)
         .set({ status: "abandoned", finishedAt: new Date() })
-        .where(and(eq(lilaGames.userId, p.userId), eq(lilaGames.status, "active")));
+        .where(and(eq(lilaGames.userId, p.userId), eq(lilaGames.status, "active"), eq(lilaGames.mode, "free")));
     }
     const [row] = await tx
       .insert(lilaGames)
