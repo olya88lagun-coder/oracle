@@ -1,19 +1,6 @@
-import { useId } from "react";
+import Image from "next/image";
 import type { CSSProperties } from "react";
-import {
-  ARROWS,
-  BOARD_COLUMNS,
-  BOARD_ROWS,
-  CELLS,
-  GOAL_CELL,
-  SNAKES,
-  cellPosition,
-  getCell,
-  isLilaCellNumber,
-  lineForCell,
-  type LilaCellNumber,
-  type LilaConnection,
-} from "./board-data";
+import { BOARD_COLUMNS, BOARD_ROWS, CELLS, GOAL_CELL, cellPosition, getCell, isLilaCellNumber, lineForCell, type LilaCellNumber } from "./board-data";
 
 export type LilaBoardVariant = "full" | "compact" | "locator";
 
@@ -23,87 +10,64 @@ type BoardProps = {
   variant?: LilaBoardVariant;
 };
 
-type Point = {
-  x: number;
-  y: number;
-};
+// Поле нарисовано на холсте 1920×1720: клетки по 200 px и поле 60 px вокруг под рамку (docs/design/codex-brief-lila-board.md).
+// Номера, фишка и след выводятся поверх картинки по тем же координатам
+const CANVAS = { width: 1920, height: 1720, margin: 60, cell: 200 } as const;
 
-const CELL_SIZE = 100;
-const BOARD_WIDTH = BOARD_COLUMNS * CELL_SIZE;
-const BOARD_HEIGHT = BOARD_ROWS * CELL_SIZE;
+const BASE_SRC = "/lila/board-base.webp";
+const PATHS_SRC = { full: "/lila/board-paths.svg", compact: "/lila/board-paths-compact.svg" } as const;
+
+type Point = { x: number; y: number };
+
+function centerPoint(number: LilaCellNumber): Point {
+  const { col, row } = cellPosition(number);
+  return { x: CANVAS.margin + col * CANVAS.cell + CANVAS.cell / 2, y: CANVAS.margin + row * CANVAS.cell + CANVAS.cell / 2 };
+}
 
 export function Board({ current, trail = [], variant = "full" }: BoardProps) {
-  const arrowMarkerId = `lila-arrow-${useId().replace(/:/g, "")}`;
   const safeCurrent = isLilaCellNumber(current) ? current : 1;
   const safeTrail = trail.filter(isLilaCellNumber);
   const currentPoint = centerPoint(safeCurrent);
-  const showNames = variant === "full";
-  const isLocator = variant === "locator";
   const classes = ["lila-board", `lila-board--${variant}`].join(" ");
-
   const style = {
-    "--lila-token-x": `${(currentPoint.x / BOARD_WIDTH) * 100}%`,
-    "--lila-token-y": `${(currentPoint.y / BOARD_HEIGHT) * 100}%`,
+    "--lila-token-x": `${((currentPoint.x / CANVAS.width) * 100).toFixed(3)}%`,
+    "--lila-token-y": `${((currentPoint.y / CANVAS.height) * 100).toFixed(3)}%`,
   } as CSSProperties;
 
   return (
     <figure className={classes} style={style}>
       <div className="lila-board__paper">
-        <svg className="lila-board__paths" viewBox={`0 0 ${BOARD_WIDTH} ${BOARD_HEIGHT}`} aria-hidden="true" focusable="false">
-          <defs>
-            <marker id={arrowMarkerId} viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-              <path d="M 0 0 L 10 5 L 0 10 z" />
-            </marker>
-          </defs>
-          {safeTrail.length > 1 ? <path className="lila-board__trail" d={trailPath(safeTrail)} /> : null}
-          {ARROWS.map((line) => (
-            <path
-              key={`arrow-${line.from}-${line.to}`}
-              className="lila-board__arrow"
-              d={connectionPath(line, 0)}
-              markerEnd={`url(#${arrowMarkerId})`}
-            />
-          ))}
-          {SNAKES.map((line, index) => (
-            <g key={`snake-${line.from}-${line.to}`} className={`lila-board__snake lila-board__snake--${index % 3}`}>
-              <path className="lila-board__snake-body" d={connectionPath(line, index % 2 === 0 ? 42 : -42)} />
-              <SnakeHead at={centerPoint(line.from)} />
-              <SnakeTail at={centerPoint(line.to)} />
-            </g>
-          ))}
-        </svg>
+        <Image className="lila-board__base" src={BASE_SRC} alt="" fill unoptimized sizes="(min-width: 900px) 640px, 100vw" />
+        {variant !== "locator" ? <Image className="lila-board__art" src={PATHS_SRC[variant]} alt="" fill unoptimized sizes="(min-width: 900px) 640px, 100vw" /> : null}
+        {safeTrail.length > 1 ? (
+          <svg className="lila-board__trail-layer" viewBox={`0 0 ${CANVAS.width} ${CANVAS.height}`} aria-hidden="true" focusable="false">
+            <path className="lila-board__trail" d={trailPath(safeTrail)} />
+          </svg>
+        ) : null}
 
-        <div className="lila-board__cells" aria-hidden={isLocator ? "true" : undefined}>
+        {/* Названия и переходы читает список ниже: сами клетки для экранных программ скрыты */}
+        <div className="lila-board__cells" aria-hidden="true">
           {CELLS.map((cell) => {
             const position = cellPosition(cell.number);
-            const relation = lineForCell(cell.number);
-            const isCurrent = cell.number === safeCurrent;
-            const isGoal = cell.number === GOAL_CELL;
-            const isTrail = safeTrail.includes(cell.number);
-            const shouldShowName = showNames && cell.name.length <= 18;
-            const label = cellLabel(cell.number);
-
+            const tipX = position.col < 2 ? "start" : position.col > BOARD_COLUMNS - 3 ? "end" : "center";
+            const tipY = position.row < 2 ? "below" : "above";
             return (
               <div
                 key={cell.number}
                 className={[
                   "lila-board__cell",
-                  isCurrent ? "lila-board__cell--current" : "",
-                  isGoal ? "lila-board__cell--goal" : "",
-                  isTrail ? "lila-board__cell--trail" : "",
-                  relation ? `lila-board__cell--${relation.kind}` : "",
-                  shouldShowName ? "" : "lila-board__cell--number-only",
+                  cell.number === safeCurrent ? "lila-board__cell--current" : "",
+                  cell.number === GOAL_CELL ? "lila-board__cell--goal" : "",
+                  safeTrail.includes(cell.number) ? "lila-board__cell--trail" : "",
                 ]
                   .filter(Boolean)
                   .join(" ")}
                 style={{ gridColumn: position.col + 1, gridRow: position.row + 1 }}
-                tabIndex={shouldShowName ? undefined : 0}
-                aria-label={label}
                 data-name={cell.name}
-                title={cell.name}
+                data-tip-x={tipX}
+                data-tip-y={tipY}
               >
                 <span className="lila-board__number">{cell.number}</span>
-                {shouldShowName ? <span className="lila-board__name">{cell.name}</span> : null}
               </div>
             );
           })}
@@ -142,37 +106,6 @@ export function Board({ current, trail = [], variant = "full" }: BoardProps) {
   );
 }
 
-function SnakeHead({ at }: { at: Point }) {
-  return (
-    <g className="lila-board__snake-head" transform={`translate(${at.x - 12} ${at.y + 16}) rotate(-18)`}>
-      <path d="M 0 7 C 6 -4 23 -3 30 7 C 22 17 7 18 0 7 Z" />
-      <circle cx="21" cy="5.5" r="1.7" />
-    </g>
-  );
-}
-
-function SnakeTail({ at }: { at: Point }) {
-  return <path className="lila-board__snake-tail" d={`M ${at.x + 18} ${at.y - 14} q 22 -10 34 8`} />;
-}
-
-function centerPoint(number: LilaCellNumber): Point {
-  const position = cellPosition(number);
-
-  return {
-    x: position.col * CELL_SIZE + CELL_SIZE / 2,
-    y: position.row * CELL_SIZE + CELL_SIZE / 2,
-  };
-}
-
-function connectionPath(line: LilaConnection, bend: number) {
-  const from = centerPoint(line.from);
-  const to = centerPoint(line.to);
-  const midX = (from.x + to.x) / 2 + bend;
-  const midY = (from.y + to.y) / 2 - Math.abs(bend) * 0.35;
-
-  return `M ${from.x} ${from.y} Q ${midX} ${midY} ${to.x} ${to.y}`;
-}
-
 function trailPath(trail: LilaCellNumber[]) {
   return trail
     .map((number, index) => {
@@ -195,3 +128,5 @@ function cellScreenReaderText(number: LilaCellNumber, current: LilaCellNumber) {
   const currentText = number === current ? " — вы здесь" : "";
   return `${cellLabel(number)}${currentText}`;
 }
+
+export const BOARD_GRID = { columns: BOARD_COLUMNS, rows: BOARD_ROWS } as const;
