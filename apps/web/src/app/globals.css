@@ -317,7 +317,7 @@ body .stack > .matrix-result { margin-top: 56px; }
 .practice-card { position: relative; overflow: hidden; display: flex; align-items: flex-end; min-height: 260px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); isolation: isolate; transition: border-color 300ms ease; }
 @media (min-width: 760px) { .practice-card { aspect-ratio: 1.9; min-height: 0; align-items: center; } }
 .practice-card:hover { border-color: var(--line-strong); }
-.practice-card__art { z-index: -2; object-fit: cover; object-position: 80% 50%; transition: transform 700ms ease; }
+.practice-card__art { z-index: -2; object-fit: cover; object-position: 80% 50%; transition: transform 450ms cubic-bezier(.2, .8, .2, 1); }
 .practice-card:hover .practice-card__art { transform: scale(1.03); }
 .practice-card::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, var(--scrim) 0%, var(--scrim) 30%, var(--scrim-clear) 72%); }
 .practice-card__body { display: grid; gap: 10px; align-content: start; max-width: 62%; padding: 24px 20px; }
@@ -346,7 +346,8 @@ body .stack > .matrix-result { margin-top: 56px; }
 /* Высоту баннера ставит Analytics.tsx; 220px — до первого замера. Плюс 32px: баннер висит в 16px от низа */
 body.has-cookie-banner { padding-bottom: calc(var(--cookie-banner-height, 220px) + 32px); }
 
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } .practice-card:hover .practice-card__art { transform: none; } }
+/* Движение отключаем, а смену цвета и рамок оставляем: она не двигает интерфейс */
+@media (prefers-reduced-motion: reduce) { *, ::before, ::after { transition-property: color, background-color, border-color, opacity !important; } .practice-card:hover .practice-card__art { transform: none; } }
 
 /* Лила: визуальное поле 9 × 8 с бумажной фактурой, SVG-змеями и стрелами */
 .lila-board { display: grid; gap: 14px; width: min(100%, 920px); margin: 0; color: var(--ink); }
@@ -624,7 +625,7 @@ a.report-toc__title:hover { color: var(--accent); }
 }
 .lila-tile__name { padding-inline: 4px; hyphens: auto; overflow-wrap: break-word; }
 @media (prefers-reduced-motion: no-preference) {
-  .lila-tile__art .lila-art { transition: transform 300ms ease; }
+  .lila-tile__art .lila-art { transition: transform 450ms cubic-bezier(.2, .8, .2, 1); }
   .lila-tile:hover .lila-tile__art .lila-art { transform: scale(1.04); }
 }
 .lila-tile__sep { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -649,6 +650,25 @@ a.report-toc__title:hover { color: var(--accent); }
 .lila-play__board { grid-area: board; }
 .lila-play__history { grid-area: history; }
 .lila-play__roll { margin: 0; color: var(--ink-soft); }
+.lila-play__rollrow { display: flex; align-items: center; gap: 16px; }
+/* Кубик: грань с точками 3×3; катится, пока сервер отвечает, и оседает на выпавшей грани */
+.die { flex: none; display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); width: 56px; height: 56px; padding: 9px; border: 1px solid var(--line-strong); border-radius: 14px; background: linear-gradient(160deg, var(--surface-3), var(--surface-2)); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35); }
+.die__pip { align-self: center; justify-self: center; width: 9px; height: 9px; border-radius: 50%; background: transparent; }
+.die__pip[data-on] { background: var(--lavender); }
+@media (prefers-reduced-motion: no-preference) {
+  .die[data-rolling] { animation: die-tumble 700ms cubic-bezier(.3, .6, .4, 1); }
+  .die[data-settled] { animation: die-settle 260ms cubic-bezier(.2, .8, .2, 1); }
+  .lila-turn__guide p { animation: fade-in 320ms ease-out; }
+}
+@keyframes die-tumble {
+  0% { transform: translateY(0) rotate(0); }
+  25% { transform: translateY(-14px) rotate(140deg); }
+  55% { transform: translateY(0) rotate(290deg) scale(0.96); }
+  75% { transform: translateY(-5px) rotate(340deg); }
+  100% { transform: translateY(0) rotate(360deg); }
+}
+@keyframes die-settle { 0% { transform: scale(0.94); } 100% { transform: scale(1); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 /* hidden не работает у блоков со своим display: скрываем явно (вкладки на телефоне) */
 .lila-play__layout > [hidden] { display: none; }
 .lila-play__board { display: grid; gap: 12px; justify-items: center; padding: 16px; }
