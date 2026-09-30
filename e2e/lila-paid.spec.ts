@@ -31,6 +31,8 @@ test("a guest is offered to log in before buying the guide", async ({ page }) =>
 });
 
 test("a signed-in player buys the guide, plays ten moves and reads the conclusion", async ({ browser }) => {
+  // Оплата, десять ходов и итог от воркера: под нагрузкой полного прогона общего лимита в 90 секунд не хватает
+  test.setTimeout(180_000);
   const { context, page } = await signIn(browser, uniqueName("Проводник"));
   await buy(page, "Оплатить");
   await expect(page).toHaveURL(/\/lila\/igra$/, { timeout: 30_000 });
