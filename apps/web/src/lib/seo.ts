@@ -5,7 +5,7 @@ import { ARCANUM_IMAGE_SIZE, arcanumPath, MATRIX_PATH } from "./arcana-paths";
 import { BLOG_PATH, BLOG_POSTS, blogPath } from "./blog";
 import { lilaCellPath, LILA_PATH } from "./lila-paths";
 import { DOCUMENT_PATHS } from "./legal";
-import { SITE_NAME, SITE_URL } from "./site";
+import { SITE_NAME, SITE_URL, SOCIAL_LINKS } from "./site";
 
 // Личные страницы: вход, портрет и всё, что под ними. В поиск не попадают
 export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", "/lila/igra"];
@@ -38,7 +38,7 @@ export const websiteJsonLd = (): Record<string, unknown> => ({
   "@context": "https://schema.org",
   "@graph": [
     { "@type": "WebSite", "@id": `${SITE_URL}/#website`, name: SITE_NAME, url: SITE_URL, inLanguage: "ru" },
-    { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL, logo: `${SITE_URL}/hero.webp` },
+    { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL, logo: `${SITE_URL}/hero.webp`, sameAs: SOCIAL_LINKS.map((link) => link.url) },
   ],
 });
 

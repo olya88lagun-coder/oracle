@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CookieSettingsButton } from "./CookieSettingsButton";
 import { DISCLAIMER } from "@/lib/legal";
+import { SOCIAL_LINKS } from "@/lib/site";
 
 const LINKS = [
   { href: "/portret", label: "Мой портрет" },
@@ -19,6 +20,11 @@ export function Footer() {
           <Link key={link.href} href={link.href}>
             {link.label}
           </Link>
+        ))}
+        {SOCIAL_LINKS.map((link) => (
+          <a key={link.url} href={link.url} rel="me noopener" target="_blank">
+            {link.name}
+          </a>
         ))}
         <CookieSettingsButton />
       </nav>
