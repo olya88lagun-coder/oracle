@@ -12,3 +12,4 @@ export const ARTICLES: readonly Article[] = Object.keys(SOURCES)
   .map((name) => parseArticle(name, SOURCES[name] ?? ""));
 
 export const articleBySlug = (slug: string): Article | undefined => ARTICLES.find((article) => article.slug === slug);
+export { ArticleMarkdownError, linksOf, parseMarkdown, plainText, type Block, type Inline } from "./article-markdown";
