@@ -1,3 +1,4 @@
+import { LILA_SESSION_PRODUCT } from "@oracle/core";
 import { getLilaConclusion, getLilaGameForUser } from "@oracle/db";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -13,6 +14,7 @@ import { LILA_GAME_PATH } from "@/lib/lila-paths";
 import { describeGameFacts, trailOf } from "@/lib/lila-turn";
 import { toGameView } from "@/lib/lila-view";
 import { getDb } from "@/server/db";
+import { salesEnabled } from "@/server/payments-deps";
 import { enqueueConclusion } from "@/server/queue";
 import { requireUser } from "@/server/viewer";
 
@@ -40,6 +42,15 @@ export default async function LilaHistoryPage({ params }: { params: Promise<{ id
         {conclusion && (
           <p>
             <LilaPdfLink gameId={record.id} />
+          </p>
+        )}
+        {record.mode !== "guided" && record.status === "finished" && salesEnabled(LILA_SESSION_PRODUCT) && (
+          <p className="muted">
+            Итог партии и PDF —{" "}
+            <Link href={LILA_GAME_PATH}>
+              в игре с проводником
+            </Link>
+            .
           </p>
         )}
         {game.status === "active" && (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 // Точки на гранях в сетке 3×3: номера ячеек слева направо, сверху вниз
 const PIPS: Record<number, readonly number[]> = {
@@ -13,10 +13,11 @@ const PIPS: Record<number, readonly number[]> = {
 };
 const SHUFFLE_MS = 90;
 
-type Props = { value: number | null; rolling: boolean };
+// moveKey меняется с каждым ходом: оседание кубика проигрывается и когда выпало то же число, что и в прошлый раз
+type Props = { value: number | null; rolling: boolean; moveKey: number; rollMs: number };
 
 // Кубик только для глаз: результат озвучивает строка статуса рядом, поэтому сам он скрыт от скринридеров
-export function Die({ value, rolling }: Props) {
+export function Die({ value, rolling, moveKey, rollMs }: Props) {
   const [shown, setShown] = useState<number | null>(value);
   useEffect(() => {
     if (!rolling) return setShown(value);
@@ -25,7 +26,7 @@ export function Die({ value, rolling }: Props) {
   }, [rolling, value]);
   const pips = shown ? PIPS[shown] ?? [] : [];
   return (
-    <div className="die" data-rolling={rolling || undefined} data-settled={!rolling && value !== null ? value : undefined} aria-hidden="true">
+    <div key={moveKey} className="die" style={{ "--die-roll-ms": `${rollMs}ms` } as CSSProperties} data-rolling={rolling || undefined} data-settled={!rolling && value !== null ? value : undefined} aria-hidden="true">
       {Array.from({ length: 9 }, (_, cell) => (
         <span key={cell} className="die__pip" data-on={pips.includes(cell) || undefined} />
       ))}

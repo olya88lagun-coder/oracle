@@ -88,3 +88,25 @@ test("a player with an active game cannot buy another one", async ({ browser }) 
   expect(response.status()).toBe(409);
   await context.close();
 });
+
+test("a finished free game points to the guide for the conclusion and PDF", async ({ browser }) => {
+  const { context, page } = await signIn(browser, uniqueName("Свободная"));
+  await page.goto("/lila/igra");
+  await page.getByRole("textbox", { name: "Или напишите своё намерение" }).fill(INTENTION);
+  await page.getByRole("button", { name: "Играть без проводника" }).click();
+
+  // Завершить партию можно после десяти ходов
+  await ownRoll(page, 6);
+  for (let i = 0; i < 9; i += 1) await ownRoll(page, 1);
+  await expect(page.getByText(/Ходов 10/)).toBeVisible();
+  await page.getByRole("button", { name: "Завершить партию" }).first().click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Завершить партию" }).click();
+  await expect(page.getByText("Итог партии и PDF — в игре с проводником.")).toBeVisible();
+
+  await page.goto("/portret");
+  await page.getByRole("link", { name: "Открыть партию" }).first().click();
+  await expect(page).toHaveURL(/\/portret\/lila\/[0-9a-f-]{36}$/);
+  await expect(page.getByRole("link", { name: "в игре с проводником" })).toHaveAttribute("href", "/lila/igra");
+  await expect(page.getByRole("link", { name: "Скачать PDF" })).toHaveCount(0);
+  await context.close();
+});
