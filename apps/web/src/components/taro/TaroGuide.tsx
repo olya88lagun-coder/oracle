@@ -30,14 +30,16 @@ export function taroFaqJsonLd(): Record<string, unknown> {
 
 export function TaroGuide() {
   return (
-    <section className="stack matrix-guide" aria-labelledby="taro-faq">
+    <section className="matrix-wrap matrix-block matrix-faq" aria-labelledby="taro-faq">
       <h2 id="taro-faq">Частые вопросы</h2>
-      {TARO_FAQ.map((item) => (
-        <div key={item.question} className="stack matrix-guide__item">
-          <h3>{item.question}</h3>
-          <p>{item.answer}</p>
-        </div>
-      ))}
+      <div className="matrix-faq__list">
+        {TARO_FAQ.map((item, index) => (
+          <details key={item.question} open={index === 0}>
+            <summary>{item.question}</summary>
+            <p>{item.answer}</p>
+          </details>
+        ))}
+      </div>
     </section>
   );
 }

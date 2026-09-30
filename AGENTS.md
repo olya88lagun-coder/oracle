@@ -35,7 +35,7 @@
 | Страницы арканов | `apps/web/src/app/matrica-sudby/[arkan]/page.tsx` |
 | Блок продажи разбора | `apps/web/src/components/matrix/ReportOffer.tsx` |
 | Страница разбора (ожидание и готовый разбор) | `apps/web/src/app/portret/razbor/[id]/`, `apps/web/src/components/report/` |
-| Таро и карта дня | `apps/web/src/app/taro/`, `apps/web/src/components/taro/` (карта дня — `TaroDraw`, выбор и хранилище — `lib/taro-day.ts`, пути — `lib/taro-paths.ts`) |
+| Таро и карта дня | `apps/web/src/app/taro/`, `apps/web/src/components/taro/` (карта дня — `TaroDraw`, выбор и хранилище — `lib/taro-day.ts`, пути — `lib/taro-paths.ts`; каталог `/taro` — `TaroCatalog` и `lib/taro-catalog.ts`, картинки сцены — `apps/web/public/images/taro/`) |
 | Тексты карт Таро | `packages/content/tarot/NN-slug.md` (после правки — `pnpm content:build`) |
 | Иллюстрации карт Таро | `apps/web/public/taro/NN-slug.webp` (960 px по высоте — страница карты и превью ссылок), `NN-slug-480.webp` (карта дня) и `NN-slug-160.webp` (сетка); источник и лицензия каждого скана — `packages/content/tarot-sources.json`; тест проверяет, что у всех 78 есть все три файла |
 | Тексты арканов | `packages/content/arcana/*.md` (после правки — `pnpm content:build`) |
