@@ -2,8 +2,9 @@ import { toIsoDate } from "@oracle/core";
 import type { Metadata } from "next";
 import { ArcanaIndex } from "@/components/ArcanaIndex";
 import { MatrixCalculator } from "@/components/matrix/MatrixCalculator";
+import { matrixFaqJsonLd, MatrixGuide } from "@/components/matrix/MatrixGuide";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
-import { publicMetadata } from "@/lib/seo";
+import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { listPaidPurchases } from "@oracle/db";
 import { getDb } from "@/server/db";
 import { salesEnabled } from "@/server/payments-deps";
@@ -25,6 +26,7 @@ export default async function MatrixPage() {
 
   return (
     <main className="page page--wide stack matrix-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(matrixFaqJsonLd()) }} />
       <MatrixCalculator
         signedIn={Boolean(user)}
         profileDate={profileDate}
@@ -53,6 +55,8 @@ export default async function MatrixPage() {
           силы, что повторяется, куда хочется расти. Трактовки — гипотезы для размышления, а не диагноз и не приговор.
         </p>
       </section>
+
+      <MatrixGuide />
 
       <ArcanaIndex />
     </main>

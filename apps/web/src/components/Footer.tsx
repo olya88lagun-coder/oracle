@@ -4,6 +4,7 @@ import { DISCLAIMER } from "@/lib/legal";
 
 const LINKS = [
   { href: "/portret", label: "Мой портрет" },
+  { href: "/blog", label: "Блог" },
   { href: "/contacts", label: "Контакты" },
   { href: "/privacy", label: "Политика обработки данных" },
   { href: "/oferta", label: "Оферта" },
