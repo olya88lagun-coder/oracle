@@ -779,13 +779,33 @@ a.report-toc__title:hover { color: var(--accent); }
 .matrix-guide h3 { margin: 0; font-size: 18px; }
 .matrix-guide__item p { margin: 0; }
 
-/* Совместимость: результат пары и две колонки «Вы и партнёр» */
-.compat-page { gap: 28px; }
+/* Совместимость: форма, карточка пары, две колонки «Вы и партнёр» (по макету Codex) */
+.compat-page { gap: 32px; }
 .compat-form { max-width: 560px; }
-.compat-pair { align-items: flex-start; }
-.compat-pair__art { width: 100%; max-width: 320px; height: auto; border-radius: var(--radius); }
+@media (min-width: 760px) {
+  .compat-form { display: grid; max-width: none; grid-template-columns: 1fr 1fr auto; align-items: end; column-gap: 20px; }
+  .compat-form > .muted, .compat-form > .error { grid-column: 1 / -1; }
+}
+.compat-result { gap: 28px; }
+.compat-pair { gap: 18px; }
+.compat-pair__art { width: 100%; max-width: 360px; height: auto; border-radius: var(--radius); border: 1px solid var(--line-strong); }
 .compat-pair__name { margin: 0; }
+@media (min-width: 760px) {
+  .compat-pair { display: grid; grid-template-columns: 330px 1fr; align-items: start; column-gap: 32px; padding: 26px; }
+  .compat-pair__art { max-width: none; }
+}
+.compat-fact { padding-top: 12px; border-top: 1px solid var(--line); }
 .compat-people { display: grid; gap: 16px; }
 @media (min-width: 900px) { .compat-people { grid-template-columns: 1fr 1fr; align-items: start; } }
 .compat-person h3 { margin: 0; }
-.compat-actions { flex-wrap: wrap; gap: 12px; align-items: center; }
+.compat-person__point { padding-top: 12px; border-top: 1px solid var(--line); gap: 8px; }
+.compat-person__point:first-of-type { border-top: 0; padding-top: 0; }
+.compat-metric { display: grid; grid-template-columns: 92px 1fr; gap: 12px; align-items: baseline; margin: 0; }
+.compat-metric .eyebrow { margin: 0; }
+.compat-metric a { color: var(--accent); font-weight: 600; }
+@media (max-width: 519px) { .compat-metric { grid-template-columns: 1fr; gap: 2px; } }
+.compat-actions { flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
+@media (max-width: 519px) { .compat-actions { display: grid; } .compat-actions .button { width: 100%; } }
+.compat-page .matrix-guide { gap: 40px; margin-top: 28px; }
+.compat-page .matrix-guide h2 { margin-bottom: 6px; }
+.compat-page .matrix-guide__item { gap: 6px; margin-top: 14px; }
