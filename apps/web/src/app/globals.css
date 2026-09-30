@@ -662,6 +662,8 @@ a.report-toc__title:hover { color: var(--accent); }
   .lila-play__layout {
     grid-template-columns: minmax(340px, 440px) minmax(0, 1fr);
     grid-template-areas: "side dice" "side board" "history history";
+    /* Левая колонка (ход, абзац проводника) выше правой: лишняя высота уходит в ряд под полем, а кубик и поле остаются вплотную вверху */
+    grid-template-rows: auto 1fr auto;
     align-items: start;
   }
   /* Вкладки нужны только на телефоне: на компьютере ход и поле всегда рядом, кубик над полем, история — ниже на всю ширину */
