@@ -71,6 +71,6 @@ test("the PDF endpoint refuses foreign origins and bad dates", async ({ page }) 
 test("the matrix result offers to check the compatibility", async ({ page }) => {
   await page.goto("/matrica-sudby");
   await page.getByRole("textbox", { name: "Дата рождения" }).fill("1988-11-18");
-  await page.getByRole("button", { name: "Рассчитать", exact: true }).click();
+  await page.getByRole("button", { name: "Рассчитать матрицу", exact: true }).click();
   await expect(page.getByRole("link", { name: "Проверить совместимость с партнёром" })).toHaveAttribute("href", "/sovmestimost");
 });
