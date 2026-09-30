@@ -1,0 +1,548 @@
+{
+  "shut": {
+    "file": "RWS_Tarot_00_Fool.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mag": {
+    "file": "RWS_Tarot_01_Magician.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "verkhovnaya-zhrica": {
+    "file": "RWS_Tarot_02_High_Priestess.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "imperatrica": {
+    "file": "RWS_Tarot_03_Empress.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "imperator": {
+    "file": "RWS_Tarot_04_Emperor.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "ierofant": {
+    "file": "RWS_Tarot_05_Hierophant.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "vlyublennye": {
+    "file": "RWS_Tarot_06_Lovers.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_06_Lovers.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kolesnica": {
+    "file": "RWS_Tarot_07_Chariot.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "sila": {
+    "file": "RWS_Tarot_08_Strength.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "otshelnik": {
+    "file": "RWS_Tarot_09_Hermit.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "koleso-fortuny": {
+    "file": "RWS_Tarot_10_Wheel_of_Fortune.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "spravedlivost": {
+    "file": "RWS_Tarot_11_Justice.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "poveshennyj": {
+    "file": "RWS_Tarot_12_Hanged_Man.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "smert": {
+    "file": "RWS_Tarot_13_Death.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "umerennost": {
+    "file": "RWS_Tarot_14_Temperance.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "dyavol": {
+    "file": "RWS_Tarot_15_Devil.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "bashnya": {
+    "file": "RWS_Tarot_16_Tower.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zvezda": {
+    "file": "RWS_Tarot_17_Star.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "luna": {
+    "file": "RWS_Tarot_18_Moon.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "solnce": {
+    "file": "RWS_Tarot_19_Sun.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "sud": {
+    "file": "RWS_Tarot_20_Judgement.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mir": {
+    "file": "RWS_Tarot_21_World.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-tuz": {
+    "file": "Wands01.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/11/Wands01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-dvoyka": {
+    "file": "Wands02.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Wands02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-troyka": {
+    "file": "Wands03.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Wands03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-chetverka": {
+    "file": "Wands04.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Wands04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-pyaterka": {
+    "file": "Wands05.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/9d/Wands05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-shesterka": {
+    "file": "Wands06.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Wands06.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-semerka": {
+    "file": "Wands07.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Wands07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-vosmerka": {
+    "file": "Wands08.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Wands08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-devyatka": {
+    "file": "Wands09.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Wands09.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-desyatka": {
+    "file": "Wands10.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Wands10.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-pazh": {
+    "file": "Wands11.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Wands11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-ryttsar": {
+    "file": "Wands12.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/16/Wands12.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-koroleva": {
+    "file": "Wands13.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Wands13.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "zhezly-korol": {
+    "file": "Wands14.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Wands14.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-tuz": {
+    "file": "Cups01.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/36/Cups01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-dvoyka": {
+    "file": "Cups02.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Cups02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-troyka": {
+    "file": "Cups03.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Cups03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-chetverka": {
+    "file": "Cups04.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/35/Cups04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-pyaterka": {
+    "file": "Cups05.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Cups05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-shesterka": {
+    "file": "Cups06.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Cups06.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-semerka": {
+    "file": "Cups07.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Cups07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-vosmerka": {
+    "file": "Cups08.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/60/Cups08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-devyatka": {
+    "file": "Cups09.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/2/24/Cups09.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-desyatka": {
+    "file": "Cups10.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/84/Cups10.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-pazh": {
+    "file": "Cups11.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Cups11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-ryttsar": {
+    "file": "Cups12.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Cups12.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-koroleva": {
+    "file": "Cups13.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/62/Cups13.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "kubki-korol": {
+    "file": "Cups14.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/04/Cups14.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-tuz": {
+    "file": "Swords01.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Swords01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-dvoyka": {
+    "file": "Swords02.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Swords02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-troyka": {
+    "file": "Swords03.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/0/02/Swords03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-chetverka": {
+    "file": "Swords04.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Swords04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-pyaterka": {
+    "file": "Swords05.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/2/23/Swords05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-shesterka": {
+    "file": "Swords06.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/2/29/Swords06.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-semerka": {
+    "file": "Swords07.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/34/Swords07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-vosmerka": {
+    "file": "Swords08.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Swords08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-devyatka": {
+    "file": "Swords09.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Swords09.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-desyatka": {
+    "file": "Swords10.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Swords10.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-pazh": {
+    "file": "Swords11.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Swords11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-ryttsar": {
+    "file": "Swords12.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Swords12.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-koroleva": {
+    "file": "Swords13.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Swords13.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "mechi-korol": {
+    "file": "Swords14.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/33/Swords14.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-tuz": {
+    "file": "Pents01.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Pents01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-dvoyka": {
+    "file": "Pents02.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/9f/Pents02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-troyka": {
+    "file": "Pents03.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/42/Pents03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-chetverka": {
+    "file": "Pents04.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/3/35/Pents04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-pyaterka": {
+    "file": "Pents05.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/9/96/Pents05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-shesterka": {
+    "file": "Pents06.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Pents06.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-semerka": {
+    "file": "Pents07.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Pents07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-vosmerka": {
+    "file": "Pents08.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/49/Pents08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-devyatka": {
+    "file": "Pents09.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Pents09.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-desyatka": {
+    "file": "Pents10.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/42/Pents10.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-pazh": {
+    "file": "Pents11.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Pents11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-ryttsar": {
+    "file": "Pents12.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Pents12.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-koroleva": {
+    "file": "Pents13.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/88/Pents13.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  },
+  "pentakli-korol": {
+    "file": "Pents14.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Pents14.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "license": "Public domain",
+    "author": "Pamela Colman Smith",
+    "checkedAt": "2026-09-30"
+  }
+}

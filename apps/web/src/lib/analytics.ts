@@ -5,8 +5,8 @@ export { LOGIN_MARK } from "./login-mark";
 export const METRIKA_ID: number | null = 113068094;
 export const YANDEX_VERIFICATION: string | null = "9512ea7a80f720a4";
 
-// План 1: вход и дата; план 2а: воронка матрицы судьбы; план 3а и 3б: Лила
-export const GOALS = ["login", "birth_date_saved", "matrix_calculated", "matrix_save_click", "matrix_share", "arcana_to_calculator", "report_offer_view", "report_offer_click", "report_paid", "report_opened", "report_pdf_download", "lila_start", "lila_finish", "lila_save", "lila_offer_click", "lila_paid", "compat_calculated", "compat_share", "compat_pdf"] as const;
+// План 1: вход и дата; план 2а: воронка матрицы судьбы; план 3а и 3б: Лила; план 5: совместимость; план 6: таро
+export const GOALS = ["login", "birth_date_saved", "matrix_calculated", "matrix_save_click", "matrix_share", "arcana_to_calculator", "report_offer_view", "report_offer_click", "report_paid", "report_opened", "report_pdf_download", "lila_start", "lila_finish", "lila_save", "lila_offer_click", "lila_paid", "compat_calculated", "compat_share", "compat_pdf", "taro_draw", "taro_share"] as const;
 export type Goal = (typeof GOALS)[number];
 
 export const CONSENT_KEY = "oracle-cookie-consent";

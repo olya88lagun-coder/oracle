@@ -21,12 +21,12 @@ describe("PRACTICES", () => {
     }
   });
 
-  test("the matrix, Lila and compatibility are open, and lead to their own pages", () => {
+  test("the matrix, Lila, compatibility and tarot are open, and lead to their own pages", () => {
     expect(PRACTICES.map((practice) => [practice.slug, practice.href])).toEqual([
       ["matrix", "/matrica-sudby"],
       ["lila", "/lila"],
       ["compat", "/sovmestimost"],
-      ["tarot", null],
+      ["tarot", "/taro"],
       ["natal", null],
     ]);
   });

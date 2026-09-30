@@ -1,6 +1,7 @@
 import { MATRIX_PATH } from "./arcana-paths";
 import { COMPAT_PATH } from "./compat";
 import { LILA_PATH } from "./lila-paths";
+import { TARO_PATH } from "./taro-paths";
 
 export type Practice = { slug: "matrix" | "lila" | "compat" | "tarot" | "natal"; title: string; summary: string; href: string | null };
 
@@ -9,7 +10,7 @@ export const PRACTICES: readonly Practice[] = [
   { slug: "matrix", title: "Матрица судьбы", summary: "22 аркана по дате рождения: сильные стороны, повторяющиеся сценарии и точки роста.", href: MATRIX_PATH },
   { slug: "lila", title: "Лила", summary: "Игра с намерением на поле из 72 клеток — повод посмотреть на свой вопрос по-новому.", href: LILA_PATH },
   { slug: "compat", title: "Совместимость", summary: "Две даты рождения — один общий аркан: как ваши матрицы разговаривают друг с другом.", href: COMPAT_PATH },
-  { slug: "tarot", title: "Таро", summary: "Расклад на вопрос и карта дня: символы как зеркало, а не приговор.", href: null },
+  { slug: "tarot", title: "Таро", summary: "Расклад на вопрос и карта дня: символы как зеркало, а не приговор.", href: TARO_PATH },
   { slug: "natal", title: "Натальная карта", summary: "Настоящий расчёт по дате, времени и месту рождения.", href: null },
 ];
 

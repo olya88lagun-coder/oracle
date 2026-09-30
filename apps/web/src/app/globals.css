@@ -840,3 +840,22 @@ a.report-toc__title:hover { color: var(--accent); }
 @media (max-width: 519px) { .compat-metric { grid-template-columns: 1fr; gap: 2px; } }
 .compat-actions { flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
 @media (max-width: 519px) { .compat-actions { display: grid; } .compat-actions .button { width: 100%; } }
+
+/* Таро: карта дня, страница карты, сетка колоды */
+.taro-draw { max-width: 420px; align-items: flex-start; }
+.taro-draw__card { width: min(100%, 277px); height: auto; border-radius: 12px; border: 1px solid var(--line-strong); box-shadow: var(--shadow); }
+.taro-back { display: block; width: min(100%, 277px); height: auto; border-radius: 12px; box-shadow: var(--shadow); }
+.taro-actions { flex-wrap: wrap; gap: 12px; align-items: center; }
+.taro-hero { display: grid; gap: 24px; justify-items: center; }
+.taro-hero__art { width: min(100%, 320px); height: auto; border-radius: 12px; border: 1px solid var(--line-strong); box-shadow: var(--shadow); }
+.taro-hero__text { width: 100%; }
+.taro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.taro-grid__item { display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 44px; padding: 8px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); text-align: center; text-decoration: none; font-size: 14px; }
+.taro-grid__item:hover { border-color: var(--accent-line); }
+.taro-grid__item img { width: 100%; max-width: 92px; height: auto; border-radius: 6px; }
+@media (min-width: 760px) {
+  .taro-hero { grid-template-columns: minmax(240px, 320px) 1fr; align-items: start; justify-items: start; gap: 48px; }
+  .taro-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+}
+@media (prefers-reduced-motion: no-preference) { .taro-draw--drawn .taro-draw__card { animation: taro-reveal 500ms var(--ease-out); } }
+@keyframes taro-reveal { from { opacity: 0; transform: rotateY(90deg) scale(0.96); } to { opacity: 1; transform: none; } }
