@@ -12,7 +12,7 @@ import { loadPortrait } from "@/server/profile-service";
 import { currentUser } from "@/server/viewer";
 
 export const metadata: Metadata = publicMetadata({
-  title: "Матрица судьбы по дате рождения — расчёт онлайн",
+  title: "Рассчитать матрицу судьбы по дате рождения онлайн бесплатно",
   description:
     "Рассчитайте матрицу судьбы по дате рождения: все 22 аркана на диаграмме и трактовка трёх ключевых точек — личности, центра и задачи. Бесплатно, без регистрации.",
   path: MATRIX_PATH,
