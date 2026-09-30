@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Совместимость по дате рождения — макет</title>
+  <style>
+    :root {
+      --bg: #0A090E;
+      --surface: #121017;
+      --surface-2: #17141D;
+      --surface-3: #211B22;
+      --line: #2A2430;
+      --line-strong: #5C4A38;
+      --ink: #F1E9DF;
+      --ink-soft: #B9AFA5;
+      --ink-faint: #8F877F;
+      --accent: #CBA676;
+      --accent-hover: #DDBC8E;
+      --accent-ink: #15100A;
+      --accent-soft: #A99F96;
+      --lavender: #B9A4E8;
+      --lavender-hover: #CBBAF1;
+      --lavender-ink: #16111F;
+      --lavender-glow: rgba(185, 164, 232, 0.16);
+      --accent-line: rgba(203, 166, 118, 0.38);
+      --input-bg: #0D0B10;
+      --focus-ring: rgba(203, 166, 118, 0.16);
+      --scrim: rgba(10, 9, 14, 0.92);
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--bg); color: var(--ink); font-family: Manrope, "Segoe UI", system-ui, sans-serif; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(185, 164, 232, 0.12), transparent 30rem),
+        radial-gradient(circle at 82% 8%, rgba(203, 166, 118, 0.13), transparent 34rem),
+        linear-gradient(180deg, #120D14 0, var(--bg) 34rem, #07070A 100%);
+    }
+
+    a { color: inherit; }
+    .page { width: min(100%, 1280px); margin: 0 auto; padding: 24px 20px 44px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 34px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 300; }
+    .brand::before { content: "✶"; color: var(--accent); font-size: 21px; }
+    .portrait { color: var(--ink-soft); border-bottom: 1px solid var(--accent-line); padding-bottom: 8px; font-size: 14px; }
+
+    h1, h2, h3 {
+      margin: 0;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+    h1 { max-width: 760px; font-size: clamp(42px, 7vw, 76px); line-height: 0.98; }
+    h2 { font-size: clamp(30px, 4vw, 46px); line-height: 1.06; }
+    h3 { font-size: 25px; line-height: 1.12; }
+    p { margin: 0; color: var(--ink-soft); font-size: 16px; line-height: 1.58; }
+    .small { color: var(--ink-faint); font-size: 14px; line-height: 1.45; }
+    .eyebrow {
+      margin-bottom: 12px;
+      color: var(--accent-soft);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+    }
+
+    .stack { display: grid; gap: 18px; }
+    .stack-lg { display: grid; gap: 28px; }
+    .hero { display: grid; gap: 26px; margin-bottom: 34px; }
+    .lead { max-width: 760px; font-size: 18px; }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.01)), var(--surface);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .panel { padding: 20px; }
+    .accent-card {
+      border-color: rgba(203, 166, 118, 0.48);
+      background: linear-gradient(135deg, rgba(203,166,118,.10), rgba(185,164,232,.04)), var(--surface);
+    }
+    .soft-card { background: var(--surface-2); }
+
+    .form-card { display: grid; gap: 16px; margin-bottom: 44px; }
+    .fields { display: grid; gap: 14px; }
+    label { display: grid; gap: 8px; color: var(--ink-soft); font-size: 14px; }
+    input {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--input-bg);
+      color: var(--ink);
+      padding: 0 14px;
+      font: inherit;
+      color-scheme: dark;
+    }
+    input:focus-visible, button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 8px var(--focus-ring);
+    }
+
+    .button-row { display: flex; flex-wrap: wrap; gap: 12px; }
+    button {
+      min-height: 48px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 22px;
+      font: inherit;
+      font-weight: 700;
+      cursor: default;
+    }
+    .primary { background: var(--lavender); color: var(--lavender-ink); box-shadow: 0 0 0 1px rgba(185,164,232,.18), 0 0 34px var(--lavender-glow); }
+    .primary.bronze { background: var(--accent); color: var(--accent-ink); box-shadow: none; }
+    .secondary { background: transparent; color: var(--ink); border: 1px solid var(--line-strong); }
+
+    .result { display: grid; gap: 28px; }
+    .pair-card {
+      display: grid;
+      gap: 20px;
+      align-items: start;
+    }
+    .arcana-image {
+      width: 100%;
+      max-width: 360px;
+      aspect-ratio: 1;
+      border-radius: 22px;
+      object-fit: cover;
+      border: 1px solid rgba(203, 166, 118, 0.48);
+      background: var(--surface-2);
+    }
+    .tag {
+      display: inline-flex;
+      width: max-content;
+      min-height: 34px;
+      align-items: center;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      padding: 0 12px;
+      color: var(--accent);
+      font-size: 14px;
+    }
+    .callout {
+      border-left: 1px solid var(--accent);
+      padding: 14px 0 14px 18px;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      line-height: 1.3;
+    }
+    .facts { display: grid; gap: 12px; }
+    .fact { border-top: 1px solid var(--line); padding-top: 12px; }
+    .fact strong { color: var(--ink); }
+    .people { display: grid; gap: 16px; }
+    .metric {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-size: 15px;
+    }
+    .metric b { color: var(--accent); font-weight: 600; }
+    .summary-grid { display: grid; gap: 14px; }
+    .info-grid { display: grid; gap: 16px; }
+
+    @media (min-width: 760px) {
+      .page { padding: 32px 68px 56px; }
+      .topbar { margin-bottom: 56px; }
+      .hero { grid-template-columns: 1fr 340px; align-items: end; }
+      .form-card { grid-template-columns: 1fr auto; align-items: end; padding: 26px; }
+      .fields { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+      .pair-card { grid-template-columns: 330px 1fr; padding: 26px; }
+      .people { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 759px) {
+      .page { padding: 20px 20px 40px; }
+      .topbar { margin-bottom: 34px; }
+      .brand { font-size: 22px; }
+      .portrait { font-size: 13px; }
+      .panel, .pair-card { padding: 20px; }
+      .button-row { display: grid; }
+      button { width: 100%; min-height: 48px; }
+      .arcana-image { max-width: none; }
+      .metric { grid-template-columns: 1fr; gap: 4px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="brand">Твой оракул</div>
+      <div class="portrait">Мой портрет</div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Практика</div>
+        <h1>Совместимость по дате рождения</h1>
+        <p class="lead">Две даты — один общий аркан: как ваши матрицы судьбы разговаривают друг с другом. Без предсказаний — как повод для разговора.</p>
+      </div>
+    </section>
+
+    <section class="card form-card">
+      <div class="fields">
+        <label>Ваша дата рождения
+          <input type="date" value="1988-11-18">
+        </label>
+        <label>Дата рождения партнёра
+          <input type="date" value="1991-07-04">
+        </label>
+      </div>
+      <div class="stack">
+        <button class="primary bronze">Рассчитать совместимость</button>
+        <p class="small">Считается в вашем браузере. Дата партнёра нигде не сохраняется.</p>
+      </div>
+    </section>
+
+    <section class="result">
+      <h2>Аркан вашей пары</h2>
+      <article class="card pair-card accent-card">
+        <img class="arcana-image" src="../../../../apps/web/public/arcana/19-solnce-480.webp" alt="Аркан 19 — Солнце">
+        <div class="stack">
+          <span class="tag">Аркан 19</span>
+          <h3>Солнце</h3>
+          <p><strong style="color: var(--ink);">Суть союза.</strong> Солнце приносит в пару радость, ясность и тепло. В таком союзе важны открытость, простые удовольствия и спокойное право быть заметными рядом друг с другом.</p>
+          <div class="facts">
+            <p class="fact"><strong>Что даёт:</strong> больше лёгкости, искренности, игры и щедрости; ощущение, что можно быть собой и делиться теплом без доказательств.</p>
+            <p class="fact"><strong>Где стоит присмотреться:</strong> не превращается ли радость одного в ожидание постоянного восхищения от другого.</p>
+          </div>
+          <div class="callout">Вопрос для двоих: что по-настоящему наполняет нашу пару радостью — и сколько места мы оставляем для этого в обычных днях?</div>
+        </div>
+      </article>
+
+      <h2>Вы и партнёр</h2>
+      <section class="people">
+        <article class="card panel stack">
+          <h3>Вы</h3>
+          <div class="metric"><span>Личность</span><b>6 Влюблённые</b></div>
+          <p>Влюблённые — один из главных арканов темы отношений: любовь, притяжение, союз равных. Вам может быть важно выбирать сердцем, чувствовать взаимность и видеть красоту в близости.</p>
+          <div class="metric"><span>Центр</span><b>19 Солнце</b></div>
+          <p>Солнце в отношениях — это тепло, открытость, игра и щедрость. Рядом с вами может быть радостно и просто.</p>
+          <div class="metric"><span>Задача</span><b>11 Сила</b></div>
+          <p>Сила в отношениях — это теплота, стойкость и готовность поддержать. Рядом с вами может быть безопасно: вы умеете выдерживать сильные чувства.</p>
+        </article>
+        <article class="card panel stack">
+          <h3>Партнёр</h3>
+          <div class="metric"><span>Личность</span><b>11 Сила</b></div>
+          <p>Сила в отношениях — это теплота, стойкость и готовность поддержать. Перекос — терпеть до последнего и копить раздражение, пока оно не прорвётся.</p>
+          <div class="metric"><span>Центр</span><b>6 Влюблённые</b></div>
+          <p>Влюблённые говорят о взаимности и живом выборе. Точка роста — выбирать из своих ценностей, а не из страха кого-то потерять.</p>
+          <div class="metric"><span>Задача</span><b>19 Солнце</b></div>
+          <p>Солнце просит делиться теплом, не требуя постоянного восхищения. Настоящее тепло не нуждается в зрителях.</p>
+        </article>
+      </section>
+
+      <section class="stack">
+        <h2>Где вы похожи и где различаетесь</h2>
+        <div class="summary-grid">
+          <div class="card panel soft-card">
+            <p><strong style="color: var(--ink);">Похожи:</strong> обоим важны живой контакт, тепло и возможность говорить не только о планах, но и о чувствах.</p>
+          </div>
+          <div class="card panel soft-card">
+            <p><strong style="color: var(--ink);">Различаетесь:</strong> один может быстрее идти к радости и открытости, другой — сначала искать устойчивость и безопасность.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="button-row">
+        <button class="primary">Скачать PDF</button>
+        <button class="secondary">Отправить партнёру</button>
+        <button class="secondary">Пересчитать</button>
+      </div>
+
+      <section class="info-grid">
+        <article class="card panel stack">
+          <h2>Как считается совместимость</h2>
+          <p>Сервис берёт две даты рождения, считает ключевые точки каждой матрицы и общий аркан пары. Это не прогноз, а способ увидеть темы для разговора.</p>
+        </article>
+        <article class="card panel stack">
+          <h2>Частые вопросы</h2>
+          <h3>Дата партнёра сохраняется?</h3>
+          <p>Нет. Расчёт выполняется в браузере, дата партнёра нигде не сохраняется…</p>
+        </article>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

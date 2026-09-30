@@ -19,8 +19,8 @@ function Person({ title, person }: { title: string; person: Compatibility["peopl
         const arcanum = arcanumByNumber(person[point]);
         return (
           <div key={point} className="stack compat-person__point">
-            <p className="eyebrow">{POINT_LABELS[point]}</p>
-            <p>
+            <p className="compat-metric">
+              <span className="eyebrow">{POINT_LABELS[point]}</span>
               <Link href={arcanumPath(arcanum)}>
                 {arcanum.number} · {arcanum.name}
               </Link>
@@ -45,20 +45,22 @@ export function CompatResult({ compat, headingRef, actions }: Props) {
       </h2>
       <div className="card stack compat-pair">
         <Image className="compat-pair__art" src={arcanumImage(arcanum, "card")} alt="" width={480} height={480} unoptimized />
-        <p className="eyebrow">Аркан {arcanum.number}</p>
-        <p className="display compat-pair__name">{arcanum.name}</p>
-        <p>{union.essence}</p>
-        <p>
-          <strong>Что даёт: </strong>
-          {union.gives}
-        </p>
-        <p>
-          <strong>Где стоит присмотреться: </strong>
-          {union.attention}
-        </p>
-        <p className="lila-turn__question">
-          <strong>Вопрос для двоих:</strong> {union.question}
-        </p>
+        <div className="stack compat-pair__body">
+          <p className="eyebrow">Аркан {arcanum.number}</p>
+          <p className="display compat-pair__name">{arcanum.name}</p>
+          <p>{union.essence}</p>
+          <p className="compat-fact">
+            <strong>Что даёт: </strong>
+            {union.gives}
+          </p>
+          <p className="compat-fact">
+            <strong>Где стоит присмотреться: </strong>
+            {union.attention}
+          </p>
+          <p className="lila-turn__question">
+            <strong>Вопрос для двоих:</strong> {union.question}
+          </p>
+        </div>
       </div>
 
       <h2>Вы и партнёр</h2>
