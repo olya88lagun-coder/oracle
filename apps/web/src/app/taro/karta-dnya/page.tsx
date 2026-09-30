@@ -14,7 +14,7 @@ export const metadata: Metadata = publicMetadata({
 
 export default function TaroDayPage() {
   return (
-    <main className="page stack taro-page">
+    <main className="page stack taro-page taro-day-page">
       <div className="stack">
         <p className="eyebrow eyebrow--line">Практика · таро</p>
         <h1 className="display">Карта дня</h1>

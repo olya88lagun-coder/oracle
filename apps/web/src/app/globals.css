@@ -842,13 +842,28 @@ a.report-toc__title:hover { color: var(--accent); }
 @media (max-width: 519px) { .compat-actions { display: grid; } .compat-actions .button { width: 100%; } }
 
 /* Таро: карта дня, страница карты, сетка колоды */
-.taro-draw { max-width: 420px; align-items: flex-start; }
+.taro-draw { position: relative; isolation: isolate; max-width: 420px; align-items: flex-start; }
+/* Сцена карты дня: мягкий свет за картами и два тонких кольца, как на рубашке; без картинок и внешних ресурсов */
+.taro-draw::before { content: ""; position: absolute; z-index: -1; top: -30px; left: 50%; width: min(100vw, 900px); height: 620px; transform: translateX(-50%); pointer-events: none;
+  background:
+    radial-gradient(ellipse 46% 40% at 50% 36%, rgba(185, 164, 232, 0.2), transparent 72%),
+    radial-gradient(ellipse 34% 30% at 50% 40%, rgba(203, 166, 118, 0.18), transparent 70%),
+    radial-gradient(circle at 50% 36%, transparent 0 34%, var(--accent-line) 34.2%, transparent 34.6% 47%, rgba(185, 164, 232, 0.28) 47.2%, transparent 47.6%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 40%, #000 40%, transparent 78%); mask-image: radial-gradient(ellipse 60% 55% at 50% 40%, #000 40%, transparent 78%); }
+.taro-day-page .taro-draw { margin-inline: auto; align-items: center; }
+.taro-day-page .taro-draw > p { text-align: center; }
+.taro-day-page .taro-draw--drawn { align-items: flex-start; }
+.taro-day-page .taro-draw--drawn > p { text-align: left; }
 .taro-draw__card { width: min(100%, 277px); height: auto; border-radius: 12px; border: 1px solid var(--line-strong); box-shadow: var(--shadow); }
 .taro-back { display: block; width: min(100%, 277px); height: auto; border-radius: 12px; box-shadow: var(--shadow); }
 .taro-picks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; }
 .taro-picks .taro-back, .taro-picks .taro-draw__card { width: 100%; }
 .taro-pick { padding: 0; border: 0; border-radius: 12px; background: none; cursor: pointer; transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base); }
-.taro-pick:hover:not(:disabled) { transform: translateY(-4px); }
+.taro-pick { --tilt: 0deg; --lift: 0px; transform: translateY(var(--lift)) rotate(var(--tilt)); }
+.taro-pick:nth-child(1) { --tilt: -4deg; --lift: 8px; }
+.taro-pick:nth-child(3) { --tilt: 4deg; --lift: 8px; }
+.taro-pick:hover:not(:disabled) { --lift: -6px; }
+.taro-pick:hover:not(:disabled) .taro-back { box-shadow: 0 0 0 1px var(--accent-line), 0 18px 60px rgba(185, 164, 232, 0.28); }
 .taro-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .taro-pick:disabled { cursor: default; opacity: 0.4; }
 .taro-actions { flex-wrap: wrap; gap: 12px; align-items: center; }
