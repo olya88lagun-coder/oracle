@@ -83,6 +83,8 @@ export function GameShell({ initialGame, signedIn, images, guidedEnabled = false
             Партия завершена. История — {signedIn ? "в «Моём портрете»" : "в этом браузере"}.
           </p>
         )}
+        {/* Итог и PDF есть только у партии с проводником; предложение начать её — сразу ниже, в форме намерения */}
+        {game && game.mode !== "guided" && guidedEnabled && <p className="muted">Итог партии и PDF — в игре с проводником.</p>}
         {signedIn && guest && !game && <SaveGameBanner guest={guest} onSave={(replace) => void save(replace)} onDiscard={discard} />}
         <IntentionForm busy={busy} error={error} onStart={(text) => void start(text)} guided={guidedEnabled ? { signedIn } : null} />
       </div>
