@@ -23,6 +23,8 @@
 | Лила: история партии | `apps/web/src/app/portret/lila/[id]/page.tsx` |
 | Лила: экран ожидания оплаты | `apps/web/src/app/lila/igra/oplata/[id]/`, `apps/web/src/components/lila/LilaPaymentWaiting.tsx` |
 | Лила: блок покупки и итог партии | `apps/web/src/components/lila/GuidedOffer.tsx`, `ConclusionView.tsx`, `ConclusionWaiting.tsx` |
+| Блог | `apps/web/src/app/blog/`, тексты статей — `apps/web/src/components/blog/`, список статей — `apps/web/src/lib/blog.ts` (новая статья: запись в `BLOG_POSTS` и компонент в `BODIES` страницы) |
+| Пояснения и вопросы под калькулятором матрицы | `apps/web/src/components/matrix/MatrixGuide.tsx` (вопросы уходят и в разметку FAQPage) |
 | Тексты клеток Лилы | `packages/content/lila-cells.md` (после правки — `pnpm content:build`) |
 | Иллюстрации клеток Лилы | `apps/web/public/lila/NN-slug.webp` (960 px — страница клетки и превью ссылок), `NN-slug-480.webp` (карточка хода) и `NN-slug-160.webp` (сетка); путь даёт `lilaCellImage` в `apps/web/src/lib/lila-paths.ts`; пока файла нет, показывается запасная карточка `CellFallback`; когда добавлены все 72×3, в `lila-paths.ts` `LILA_IMAGES_READY = true` |
 | Направление визуала | `docs/design/visual-direction.md` |
