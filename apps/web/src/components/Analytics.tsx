@@ -100,15 +100,14 @@ export function Analytics() {
   return (
     <div ref={bannerRef} className="cookie-banner" role="dialog" aria-label="Cookie">
       <p>
-        Мы используем cookie, чтобы сайт работал. С вашего разрешения — ещё и Яндекс.Метрику для статистики посещений. Подробнее — в{" "}
-        <Link href="/privacy">политике</Link>.
+        Необходимые cookie помогают сайту работать. Аналитические (Яндекс.Метрика) — с вашего согласия. <Link href="/privacy">Подробнее</Link>
       </p>
-      <div className="row">
-        <button type="button" className="button" onClick={() => decide("all")}>
-          Принять
-        </button>
+      <div className="cookie-banner__actions">
         <button type="button" className="button button--ghost" onClick={() => decide("necessary")}>
           Только необходимые
+        </button>
+        <button type="button" className="button" onClick={() => decide("all")}>
+          Принять
         </button>
       </div>
     </div>

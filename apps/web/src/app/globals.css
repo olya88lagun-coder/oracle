@@ -75,16 +75,6 @@ h3 { font-size: 24px; }
 body .stack > * + * { margin-top: 20px; }
 .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 
-.site-header { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 16px; max-width: var(--container); margin: 0 auto; padding: 16px; }
-@media (min-width: 900px) { .site-header { padding: 24px 28px; } }
-.site-header__logo { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: var(--ink); font-family: var(--font-display); font-size: clamp(23px, 3vw, 32px); font-weight: 300; letter-spacing: 0; white-space: nowrap; text-decoration: none; }
-/* Знак перед названием: тонкое кольцо с перекрестием и точкой, только CSS */
-.site-header__logo::before { content: ""; flex: none; width: 18px; height: 18px; border: 1px solid var(--accent-line); border-radius: 50%; box-shadow: 0 0 0 7px rgba(203, 166, 118, 0.04);
-  background: radial-gradient(circle, var(--accent) 0 2px, transparent 2.5px), linear-gradient(90deg, transparent 8px, var(--accent-line) 8px 9px, transparent 9px), linear-gradient(0deg, transparent 8px, var(--accent-line) 8px 9px, transparent 9px); }
-.site-header__logo:hover::before { border-color: var(--accent); }
-.site-header__account { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: var(--ink); font-size: 14px; text-decoration: none; text-shadow: 0 0 8px var(--bg), 0 0 3px var(--bg); }
-.site-header__icon { display: inline-grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--line-strong); border-radius: 50%; background: rgba(10, 9, 14, 0.6); color: var(--ink-soft); transition: border-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out); }
-.site-header__account:hover .site-header__icon { border-color: var(--accent); color: var(--accent); }
 
 .eyebrow--line::after { content: ""; display: inline-block; width: clamp(48px, 10vw, 120px); height: 1px; margin-left: 14px; vertical-align: middle; background: linear-gradient(90deg, var(--accent), transparent); }
 .eyebrow { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-soft); }
@@ -339,14 +329,8 @@ body .stack > .matrix-result { margin-top: 56px; }
 .portrait-keys__number { display: inline-grid; place-items: center; min-width: 32px; height: 32px; border: 1px solid var(--accent-line); border-radius: 50%; color: var(--accent); font-family: var(--font-display); }
 .portrait-practice__cta { margin-top: auto; align-self: flex-start; }
 
-.footer { max-width: var(--container); margin: 0 auto; padding: 24px 16px 40px; font-size: 14px; color: var(--ink-faint); }
-.footer nav { display: flex; flex-wrap: wrap; gap: 0 20px; padding-top: 12px; border-top: 1px solid var(--line); }
-.footer nav a, .footer nav .link-button { display: inline-flex; align-items: center; min-height: 44px; }
-.footer a, .footer .link-button { color: var(--ink-faint); }
 .disclaimer { margin: 16px 0 0; max-width: 720px; }
 .link-button { background: none; border: 0; padding: 0; font: inherit; text-decoration: underline; cursor: pointer; }
-.cookie-banner { position: fixed; z-index: 10; inset-inline: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); max-width: 608px; margin-inline: auto; padding: 20px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--surface-2); color: var(--ink); font-size: 14px; box-shadow: var(--shadow); }
-.cookie-banner p { margin: 0 0 14px; }
 /* Высоту баннера ставит Analytics.tsx; 220px — до первого замера. Плюс 32px: баннер висит в 16px от низа */
 body.has-cookie-banner { padding-bottom: calc(var(--cookie-banner-height, 220px) + 32px); }
 
@@ -946,6 +930,61 @@ a.report-toc__title:hover { color: var(--accent); }
   .matrix-cta { grid-template-columns: 1fr auto; gap: 30px; padding-block: 38px; }
 }
 @media (prefers-reduced-motion: reduce) { .matrix-library__art img { transition: none; } .matrix-library a:hover .matrix-library__art img { transform: none; } }
+/* Шапка, навигация, подвал и баннер согласия: общий каркас всех страниц */
+.wordmark { display: inline-flex; align-items: center; gap: 0.26em; min-height: 44px; color: var(--ink); font-family: var(--font-display); font-size: clamp(24px, 3vw, 30px); font-weight: 400; line-height: 1.1; letter-spacing: 0; white-space: nowrap; text-decoration: none; }
+.wordmark em { font-style: normal; color: var(--accent); }
+.wordmark--small { font-size: 24px; }
+.site-header { position: relative; z-index: 10; border-bottom: 1px solid rgba(241, 233, 223, 0.08); background: var(--bg); }
+.site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: var(--container); min-height: 70px; margin: 0 auto; padding: 0 16px; }
+.site-nav { display: none; align-items: center; gap: 26px; font-size: 13px; }
+.site-nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-soft); text-decoration: none; }
+.site-nav a:hover, .site-nav a[aria-current] { color: var(--ink); }
+.site-nav a[aria-current] { box-shadow: 0 1px 0 var(--accent); }
+.site-header__actions { display: flex; align-items: center; gap: 4px; }
+.site-header__account { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--ink); font-size: 13px; white-space: nowrap; text-decoration: none; }
+.site-header__account-label { display: none; }
+.site-header__icon { display: inline-grid; place-items: center; width: 38px; height: 38px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--accent); transition: border-color var(--dur-base) var(--ease-out); }
+.site-header__account:hover .site-header__icon { border-color: var(--accent); }
+.site-header__menu { display: grid; place-items: center; width: 44px; height: 44px; border: 0; background: none; color: var(--ink); cursor: pointer; }
+.site-mobile-nav { position: absolute; inset: 100% 0 auto; z-index: 11; padding: 8px 16px 16px; border-bottom: 1px solid var(--line); background: var(--surface); }
+.site-mobile-nav[hidden] { display: none; }
+.site-mobile-nav a { display: flex; align-items: center; min-height: 48px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.site-mobile-nav a[aria-current] { color: var(--accent); }
+.site-mobile-nav a:last-child { border-bottom: 0; }
+@media (min-width: 860px) {
+  .site-header__inner { min-height: 84px; padding: 0 28px; }
+  .site-nav { display: flex; }
+  .site-header__menu, .site-mobile-nav { display: none; }
+  .site-header__account-label { display: inline; }
+}
+@media (min-width: 860px) and (max-width: 1099px) { .site-nav { gap: 18px; } .site-header__account-label { display: none; } }
+.footer { max-width: var(--container); margin: 0 auto; padding: 40px 16px 32px; font-size: 14px; color: var(--ink-faint); }
+.footer__top, .footer__bottom { display: grid; gap: 18px; }
+.footer nav { display: flex; flex-wrap: wrap; gap: 0 22px; }
+.footer nav a, .footer nav .link-button { display: inline-flex; align-items: center; min-height: 44px; }
+.footer a, .footer .link-button { color: var(--ink-faint); text-decoration: none; }
+.footer a:hover, .footer .link-button:hover { color: var(--ink); }
+.footer__bottom { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
+.footer .link-button { text-decoration: none; }
+.footer__bottom .disclaimer { margin: 0; max-width: 640px; font-size: 13px; }
+@media (min-width: 860px) {
+  .footer { padding: 56px 28px 36px; }
+  .footer__top { grid-template-columns: auto 1fr auto; align-items: center; gap: 40px; }
+  .footer__bottom { grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 60px; }
+  .footer__bottom nav { justify-content: flex-end; }
+}
+.cookie-banner { position: fixed; z-index: 30; inset: auto 0 0; display: grid; gap: 12px; padding: 14px 16px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line-strong); background: var(--surface-2); color: var(--ink-soft); font-size: 14px; box-shadow: 0 -16px 36px rgba(0, 0, 0, 0.3); }
+.cookie-banner p { margin: 0; line-height: 1.55; }
+.cookie-banner a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.cookie-banner__actions { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; }
+.cookie-banner__actions .button { min-height: 44px; padding: 8px 14px; border-radius: 6px; font-size: 14px; }
+@media (min-width: 760px) {
+  .cookie-banner { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 32px; padding: 14px max(28px, calc((100% - 1200px) / 2)); }
+  .cookie-banner__actions { display: flex; }
+  .cookie-banner__actions .button { white-space: nowrap; }
+}
+/* Высоту баннера ставит Analytics.tsx; 140px — до первого замера */
+body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 
 /* Таро: карта дня, страница карты, сетка колоды */
 .taro-day { display: grid; gap: 28px; }

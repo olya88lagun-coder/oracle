@@ -15,7 +15,7 @@
 | Главная | `apps/web/src/app/page.tsx` |
 | Личный кабинет | `apps/web/src/app/portret/` (`page.tsx`, форма даты рождения, удаление данных) |
 | Вход | `apps/web/src/app/login/` |
-| Шапка, подвал, cookie-баннер | `apps/web/src/components/` (`Header`, `Footer`, `Analytics` — там же баннер) |
+| Шапка, подвал, cookie-баннер | `apps/web/src/components/` (`Header` и `HeaderNav` — навигация и меню на телефоне, `Footer`, `Analytics` — там же баннер); список разделов шапки и подвала — `apps/web/src/lib/sections.ts` |
 | Список практик на главной | `apps/web/src/lib/practices.ts` |
 | Лила: вход и справочник | `apps/web/src/app/lila/page.tsx` |
 | Лила: игра | `apps/web/src/app/lila/igra/`, `apps/web/src/components/lila/` (поле — `Board`) |
