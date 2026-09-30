@@ -552,8 +552,6 @@ a.report-toc__title:hover { color: var(--accent); }
 .hero__cta > * { margin: 0; }
 .hero__promise { font-size: 17px; color: var(--ink); }
 .practice-card__cta { width: fit-content; margin-top: 14px; white-space: nowrap; pointer-events: none; }
-.home-start { display: grid; gap: 16px; justify-items: start; margin-top: 8px; }
-.home-start > * { margin: 0; }
 .report-offer__teaser { position: relative; color: var(--ink); -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
 
 /* Лила: экраны по макетам Codex (docs/design/mockups/lila-*). Цвета — только переменные из :root */
@@ -1059,6 +1057,27 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 }
 @media (min-width: 701px) and (max-width: 859px) { .taro-cat__grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 @media (prefers-reduced-motion: reduce) { .taro-cat__image img { transition: none; } .taro-cat__card:hover .taro-cat__image img { transform: none; } }
+
+/* Главная: «Скоро» — узкая вторичная строка, блог — полоса из трёх материалов */
+.practice-soon { display: grid; gap: 12px; margin: 4px 0 0; padding: 0; list-style: none; }
+.practice-soon li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.practice-soon h3 { margin: 0; font-size: 20px; color: var(--ink-soft); }
+.practice-soon p { margin: 4px 0 0; color: var(--ink-faint); font-size: 14px; }
+.practice-soon__tag { border-color: var(--line); color: var(--ink-faint); }
+.home-blog { margin-top: 28px; }
+.home-blog__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; }
+.home-blog__head h2 { margin: 0; }
+.home-blog__list { display: grid; gap: 28px; margin: 0; padding: 0; list-style: none; }
+.home-blog__card { display: grid; gap: 10px; color: var(--ink); text-decoration: none; }
+.home-blog__art { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 4px; background: var(--surface); }
+.home-blog__art img { object-fit: cover; transition: transform 400ms var(--ease-out); }
+.home-blog__card:hover .home-blog__art img { transform: scale(1.03); }
+.home-blog__title { font-family: var(--font-display); font-size: 22px; line-height: 1.25; }
+.home-blog__card:hover .home-blog__title { color: var(--accent); }
+.home-blog__date { color: var(--ink-faint); font-size: 14px; }
+.home-blog__card:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+@media (min-width: 860px) { .home-blog__list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; } }
+@media (prefers-reduced-motion: reduce) { .home-blog__art img { transition: none; } .home-blog__card:hover .home-blog__art img { transform: none; } }
 
 /* Таро: карта дня, страница карты, сетка колоды */
 .taro-day { display: grid; gap: 28px; }

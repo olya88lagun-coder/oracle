@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
+import { BLOG_PATH, BLOG_POSTS, blogPath } from "@/lib/blog";
 import { FREE_MATRIX_CTA, FREE_RESULT_PROMISE, FREE_RESULT_TERMS, PRACTICES } from "@/lib/practices";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE, websiteJsonLd } from "@/lib/seo";
 
@@ -12,6 +13,11 @@ export const metadata: Metadata = publicMetadata({
   absoluteTitle: true,
   image: SITE_PREVIEW_IMAGE,
 });
+
+const OPEN = PRACTICES.filter((practice) => practice.href);
+const SOON = PRACTICES.filter((practice) => !practice.href);
+const LATEST_POSTS = BLOG_POSTS.slice(0, 3);
+const formatPostDate = (iso: string): string => new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${iso}T00:00:00Z`));
 
 // Картинки заранее ужаты до нужного размера (webp) — оптимизатор Next не нужен, и в standalone-сборке не требуется sharp
 export default function HomePage() {
@@ -51,7 +57,7 @@ export default function HomePage() {
         <section className="stack" aria-labelledby="practices">
           <h2 id="practices">Практики</h2>
           <ul className="practice-grid">
-            {PRACTICES.map((practice) => (
+            {OPEN.map((practice) => (
               <li key={practice.slug} className="practice-card">
                 <Image className="practice-card__art" src={`/practices/${practice.slug}.webp`} alt="" fill unoptimized sizes="(min-width: 760px) 50vw, 100vw" />
                 <div className="practice-card__body">
@@ -72,14 +78,19 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
-          <div className="home-start">
-            <p className="lead">Начните с матрицы судьбы — бесплатно откроются три ключевые позиции: Личность, Центр и Задача.</p>
-            <p>
-              <Link className="button button--lavender" href={MATRIX_PATH}>
-                {FREE_MATRIX_CTA}
-              </Link>
-            </p>
-          </div>
+          {SOON.length > 0 && (
+            <ul className="practice-soon" aria-label="Скоро">
+              {SOON.map((practice) => (
+                <li key={practice.slug}>
+                  <span className="tag practice-soon__tag">Скоро</span>
+                  <div>
+                    <h3>{practice.title}</h3>
+                    <p>{practice.summary}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         <section className="card card--accent card--portrait stack">
@@ -97,6 +108,28 @@ export default function HomePage() {
               Открыть портрет
             </Link>
           </p>
+        </section>
+
+        <section className="stack home-blog" aria-labelledby="home-blog">
+          <div className="home-blog__head">
+            <h2 id="home-blog">Из блога</h2>
+            <Link className="matrix-link" href={BLOG_PATH}>
+              Все статьи
+            </Link>
+          </div>
+          <ul className="home-blog__list">
+            {LATEST_POSTS.map((post) => (
+              <li key={post.slug}>
+                <Link href={blogPath(post)} className="home-blog__card">
+                  <span className="home-blog__art">
+                    <Image src={post.image.url} alt="" fill unoptimized sizes="(min-width: 860px) 360px, 100vw" />
+                  </span>
+                  <span className="home-blog__title">{post.title}</span>
+                  <span className="home-blog__date">{formatPostDate(post.published)}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       </div>
     </main>
