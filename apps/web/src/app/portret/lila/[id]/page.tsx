@@ -37,6 +37,11 @@ export default async function LilaHistoryPage({ params }: { params: Promise<{ id
         <p className="muted">
           {describeGameFacts(game)} · {game.status === "active" ? "партия идёт" : "партия завершена"}
         </p>
+        {conclusion && (
+          <p>
+            <LilaPdfLink gameId={record.id} />
+          </p>
+        )}
         {game.status === "active" && (
           <p>
             <Link className="button button--lavender" href={LILA_GAME_PATH}>
@@ -48,9 +53,6 @@ export default async function LilaHistoryPage({ params }: { params: Promise<{ id
       {conclusion && (
         <>
           <ConclusionView chapters={conclusion.chapters} />
-          <p>
-            <LilaPdfLink gameId={record.id} />
-          </p>
         </>
       )}
       {waiting && <ConclusionWaiting gameId={record.id} />}
