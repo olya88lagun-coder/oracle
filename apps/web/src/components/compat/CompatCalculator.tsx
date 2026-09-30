@@ -3,6 +3,7 @@
 import { calculateCompatibility, parseBirthDate, toIsoDate, type Compatibility } from "@oracle/core";
 import { useRef, useState, type FormEvent } from "react";
 import { reachGoal } from "@/lib/analytics";
+import { COMPAT_CALC_ID } from "./CompatGuide";
 import { CompatResult } from "./CompatResult";
 import { CompatShare } from "./CompatShare";
 
@@ -75,24 +76,35 @@ export function CompatCalculator({ profileDate }: { profileDate: string | null }
 
   return (
     <>
-      <form className="card stack compat-form" onSubmit={calculate} noValidate>
-        <div className="field">
-          <label htmlFor="compat-date-a">Ваша дата рождения</label>
-          <input ref={aRef} id="compat-date-a" className="input" type="date" min="1900-01-01" value={a} onChange={(event) => setA(event.target.value)} />
+      <form id={COMPAT_CALC_ID} className="card compat-form" aria-labelledby="compat-calc-title" onSubmit={calculate} noValidate>
+        <div className="compat-form__head">
+          <div className="stack">
+            <h2 id="compat-calc-title">Рассчитать общий аркан</h2>
+            <p className="muted">Дата партнёра остаётся на вашем устройстве.</p>
+          </div>
+          <span className="tag tag--open">Расчёт в браузере</span>
         </div>
-        <div className="field">
-          <label htmlFor="compat-date-b">Дата рождения партнёра</label>
-          <input ref={bRef} id="compat-date-b" className="input" type="date" min="1900-01-01" value={b} onChange={(event) => setB(event.target.value)} />
+        <div className="compat-form__fields">
+          <div className="field">
+            <label htmlFor="compat-date-a">Ваша дата рождения</label>
+            <input ref={aRef} id="compat-date-a" className="input" type="date" min="1900-01-01" value={a} onChange={(event) => setA(event.target.value)} />
+          </div>
+          <div className="field">
+            <label htmlFor="compat-date-b">Дата рождения партнёра</label>
+            <input ref={bRef} id="compat-date-b" className="input" type="date" min="1900-01-01" value={b} onChange={(event) => setB(event.target.value)} />
+          </div>
         </div>
-        <button type="submit" className="button button--lavender">
-          Рассчитать совместимость
-        </button>
+        <div className="stack compat-form__submit">
+          <button type="submit" className="button button--lavender">
+            Рассчитать совместимость
+          </button>
+          <p className="muted">Считается в вашем браузере. Дата партнёра нигде не сохраняется.</p>
+        </div>
         {error && (
-          <p className="error" role="alert">
+          <p className="error compat-form__error" role="alert">
             {error}
           </p>
         )}
-        <p className="muted">Считается в вашем браузере. Дата партнёра нигде не сохраняется.</p>
       </form>
 
       {compat && (

@@ -1,7 +1,8 @@
 import { toIsoDate } from "@oracle/core";
 import type { Metadata } from "next";
+import Image from "next/image";
 import { CompatCalculator } from "@/components/compat/CompatCalculator";
-import { compatFaqJsonLd, CompatGuide } from "@/components/compat/CompatGuide";
+import { compatFaqJsonLd, CompatCta, CompatGuide, CompatPreview } from "@/components/compat/CompatGuide";
 import { COMPAT_PATH } from "@/lib/compat";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -35,13 +36,25 @@ export default async function CompatibilityPage() {
     <main className="page page--wide stack compat-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(appJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(compatFaqJsonLd()) }} />
-      <div className="stack">
-        <p className="eyebrow eyebrow--line">Практика · совместимость</p>
-        <h1 className="display">Совместимость по дате рождения</h1>
-        <p className="lead">Две даты — один общий аркан: как ваши матрицы судьбы разговаривают друг с другом. Без предсказаний — как повод для разговора.</p>
-      </div>
+      <section className="compat-hero" aria-labelledby="compat-title">
+        <div className="stack">
+          <p className="eyebrow eyebrow--line">Практика · совместимость</p>
+          <h1 id="compat-title" className="display">
+            Совместимость по дате рождения
+          </h1>
+          <p className="lead">Две даты — один общий аркан: как ваши матрицы судьбы разговаривают друг с другом. Без предсказаний — как повод для разговора.</p>
+        </div>
+        <figure className="compat-hero__art">
+          <div className="compat-hero__image">
+            <Image src="/practices/compat.webp" alt="Два лунных диска пересекаются над тёмной водой" fill priority unoptimized sizes="(min-width: 860px) 430px, 100vw" />
+          </div>
+          <figcaption>Два начала встречаются в общей области света. Результат не оценивает пару, а помогает увидеть темы для разговора.</figcaption>
+        </figure>
+      </section>
       <CompatCalculator profileDate={profileDate} />
+      <CompatPreview />
       <CompatGuide />
+      <CompatCta />
     </main>
   );
 }

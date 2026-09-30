@@ -3,7 +3,7 @@ import { calculateCompatibility } from "@oracle/core";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
-import { COMPAT_FAQ, compatFaqJsonLd, CompatGuide } from "./CompatGuide";
+import { COMPAT_CALC_ID, COMPAT_FAQ, COMPAT_METHOD_ID, compatFaqJsonLd, CompatCta, CompatGuide, CompatPreview } from "./CompatGuide";
 import { CompatResult } from "./CompatResult";
 
 const text = (html: string) => html.replace(/<[^>]+>/g, " ");
@@ -20,6 +20,28 @@ describe("CompatGuide", () => {
     const html = renderToStaticMarkup(createElement(CompatGuide));
     expect(findStopPhrases(text(html))).toEqual([]);
     expect(html).toContain("Нет. Даты остаются на вашем устройстве");
+  });
+});
+
+describe("CompatPreview and CompatCta", () => {
+  test("promise the three result blocks and have no prediction stop phrases", () => {
+    const html = renderToStaticMarkup(createElement(CompatPreview));
+    for (const title of ["Аркан вашей пары", "Вы и партнёр", "Сходства и различия"]) expect(html).toContain(title);
+    expect(findStopPhrases(text(html))).toEqual([]);
+  });
+
+  test("the final call is made of links to the form and the method, not a second calculate button", () => {
+    const html = renderToStaticMarkup(createElement(CompatCta));
+    expect(html).toContain(`href="#${COMPAT_CALC_ID}"`);
+    expect(html).toContain(`href="#${COMPAT_METHOD_ID}"`);
+    expect(html).not.toContain("<button");
+    expect(findStopPhrases(text(html))).toEqual([]);
+  });
+
+  test("the method section carries the anchor id and the FAQ opens with the first question", () => {
+    const html = renderToStaticMarkup(createElement(CompatGuide));
+    expect(html).toContain(`id="${COMPAT_METHOD_ID}"`);
+    expect(html.match(/<details open/g)).toHaveLength(1);
   });
 });
 
