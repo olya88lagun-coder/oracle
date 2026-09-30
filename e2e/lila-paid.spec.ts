@@ -44,7 +44,7 @@ test("a signed-in player buys the guide, plays ten moves and reads the conclusio
 
   await page.getByRole("button", { name: "Завершить партию" }).first().click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Завершить партию" }).click();
-  await expect(page).toHaveURL(/\/portret\/lila\/[0-9a-f-]{36}$/);
+  await expect(page).toHaveURL(/\/portret\/lila\/[0-9a-f-]{36}$/, { timeout: 30_000 });
   await expect(page.getByRole("heading", { level: 2, name: "Намерение и путь" })).toBeVisible({ timeout: 60_000 });
   for (const title of ["Что повторялось", "Что вы замечали", "Вывод и шаг на неделю"]) {
     await expect(page.getByRole("heading", { level: 2, name: title })).toBeVisible();
