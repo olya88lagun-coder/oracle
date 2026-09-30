@@ -30,8 +30,8 @@ export function Board({ current, trail = [], variant = "full" }: BoardProps) {
   const currentPoint = centerPoint(safeCurrent);
   const classes = ["lila-board", `lila-board--${variant}`].join(" ");
   const style = {
-    "--lila-token-x": `${((currentPoint.x / CANVAS.width) * 100).toFixed(3)}%`,
-    "--lila-token-y": `${((currentPoint.y / CANVAS.height) * 100).toFixed(3)}%`,
+    "--lila-token-x": ((currentPoint.x / CANVAS.width) * 100).toFixed(3),
+    "--lila-token-y": ((currentPoint.y / CANVAS.height) * 100).toFixed(3),
   } as CSSProperties;
 
   return (
