@@ -29,7 +29,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: HERO_ALT,
     basis: ["positions", "arcana", "matrix-formulas"],
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-1-mag", "/blog/chto-takoe-matritsa-sudby"],
-    status: "draft",
+    status: "published",
   },
   {
     slug: "matritsa-sovmestimosti-rasshifrovka",
