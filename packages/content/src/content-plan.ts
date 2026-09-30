@@ -40,7 +40,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Аркан 6 «Влюблённые» — образ выбора и близости",
     basis: ["compat-texts", "compat-formulas"],
     internalLinks: ["/sovmestimost", "/matrica-sudby/arkan-6-vlyublennye"],
-    status: "draft",
+    status: "published",
   },
   {
     slug: "kak-schitaetsya-matritsa-sovmestimosti",
