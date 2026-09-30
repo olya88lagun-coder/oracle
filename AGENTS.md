@@ -24,6 +24,7 @@
 | Лила: экран ожидания оплаты | `apps/web/src/app/lila/igra/oplata/[id]/`, `apps/web/src/components/lila/LilaPaymentWaiting.tsx` |
 | Лила: блок покупки и итог партии | `apps/web/src/components/lila/GuidedOffer.tsx`, `ConclusionView.tsx`, `ConclusionWaiting.tsx` |
 | Блог | `apps/web/src/app/blog/`, тексты статей — `apps/web/src/components/blog/`, список статей — `apps/web/src/lib/blog.ts` (новая статья: запись в `BLOG_POSTS` и компонент в `BODIES` страницы) |
+| Статьи блога в Markdown (пишет автописатель) | `packages/content/articles/*.md`, контент-план — `packages/content/src/content-plan.ts`, проверки — `packages/content/src/article-check.ts`, инструкция — `docs/oracle-article-writer.md` (после правки статьи — `pnpm content:build`) |
 | Пояснения и вопросы под калькулятором матрицы | `apps/web/src/components/matrix/MatrixGuide.tsx` (вопросы уходят и в разметку FAQPage) |
 | Совместимость | `apps/web/src/app/sovmestimost/page.tsx`, `apps/web/src/components/compat/` |
 | Тексты «Союз» (совместимость) | `packages/content/compat-arcana.md` (после правки — `pnpm content:build`) |
