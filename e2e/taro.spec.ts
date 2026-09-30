@@ -9,7 +9,7 @@ async function draw(page: Page) {
   await page.goto("/taro/karta-dnya");
   // Клик до гидратации ничего не делает: повторяем, пока карта не появится
   await expect(async () => {
-    await page.getByRole("button", { name: "Вытянуть карту дня" }).click();
+    await page.getByRole("button", { name: "Карта 2" }).click();
     await expect(page.getByRole("status").filter({ hasText: "Ваша карта дня" })).toBeVisible({ timeout: 3000 });
   }).toPass({ timeout: 25_000 });
 }
@@ -21,6 +21,14 @@ test("the index lists all 78 cards and fits a phone", async ({ page }) => {
   await noHorizontalScroll(page);
 });
 
+test("three face-down cards are offered, and choosing one opens a card while the others stay closed", async ({ page }) => {
+  await page.goto("/taro/karta-dnya");
+  await expect(page.getByRole("button", { name: /^Карта [123]$/ })).toHaveCount(3);
+  await draw(page);
+  await expect(page.getByRole("button", { name: /^Карта [123]$/ })).toHaveCount(2);
+  await expect(page.getByRole("button", { name: /^Карта [123]$/ }).first()).toBeDisabled();
+});
+
 test("a drawn card stays for the day, and a new day allows a new draw", async ({ page }) => {
   await page.clock.install({ time: new Date("2026-10-05T10:00:00Z") });
   await draw(page);
@@ -30,7 +38,7 @@ test("a drawn card stays for the day, and a new day allows a new draw", async ({
   await expect(page.getByRole("heading", { level: 2 }).first()).toHaveText(first ?? "");
   await page.clock.setFixedTime(new Date("2026-10-06T10:00:00Z"));
   await page.reload();
-  await expect(page.getByRole("button", { name: "Вытянуть карту дня" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Карта [123]$/ })).toHaveCount(3);
 });
 
 test("the draw keeps only the day and the card in the browser storage", async ({ page }) => {

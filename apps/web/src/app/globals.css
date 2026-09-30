@@ -845,6 +845,12 @@ a.report-toc__title:hover { color: var(--accent); }
 .taro-draw { max-width: 420px; align-items: flex-start; }
 .taro-draw__card { width: min(100%, 277px); height: auto; border-radius: 12px; border: 1px solid var(--line-strong); box-shadow: var(--shadow); }
 .taro-back { display: block; width: min(100%, 277px); height: auto; border-radius: 12px; box-shadow: var(--shadow); }
+.taro-picks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; }
+.taro-picks .taro-back, .taro-picks .taro-draw__card { width: 100%; }
+.taro-pick { padding: 0; border: 0; border-radius: 12px; background: none; cursor: pointer; transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base); }
+.taro-pick:hover:not(:disabled) { transform: translateY(-4px); }
+.taro-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.taro-pick:disabled { cursor: default; opacity: 0.4; }
 .taro-actions { flex-wrap: wrap; gap: 12px; align-items: center; }
 .taro-hero { display: grid; gap: 24px; justify-items: center; }
 .taro-hero__art { width: min(100%, 320px); height: auto; border-radius: 12px; border: 1px solid var(--line-strong); box-shadow: var(--shadow); }
@@ -857,5 +863,5 @@ a.report-toc__title:hover { color: var(--accent); }
   .taro-hero { grid-template-columns: minmax(240px, 320px) 1fr; align-items: start; justify-items: start; gap: 48px; }
   .taro-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
 }
-@media (prefers-reduced-motion: no-preference) { .taro-draw--drawn .taro-draw__card { animation: taro-reveal 500ms var(--ease-out); } }
+@media (prefers-reduced-motion: no-preference) { .taro-picks__open, .taro-draw--drawn .taro-draw__card { animation: taro-reveal 500ms var(--ease-out); } }
 @keyframes taro-reveal { from { opacity: 0; transform: rotateY(90deg) scale(0.96); } to { opacity: 1; transform: none; } }
