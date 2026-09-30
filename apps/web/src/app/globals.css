@@ -74,8 +74,8 @@ body .stack > * + * { margin-top: 20px; }
 .site-header { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 16px; max-width: var(--container); margin: 0 auto; padding: 16px; }
 @media (min-width: 900px) { .site-header { padding: 24px 28px; } }
 .site-header__logo { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); font-size: clamp(22px, 3vw, 30px); font-weight: 300; letter-spacing: -0.01em; white-space: nowrap; text-decoration: none; }
-.site-header__account { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: var(--ink); font-size: 14px; text-decoration: none; }
-.site-header__icon { display: inline-grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--ink-soft); transition: border-color 200ms ease, color 200ms ease; }
+.site-header__account { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: var(--ink); font-size: 14px; text-decoration: none; text-shadow: 0 0 8px var(--bg), 0 0 3px var(--bg); }
+.site-header__icon { display: inline-grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--line-strong); border-radius: 50%; background: rgba(10, 9, 14, 0.6); color: var(--ink-soft); transition: border-color 200ms ease, color 200ms ease; }
 .site-header__account:hover .site-header__icon { border-color: var(--accent); color: var(--accent); }
 
 .eyebrow--line::after { content: ""; display: inline-block; width: clamp(48px, 10vw, 120px); height: 1px; margin-left: 14px; vertical-align: middle; background: linear-gradient(90deg, var(--accent), transparent); }
@@ -397,8 +397,11 @@ body.has-cookie-banner { padding-bottom: calc(var(--cookie-banner-height, 220px)
   line-height: 1;
   color: var(--ink);
   font-variant-numeric: lining-nums;
-  /* Тёмный ореол: цифра читается и там, где под ней проходит змея или стрела */
-  text-shadow: 0 0 5px var(--bg), 0 0 2px var(--bg);
+  /* Тёмная подложка и ореол: цифра читается и там, где под ней проходит змея или стрела */
+  padding: 0.18em 0.3em;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(10, 9, 14, 0.78) 55%, rgba(10, 9, 14, 0) 100%);
+  text-shadow: 0 0 2px var(--bg), 0 0 5px var(--bg), 0 0 9px var(--bg);
 }
 .lila-board__cell--trail { background: radial-gradient(circle, rgba(185, 164, 232, 0.14), transparent 70%); }
 .lila-board__cell--current {
