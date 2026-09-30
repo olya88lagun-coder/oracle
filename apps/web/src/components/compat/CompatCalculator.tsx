@@ -77,12 +77,9 @@ export function CompatCalculator({ profileDate }: { profileDate: string | null }
   return (
     <>
       <form id={COMPAT_CALC_ID} className="card compat-form" aria-labelledby="compat-calc-title" onSubmit={calculate} noValidate>
-        <div className="compat-form__head">
-          <div className="stack">
-            <h2 id="compat-calc-title">Рассчитать общий аркан</h2>
-            <p className="muted">Дата партнёра остаётся на вашем устройстве.</p>
-          </div>
-          <span className="tag tag--open">Расчёт в браузере</span>
+        <div className="compat-form__head stack">
+          <h2 id="compat-calc-title">Рассчитать общий аркан</h2>
+          <p className="muted">Дата партнёра остаётся на вашем устройстве.</p>
         </div>
         <div className="compat-form__fields">
           <div className="field">

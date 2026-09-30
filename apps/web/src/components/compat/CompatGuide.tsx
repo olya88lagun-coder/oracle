@@ -43,18 +43,15 @@ const STEPS: readonly { title: string; text: string }[] = [
   { title: "Затем сопоставление", text: "Мы смотрим личность, центр и задачу каждого: где арканы совпадают и где различаются." },
 ];
 
-// Что покажет результат: три блока, которые появятся после расчёта
+// Что покажет результат: три открытые редакционные колонки, которые появятся после расчёта
 export function CompatPreview() {
   return (
-    <section className="stack compat-section" aria-labelledby="compat-preview">
+    <section className="stack compat-section compat-section--preview" aria-labelledby="compat-preview">
       <p className="eyebrow eyebrow--line">Что покажет результат</p>
       <h2 id="compat-preview">Не вердикт, а карта разговора</h2>
       <ol className="compat-cards">
-        {PREVIEW.map((item, index) => (
-          <li key={item.title} className={item.accent ? "card card--accent compat-card" : "card compat-card"}>
-            <span className="compat-card__index" aria-hidden="true">
-              {String(index + 1).padStart(2, "0")}
-            </span>
+        {PREVIEW.map((item) => (
+          <li key={item.title} className={item.accent ? "compat-card compat-card--accent" : "compat-card"}>
             <h3>{item.title}</h3>
             <p className="muted">{item.text}</p>
           </li>
@@ -73,7 +70,7 @@ export function CompatGuide() {
         <h2 id="compat-how">Как считается совместимость</h2>
         <ol className="compat-cards">
           {STEPS.map((step) => (
-            <li key={step.title} className="card compat-card">
+            <li key={step.title} className="compat-card">
               <h3>{step.title}</h3>
               <p className="muted">{step.text}</p>
             </li>
