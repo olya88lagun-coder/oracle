@@ -3,19 +3,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { FREE_MATRIX_CTA, FREE_RESULT_PROMISE, FREE_RESULT_TERMS, PRACTICES } from "@/lib/practices";
-import { publicMetadata } from "@/lib/seo";
+import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE, websiteJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
   title: "Твой оракул — символические практики для самопознания",
   description: "Матрица судьбы, Лила, таро и натальная карта как инструмент самопознания — без обещаний предсказать будущее.",
   path: "/",
   absoluteTitle: true,
+  image: SITE_PREVIEW_IMAGE,
 });
 
 // Картинки заранее ужаты до нужного размера (webp) — оптимизатор Next не нужен, и в standalone-сборке не требуется sharp
 export default function HomePage() {
   return (
     <main className="home">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd()) }} />
       <section className="hero">
         <div className="hero__art">
           <Image src="/hero.webp" alt="" fill priority unoptimized sizes="100vw" />

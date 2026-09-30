@@ -5,7 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Board } from "@/components/lila/Board";
 import { CellArt } from "@/components/lila/CellArt";
-import { lilaCellDescription, lilaCellFromParam, lilaCellJsonLd, lilaCellPath, lilaParam, LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
+import { lilaCellDescription, lilaCellFromParam, lilaCellImage, lilaCellJsonLd, lilaCellPath, lilaParam, LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
 import { publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { availableCellImages } from "@/server/lila-images";
@@ -25,6 +25,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     title: `Клетка ${cell.number} «${cell.name}» в игре Лила — значение`,
     description: lilaCellDescription(cell),
     path: lilaCellPath(cell),
+    image: { url: lilaCellImage(cell, "page"), alt: `Клетка ${cell.number} «${cell.name}» в игре Лила` },
   });
 }
 
@@ -91,7 +92,7 @@ export default async function LilaCellPage({ params }: Params) {
         </section>
       )}
 
-      <p className="row">
+      <nav className="row" aria-label="Соседние клетки">
         <Link className="button" href={LILA_GAME_PATH}>
           Играть
         </Link>
@@ -101,7 +102,7 @@ export default async function LilaCellPage({ params }: Params) {
         <Link className="button button--ghost" href={lilaCellPath(next)}>
           {next.number} · {next.name} →
         </Link>
-      </p>
+      </nav>
         </div>
 
         <div className="card lila-cell-layout__board">
