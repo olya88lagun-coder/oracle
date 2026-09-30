@@ -783,26 +783,29 @@ a.report-toc__title:hover { color: var(--accent); }
 .matrix-guide h3 { margin: 0; font-size: 18px; }
 .matrix-guide__item p { margin: 0; }
 
-/* Совместимость: форма, карточка пары, две колонки «Вы и партнёр» (по макету Codex) */
-.compat-page { gap: 32px; }
-.compat-hero { display: grid; gap: 28px; align-items: end; }
-.compat-hero__art { position: relative; margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
-.compat-hero__image { position: relative; aspect-ratio: 16 / 9; }
-.compat-hero__image img { object-fit: cover; object-position: 78% center; }
-.compat-hero__art figcaption { padding: 16px 18px 18px; color: var(--ink-soft); font-size: 14px; line-height: 1.5; }
-.compat-form { display: grid; gap: 18px; scroll-margin-top: 24px; }
-.compat-form__head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px 16px; }
-.compat-form__head .stack { gap: 6px; }
+/* Совместимость: погружённый герой с двумя лунами (compat-hero.webp — оптимизированный растр, не CSS-фигуры),
+   форма закреплена в его нижней левой части; ниже — открытые редакционные колонки без рамок карточек */
+.compat-scene { position: relative; isolation: isolate; }
+.compat-scene__art { position: absolute; inset: 0 0 auto; z-index: -2; height: min(150vw, 640px); -webkit-mask-image: linear-gradient(to bottom, #000 52%, transparent); mask-image: linear-gradient(to bottom, #000 52%, transparent); }
+.compat-scene__art img { object-fit: cover; object-position: 78% 20%; }
+/* Тонкая затемняющая плёнка слева поверх картинки: заголовок и форма остаются читаемыми на любом кадре */
+.compat-scene::before { content: ""; position: absolute; inset: 0 0 auto; z-index: -1; height: min(150vw, 640px); background: linear-gradient(100deg, var(--scrim) 0%, rgba(10, 9, 14, 0.55) 30%, transparent 62%); pointer-events: none; }
+.compat-hero-intro { max-width: 30em; }
+.compat-hero-intro .display { max-width: 9em; }
+.compat-form { display: grid; gap: 18px; max-width: 640px; scroll-margin-top: 24px; }
+.compat-form__head { gap: 6px; }
 .compat-form__head h2, .compat-form__head p { margin: 0; }
 .compat-form__fields { display: grid; gap: 14px; }
 .compat-form__submit { gap: 10px; }
 .compat-form__submit p { margin: 0; font-size: 14px; }
 .compat-section { gap: 18px; }
 .compat-section h2 { margin: 0; }
-.compat-cards { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
-.compat-card { display: grid; align-content: start; gap: 10px; }
+.compat-section--preview h2 { padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.compat-cards { display: grid; gap: 28px; margin: 0; padding: 0; list-style: none; }
+.compat-card { display: grid; align-content: start; gap: 10px; padding-top: 18px; border-top: 1px solid var(--line-strong); }
 .compat-card h3, .compat-card p { margin: 0; }
-.compat-card__index { color: var(--accent); font-family: var(--font-display); font-size: 32px; line-height: 1; }
+.compat-card--accent { border-top-color: var(--accent); }
+.compat-card--accent h3 { color: var(--accent-soft); }
 .compat-note { margin: 0; padding: 12px 0 12px 18px; border-left: 1px solid var(--accent); color: var(--ink-soft); }
 .compat-faq details { padding: 4px 0; border-top: 1px solid var(--line); }
 .compat-faq details:last-child { border-bottom: 1px solid var(--line); }
@@ -816,14 +819,15 @@ a.report-toc__title:hover { color: var(--accent); }
 .compat-cta h2, .compat-cta p { margin: 0; }
 .compat-cta__actions { flex-wrap: wrap; gap: 12px; }
 @media (max-width: 519px) { .compat-cta__actions { display: grid; } .compat-cta__actions .button { width: 100%; } }
+@media (min-width: 760px) { .compat-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (min-width: 860px) {
-  .compat-hero { grid-template-columns: minmax(0, 1fr) 430px; }
-  .compat-form { grid-template-columns: 1fr auto; align-items: end; column-gap: 24px; padding: 28px; }
+  .compat-scene__art, .compat-scene::before { height: min(56vw, 780px); }
+  .compat-scene__art img { object-position: 76% 18%; }
+  .compat-form { grid-template-columns: 1fr auto; align-items: end; column-gap: 24px; max-width: 860px; padding: 32px; }
   .compat-form__head, .compat-form__error { grid-column: 1 / -1; }
-  .compat-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .compat-form__fields { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
   .compat-cta { grid-template-columns: 1fr auto; padding: 28px; }
 }
-@media (min-width: 860px) { .compat-form__fields { grid-template-columns: repeat(2, minmax(220px, 1fr)); } }
 .compat-result { gap: 28px; }
 .compat-pair { gap: 18px; }
 .compat-pair__art { width: 100%; max-width: 360px; height: auto; border-radius: var(--radius); border: 1px solid var(--line-strong); }

@@ -33,28 +33,26 @@ export default async function CompatibilityPage() {
   const portrait = user ? await loadPortrait({ db: getDb(), now: () => new Date() }, user.id) : null;
   const profileDate = portrait?.birthDate ? toIsoDate(portrait.birthDate) : null;
   return (
-    <main className="page page--wide stack compat-page">
+    <main className="compat-scene">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(appJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(compatFaqJsonLd()) }} />
-      <section className="compat-hero" aria-labelledby="compat-title">
-        <div className="stack">
+      <div className="compat-scene__art">
+        <Image src="/compat-hero.webp" alt="" fill priority unoptimized sizes="100vw" />
+      </div>
+      <div className="compat-scene__content page page--wide stack">
+        <section className="compat-hero-intro stack" aria-labelledby="compat-title">
           <p className="eyebrow eyebrow--line">Практика · совместимость</p>
           <h1 id="compat-title" className="display">
-            Совместимость по дате рождения
+            Совместимость <br />
+            по дате рождения
           </h1>
           <p className="lead">Две даты — один общий аркан: как ваши матрицы судьбы разговаривают друг с другом. Без предсказаний — как повод для разговора.</p>
-        </div>
-        <figure className="compat-hero__art">
-          <div className="compat-hero__image">
-            <Image src="/practices/compat.webp" alt="Два лунных диска пересекаются над тёмной водой" fill priority unoptimized sizes="(min-width: 860px) 430px, 100vw" />
-          </div>
-          <figcaption>Два начала встречаются в общей области света. Результат не оценивает пару, а помогает увидеть темы для разговора.</figcaption>
-        </figure>
-      </section>
-      <CompatCalculator profileDate={profileDate} />
-      <CompatPreview />
-      <CompatGuide />
-      <CompatCta />
+        </section>
+        <CompatCalculator profileDate={profileDate} />
+        <CompatPreview />
+        <CompatGuide />
+        <CompatCta />
+      </div>
     </main>
   );
 }
