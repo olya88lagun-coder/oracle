@@ -1,4 +1,6 @@
-// Рубашка колоды. Пока свой рисунок не принят — CSS-заглушка; интерфейс не меняется, когда её заменит файл
+import Image from "next/image";
+
+// Рубашка колоды: рисунок без текста, декоративный
 export function TaroBack() {
-  return <div className="taro-back" aria-hidden="true" />;
+  return <Image className="taro-back" src="/taro/rubashka.webp" alt="" width={277} height={415} priority unoptimized />;
 }

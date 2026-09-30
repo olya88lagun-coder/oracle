@@ -29,7 +29,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: HERO_ALT,
     basis: ["positions", "arcana", "matrix-formulas"],
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-1-mag", "/blog/chto-takoe-matritsa-sudby"],
-    status: "draft",
+    status: "published",
   },
   {
     slug: "matritsa-sovmestimosti-rasshifrovka",
@@ -40,7 +40,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Аркан 6 «Влюблённые» — образ выбора и близости",
     basis: ["compat-texts", "compat-formulas"],
     internalLinks: ["/sovmestimost", "/matrica-sudby/arkan-6-vlyublennye"],
-    status: "draft",
+    status: "published",
   },
   {
     slug: "kak-schitaetsya-matritsa-sovmestimosti",
