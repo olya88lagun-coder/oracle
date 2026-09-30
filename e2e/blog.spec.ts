@@ -5,11 +5,12 @@ async function noHorizontalScroll(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 }
 
-test("the blog lists four articles and the footer links to it", async ({ page }) => {
+test("the blog lists four articles and the footer links to it and to the community", async ({ page }) => {
   await page.goto("/blog");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Блог");
   await expect(page.getByRole("main").getByRole("heading", { level: 2 })).toHaveCount(4);
   await expect(page.getByRole("contentinfo").getByRole("link", { name: "Блог" })).toHaveAttribute("href", "/blog");
+  await expect(page.getByRole("contentinfo").getByRole("link", { name: "ВКонтакте" })).toHaveAttribute("href", "https://vk.ru/tvoy_orakul");
   await noHorizontalScroll(page);
 });
 

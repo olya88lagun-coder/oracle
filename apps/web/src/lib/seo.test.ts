@@ -64,6 +64,8 @@ describe("structured data", () => {
   test("the site describes itself as a website and an organization, and the Lila page as a free web app", () => {
     const graph = (websiteJsonLd()["@graph"] as { "@type": string }[]).map((item) => item["@type"]);
     expect(graph).toEqual(["WebSite", "Organization"]);
+    const organization = (websiteJsonLd()["@graph"] as { "@type": string; sameAs?: string[] }[]).find((item) => item["@type"] === "Organization");
+    expect(organization?.sameAs).toEqual(["https://vk.ru/tvoy_orakul"]);
     expect(lilaGameJsonLd()).toMatchObject({ "@type": "WebApplication", offers: { price: "0", priceCurrency: "RUB" } });
   });
 
