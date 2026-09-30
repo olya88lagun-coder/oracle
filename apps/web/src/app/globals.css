@@ -790,8 +790,9 @@ a.report-toc__title:hover { color: var(--accent); }
 .compat-scene__art img { object-fit: cover; object-position: 78% 20%; }
 /* Тонкая затемняющая плёнка слева поверх картинки: заголовок и форма остаются читаемыми на любом кадре */
 .compat-scene::before { content: ""; position: absolute; inset: 0 0 auto; z-index: -1; height: min(150vw, 640px); background: linear-gradient(100deg, var(--scrim) 0%, rgba(10, 9, 14, 0.55) 30%, transparent 62%); pointer-events: none; }
-.compat-hero-intro { max-width: 30em; }
-.compat-hero-intro .display { max-width: 9em; }
+.compat-hero-intro { max-width: none; }
+.compat-hero-intro .lead { max-width: 34em; }
+.compat-hero-intro .display { max-width: none; }
 .compat-form { display: grid; gap: 18px; max-width: 640px; scroll-margin-top: 24px; }
 .compat-form__head { gap: 6px; }
 .compat-form__head h2, .compat-form__head p { margin: 0; }
@@ -799,13 +800,12 @@ a.report-toc__title:hover { color: var(--accent); }
 .compat-form__submit { gap: 10px; }
 .compat-form__submit p { margin: 0; font-size: 14px; }
 .compat-section { gap: 18px; }
+.compat-scene__content > .compat-section { margin-top: clamp(28px, 5vw, 56px); }
 .compat-section h2 { margin: 0; }
 .compat-section--preview h2 { padding-bottom: 24px; border-bottom: 1px solid var(--line); }
 .compat-cards { display: grid; gap: 28px; margin: 0; padding: 0; list-style: none; }
 .compat-card { display: grid; align-content: start; gap: 10px; padding-top: 18px; border-top: 1px solid var(--line-strong); }
 .compat-card h3, .compat-card p { margin: 0; }
-.compat-card--accent { border-top-color: var(--accent); }
-.compat-card--accent h3 { color: var(--accent-soft); }
 .compat-note { margin: 0; padding: 12px 0 12px 18px; border-left: 1px solid var(--accent); color: var(--ink-soft); }
 .compat-faq details { padding: 4px 0; border-top: 1px solid var(--line); }
 .compat-faq details:last-child { border-bottom: 1px solid var(--line); }
@@ -818,6 +818,8 @@ a.report-toc__title:hover { color: var(--accent); }
 .compat-cta { display: grid; gap: 18px; align-items: center; }
 .compat-cta h2, .compat-cta p { margin: 0; }
 .compat-cta__actions { flex-wrap: wrap; gap: 12px; }
+/* Телефон: луны под затемнением, чтобы заголовок и вступление читались */
+@media (max-width: 899px) { .compat-scene::before { background: linear-gradient(to bottom, rgba(10, 9, 14, 0.5) 0%, rgba(10, 9, 14, 0.74) 40%, rgba(10, 9, 14, 0.4) 72%, transparent 100%); } }
 @media (max-width: 519px) { .compat-cta__actions { display: grid; } .compat-cta__actions .button { width: 100%; } }
 @media (min-width: 760px) { .compat-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (min-width: 860px) {
