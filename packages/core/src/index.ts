@@ -3,3 +3,4 @@ export * from "./matrix";
 export * from "./report";
 export * from "./lila";
 export * from "./lila-session";
+export * from "./compatibility";
