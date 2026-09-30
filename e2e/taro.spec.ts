@@ -14,11 +14,31 @@ async function draw(page: Page) {
   }).toPass({ timeout: 25_000 });
 }
 
-test("the index lists all 78 cards and fits a phone", async ({ page }) => {
+test("the catalog holds all 78 card links, shows the major arcana first and fits a phone", async ({ page }) => {
   await page.goto("/taro");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Таро и карта дня");
-  await expect(page.locator(".taro-grid a")).toHaveCount(78);
+  await expect(page.locator(".taro-cat__grid a")).toHaveCount(78);
+  await expect(page.getByRole("status").filter({ hasText: /^22 карты$/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Все/ })).toHaveAttribute("aria-pressed", "false");
   await noHorizontalScroll(page);
+});
+
+test("the suit filters and the search narrow the catalog, and a failed search can be reset", async ({ page }) => {
+  await page.goto("/taro");
+  const status = page.getByRole("status").filter({ hasText: /карт/ });
+  await expect(status).toHaveText("22 карты");
+  await page.getByRole("button", { name: /^Кубки/ }).click();
+  await expect(status).toHaveText("14 карт");
+  await page.getByRole("button", { name: /^Все/ }).click();
+  await expect(status).toHaveText("78 карт");
+  // Поиск идёт по всей колоде, не зависит от регистра и ё/е
+  await page.getByRole("button", { name: /^Мечи/ }).click();
+  await page.getByRole("searchbox", { name: "Найти карту в колоде Таро" }).fill("ВЛЮБЛЕННЫЕ");
+  await expect(status).toHaveText("1 карта");
+  await page.getByRole("searchbox", { name: "Найти карту в колоде Таро" }).fill("такой карты нет");
+  await expect(page.getByRole("heading", { level: 3, name: "Карты не найдены" })).toBeVisible();
+  await page.getByRole("button", { name: "Сбросить поиск" }).click();
+  await expect(status).toHaveText("78 карт");
 });
 
 test("three face-down cards are offered, and choosing one opens the card of the day", async ({ page }) => {
