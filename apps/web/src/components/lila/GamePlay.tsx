@@ -144,13 +144,13 @@ export function GamePlay({ initial, api, images, onClosed }: Props) {
         </div>
         {/* Кубик над полем и виден на любой вкладке, кроме истории: бросок и движение фишки — на одном экране */}
         <div className="card lila-play__dice" hidden={tab === "history"}>
-          {game.canRoll && <DiceControls busy={busy} onRoll={(value) => void roll(value)} />}
           <div className="lila-play__rollrow">
             <Die value={turn?.roll ?? null} rolling={rolling} />
             <p role="status" className="lila-play__roll">
               {rolling ? "" : turn ? rollSummary(turn) : "Бросьте кубик. Чтобы начать путь, нужна шестёрка."}
             </p>
           </div>
+          {game.canRoll && <DiceControls busy={busy} onRoll={(value) => void roll(value)} />}
           {error && (
             <p className="error" role="alert">
               {error}
