@@ -25,6 +25,15 @@ export function collectCompat(file) {
   return { unions: readText(file) };
 }
 
+// Статьи блога: одна запись на файл, имя файла без .md — slug
+export function collectArticles(dir) {
+  const sources = {};
+  for (const name of readdirSync(dir).filter((file) => file.endsWith(".md")).sort()) {
+    sources[name.replace(/\.md$/, "")] = readText(join(dir, name));
+  }
+  return sources;
+}
+
 function write(output, data) {
   mkdirSync(dirname(output), { recursive: true });
   writeFileSync(output, `${JSON.stringify(data, null, 2)}\n`, "utf8");
@@ -37,4 +46,5 @@ if (import.meta.main) {
   write(join(root, "src", "generated", "positions.json"), collectPositions(join(root, "positions.md")));
   write(join(root, "src", "generated", "lila.json"), collectLila(join(root, "lila-cells.md")));
   write(join(root, "src", "generated", "compat.json"), collectCompat(join(root, "compat-arcana.md")));
+  write(join(root, "src", "generated", "articles.json"), collectArticles(join(root, "articles")));
 }

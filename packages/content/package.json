@@ -2,7 +2,7 @@
   "name": "@oracle/content",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts", "./lila": "./src/lila-cells.ts", "./compat": "./src/compat-unions.ts" },
+  "exports": { ".": "./src/index.ts", "./lila": "./src/lila-cells.ts", "./compat": "./src/compat-unions.ts", "./articles": "./src/articles-data.ts" },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
     "build": "node scripts/build-arcana.mjs"

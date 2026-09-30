@@ -15,3 +15,27 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm test:coverage
+
+  article-scope:
+    # PR автописателя может менять только файлы статей: любой другой код идёт к владелице на «да»
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'article/')
+    runs-on: ubuntu-latest
+    env:
+      BASE_REF: ${{ github.base_ref }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Only article files changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          changed="$(git diff --name-only "origin/${BASE_REF}...HEAD")"
+          echo "Changed files:"
+          printf '%s\n' "$changed"
+          forbidden="$(printf '%s\n' "$changed" | grep -vE '^(packages/content/articles/[a-z0-9-]+\.md|packages/content/src/content-plan\.ts|packages/content/src/generated/articles\.json)$' || true)"
+          if [[ -n "$forbidden" ]]; then
+            echo "::error::A pull request from article/* may change only article files. Not allowed:"
+            printf '%s\n' "$forbidden"
+            exit 1
+          fi
