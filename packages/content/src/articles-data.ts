@@ -1,4 +1,5 @@
 import { parseArticle, type Article } from "./articles";
+export { parseArticle };
 import raw from "./generated/articles.json";
 
 export { ARTICLE_BASIS, type ArticleBasisKey } from "./article-basis";

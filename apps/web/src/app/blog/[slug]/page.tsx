@@ -1,12 +1,14 @@
+import { articleBySlug } from "@oracle/content/articles";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import { ArticleBody } from "@/components/blog/ArticleBody";
 import { HowToPlayLila } from "@/components/blog/HowToPlayLila";
 import { LilaIntention } from "@/components/blog/LilaIntention";
 import { LilaSnakesArrows } from "@/components/blog/LilaSnakesArrows";
 import { WhatIsMatrix } from "@/components/blog/WhatIsMatrix";
-import { BLOG_PATH, BLOG_POSTS, blogPath, blogPostBySlug, blogPostJsonLd } from "@/lib/blog";
+import { articleFaqJsonLd, BLOG_PATH, BLOG_POSTS, blogPath, blogPostBySlug, blogPostJsonLd } from "@/lib/blog";
 import { DISCLAIMER } from "@/lib/legal";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 
@@ -35,11 +37,14 @@ const dateLabel = (iso: string) => new Intl.DateTimeFormat("ru-RU", { day: "nume
 
 export default async function BlogPostPage({ params }: Params) {
   const post = blogPostBySlug((await params).slug);
+  const article = post ? articleBySlug(post.slug) : undefined;
   const Body = post ? BODIES[post.slug] : undefined;
-  if (!post || !Body) notFound();
+  const content = Body ? <Body /> : article ? <ArticleBody article={article} /> : null;
+  if (!post || !content) notFound();
   return (
     <main className="page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(blogPostJsonLd(post)) }} />
+      {article && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(articleFaqJsonLd(article)) }} />}
       <article className="stack blog-article">
         <nav aria-label="Навигация" className="muted">
           <Link className="touch-link" href={BLOG_PATH}>
@@ -51,7 +56,7 @@ export default async function BlogPostPage({ params }: Params) {
         <p className="muted">
           <time dateTime={post.published}>{dateLabel(post.published)}</time>
         </p>
-        <Body />
+        {content}
         <p className="muted">{DISCLAIMER}</p>
       </article>
     </main>

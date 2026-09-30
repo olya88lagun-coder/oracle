@@ -1,3 +1,4 @@
+import { ARTICLES, type Article } from "@oracle/content/articles";
 import { lilaCellByNumber } from "@oracle/content/lila";
 import { lilaCellImage } from "./lila-paths";
 import { SITE_URL } from "./site";
@@ -19,7 +20,7 @@ const cellPreview = (number: number) => {
   return { url: lilaCellImage(cell, "page"), alt: `Клетка ${cell.number} «${cell.name}» в игре Лила` };
 };
 
-export const BLOG_POSTS: readonly BlogPost[] = [
+const MANUAL_POSTS: readonly BlogPost[] = [
   {
     slug: "kak-igrat-v-lilu-onlain",
     title: "Как играть в Лилу онлайн: правила по шагам",
@@ -53,6 +54,26 @@ export const BLOG_POSTS: readonly BlogPost[] = [
     image: { url: "/hero.webp", alt: "Матрица судьбы — символическая схема по дате рождения" },
   },
 ];
+
+const articlePost = (article: Article): BlogPost => ({
+  slug: article.slug,
+  title: article.title,
+  metaTitle: article.metaTitle,
+  description: article.description,
+  published: article.date,
+  image: { url: article.image, alt: article.imageAlt },
+});
+
+// Сначала новые; при одинаковой дате порядок объявления сохраняется (сортировка устойчива)
+export const BLOG_POSTS: readonly BlogPost[] = [...MANUAL_POSTS, ...ARTICLES.map(articlePost)].sort((a, b) => b.published.localeCompare(a.published));
+
+export function articleFaqJsonLd(article: Article): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: article.faq.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })),
+  };
+}
 
 export const blogPath = (post: Pick<BlogPost, "slug">): string => `${BLOG_PATH}/${post.slug}`;
 export const blogPostBySlug = (slug: string): BlogPost | undefined => BLOG_POSTS.find((post) => post.slug === slug);
