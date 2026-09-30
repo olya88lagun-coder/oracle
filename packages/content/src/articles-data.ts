@@ -14,3 +14,4 @@ export const ARTICLES: readonly Article[] = Object.keys(SOURCES)
 export const articleBySlug = (slug: string): Article | undefined => ARTICLES.find((article) => article.slug === slug);
 export { ArticleMarkdownError, linksOf, parseMarkdown, plainText, type Block, type Inline } from "./article-markdown";
 export { checkArticle, TOOL_PATHS, type ArticleCheckContext } from "./article-check";
+export { CONTENT_PLAN, nextDraftTopic, type PlanTopic } from "./content-plan";
