@@ -7,7 +7,7 @@ import { CellArt } from "@/components/lila/CellArt";
 import { Scene } from "@/components/Scene";
 import { DISCLAIMER } from "@/lib/legal";
 import { lilaCellPath, LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
-import { publicMetadata } from "@/lib/seo";
+import { jsonLdScript, lilaGameJsonLd, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { availableCellImages } from "@/server/lila-images";
 
 export const metadata: Metadata = publicMetadata({
@@ -15,12 +15,14 @@ export const metadata: Metadata = publicMetadata({
   description: "Сформулируйте намерение, бросайте кубик и проходите путь по 72 клеткам Лилы: у каждой клетки — тема, вопрос и ваша запись. Бесплатно и без регистрации.",
   path: LILA_PATH,
   absoluteTitle: true,
+  image: SITE_PREVIEW_IMAGE,
 });
 
 export default function LilaPage() {
   const images = availableCellImages();
   return (
     <Scene>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(lilaGameJsonLd()) }} />
       <div className="lila-hero">
         <div className="scene__intro stack">
           <p className="eyebrow eyebrow--line">Практика</p>

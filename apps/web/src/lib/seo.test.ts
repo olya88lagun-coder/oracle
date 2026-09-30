@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { PRIVATE_PATHS, PUBLIC_PATHS, publicMetadata } from "./seo";
+import { jsonLdScript, lilaGameJsonLd, PRIVATE_PATHS, PUBLIC_PATHS, publicMetadata, SITE_PREVIEW_IMAGE, websiteJsonLd } from "./seo";
 
 describe("publicMetadata", () => {
   test("opens the page for indexing with a canonical address", () => {
@@ -15,6 +15,13 @@ describe("publicMetadata", () => {
     const metadata = publicMetadata({ title: "Сила", description: "d", path: "/p", image: { url: "/arcana/11-sila.webp", alt: "Аркан 11 «Сила»" } });
 
     expect(metadata.openGraph).toMatchObject({ images: [{ url: "/arcana/11-sila.webp", width: 960, height: 960, alt: "Аркан 11 «Сила»" }] });
+  });
+
+  test("the shared site picture keeps its own size and a large card; a page without a picture gets a small card", () => {
+    const withImage = publicMetadata({ title: "Главная", description: "d", path: "/", image: SITE_PREVIEW_IMAGE });
+    expect(withImage.openGraph).toMatchObject({ images: [{ url: "/hero.webp", width: 2400, height: 1028 }] });
+    expect(withImage.twitter).toMatchObject({ card: "summary_large_image", images: ["/hero.webp"] });
+    expect(publicMetadata({ title: "Контакты", description: "d", path: "/contacts" }).twitter).toMatchObject({ card: "summary" });
   });
 
   test("an absolute title skips the site-wide template", () => {
@@ -50,5 +57,17 @@ describe("paths", () => {
     expect(PUBLIC_PATHS).toContain("/matrica-sudby");
     expect(PUBLIC_PATHS).toContain("/matrica-sudby/arkan-11-sila");
     expect(PUBLIC_PATHS.filter((path) => path.startsWith("/matrica-sudby/arkan-"))).toHaveLength(22);
+  });
+});
+
+describe("structured data", () => {
+  test("the site describes itself as a website and an organization, and the Lila page as a free web app", () => {
+    const graph = (websiteJsonLd()["@graph"] as { "@type": string }[]).map((item) => item["@type"]);
+    expect(graph).toEqual(["WebSite", "Organization"]);
+    expect(lilaGameJsonLd()).toMatchObject({ "@type": "WebApplication", offers: { price: "0", priceCurrency: "RUB" } });
+  });
+
+  test("the script text cannot close its own tag", () => {
+    expect(jsonLdScript({ name: "</script><b>" })).not.toContain("<");
   });
 });
