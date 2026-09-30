@@ -181,7 +181,7 @@ body .stack > * + * { margin-top: 20px; }
 
 .portrait-practices { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
 @media (min-width: 640px) { .portrait-practices { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 1100px) { .portrait-practices { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1100px) { .portrait-practices { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); } }
 .portrait-practice { overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); transition: border-color var(--dur-base) var(--ease-out); }
 .portrait-practice:hover { border-color: var(--line-strong); }
 .portrait-practice__art { position: relative; aspect-ratio: 16 / 7; -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent); mask-image: linear-gradient(to bottom, #000 60%, transparent); }
@@ -317,7 +317,7 @@ body .stack > .matrix-result { margin-top: 56px; }
 
 /* Карточки практик: символ справа на картинке, текст слева на затемнении */
 .practice-grid { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
-@media (min-width: 760px) { .practice-grid { grid-template-columns: 1fr 1fr; gap: 20px; } }
+@media (min-width: 760px) { .practice-grid { grid-template-columns: 1fr 1fr; gap: 20px; } .practice-grid > .practice-card:last-child:nth-child(odd) { grid-column: 1 / -1; } }
 .practice-card { position: relative; overflow: hidden; display: flex; align-items: flex-end; min-height: 260px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); isolation: isolate; transition: border-color var(--dur-base) var(--ease-out); }
 @media (min-width: 760px) { .practice-card { aspect-ratio: 1.9; min-height: 0; align-items: center; } }
 .practice-card:hover { border-color: var(--line-strong); }
@@ -778,3 +778,14 @@ a.report-toc__title:hover { color: var(--accent); }
 .matrix-guide__item { gap: 6px; }
 .matrix-guide h3 { margin: 0; font-size: 18px; }
 .matrix-guide__item p { margin: 0; }
+
+/* Совместимость: результат пары и две колонки «Вы и партнёр» */
+.compat-page { gap: 28px; }
+.compat-form { max-width: 560px; }
+.compat-pair { align-items: flex-start; }
+.compat-pair__art { width: 100%; max-width: 320px; height: auto; border-radius: var(--radius); }
+.compat-pair__name { margin: 0; }
+.compat-people { display: grid; gap: 16px; }
+@media (min-width: 900px) { .compat-people { grid-template-columns: 1fr 1fr; align-items: start; } }
+.compat-person h3 { margin: 0; }
+.compat-actions { flex-wrap: wrap; gap: 12px; align-items: center; }

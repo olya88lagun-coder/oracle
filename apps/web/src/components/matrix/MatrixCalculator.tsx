@@ -2,8 +2,10 @@
 
 import { calculateMatrix, formatBirthDateRu, parseBirthDate, toIsoDate } from "@oracle/core";
 import { arcanumByNumber } from "@oracle/content";
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { reachGoal } from "@/lib/analytics";
+import { COMPAT_PATH } from "@/lib/compat";
 import { browserStorage, pickBirthDate, readStoredBirthDate, storeBirthDate } from "@/lib/birth-date-storage";
 import { DATE_ERROR, saveBlockState, sessionStore, takeSaveIntent, type SaveStatus } from "@/lib/matrix-save";
 import { FREE_RESULT_PROMISE } from "@/lib/practices";
@@ -129,6 +131,9 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
             <div className="matrix-actions">
               <SaveBlock state={saveBlockState({ signedIn, profileDate, date, status })} profileDate={profileDate} onSave={() => void save(date)} />
               <ShareButton arcanum={arcanumByNumber(matrix.E)} />
+              <Link className="touch-link" href={COMPAT_PATH}>
+                Проверить совместимость с партнёром
+              </Link>
             </div>
           }
         />

@@ -5,6 +5,7 @@ const MINUTE_MS = 60_000;
 const PROFILE_SAVES_PER_MINUTE = 20;
 const PURCHASES_PER_MINUTE = 10;
 const REPORT_PDFS_PER_MINUTE = 10;
+const COMPAT_PDFS_PER_MINUTE = 6;
 const LILA_ACTIONS_PER_MINUTE = 60;
 const LILA_POLLS_PER_MINUTE = 120;
 
@@ -33,6 +34,8 @@ export const profileLimiter = createRateLimiter({ limit: PROFILE_SAVES_PER_MINUT
 export const purchaseLimiter = createRateLimiter({ limit: PURCHASES_PER_MINUTE, windowMs: MINUTE_MS });
 // Сборка PDF занимает процессор и память контейнера web, поэтому скачивания ограничены по пользователю
 export const reportPdfLimiter = createRateLimiter({ limit: REPORT_PDFS_PER_MINUTE, windowMs: MINUTE_MS });
+// PDF совместимости доступен без входа, поэтому ключ — адрес клиента; сборка занимает процессор, лимит строгий
+export const compatPdfLimiter = createRateLimiter({ limit: COMPAT_PDFS_PER_MINUTE, windowMs: MINUTE_MS });
 
 // Броски, записи и перенос партии: ход — короткая операция, но перебор должен упираться в лимит
 export const lilaLimiter = createRateLimiter({ limit: LILA_ACTIONS_PER_MINUTE, windowMs: MINUTE_MS });

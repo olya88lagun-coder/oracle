@@ -53,6 +53,10 @@ describe("paths", () => {
     expect(PRIVATE_PATHS).toContain("/lila/igra");
   });
 
+  test("the compatibility calculator is public", () => {
+    expect(PUBLIC_PATHS).toContain("/sovmestimost");
+  });
+
   test("the matrix calculator and the 22 arcana pages are public", () => {
     expect(PUBLIC_PATHS).toContain("/matrica-sudby");
     expect(PUBLIC_PATHS).toContain("/matrica-sudby/arkan-11-sila");

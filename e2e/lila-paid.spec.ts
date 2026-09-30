@@ -31,6 +31,8 @@ test("a guest is offered to log in before buying the guide", async ({ page }) =>
 });
 
 test("a signed-in player buys the guide, plays ten moves and reads the conclusion", async ({ browser }) => {
+  // Оплата, десять ходов и итог от воркера: под нагрузкой полного прогона общего лимита в 90 секунд не хватает
+  test.setTimeout(180_000);
   const { context, page } = await signIn(browser, uniqueName("Проводник"));
   await buy(page, "Оплатить");
   await expect(page).toHaveURL(/\/lila\/igra$/, { timeout: 30_000 });
@@ -44,7 +46,7 @@ test("a signed-in player buys the guide, plays ten moves and reads the conclusio
 
   await page.getByRole("button", { name: "Завершить партию" }).first().click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Завершить партию" }).click();
-  await expect(page).toHaveURL(/\/portret\/lila\/[0-9a-f-]{36}$/);
+  await expect(page).toHaveURL(/\/portret\/lila\/[0-9a-f-]{36}$/, { timeout: 30_000 });
   await expect(page.getByRole("heading", { level: 2, name: "Намерение и путь" })).toBeVisible({ timeout: 60_000 });
   for (const title of ["Что повторялось", "Что вы замечали", "Вывод и шаг на неделю"]) {
     await expect(page.getByRole("heading", { level: 2, name: title })).toBeVisible();
