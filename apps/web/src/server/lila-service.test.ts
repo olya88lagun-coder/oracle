@@ -1,11 +1,13 @@
-import { createTestDb, seedUser, type Database } from "@oracle/db/testing";
-import { beforeEach, describe, expect, test } from "vitest";
-import { activeGame, finishGame, gameById, importGame, rollGame, saveNote, startGame, type LilaDeps } from "./lila-service";
+import { createLilaGame, createTestDb, saveLilaConclusion, seedUser, type Database } from "@oracle/db/testing";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import { activeGame, conclusionStatus, finishGame, gameById, importGame, rollGame, saveNote, startGame, type LilaDeps } from "./lila-service";
 
 let db: Database;
 let userId: string;
 let next = 6;
-const deps = (): LilaDeps => ({ db, randomRoll: () => next, now: () => new Date("2026-10-01T10:00:00Z") });
+const enqueueGuide = vi.fn().mockResolvedValue(undefined);
+const enqueueConclusion = vi.fn().mockResolvedValue(undefined);
+const deps = (): LilaDeps => ({ db, randomRoll: () => next, now: () => new Date("2026-10-01T10:00:00Z"), enqueueGuide, enqueueConclusion });
 const started = async () => {
   const result = await startGame(deps(), { userId, intention: "Что мне важно увидеть?" });
   if (!result.ok) throw new Error(result.error);
@@ -16,6 +18,8 @@ beforeEach(async () => {
   db = await createTestDb();
   userId = (await seedUser(db, { externalId: "svc-1" })).userId;
   next = 6;
+  enqueueGuide.mockClear();
+  enqueueConclusion.mockClear();
 });
 
 describe("startGame", () => {
@@ -84,5 +88,67 @@ describe("importGame", () => {
     await started();
     expect(await importGame(deps(), { userId, payload, replace: false })).toEqual({ ok: false, error: "active_exists" });
     expect((await importGame(deps(), { userId, payload, replace: true })).ok).toBe(true);
+  });
+});
+
+describe("guided games", () => {
+  const guided = async () => {
+    const created = await createLilaGame(db, { userId, intention: "С проводником", mode: "guided" });
+    if (!created.ok) throw new Error("no game");
+    return created.game;
+  };
+
+  test("a roll queues a guide paragraph for a real move only, and never in a free game", async () => {
+    const game = await guided();
+    next = 3;
+    await rollGame(deps(), { userId, gameId: game.id, customRoll: undefined });
+    expect(enqueueGuide).not.toHaveBeenCalled();
+    next = 6;
+    await rollGame(deps(), { userId, gameId: game.id, customRoll: undefined });
+    expect(enqueueGuide).toHaveBeenCalledExactlyOnceWith({ gameId: game.id, n: 2 });
+  });
+
+  test("a free game queues nothing", async () => {
+    const free = await started();
+    await rollGame(deps(), { userId, gameId: free.id, customRoll: undefined });
+    expect(enqueueGuide).not.toHaveBeenCalled();
+  });
+
+  test("finishing queues the conclusion for a guided game only, and nothing when it is too early", async () => {
+    const game = await guided();
+    await rollGame(deps(), { userId, gameId: game.id, customRoll: undefined });
+    expect(await finishGame(deps(), { userId, gameId: game.id })).toEqual({ ok: false, error: "too_early" });
+    expect(enqueueConclusion).not.toHaveBeenCalled();
+    next = 1;
+    for (let i = 0; i < 9; i += 1) await rollGame(deps(), { userId, gameId: game.id, customRoll: undefined });
+    expect((await finishGame(deps(), { userId, gameId: game.id })).ok).toBe(true);
+    expect(enqueueConclusion).toHaveBeenCalledExactlyOnceWith({ gameId: game.id });
+  });
+
+  test("a free game does not queue a conclusion when it is finished", async () => {
+    const free = await started();
+    for (let i = 0; i < 10; i += 1) await rollGame(deps(), { userId, gameId: free.id, customRoll: i === 0 ? 6 : 1 });
+    expect((await finishGame(deps(), { userId, gameId: free.id })).ok).toBe(true);
+    expect(enqueueConclusion).not.toHaveBeenCalled();
+  });
+
+  test("conclusionStatus is null for a stranger and a free game, pending until saved, then ready", async () => {
+    const game = await guided();
+    next = 1;
+    await rollGame(deps(), { userId, gameId: game.id, customRoll: 6 });
+    for (let i = 0; i < 9; i += 1) await rollGame(deps(), { userId, gameId: game.id, customRoll: undefined });
+    await finishGame(deps(), { userId, gameId: game.id });
+    enqueueConclusion.mockClear();
+    const stranger = (await seedUser(db, { externalId: "svc-2" })).userId;
+    expect(await conclusionStatus(deps(), { userId: stranger, gameId: game.id })).toBeNull();
+    expect(await conclusionStatus(deps(), { userId, gameId: game.id })).toBe("pending");
+    expect(enqueueConclusion).toHaveBeenCalledWith({ gameId: game.id });
+    await saveLilaConclusion(db, { gameId: game.id, chapters: [{ id: "path", source: "fallback", paragraphs: ["Итог."] }] });
+    expect(await conclusionStatus(deps(), { userId, gameId: game.id })).toBe("ready");
+  });
+
+  test("conclusionStatus is null for a free game", async () => {
+    const free = await started();
+    expect(await conclusionStatus(deps(), { userId, gameId: free.id })).toBeNull();
   });
 });

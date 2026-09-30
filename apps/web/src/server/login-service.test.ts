@@ -5,7 +5,7 @@ import type { AppEnv } from "./env";
 import { completeLogin, finishVkLogin, getCurrentUser, giveConsent, startVkLogin, type LoginCookies, type LoginDeps } from "./login-service";
 
 const NOW = new Date("2026-09-24T12:00:00Z");
-const ENV: AppEnv = { APP_URL: "https://oracle.test", DATABASE_URL: "postgres://unused", SESSION_SECRET: "s".repeat(40), VK_CLIENT_ID: "555", payments: null, paidReports: false };
+const ENV: AppEnv = { APP_URL: "https://oracle.test", DATABASE_URL: "postgres://unused", SESSION_SECRET: "s".repeat(40), VK_CLIENT_ID: "555", payments: null, paidReports: false, paidLila: false };
 const NO_COOKIES: LoginCookies = { consent: null };
 const ANNA = { provider: "vk", externalId: "42", displayName: "Аня" } as const;
 

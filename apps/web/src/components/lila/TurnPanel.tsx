@@ -12,9 +12,11 @@ type Props = {
   images: readonly string[];
   editable: boolean;
   onSaveNote: (note: string) => Promise<boolean>;
+  // Абзац проводника платной партии; null — партия без проводника
+  guide?: { text: string | null; pending: boolean; waitedTooLong: boolean } | null;
 };
 
-export function TurnPanel({ turn, moveNumber, note, images, editable, onSaveNote }: Props) {
+export function TurnPanel({ turn, moveNumber, note, images, editable, onSaveNote, guide = null }: Props) {
   const [draft, setDraft] = useState(note ?? "");
   const [saved, setSaved] = useState(false);
   useEffect(() => {
@@ -59,6 +61,12 @@ export function TurnPanel({ turn, moveNumber, note, images, editable, onSaveNote
           </p>
           {turn.previousNote && <p className="muted">Ваша прошлая запись здесь: «{turn.previousNote}»</p>}
         </>
+      )}
+      {guide && (guide.text || (guide.pending && !guide.waitedTooLong)) && (
+        <div className="lila-turn__guide" aria-live="polite">
+          <p className="eyebrow">Проводник</p>
+          {guide.text ? <p>{guide.text}</p> : <p role="status">Проводник пишет…</p>}
+        </div>
       )}
       {editable && (
         <label className="stack">

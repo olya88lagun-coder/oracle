@@ -141,6 +141,7 @@ export default async function PortraitPage() {
               <li key={game.id}>
                 <span>
                   {game.status === "active" ? "Идёт" : "Завершена"} · «{game.intention}» · ходов {game.movesCount}
+                  {game.mode === "guided" && <span className="tag portrait-reports__tag">с проводником</span>}
                 </span>
                 <Link className="button button--ghost" href={game.status === "active" ? LILA_GAME_PATH : lilaHistoryPath(game.id)}>
                   {game.status === "active" ? "Продолжить партию" : "Открыть партию"}

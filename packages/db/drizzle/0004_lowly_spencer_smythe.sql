@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "lila_games_one_awaiting_uq" ON "lila_games" USING btree ("user_id") WHERE "lila_games"."status" = 'awaiting_payment';

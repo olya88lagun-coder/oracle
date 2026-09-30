@@ -1,7 +1,7 @@
 import type { Matrix, MatrixPoint } from "./matrix";
 
 export const MATRIX_REPORT_PRODUCT = "matrix_report";
-export type Product = typeof MATRIX_REPORT_PRODUCT;
+export type Product = typeof MATRIX_REPORT_PRODUCT | "lila_session";
 // Единственное место с ценой: блок продажи, оферта и платёж читают её отсюда
 export const MATRIX_REPORT_PRICE_KOPECKS = 39_000;
 

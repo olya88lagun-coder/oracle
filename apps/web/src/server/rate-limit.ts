@@ -6,6 +6,7 @@ const PROFILE_SAVES_PER_MINUTE = 20;
 const PURCHASES_PER_MINUTE = 10;
 const REPORT_PDFS_PER_MINUTE = 10;
 const LILA_ACTIONS_PER_MINUTE = 60;
+const LILA_POLLS_PER_MINUTE = 120;
 
 // Память процесса: на одном контейнере web этого достаточно, чтобы не дать засыпать базу запросами
 export function createRateLimiter(p: { limit: number; windowMs: number; now?: () => number }): RateLimiter {
@@ -35,6 +36,9 @@ export const reportPdfLimiter = createRateLimiter({ limit: REPORT_PDFS_PER_MINUT
 
 // Броски, записи и перенос партии: ход — короткая операция, но перебор должен упираться в лимит
 export const lilaLimiter = createRateLimiter({ limit: LILA_ACTIONS_PER_MINUTE, windowMs: MINUTE_MS });
+
+// Опрос итога платной партии: вкладка спрашивает раз в 3 секунды (20 в минуту), запас — на несколько вкладок
+export const lilaPollLimiter = createRateLimiter({ limit: LILA_POLLS_PER_MINUTE, windowMs: MINUTE_MS });
 
 // Caddy заменяет X-Forwarded-For, пришедший от клиента, поэтому первый адрес — настоящий
 export function clientKeyFromHeaders(headers: Headers): string {

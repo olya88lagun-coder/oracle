@@ -12,7 +12,7 @@ import { GamePlay } from "./GamePlay";
 import { IntentionForm } from "./IntentionForm";
 import { SaveGameBanner } from "./SaveGameBanner";
 
-type Props = { initialGame: GameView | null; signedIn: boolean; images: string[] };
+type Props = { initialGame: GameView | null; signedIn: boolean; images: string[]; guidedEnabled?: boolean };
 
 const storage = (): Storage | null => {
   try {
@@ -22,7 +22,7 @@ const storage = (): Storage | null => {
   }
 };
 
-export function GameShell({ initialGame, signedIn, images }: Props) {
+export function GameShell({ initialGame, signedIn, images, guidedEnabled = false }: Props) {
   const [game, setGame] = useState<GameView | null>(initialGame);
   const [guest, setGuest] = useState<GuestGame | null>(null);
   const [ready, setReady] = useState(signedIn);
@@ -84,7 +84,7 @@ export function GameShell({ initialGame, signedIn, images }: Props) {
           </p>
         )}
         {signedIn && guest && !game && <SaveGameBanner guest={guest} onSave={(replace) => void save(replace)} onDiscard={discard} />}
-        <IntentionForm busy={busy} error={error} onStart={(text) => void start(text)} />
+        <IntentionForm busy={busy} error={error} onStart={(text) => void start(text)} guided={guidedEnabled ? { signedIn } : null} />
       </div>
     );
   }

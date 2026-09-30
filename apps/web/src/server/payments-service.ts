@@ -1,39 +1,57 @@
-import { MATRIX_REPORT_PRICE_KOPECKS, MATRIX_REPORT_PRODUCT, type GenerateReportJob } from "@oracle/core";
+import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT, MATRIX_REPORT_PRICE_KOPECKS, MATRIX_REPORT_PRODUCT, type GenerateReportJob, type Product } from "@oracle/core";
 import {
+  abandonAwaitingLilaGames,
+  activateLilaGameForPurchase,
   attachPayment,
+  createLilaGame,
   createPurchase,
   findOpenPurchase,
   findPaidPurchase,
+  getActiveLilaGame,
+  getAwaitingLilaGame,
   getBirthDate,
+  getLilaGameByPurchase,
+  getPaidWaitingLilaGame,
   getPurchase,
   getPurchaseByPaymentId,
   getReport,
   markPurchaseCanceled,
   markPurchaseSucceeded,
+  rebindLilaGamePurchase,
   type Database,
   type PurchaseRecord,
 } from "@oracle/db";
 import { z } from "zod";
+import { normalizeIntention } from "../lib/lila-view";
 import { reportPath } from "../lib/report-offer";
 import type { PaymentGateway } from "./payments/gateway";
 
 export type PaymentsDeps = { db: Database; gateway: PaymentGateway; appUrl: string; now: () => Date; enqueueGenerate: (job: GenerateReportJob) => Promise<void> };
-export type StartPurchaseError = "no_birth_date" | "invalid_email" | "already_paid" | "not_found" | "payment_failed";
+export type StartPurchaseError = "no_birth_date" | "invalid_email" | "invalid_intention" | "active_game" | "already_paid" | "not_found" | "payment_failed";
 export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: StartPurchaseError; purchaseId?: string };
 export type PurchaseViewStatus = "pending" | "canceled" | "generating" | "ready";
+export type LilaPurchaseView = { id: string; status: "pending" | "canceled" | "ready" | "blocked"; gameId: string | null };
 export type PurchaseView = { id: string; status: PurchaseViewStatus; birthDate: string; duplicateOf: string | null };
 
 const REUSE_WINDOW_MS = 30 * 60_000;
 const DESCRIPTION_MAX = 128;
-const DESCRIPTION = "Разбор матрицы судьбы — «Твой оракул»";
+const DESCRIPTIONS: Readonly<Record<Product, string>> = {
+  matrix_report: "Разбор матрицы судьбы — «Твой оракул»",
+  lila_session: "Сессия Лилы с проводником — «Твой оракул»",
+};
 const emailSchema = z.email().max(254);
 
 export { reportPath };
 
+export const lilaPaymentPath = (purchaseId: string) => `/lila/igra/oplata/${purchaseId}`;
+export const purchaseReturnPath = (purchase: { id: string; product: Product }): string =>
+  purchase.product === LILA_SESSION_PRODUCT ? lilaPaymentPath(purchase.id) : reportPath(purchase.id);
+
 // Описание видно в кабинете ЮKassa: по нему владелица отправляет чек «Мой налог». Лимит ЮKassa — 128 знаков
-export function paymentDescription(email: string): string {
-  const full = `${DESCRIPTION}, чек: ${email}`;
-  return full.length <= DESCRIPTION_MAX ? full : `${DESCRIPTION}, чек: см. метаданные`;
+export function paymentDescription(email: string, product: Product = MATRIX_REPORT_PRODUCT): string {
+  const base = DESCRIPTIONS[product];
+  const full = `${base}, чек: ${email}`;
+  return full.length <= DESCRIPTION_MAX ? full : `${base}, чек: см. метаданные`;
 }
 
 function readEmail(value: unknown): string | null {
@@ -51,23 +69,68 @@ async function purchaseFor(deps: PaymentsDeps, p: { userId: string; birthDate: s
   if (open?.confirmationUrl && open.receiptEmail === p.email) return { ok: true, url: open.confirmationUrl };
 
   const purchase = await createPurchase(deps.db, { ...key, receiptEmail: p.email, amountKopecks: MATRIX_REPORT_PRICE_KOPECKS });
+  return createGatewayPayment(deps, purchase, p.email);
+}
+
+// Создание платежа в шлюзе для уже созданной покупки: общая часть покупки разбора и сессии
+async function createGatewayPayment(deps: PaymentsDeps, purchase: PurchaseRecord, email: string): Promise<StartPurchaseOutcome> {
   try {
     const payment = await deps.gateway.createPayment({
       purchaseId: purchase.id,
       amountKopecks: purchase.amountKopecks,
-      description: paymentDescription(p.email),
-      receiptEmail: p.email,
-      returnUrl: new URL(reportPath(purchase.id), deps.appUrl).toString(),
+      description: paymentDescription(email, purchase.product),
+      receiptEmail: email,
+      returnUrl: new URL(purchaseReturnPath(purchase), deps.appUrl).toString(),
     });
     if (!payment.confirmationUrl) throw new Error("payment has no confirmation url");
     await attachPayment(deps.db, purchase.id, { paymentId: payment.id, confirmationUrl: payment.confirmationUrl });
     return { ok: true, url: payment.confirmationUrl };
   } catch (error) {
-    // В лог — только id покупки и причина: e-mail и дата здесь не нужны
+    // В лог — только id покупки и причина: e-mail, дата и намерение здесь не нужны
     console.error("payment was not created", { purchaseId: purchase.id, error: String(error) });
     await markPurchaseCanceled(deps.db, purchase.id);
     return { ok: false, error: "payment_failed" };
   }
+}
+
+export async function startLilaPurchase(deps: PaymentsDeps, p: { userId: string; email: unknown; intention: unknown }): Promise<StartPurchaseOutcome> {
+  const email = readEmail(p.email);
+  if (!email) return { ok: false, error: "invalid_email" };
+  const intention = normalizeIntention(p.intention);
+  if (!intention) return { ok: false, error: "invalid_intention" };
+  if (await getActiveLilaGame(deps.db, p.userId)) return { ok: false, error: "active_game" };
+  // Уже оплаченная партия ждёт своей очереди: вторую сессию не продаём, страница ожидания её запустит
+  const paidWaiting = await getPaidWaitingLilaGame(deps.db, p.userId);
+  if (paidWaiting?.purchaseId) return { ok: false, error: "already_paid", purchaseId: paidWaiting.purchaseId };
+
+  const waiting = await getAwaitingLilaGame(deps.db, p.userId);
+  if (waiting?.purchaseId) {
+    const open = await getPurchase(deps.db, waiting.purchaseId);
+    const fresh = open !== null && open.createdAt.getTime() >= deps.now().getTime() - REUSE_WINDOW_MS;
+    if (open && fresh && open.status === "pending" && open.confirmationUrl && open.receiptEmail === email && waiting.intention === intention) {
+      return { ok: true, url: open.confirmationUrl };
+    }
+  }
+  await abandonAwaitingLilaGames(deps.db, p.userId);
+
+  const purchase = await createPurchase(deps.db, { userId: p.userId, product: LILA_SESSION_PRODUCT, receiptEmail: email, amountKopecks: LILA_SESSION_PRICE_KOPECKS });
+  const game = await createLilaGame(deps.db, { userId: p.userId, intention, mode: "guided", status: "awaiting_payment", purchaseId: purchase.id });
+  if (!game.ok) return { ok: false, error: "active_game" };
+  return createGatewayPayment(deps, purchase, email);
+}
+
+// «Попробовать снова» после отмены: та же партия получает новую покупку
+async function retryLilaPurchase(deps: PaymentsDeps, p: { userId: string; purchase: PurchaseRecord }): Promise<StartPurchaseOutcome> {
+  const { purchase } = p;
+  const game = await getLilaGameByPurchase(deps.db, purchase.id);
+  if (!game || game.status !== "awaiting_payment" || !purchase.receiptEmail) return { ok: false, error: "not_found" };
+  if (await getActiveLilaGame(deps.db, p.userId)) return { ok: false, error: "active_game" };
+  const next = await createPurchase(deps.db, { userId: p.userId, product: LILA_SESSION_PRODUCT, receiptEmail: purchase.receiptEmail, amountKopecks: LILA_SESSION_PRICE_KOPECKS });
+  if (!(await rebindLilaGamePurchase(deps.db, { gameId: game.id, userId: p.userId, purchaseId: next.id }))) {
+    await markPurchaseCanceled(deps.db, next.id);
+    return { ok: false, error: "not_found" };
+  }
+  return createGatewayPayment(deps, next, purchase.receiptEmail);
 }
 
 // Покупается разбор даты из портрета: страница сохраняет дату в портрет до оплаты, клиенту здесь не верим
@@ -82,6 +145,7 @@ export async function startPurchase(deps: PaymentsDeps, p: { userId: string; ema
 // «Попробовать снова» после отмены: та же дата и тот же e-mail, новая покупка
 export async function retryPurchase(deps: PaymentsDeps, p: { userId: string; purchaseId: unknown }): Promise<StartPurchaseOutcome> {
   const purchase = typeof p.purchaseId === "string" ? await getPurchase(deps.db, p.purchaseId) : null;
+  if (purchase?.product === LILA_SESSION_PRODUCT && purchase.userId === p.userId && purchase.status === "canceled") return retryLilaPurchase(deps, { userId: p.userId, purchase });
   if (!purchase || purchase.userId !== p.userId || purchase.status !== "canceled" || !purchase.birthDate || !purchase.receiptEmail) {
     return { ok: false, error: "not_found" };
   }
@@ -100,6 +164,12 @@ async function enqueueIfFirst(deps: PaymentsDeps, purchase: PurchaseRecord): Pro
   else console.warn("duplicate paid purchase — refund manually", { purchaseId: purchase.id });
 }
 
+async function onPaid(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<void> {
+  if (purchase.product !== LILA_SESSION_PRODUCT) return enqueueIfFirst(deps, purchase);
+  // Оплата пришла, а в портрете уже идёт другая партия: активация повторится при просмотре страницы ожидания
+  if ((await activateLilaGameForPurchase(deps.db, purchase.id)) === "blocked") console.warn("paid Lila session waits for the active game to end", { purchaseId: purchase.id });
+}
+
 // Единственное место, где меняется статус покупки: по ответу API шлюза, а не по телу уведомления
 export async function syncPayment(deps: PaymentsDeps, paymentId: string): Promise<PurchaseRecord | null> {
   const purchase = await getPurchaseByPaymentId(deps.db, paymentId);
@@ -112,7 +182,7 @@ export async function syncPayment(deps: PaymentsDeps, paymentId: string): Promis
     return purchase;
   }
   if (payment.status === "succeeded" && payment.paid) {
-    if (await markPurchaseSucceeded(deps.db, purchase.id, deps.now())) await enqueueIfFirst(deps, purchase);
+    if (await markPurchaseSucceeded(deps.db, purchase.id, deps.now())) await onPaid(deps, purchase);
   } else if (payment.status === "canceled") {
     await markPurchaseCanceled(deps.db, purchase.id);
   }
@@ -141,4 +211,24 @@ export async function getPurchaseView(deps: PaymentsDeps, p: { purchaseId: strin
   // Задача могла не встать в очередь в момент оплаты — ставим ещё раз, id задачи тот же
   await deps.enqueueGenerate({ purchaseId: purchase.id });
   return { ...view, status: "generating" };
+}
+
+export async function getLilaPurchaseView(deps: PaymentsDeps, p: { purchaseId: string; userId: string }): Promise<LilaPurchaseView | null> {
+  let purchase = await getPurchase(deps.db, p.purchaseId);
+  if (!purchase || purchase.userId !== p.userId || purchase.product !== LILA_SESSION_PRODUCT) return null;
+  if (purchase.status === "pending" && purchase.yookassaPaymentId) {
+    try {
+      purchase = (await syncPayment(deps, purchase.yookassaPaymentId)) ?? purchase;
+    } catch (error) {
+      console.error("payment sync failed", { purchaseId: purchase.id, error: String(error) });
+    }
+  }
+  const game = await getLilaGameByPurchase(deps.db, purchase.id);
+  // После удаления данных партии нет — страница тоже 404
+  if (!game) return null;
+  if (purchase.status === "pending") return { id: purchase.id, status: "pending", gameId: game.id };
+  if (purchase.status === "canceled") return { id: purchase.id, status: "canceled", gameId: game.id };
+  const activation = await activateLilaGameForPurchase(deps.db, purchase.id);
+  if (activation === "blocked") return { id: purchase.id, status: "blocked", gameId: game.id };
+  return { id: purchase.id, status: activation === "activated" || activation === "already_active" ? "ready" : "pending", gameId: game.id };
 }

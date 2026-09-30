@@ -31,6 +31,12 @@ export function MoveHistory({ game }: { game: GameView }) {
             <span className="lila-history__cells">{cells(move)}</span>
           </p>
           {move.note && <p className="muted lila-history__note">Запись: {move.note}</p>}
+          {move.guideText && (
+            <details className="lila-history__guide">
+              <summary>Проводник</summary>
+              <p>{move.guideText}</p>
+            </details>
+          )}
         </li>
       ))}
     </ol>

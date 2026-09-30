@@ -1,34 +1,28 @@
 import { CHAPTER_TITLES, reportChapters, SCENARIO_FIELDS, SCENARIO_TITLES, type Matrix } from "@oracle/core";
 import { arcanumByNumber } from "@oracle/content";
 import type { StoredChapter } from "@oracle/db";
-import PDFDocument from "pdfkit";
 import { DISCLAIMER } from "@/lib/legal";
 import { chapterArcanaLabel, formatIsoDate, orderedChapters } from "@/lib/report-offer";
-import { pdfArcanumImagePath, pdfFontPath } from "./pdf-assets";
+import { pdfArcanumImagePath } from "./pdf-assets";
+import {
+  createPdfDoc,
+  drawFooters,
+  ensureSpace,
+  newPage,
+  paintPagesLight,
+  PDF_COLORS as COLORS,
+  PDF_CONTENT_WIDTH as CONTENT_WIDTH,
+  PDF_MARGIN as MARGIN,
+  PDF_PAGE as PAGE,
+  registerPdfFonts,
+  type PdfDoc as Doc,
+} from "./pdf-common";
 
-const COLORS = {
-  coverBg: "#0A090E",
-  coverInk: "#F1E9DF",
-  coverSoft: "#B9AFA5",
-  gold: "#CBA676",
-  paper: "#FBF7F0",
-  ink: "#2B2219",
-  muted: "#6E5A45",
-  accent: "#8A6238",
-  line: "#E4D8C4",
-  highlight: "#F3E9D6",
-} as const;
-
-const PAGE = { width: 595.28, height: 841.89 } as const;
-const MARGIN = { top: 56, bottom: 64, left: 56, right: 56 } as const;
-const CONTENT_WIDTH = PAGE.width - MARGIN.left - MARGIN.right;
 const COVER_ART_SIZE = 340;
 const COVER_ART_TOP = 104;
 const HIGHLIGHTED = new Set(["turningPoint", "experiment"]);
 
 export type ReportPdfInput = { matrix: Matrix; birthDate: string; chapters: readonly StoredChapter[]; assetsDir: string };
-
-type Doc = InstanceType<typeof PDFDocument>;
 
 function drawCover(doc: Doc, input: ReportPdfInput) {
   const center = arcanumByNumber(input.matrix.E);
@@ -50,10 +44,6 @@ function drawCover(doc: Doc, input: ReportPdfInput) {
   doc.text("tvoy-orakul.ru", 80, PAGE.height - 72, { width, align: "center", characterSpacing: 1.2 });
 }
 
-function newPage(doc: Doc) {
-  doc.addPage();
-}
-
 function drawContents(doc: Doc, input: ReportPdfInput) {
   doc.font("display").fontSize(26).fillColor(COLORS.ink).text("Оглавление", MARGIN.left, MARGIN.top);
   let y = doc.y + 22;
@@ -64,11 +54,6 @@ function drawContents(doc: Doc, input: ReportPdfInput) {
     doc.font("body").fontSize(9.5).fillColor(COLORS.muted).text(chapterArcanaLabel(chapter), MARGIN.left + 38, doc.y + 3, { width: CONTENT_WIDTH - 38 });
     y = doc.y + 18;
   }
-}
-
-// Место под заголовок главы и хотя бы несколько строк; иначе заголовок остался бы внизу страницы один
-function ensureSpace(doc: Doc, needed: number) {
-  if (doc.y + needed > PAGE.height - MARGIN.bottom) newPage(doc);
 }
 
 function drawScenario(doc: Doc, chapter: StoredChapter) {
@@ -107,42 +92,19 @@ function drawChapter(doc: Doc, chapter: StoredChapter, number: number, arcana: r
   doc.y += 26;
 }
 
-function drawFooters(doc: Doc) {
-  const { count } = doc.bufferedPageRange();
-  for (let index = 1; index < count; index += 1) {
-    doc.switchToPage(index);
-    // Без нулевого нижнего поля текст в колонтитуле вызвал бы добавление новой страницы
-    doc.page.margins.bottom = 0;
-    doc.font("body").fontSize(8.5).fillColor(COLORS.muted);
-    doc.text("Твой оракул · tvoy-orakul.ru", MARGIN.left, PAGE.height - 40, { width: CONTENT_WIDTH / 2, lineBreak: false });
-    doc.text(String(index + 1), MARGIN.left + CONTENT_WIDTH / 2, PAGE.height - 40, { width: CONTENT_WIDTH / 2, align: "right", lineBreak: false });
-  }
-}
-
 export function buildReportPdf(input: ReportPdfInput): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({
-      size: [PAGE.width, PAGE.height],
-      margins: MARGIN,
-      bufferPages: true,
-      info: { Title: "Разбор матрицы судьбы", Author: "Твой оракул", Subject: `Разбор по дате ${formatIsoDate(input.birthDate)}` },
-    });
+    const doc = createPdfDoc({ Title: "Разбор матрицы судьбы", Subject: `Разбор по дате ${formatIsoDate(input.birthDate)}` });
     const chunks: Buffer[] = [];
     doc.on("data", (chunk: Buffer) => chunks.push(chunk));
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", reject);
 
     try {
-      doc.registerFont("body", pdfFontPath(input.assetsDir, "body"));
-      doc.registerFont("bodyBold", pdfFontPath(input.assetsDir, "bodyBold"));
-      doc.registerFont("display", pdfFontPath(input.assetsDir, "display"));
+      registerPdfFonts(doc, input.assetsDir);
 
       drawCover(doc, input);
-      // Остальные страницы светлые: их удобнее читать с экрана и печатать
-      doc.on("pageAdded", () => {
-        doc.rect(0, 0, PAGE.width, PAGE.height).fill(COLORS.paper);
-        doc.fillColor(COLORS.ink);
-      });
+      paintPagesLight(doc);
       newPage(doc);
       drawContents(doc, input);
       // Оглавление занимает страницу целиком; главы начинаются с новой

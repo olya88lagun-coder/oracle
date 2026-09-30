@@ -1,4 +1,16 @@
-import { GENERATE_JOB_OPTIONS, generateReportJobKey, QUEUES, type GenerateReportJob } from "@oracle/core";
+import {
+  CONCLUSION_JOB_OPTIONS,
+  conclusionJobKey,
+  GENERATE_JOB_OPTIONS,
+  generateReportJobKey,
+  GUIDE_JOB_OPTIONS,
+  guideMoveJobKey,
+  LILA_QUEUES,
+  QUEUES,
+  type ConclusionJob,
+  type GenerateReportJob,
+  type GuideMoveJob,
+} from "@oracle/core";
 import { jobIdFor } from "@oracle/db";
 import { PgBoss } from "pg-boss";
 import { getEnv } from "./env";
@@ -27,5 +39,25 @@ export async function enqueueGenerate(job: GenerateReportJob): Promise<void> {
   } catch (error) {
     // Оплата уже зафиксирована; страница ожидания поставит задачу заново
     console.error("enqueue generate failed", { purchaseId: job.purchaseId, error: String(error) });
+  }
+}
+
+export async function enqueueGuideMove(job: GuideMoveJob): Promise<void> {
+  try {
+    const boss = await queue();
+    await boss.send(LILA_QUEUES.guideMove, job, { ...GUIDE_JOB_OPTIONS, id: jobIdFor(guideMoveJobKey(job)) });
+  } catch (error) {
+    // Ход уже записан; без абзаца партия продолжается
+    console.error("enqueue guide failed", { gameId: job.gameId, n: job.n, error: String(error) });
+  }
+}
+
+export async function enqueueConclusion(job: ConclusionJob): Promise<void> {
+  try {
+    const boss = await queue();
+    await boss.send(LILA_QUEUES.conclusion, job, { ...CONCLUSION_JOB_OPTIONS, id: jobIdFor(conclusionJobKey(job)) });
+  } catch (error) {
+    // Страница итога поставит задачу заново
+    console.error("enqueue conclusion failed", { gameId: job.gameId, error: String(error) });
   }
 }

@@ -7,6 +7,8 @@ export type GameApi = {
   roll(customRoll?: number): Promise<ApiResult>;
   saveNote(n: number, note: string): Promise<ApiResult>;
   finish(): Promise<ApiResult>;
+  // Перечитать партию: так догружается абзац проводника
+  refresh(): Promise<ApiResult>;
 };
 type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 
@@ -23,9 +25,9 @@ const MESSAGES: Record<string, string> = {
 };
 export const lilaErrorMessage = (error: string): string => MESSAGES[error] ?? "Не получилось. Попробуйте ещё раз.";
 
-async function post(url: string, body: unknown): Promise<ApiResult> {
+async function send(url: string, init: RequestInit): Promise<ApiResult> {
   try {
-    const response = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+    const response = await fetch(url, init);
     const data = (await response.json().catch(() => null)) as { ok?: boolean; game?: GameView; error?: string } | null;
     if (data?.ok && data.game) return { ok: true, game: data.game };
     return { ok: false, error: data?.error ?? "network" };
@@ -34,6 +36,9 @@ async function post(url: string, body: unknown): Promise<ApiResult> {
   }
 }
 
+const post = (url: string, body: unknown): Promise<ApiResult> => send(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+const get = (url: string): Promise<ApiResult> => send(url, { method: "GET", cache: "no-store" });
+
 export const startServerGame = (intention: string): Promise<ApiResult> => post("/api/lila/games", { intention });
 export const importGuestGame = (game: GuestGame, replace: boolean): Promise<ApiResult> => post("/api/lila/import", { game, replace });
 
@@ -41,6 +46,7 @@ export const serverApi = (gameId: string): GameApi => ({
   roll: (customRoll) => post(`/api/lila/games/${gameId}/roll`, customRoll === undefined ? {} : { roll: customRoll }),
   saveNote: (n, note) => post(`/api/lila/games/${gameId}/note`, { n, note }),
   finish: () => post(`/api/lila/games/${gameId}/finish`, {}),
+  refresh: () => get(`/api/lila/games/${gameId}`),
 });
 
 // Гость играет по тем же правилам, но целиком в браузере; бросок — из crypto.getRandomValues
@@ -60,5 +66,6 @@ export function guestApi(storage: StorageLike | null, random: () => number = get
     roll: async (customRoll) => run((game) => guestRoll(game, customRoll ?? random(), customRoll !== undefined)),
     saveNote: async (n, note) => run((game) => guestNote(game, n, note.trim() === "" ? null : note.trim())),
     finish: async () => run(guestFinish),
+    refresh: async () => run((game) => game),
   };
 }

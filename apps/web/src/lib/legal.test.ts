@@ -33,7 +33,15 @@ describe("legal constants", () => {
   });
 
   test("the text service gets no name, birth date or contacts", () => {
-    expect(DATA_RECIPIENTS.find((recipient) => recipient.name.startsWith("GigaChat"))?.what).toMatch(/без имени, даты рождения и контактов/);
+    const what = DATA_RECIPIENTS.find((recipient) => recipient.name.startsWith("GigaChat"))?.what ?? "";
+    expect(what).toMatch(/Имя, дата рождения, e-mail и контакты не передаются/);
+  });
+
+  test("the text service is told about the Lila intention and the notes of a paid game", () => {
+    const what = DATA_RECIPIENTS.find((recipient) => recipient.name.startsWith("GigaChat"))?.what ?? "";
+    expect(what).toMatch(/намерение/);
+    expect(what).toMatch(/записи мыслей/);
+    expect(what.replace(/Имя, дата рождения, e-mail и контакты не передаются/, "")).not.toMatch(/дата рождения/);
   });
 
   test("the disclaimer rules out predictions and professional advice", () => {
