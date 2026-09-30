@@ -53,6 +53,11 @@ describe("paths", () => {
     expect(PRIVATE_PATHS).toContain("/lila/igra");
   });
 
+  test("the tarot pages are public: index, card of the day and all 78 cards", () => {
+    expect(PUBLIC_PATHS).toEqual(expect.arrayContaining(["/taro", "/taro/karta-dnya", "/taro/karty/mag", "/taro/karty/zhezly-tuz"]));
+    expect(PUBLIC_PATHS.filter((path) => path.startsWith("/taro/karty/"))).toHaveLength(78);
+  });
+
   test("the compatibility calculator is public", () => {
     expect(PUBLIC_PATHS).toContain("/sovmestimost");
   });
