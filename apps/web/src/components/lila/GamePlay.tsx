@@ -11,6 +11,7 @@ import { describeTurn, openedCells, rollSummary, trailOf } from "@/lib/lila-turn
 import type { GameView } from "@/lib/lila-view";
 import { Board } from "./Board";
 import { DiceControls } from "./DiceControls";
+import { Die } from "./Die";
 import { MoveHistory } from "./MoveHistory";
 import { TurnPanel } from "./TurnPanel";
 
@@ -25,6 +26,8 @@ const TABS: readonly { id: Tab; label: string }[] = [
 const GUIDE_POLL_MS = 3000;
 // Дольше ждать абзац не стоит: блок «Проводник пишет…» исчезает без ошибки, партия идёт дальше
 const GUIDE_WAIT_MS = 45_000;
+// Кубик катится не меньше этого времени, даже если сервер ответил быстрее; при «уменьшить движение» бросок мгновенный
+const ROLL_ANIMATION_MS = 700;
 
 export function GamePlay({ initial, api, images, onClosed }: Props) {
   const router = useRouter();
@@ -37,17 +40,30 @@ export function GamePlay({ initial, api, images, onClosed }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [confirming, setConfirming] = useState(false);
 
-  async function run(action: () => Promise<ApiResult>): Promise<boolean> {
+  const [rolling, setRolling] = useState(false);
+
+  async function run(action: () => Promise<ApiResult>, minMs = 0): Promise<boolean> {
     setBusy(true);
     setError(null);
+    const started = Date.now();
     const result = await action();
+    const rest = minMs - (Date.now() - started);
+    if (rest > 0) await new Promise((resolve) => setTimeout(resolve, rest));
     setBusy(false);
+    setRolling(false);
     if (!result.ok) {
       setError(lilaErrorMessage(result.error));
       return false;
     }
     setGame(result.game);
     return true;
+  }
+
+  // Своим кубиком игрок бросает сам, поэтому катится только кубик сайта
+  function roll(value?: number) {
+    const animate = value === undefined && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (animate) setRolling(true);
+    return run(() => api.roll(value), animate ? ROLL_ANIMATION_MS : 0);
   }
 
   const lastIndex = game.moves.length - 1;
@@ -128,10 +144,13 @@ export function GamePlay({ initial, api, images, onClosed }: Props) {
         </div>
         {/* Кубик над полем и виден на любой вкладке, кроме истории: бросок и движение фишки — на одном экране */}
         <div className="card lila-play__dice" hidden={tab === "history"}>
-          {game.canRoll && <DiceControls busy={busy} onRoll={(value) => void run(() => api.roll(value))} />}
-          <p role="status" className="lila-play__roll">
-            {turn ? rollSummary(turn) : "Бросьте кубик. Чтобы начать путь, нужна шестёрка."}
-          </p>
+          <div className="lila-play__rollrow">
+            <Die value={turn?.roll ?? null} rolling={rolling} />
+            <p role="status" className="lila-play__roll">
+              {rolling ? "" : turn ? rollSummary(turn) : "Бросьте кубик. Чтобы начать путь, нужна шестёрка."}
+            </p>
+          </div>
+          {game.canRoll && <DiceControls busy={busy} onRoll={(value) => void roll(value)} />}
           {error && (
             <p className="error" role="alert">
               {error}
