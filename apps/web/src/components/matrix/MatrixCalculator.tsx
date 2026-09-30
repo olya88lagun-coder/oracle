@@ -1,26 +1,64 @@
 "use client";
 
-import { calculateMatrix, formatBirthDateRu, parseBirthDate, toIsoDate } from "@oracle/core";
+import {
+  calculateMatrix,
+  formatBirthDateRu,
+  parseBirthDate,
+  toIsoDate,
+} from "@oracle/core";
 import { arcanumByNumber } from "@oracle/content";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import { reachGoal } from "@/lib/analytics";
 import { COMPAT_PATH } from "@/lib/compat";
-import { browserStorage, pickBirthDate, readStoredBirthDate, storeBirthDate } from "@/lib/birth-date-storage";
-import { DATE_ERROR, saveBlockState, sessionStore, takeSaveIntent, type SaveStatus } from "@/lib/matrix-save";
+import {
+  browserStorage,
+  pickBirthDate,
+  readStoredBirthDate,
+  storeBirthDate,
+} from "@/lib/birth-date-storage";
+import {
+  DATE_ERROR,
+  saveBlockState,
+  sessionStore,
+  takeSaveIntent,
+  type SaveStatus,
+} from "@/lib/matrix-save";
 import { FREE_RESULT_PROMISE } from "@/lib/practices";
 import { offerState, type PaidReport } from "@/lib/report-offer";
+import { MATRIX_DATE_ID, MATRIX_FORM_ID } from "./matrix-ids";
 import { MatrixResult } from "./MatrixResult";
 import { ReportOffer } from "./ReportOffer";
 import { SaveBlock } from "./SaveBlock";
 import { ShareButton } from "./ShareButton";
 
 // paidReports: продажа разбора включена; paid — уже купленные разборы этого пользователя (по датам)
-type Props = { signedIn: boolean; profileDate: string | null; intro: ReactNode; paidReports: boolean; paid: readonly PaidReport[] };
+type Props = {
+  signedIn: boolean;
+  profileDate: string | null;
+  intro: ReactNode;
+  paidReports: boolean;
+  paid: readonly PaidReport[];
+};
 
-const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const prefersReducedMotion = () =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, intro, paidReports, paid }: Props) {
+export function MatrixCalculator({
+  signedIn,
+  profileDate: initialProfileDate,
+  intro,
+  paidReports,
+  paid,
+}: Props) {
   const [value, setValue] = useState("");
   const [date, setDate] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -31,8 +69,14 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
   // Защита от двойного клика: второй запрос попал бы под лимит и показал бы ложную ошибку
   const savingRef = useRef(false);
 
-  const parsed = useMemo(() => (date ? parseBirthDate(date, new Date()) : null), [date]);
-  const matrix = useMemo(() => (parsed ? calculateMatrix(parsed) : null), [parsed]);
+  const parsed = useMemo(
+    () => (date ? parseBirthDate(date, new Date()) : null),
+    [date],
+  );
+  const matrix = useMemo(
+    () => (parsed ? calculateMatrix(parsed) : null),
+    [parsed],
+  );
 
   // true — дата в портрете; покупка разбора ждёт этого ответа
   const save = useCallback(async (iso: string): Promise<boolean> => {
@@ -71,7 +115,13 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
       setDate(picked.date);
       storeBirthDate(storage, picked.date);
     }
-    if (takeSaveIntent(sessionStore()) && signedIn && !initialProfileDate && stored) void save(stored);
+    if (
+      takeSaveIntent(sessionStore()) &&
+      signedIn &&
+      !initialProfileDate &&
+      stored
+    )
+      void save(stored);
   }, [initialProfileDate, signedIn, save]);
 
   function calculate(event: FormEvent<HTMLFormElement>) {
@@ -94,54 +144,140 @@ export function MatrixCalculator({ signedIn, profileDate: initialProfileDate, in
     storeBirthDate(browserStorage(), iso);
     reachGoal("matrix_calculated");
     requestAnimationFrame(() => {
-      headingRef.current?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+      headingRef.current?.scrollIntoView({
+        behavior: prefersReducedMotion() ? "auto" : "smooth",
+        block: "start",
+      });
       headingRef.current?.focus({ preventScroll: true });
     });
   }
 
   return (
     <>
-      <section className="matrix-hero">
-        {intro}
-        <form className="card stack matrix-form" onSubmit={calculate} noValidate>
-          <div className="field">
-            <label htmlFor="matrix-date">Дата рождения</label>
-            <input ref={inputRef} id="matrix-date" className="input" type="date" min="1900-01-01" value={value} onChange={(event) => setValue(event.target.value)} />
+      <section className="matrix-hero" aria-labelledby="matrix-title">
+        <picture className="matrix-hero__art">
+          <source
+            media="(max-width: 700px)"
+            srcSet="/images/matrix/matrix-stone-mobile.webp"
+          />
+          {/* Декоративный кадр: пустой alt. Первый экран страницы, поэтому грузится с приоритетом */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/matrix/matrix-stone.webp"
+            alt=""
+            width={1536}
+            height={1024}
+            fetchPriority="high"
+          />
+        </picture>
+        <div className="matrix-wrap matrix-hero__inner">
+          <div className="matrix-hero__copy">
+            {intro}
+            <form
+              id={MATRIX_FORM_ID}
+              className="matrix-form"
+              onSubmit={calculate}
+              noValidate
+            >
+              <div className="field">
+                <label htmlFor={MATRIX_DATE_ID}>Дата рождения</label>
+                <div className="matrix-form__row">
+                  <input
+                    ref={inputRef}
+                    id={MATRIX_DATE_ID}
+                    className="input"
+                    type="date"
+                    min="1900-01-01"
+                    value={value}
+                    onChange={(event) => setValue(event.target.value)}
+                  />
+                  <button type="submit" className="button button--lavender">
+                    Рассчитать матрицу
+                  </button>
+                </div>
+              </div>
+              {error && (
+                <p className="error" role="alert">
+                  {error}
+                </p>
+              )}
+              <p className="matrix-form__promise">{FREE_RESULT_PROMISE}</p>
+              <p className="matrix-form__note">
+                Считается в вашем браузере — дату мы не получаем.
+              </p>
+            </form>
           </div>
-          <button type="submit" className="button button--lavender">
-            Рассчитать
-          </button>
-          {error && (
-            <p className="error" role="alert">
-              {error}
-            </p>
-          )}
-          <p className="matrix-form__promise">{FREE_RESULT_PROMISE}</p>
-          <p className="muted">Считается в вашем браузере — дату мы не получаем.</p>
-        </form>
+        </div>
       </section>
+      <div className="matrix-band">
+        <ul className="matrix-wrap matrix-band__list">
+          <li>
+            <strong>22 аркана</strong> <span>на вашей диаграмме</span>
+          </li>
+          <li>
+            <strong>3 ключевые точки</strong>{" "}
+            <span>личность, центр и задача</span>
+          </li>
+          <li>
+            <strong>Без регистрации</strong> <span>бесплатный расчёт</span>
+          </li>
+        </ul>
+      </div>
 
       {matrix && parsed && date && (
-        <MatrixResult
-          matrix={matrix}
-          dateLabel={formatBirthDateRu(parsed)}
-          headingRef={headingRef}
-          offer={<OfferSlot state={offerState({ enabled: paidReports, signedIn, date, profileDate, paid })} matrix={matrix} onSaveDate={() => (profileDate === date ? Promise.resolve(true) : save(date))} />}
-          actions={
-            <div className="matrix-actions">
-              <SaveBlock state={saveBlockState({ signedIn, profileDate, date, status })} profileDate={profileDate} onSave={() => void save(date)} />
-              <ShareButton arcanum={arcanumByNumber(matrix.E)} />
-              <Link className="touch-link" href={COMPAT_PATH}>
-                Проверить совместимость с партнёром
-              </Link>
-            </div>
-          }
-        />
+        <div className="matrix-wrap matrix-result-wrap stack">
+          <MatrixResult
+            matrix={matrix}
+            dateLabel={formatBirthDateRu(parsed)}
+            headingRef={headingRef}
+            offer={
+              <OfferSlot
+                state={offerState({
+                  enabled: paidReports,
+                  signedIn,
+                  date,
+                  profileDate,
+                  paid,
+                })}
+                matrix={matrix}
+                onSaveDate={() =>
+                  profileDate === date ? Promise.resolve(true) : save(date)
+                }
+              />
+            }
+            actions={
+              <div className="matrix-actions">
+                <SaveBlock
+                  state={saveBlockState({
+                    signedIn,
+                    profileDate,
+                    date,
+                    status,
+                  })}
+                  profileDate={profileDate}
+                  onSave={() => void save(date)}
+                />
+                <ShareButton arcanum={arcanumByNumber(matrix.E)} />
+                <Link className="touch-link" href={COMPAT_PATH}>
+                  Проверить совместимость с партнёром
+                </Link>
+              </div>
+            }
+          />
+        </div>
       )}
     </>
   );
 }
 
-function OfferSlot({ state, ...rest }: { state: ReturnType<typeof offerState> } & Omit<Parameters<typeof ReportOffer>[0], "state">) {
-  return state.kind === "hidden" ? null : <ReportOffer state={state} {...rest} />;
+function OfferSlot({
+  state,
+  ...rest
+}: { state: ReturnType<typeof offerState> } & Omit<
+  Parameters<typeof ReportOffer>[0],
+  "state"
+>) {
+  return state.kind === "hidden" ? null : (
+    <ReportOffer state={state} {...rest} />
+  );
 }

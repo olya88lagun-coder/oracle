@@ -28,6 +28,6 @@ test("the matrix page explains the calculation and answers common questions", as
   await page.goto("/matrica-sudby");
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   await expect(page.getByRole("heading", { level: 2, name: "Как считается матрица судьбы" })).toBeVisible();
-  await expect(page.getByRole("heading", { level: 3, name: "Нужна ли регистрация?" })).toBeVisible();
+  await expect(page.locator("summary", { hasText: "Нужна ли регистрация?" })).toBeVisible();
   await noHorizontalScroll(page);
 });
