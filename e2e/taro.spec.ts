@@ -21,12 +21,13 @@ test("the index lists all 78 cards and fits a phone", async ({ page }) => {
   await noHorizontalScroll(page);
 });
 
-test("three face-down cards are offered, and choosing one opens a card while the others stay closed", async ({ page }) => {
+test("three face-down cards are offered, and choosing one opens the card of the day", async ({ page }) => {
   await page.goto("/taro/karta-dnya");
   await expect(page.getByRole("button", { name: /^Карта [123]$/ })).toHaveCount(3);
   await draw(page);
-  await expect(page.getByRole("button", { name: /^Карта [123]$/ })).toHaveCount(2);
-  await expect(page.getByRole("button", { name: /^Карта [123]$/ }).first()).toBeDisabled();
+  await expect(page.getByRole("button", { name: /^Карта [123]$/ })).toHaveCount(0);
+  await expect(page.getByRole("heading", { level: 2, name: "Вопрос для себя" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Карта дня");
 });
 
 test("a drawn card stays for the day, and a new day allows a new draw", async ({ page }) => {

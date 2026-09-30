@@ -12,15 +12,30 @@ export const metadata: Metadata = publicMetadata({
   image: SITE_PREVIEW_IMAGE,
 });
 
+const FACTS: readonly { value: string; text: string }[] = [
+  { value: "1", text: "карта остаётся с вами до полуночи по Москве" },
+  { value: "78", text: "карт Райдер–Уэйт с короткой трактовкой дня" },
+  { value: "0", text: "регистраций и передачи личных данных" },
+];
+
 export default function TaroDayPage() {
   return (
-    <main className="page stack taro-page taro-day-page">
-      <div className="stack">
+    <main className="page page--wide stack taro-page taro-day-page">
+      <TaroDraw cards={drawCards()}>
         <p className="eyebrow eyebrow--line">Практика · таро</p>
-        <h1 className="display">Карта дня</h1>
-        <p className="lead">Одна карта на сегодня. Это не предсказание, а образ и вопрос, с которыми удобно прожить день. Смена карты — в полночь по московскому времени.</p>
-      </div>
-      <TaroDraw cards={drawCards()} />
+        <h1 id="taro-day-title" className="display">
+          Карта дня
+        </h1>
+        <p className="lead">Одна карта на сегодня. Не прогноз и не приговор, а образ, действие и вопрос, с которыми удобно пройти день.</p>
+        <ul className="taro-facts" aria-label="Как работает карта дня">
+          {FACTS.map((fact) => (
+            <li key={fact.value}>
+              <strong>{fact.value}</strong>
+              <span>{fact.text}</span>
+            </li>
+          ))}
+        </ul>
+      </TaroDraw>
       <p>
         <Link className="touch-link" href={TARO_PATH}>
           Значения всех 78 карт
