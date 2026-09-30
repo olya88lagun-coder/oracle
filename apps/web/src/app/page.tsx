@@ -67,7 +67,7 @@ export default function HomePage() {
                   </h3>
                   <p>{practice.summary}</p>
                   {/* Вся карточка — ссылка (растянутая practice-card__link); это надпись-подсказка, а не вторая ссылка */}
-                  {practice.href && <span className="button button--lavender practice-card__cta">{practice.slug === "matrix" ? "Рассчитать бесплатно" : "Играть бесплатно"}</span>}
+                  {practice.href && <span className="button button--lavender practice-card__cta">{practice.slug === "matrix" ? "Рассчитать бесплатно" : practice.slug === "compat" ? "Проверить бесплатно" : "Играть бесплатно"}</span>}
                 </div>
               </li>
             ))}
