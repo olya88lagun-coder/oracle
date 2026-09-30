@@ -10,7 +10,7 @@ import { loadPortrait } from "@/server/profile-service";
 import { currentUser } from "@/server/viewer";
 
 export const metadata: Metadata = publicMetadata({
-  title: "Совместимость по дате рождения — расчёт по матрице судьбы онлайн",
+  title: "Совместимость по дате рождения онлайн бесплатно — расчёт по матрице судьбы",
   description: "Введите две даты рождения и узнайте аркан вашей пары: как ваши матрицы судьбы разговаривают друг с другом. Бесплатно, без регистрации, даты остаются у вас.",
   path: COMPAT_PATH,
   image: SITE_PREVIEW_IMAGE,
