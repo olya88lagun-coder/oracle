@@ -61,7 +61,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     image: "/lila/68-kosmicheskoe-soznanie.webp",
     imageAlt: "Клетка 68 «Космическое сознание» в игре Лила",
     basis: ["lila-guide", "lila-rules"],
-    internalLinks: ["/lila", "/lila/igra", "/blog/kak-igrat-v-lilu-onlain"],
+    internalLinks: ["/lila", "/blog/kak-igrat-v-lilu-onlain", "/blog/kak-sformulirovat-namerenie-dlya-lily"],
     status: "draft",
   },
   {
