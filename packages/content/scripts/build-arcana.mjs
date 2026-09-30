@@ -21,6 +21,10 @@ export function collectLila(file) {
   return { cells: readText(file) };
 }
 
+export function collectCompat(file) {
+  return { unions: readText(file) };
+}
+
 function write(output, data) {
   mkdirSync(dirname(output), { recursive: true });
   writeFileSync(output, `${JSON.stringify(data, null, 2)}\n`, "utf8");
@@ -32,4 +36,5 @@ if (import.meta.main) {
   write(join(root, "src", "generated", "arcana.json"), collectArcana(join(root, "arcana")));
   write(join(root, "src", "generated", "positions.json"), collectPositions(join(root, "positions.md")));
   write(join(root, "src", "generated", "lila.json"), collectLila(join(root, "lila-cells.md")));
+  write(join(root, "src", "generated", "compat.json"), collectCompat(join(root, "compat-arcana.md")));
 }
