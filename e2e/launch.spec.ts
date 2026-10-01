@@ -55,3 +55,14 @@ test("state-changing endpoints refuse requests from other sites", async ({ reque
     expect(response.status(), path).toBe(403);
   }
 });
+
+test("the site has a favicon: icon links in the head and files that open", async ({ page, request }) => {
+  await page.goto("/");
+  await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveCount(1);
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveCount(1);
+  for (const path of ["/favicon.ico", "/icon.svg", "/icon.png", "/apple-icon.png"]) {
+    const response = await request.get(path);
+    expect(response.status(), path).toBe(200);
+    expect(response.headers()["content-type"], path).toMatch(/^image\//);
+  }
+});
