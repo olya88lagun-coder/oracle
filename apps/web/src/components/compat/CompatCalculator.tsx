@@ -1,8 +1,13 @@
 "use client";
 
-import { calculateCompatibility, parseBirthDate, toIsoDate, type Compatibility } from "@oracle/core";
+import { calculateCompatibility, calculateMatrix, formatBirthDateRu, parseBirthDate, toIsoDate, type Compatibility } from "@oracle/core";
+import Link from "next/link";
 import { useRef, useState, type FormEvent } from "react";
+import { ReportOffer } from "@/components/matrix/ReportOffer";
 import { reachGoal } from "@/lib/analytics";
+import { MATRIX_PATH } from "@/lib/arcana-paths";
+import { browserStorage, storeBirthDate } from "@/lib/birth-date-storage";
+import { offerState, type PaidReport } from "@/lib/report-offer";
 import { COMPAT_CALC_ID } from "./CompatGuide";
 import { CompatResult } from "./CompatResult";
 import { CompatShare } from "./CompatShare";
@@ -12,14 +17,19 @@ const PDF_ERROR = "Не получилось собрать PDF. Попробу�
 
 type Dates = { a: string; b: string };
 
-// Даты хранятся только в состоянии страницы: ни в адресе, ни в localStorage, ни на сервере (кроме запроса PDF)
-export function CompatCalculator({ profileDate }: { profileDate: string | null }) {
+// paidReports — продажа разбора включена; paid — уже купленные разборы этого пользователя (по датам)
+type Props = { profileDate: string | null; signedIn: boolean; paidReports: boolean; paid: readonly PaidReport[] };
+
+// Даты хранятся только в состоянии страницы: ни в адресе, ни в localStorage, ни на сервере (кроме запроса PDF).
+// Исключение — собственная дата человека: её запоминает и сохраняет только явное действие под результатом (вход или покупка разбора)
+export function CompatCalculator({ profileDate, signedIn, paidReports, paid }: Props) {
   const [a, setA] = useState(profileDate ?? "");
   const [b, setB] = useState("");
   const [dates, setDates] = useState<Dates | null>(null);
   const [compat, setCompat] = useState<Compatibility | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [savedDate, setSavedDate] = useState(profileDate);
   const aRef = useRef<HTMLInputElement>(null);
   const bRef = useRef<HTMLInputElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -67,12 +77,29 @@ export function CompatCalculator({ profileDate }: { profileDate: string | null }
     setBusy(false);
   }
 
+  // true — дата в портрете; покупка разбора ждёт этого ответа
+  async function saveOwnDate(iso: string): Promise<boolean> {
+    try {
+      const response = await fetch("/api/profile/birth-date", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ birthDate: iso }) });
+      if (!response.ok) return false;
+      reachGoal("birth_date_saved");
+      setSavedDate(iso);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   function reset() {
     setDates(null);
     setCompat(null);
     setB("");
     setError(null);
   }
+
+  // Предложение разбора — для собственной даты (первое поле), а не для пары: даты партнёра сервер так и не получает
+  const ownDate = dates ? parseBirthDate(dates.a, new Date()) : null;
+  const offer = dates && ownDate ? offerState({ enabled: paidReports, signedIn, date: dates.a, profileDate: savedDate, paid }) : null;
 
   return (
     <>
@@ -119,6 +146,24 @@ export function CompatCalculator({ profileDate }: { profileDate: string | null }
               </button>
             </>
           }
+        />
+      )}
+
+      {compat && dates && ownDate && offer && offer.kind !== "hidden" && (
+        <ReportOffer
+          state={offer}
+          matrix={calculateMatrix(ownDate)}
+          onSaveDate={() => (savedDate === dates.a ? Promise.resolve(true) : saveOwnDate(dates.a))}
+          compat={{
+            dateLabel: formatBirthDateRu(ownDate),
+            saveFirstNote: (
+              <>
+                Разбор покупается для даты из портрета, а в портрете другая дата. Сохранить эту дату можно на <Link href={MATRIX_PATH}>странице матрицы</Link>.
+              </>
+            ),
+            // Своя дата переживает вход через VK ID в этом браузере; дата партнёра никуда не записывается
+            onLoginClick: () => storeBirthDate(browserStorage(), dates.a),
+          }}
         />
       )}
     </>

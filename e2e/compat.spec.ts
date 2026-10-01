@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { signIn, uniqueName } from "./helpers";
 
 // Нужен только dev:web: страница публичная, вход не требуется
 async function noHorizontalScroll(page: Page) {
@@ -73,4 +74,37 @@ test("the matrix result offers to check the compatibility", async ({ page }) => 
   await page.getByRole("textbox", { name: "Дата рождения" }).fill("1988-11-18");
   await page.getByRole("button", { name: "Рассчитать матрицу", exact: true }).click();
   await expect(page.getByRole("link", { name: "Проверить совместимость с партнёром" })).toHaveAttribute("href", "/sovmestimost");
+});
+
+// Нужны PAYMENTS=fake и PAID_REPORTS=on, как в e2e/paid.spec.ts
+const offer = (page: Page) => page.getByRole("region", { name: "Разбор всей матрицы — 390 ₽" });
+
+test("under the result a guest is offered the report for their own date, and only their own date is remembered for the login", async ({ page }) => {
+  await calculate(page);
+  await expect(offer(page)).toContainText("по дате 18 ноября 1988");
+  const login = offer(page).getByRole("link", { name: "Войти и купить разбор — 390 ₽" });
+  await expect(login).toHaveAttribute("href", "/login?next=%2Fmatrica-sudby");
+  await noHorizontalScroll(page);
+
+  await login.click();
+  await expect(page).toHaveURL(/\/login/);
+  const stored = await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }));
+  expect(stored).toContain("1988-11-18");
+  expect(stored).not.toContain("2000-01-01");
+});
+
+test("a signed-in visitor buys the report for their own date and the partner's date never reaches the server", async ({ browser }) => {
+  const { context, page } = await signIn(browser, uniqueName("Пара"));
+  const bodies: string[] = [];
+  page.on("request", (request) => {
+    if (request.method() === "POST") bodies.push(`${request.url()} ${request.postData() ?? ""}`);
+  });
+  await calculate(page);
+  await offer(page).getByRole("textbox", { name: "E-mail для чека" }).fill("test@example.ru");
+  await offer(page).getByRole("button", { name: "Купить разбор — 390 ₽" }).click();
+  await expect(page).toHaveURL(/\/dev\/pay\//);
+
+  expect(bodies.some((entry) => entry.includes("/api/profile/birth-date") && entry.includes("1988-11-18"))).toBe(true);
+  expect(bodies.join(" | ")).not.toContain("2000-01-01");
+  await context.close();
 });

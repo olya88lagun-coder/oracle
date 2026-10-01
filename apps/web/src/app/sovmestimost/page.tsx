@@ -6,7 +6,9 @@ import { compatFaqJsonLd, CompatCta, CompatGuide, CompatPreview } from "@/compon
 import { COMPAT_PATH } from "@/lib/compat";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
+import { listPaidPurchases } from "@oracle/db";
 import { getDb } from "@/server/db";
+import { salesEnabled } from "@/server/payments-deps";
 import { loadPortrait } from "@/server/profile-service";
 import { currentUser } from "@/server/viewer";
 
@@ -32,6 +34,7 @@ export default async function CompatibilityPage() {
   const user = await currentUser();
   const portrait = user ? await loadPortrait({ db: getDb(), now: () => new Date() }, user.id) : null;
   const profileDate = portrait?.birthDate ? toIsoDate(portrait.birthDate) : null;
+  const paid = user ? (await listPaidPurchases(getDb(), user.id)).map((purchase) => ({ birthDate: purchase.birthDate, purchaseId: purchase.id })) : [];
   return (
     <main className="compat-scene">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(appJsonLd) }} />
@@ -48,7 +51,7 @@ export default async function CompatibilityPage() {
           </h1>
           <p className="lead">Две даты — один общий аркан: как ваши матрицы судьбы разговаривают друг с другом. Без предсказаний — как повод для разговора.</p>
         </section>
-        <CompatCalculator profileDate={profileDate} />
+        <CompatCalculator profileDate={profileDate} signedIn={Boolean(user)} paidReports={salesEnabled()} paid={paid} />
         <CompatPreview />
         <CompatGuide />
         <CompatCta />
