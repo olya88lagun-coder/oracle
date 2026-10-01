@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { CONSENT_KEY, GOALS, reachGoal, readChoice, sanitizePath, sanitizeReferrer, saveChoice } from "./analytics";
+import { adParams, CONSENT_KEY, GOALS, hitUrl, reachGoal, readChoice, sanitizePath, sanitizeReferrer, saveChoice } from "./analytics";
 
 function memoryStorage(initial: Record<string, string> = {}) {
   const data = new Map(Object.entries(initial));
@@ -45,6 +45,32 @@ describe("sanitizePath", () => {
   test("drops the query and the hash", () => {
     expect(sanitizePath("/portret?from=login#date")).toBe("/portret");
     expect(sanitizePath("")).toBe("/");
+  });
+});
+
+describe("ad parameters", () => {
+  test("keeps only the Direct and UTM tags", () => {
+    expect(adParams("?yclid=123456&utm_source=yandex&utm_campaign=matrix-test&from=login&next=%2Fportret")).toBe("?yclid=123456&utm_source=yandex&utm_campaign=matrix-test");
+  });
+
+  test("keeps readable Cyrillic and spaces in a tag", () => {
+    expect(adParams("?utm_term=%D0%BC%D0%B0%D1%82%D1%80%D0%B8%D1%86%D0%B0+%D1%81%D1%83%D0%B4%D1%8C%D0%B1%D1%8B")).toBe("?utm_term=%D0%BC%D0%B0%D1%82%D1%80%D0%B8%D1%86%D0%B0+%D1%81%D1%83%D0%B4%D1%8C%D0%B1%D1%8B");
+  });
+
+  test("drops a tag whose value could carry personal data", () => {
+    expect(adParams("?utm_source=a%40b.ru")).toBe("");
+    expect(adParams("?utm_term=" + "x".repeat(101))).toBe("");
+    expect(adParams("?utm_content=1988-11-18%2F%3Fq")).toBe("");
+  });
+
+  test("is empty without tags or without a query", () => {
+    expect(adParams("")).toBe("");
+    expect(adParams("?birthDate=1988-11-18")).toBe("");
+  });
+
+  test("the hit address is the path plus the tags and nothing else", () => {
+    expect(hitUrl("https://oracle.test", "/matrica-sudby", "?yclid=99&birthDate=1988-11-18")).toBe("https://oracle.test/matrica-sudby?yclid=99");
+    expect(hitUrl("https://oracle.test", "/portret", "?from=login")).toBe("https://oracle.test/portret");
   });
 });
 

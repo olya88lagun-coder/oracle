@@ -38,6 +38,25 @@ export function sanitizePath(path: string): string {
   return pathname || "/";
 }
 
+// Метки рекламы нужны Метрике, чтобы связать визит с кампанией Директа: без них рекламный трафик выглядит как прямой заход.
+// Пропускаем только их и только безобидные значения (буквы, цифры и несколько знаков, до 100 символов); остальные параметры отрезаются
+const AD_PARAMS = ["yclid", "ysclid", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
+const SAFE_AD_VALUE = /^[\p{L}\p{N}_.\-~ +]{1,100}$/u;
+
+export function adParams(search: string): string {
+  const params = new URLSearchParams(search);
+  const kept = new URLSearchParams();
+  for (const key of AD_PARAMS) {
+    const value = params.get(key);
+    if (value && SAFE_AD_VALUE.test(value)) kept.set(key, value);
+  }
+  const text = kept.toString();
+  return text ? `?${text}` : "";
+}
+
+// Адрес просмотра для Метрики: путь без параметров плюс метки рекламы
+export const hitUrl = (origin: string, pathname: string, search: string): string => `${origin}${sanitizePath(pathname)}${adParams(search)}`;
+
 export function sanitizeReferrer(referrer: string, origin: string): string | undefined {
   if (!referrer) return undefined;
   try {
