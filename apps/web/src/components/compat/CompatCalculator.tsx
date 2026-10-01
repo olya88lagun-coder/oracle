@@ -18,11 +18,11 @@ const PDF_ERROR = "Не получилось собрать PDF. Попробу�
 type Dates = { a: string; b: string };
 
 // paidReports — продажа разбора включена; paid — уже купленные разборы этого пользователя (по датам)
-type Props = { profileDate: string | null; signedIn: boolean; paidReports: boolean; paid: readonly PaidReport[] };
+type Props = { profileDate: string | null; signedIn: boolean; paidReports: boolean; paid: readonly PaidReport[]; ownerFree?: boolean };
 
 // Даты хранятся только в состоянии страницы: ни в адресе, ни в localStorage, ни на сервере (кроме запроса PDF).
 // Исключение — собственная дата человека: её запоминает и сохраняет только явное действие под результатом (вход или покупка разбора)
-export function CompatCalculator({ profileDate, signedIn, paidReports, paid }: Props) {
+export function CompatCalculator({ profileDate, signedIn, paidReports, paid, ownerFree = false }: Props) {
   const [a, setA] = useState(profileDate ?? "");
   const [b, setB] = useState("");
   const [dates, setDates] = useState<Dates | null>(null);
@@ -153,6 +153,7 @@ export function CompatCalculator({ profileDate, signedIn, paidReports, paid }: P
         <ReportOffer
           state={offer}
           matrix={calculateMatrix(ownDate)}
+          free={ownerFree}
           onSaveDate={() => (savedDate === dates.a ? Promise.resolve(true) : saveOwnDate(dates.a))}
           compat={{
             dateLabel: formatBirthDateRu(ownDate),

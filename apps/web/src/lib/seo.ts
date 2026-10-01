@@ -11,7 +11,7 @@ import { TARO_DAY_PATH, TARO_PATH, taroCardPath } from "./taro-paths";
 import { SITE_NAME, SITE_URL, SOCIAL_LINKS } from "./site";
 
 // Личные страницы: вход, портрет и всё, что под ними. В поиск не попадают
-export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", "/lila/igra"];
+export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", "/lila/igra", "/admin"];
 
 // Практики и их справочники; следующие планы добавят свои
 export const PUBLIC_PATHS: string[] = ["/", MATRIX_PATH, COMPAT_PATH, ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, ...TAROT_DECK.map(taroCardPath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), ...DOCUMENT_PATHS];

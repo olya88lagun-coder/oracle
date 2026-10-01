@@ -6,7 +6,7 @@ import { Icon } from "@/components/Icon";
 import { LILA_THEMES } from "@/lib/lila-themes";
 import { GuidedOffer } from "./GuidedOffer";
 
-type Props = { busy: boolean; error: string | null; onStart: (intention: string) => void; guided?: { signedIn: boolean } | null; guest?: boolean };
+type Props = { busy: boolean; error: string | null; onStart: (intention: string) => void; guided?: { signedIn: boolean; free?: boolean } | null; guest?: boolean };
 
 const MIN_CHARS = 3;
 const OWN_THEME = "";
@@ -71,7 +71,7 @@ export function IntentionForm({ busy, error, onStart, guided = null, guest = fal
         </button>
         {guest && <p className="hint">Партия хранится только в этом браузере.</p>}
       </form>
-      {guided && <GuidedOffer intention={text} signedIn={guided.signedIn} />}
+      {guided && <GuidedOffer intention={text} signedIn={guided.signedIn} free={guided.free} />}
     </div>
   );
 }

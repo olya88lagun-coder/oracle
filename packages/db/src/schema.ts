@@ -58,6 +58,8 @@ export const purchases = pgTable(
     // Снимок даты на момент покупки: смена даты в портрете разбор не трогает. Дата и e-mail стираются при удалении данных
     birthDate: date("birth_date", { mode: "string" }),
     receiptEmail: text("receipt_email"),
+    // Чек «Мой налог» отправляет владелица вручную; когда отправила, ставится время, а почта стирается
+    receiptSentAt: timestamp("receipt_sent_at", { withTimezone: true }),
     amountKopecks: integer("amount_kopecks").notNull(),
     status: purchaseStatusEnum("status").notNull().default("pending"),
     yookassaPaymentId: text("yookassa_payment_id").unique(),

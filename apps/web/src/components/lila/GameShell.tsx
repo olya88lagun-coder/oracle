@@ -16,7 +16,7 @@ import { IntentionForm } from "./IntentionForm";
 import { MoveHistory } from "./MoveHistory";
 import { SaveGameBanner } from "./SaveGameBanner";
 
-type Props = { initialGame: GameView | null; signedIn: boolean; images: string[]; guidedEnabled?: boolean };
+type Props = { initialGame: GameView | null; signedIn: boolean; images: string[]; guidedEnabled?: boolean; ownerFree?: boolean };
 
 const storage = (): Storage | null => {
   try {
@@ -26,7 +26,7 @@ const storage = (): Storage | null => {
   }
 };
 
-export function GameShell({ initialGame, signedIn, images, guidedEnabled = false }: Props) {
+export function GameShell({ initialGame, signedIn, images, guidedEnabled = false, ownerFree = false }: Props) {
   const [game, setGame] = useState<GameView | null>(initialGame);
   const [guest, setGuest] = useState<GuestGame | null>(null);
   const [ready, setReady] = useState(signedIn);
@@ -134,7 +134,7 @@ export function GameShell({ initialGame, signedIn, images, guidedEnabled = false
         </section>
         <div>
           {signedIn && guest && !game && <SaveGameBanner guest={guest} onSave={(replace) => void save(replace)} onDiscard={discard} />}
-          <IntentionForm busy={busy} error={error} onStart={(text) => void start(text)} guided={guidedEnabled ? { signedIn } : null} guest={!signedIn} />
+          <IntentionForm busy={busy} error={error} onStart={(text) => void start(text)} guided={guidedEnabled ? { signedIn, free: ownerFree } : null} guest={!signedIn} />
         </div>
       </div>
     );

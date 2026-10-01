@@ -1,5 +1,5 @@
 import type { Product } from "@oracle/core";
-import { and, asc, desc, eq, gte, isNotNull } from "drizzle-orm";
+import { and, asc, desc, eq, gt, gte, isNotNull, isNull } from "drizzle-orm";
 import { purchases, reports, type PurchaseStatus } from "./schema";
 import type { Database } from "./types";
 import { isUuid } from "./uuid";
@@ -22,7 +22,8 @@ export type PaidPurchase = { id: string; birthDate: string; ready: boolean; paid
 
 type PurchaseRow = typeof purchases.$inferSelect;
 type DateOfProduct = { userId: string; product: Product; birthDate: string };
-type NewPurchase = { userId: string; product: Product; birthDate?: string | null; receiptEmail: string; amountKopecks: number };
+// receiptEmail пустой только у бесплатной покупки владелицы: чек за 0 ₽ не нужен
+type NewPurchase = { userId: string; product: Product; birthDate?: string | null; receiptEmail?: string | null; amountKopecks: number };
 
 const toRecord = (row: PurchaseRow): PurchaseRecord => ({ ...row, product: row.product as Product });
 
@@ -35,7 +36,7 @@ export async function createPurchase(
 ): Promise<PurchaseRecord> {
   const [row] = await db
     .insert(purchases)
-    .values({ userId: p.userId, product: p.product, birthDate: p.birthDate ?? null, receiptEmail: p.receiptEmail, amountKopecks: p.amountKopecks })
+    .values({ userId: p.userId, product: p.product, birthDate: p.birthDate ?? null, receiptEmail: p.receiptEmail ?? null, amountKopecks: p.amountKopecks })
     .returning();
   return toRecord(row!);
 }
@@ -103,4 +104,35 @@ export async function listPaidPurchases(db: Database, userId: string): Promise<P
     .where(and(eq(purchases.userId, userId), eq(purchases.status, "succeeded"), isNotNull(purchases.birthDate)))
     .orderBy(desc(purchases.paidAt), desc(purchases.createdAt));
   return rows.map((row) => ({ id: row.id, birthDate: row.birthDate!, ready: row.reportId !== null, paidAt: row.paidAt! }));
+}
+
+export type ReceiptToSend = { id: string; product: Product; amountKopecks: number; paidAt: Date | null; paymentId: string | null; email: string | null };
+
+// Оплаченные покупки, по которым чек «Мой налог» ещё не отправлен, — для страницы чеков владелицы. Старые — первыми.
+// Бесплатные покупки владелицы (0 ₽) в список не попадают
+export async function listReceiptsToSend(db: Database): Promise<ReceiptToSend[]> {
+  const rows = await db
+    .select({
+      id: purchases.id,
+      product: purchases.product,
+      amountKopecks: purchases.amountKopecks,
+      paidAt: purchases.paidAt,
+      paymentId: purchases.yookassaPaymentId,
+      email: purchases.receiptEmail,
+    })
+    .from(purchases)
+    .where(and(eq(purchases.status, "succeeded"), gt(purchases.amountKopecks, 0), isNull(purchases.receiptSentAt)))
+    .orderBy(asc(purchases.paidAt));
+  return rows.map((row) => ({ ...row, product: row.product as Product }));
+}
+
+// Чек отправлен: почта больше не нужна и стирается. Повторная отметка и неоплаченная покупка ничего не меняют
+export async function markReceiptSent(db: Database, purchaseId: string, sentAt: Date): Promise<boolean> {
+  if (!isUuid(purchaseId)) return false;
+  const updated = await db
+    .update(purchases)
+    .set({ receiptSentAt: sentAt, receiptEmail: null })
+    .where(and(eq(purchases.id, purchaseId), eq(purchases.status, "succeeded"), isNull(purchases.receiptSentAt)))
+    .returning({ id: purchases.id });
+  return updated.length > 0;
 }

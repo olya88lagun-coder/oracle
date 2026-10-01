@@ -26,7 +26,15 @@ import { normalizeIntention } from "../lib/lila-view";
 import { reportPath } from "../lib/report-offer";
 import type { PaymentGateway } from "./payments/gateway";
 
-export type PaymentsDeps = { db: Database; gateway: PaymentGateway; appUrl: string; now: () => Date; enqueueGenerate: (job: GenerateReportJob) => Promise<void> };
+// isOwner — владелица сайта: платное для неё бесплатно, без шлюза, почты и чека
+export type PaymentsDeps = {
+  db: Database;
+  gateway: PaymentGateway;
+  appUrl: string;
+  now: () => Date;
+  enqueueGenerate: (job: GenerateReportJob) => Promise<void>;
+  isOwner?: (userId: string) => Promise<boolean>;
+};
 export type StartPurchaseError = "no_birth_date" | "invalid_email" | "invalid_intention" | "active_game" | "already_paid" | "not_found" | "payment_failed";
 export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: StartPurchaseError; purchaseId?: string };
 export type PurchaseViewStatus = "pending" | "canceled" | "generating" | "ready";
@@ -35,7 +43,8 @@ export type PurchaseView = { id: string; status: PurchaseViewStatus; birthDate: 
 
 const REUSE_WINDOW_MS = 30 * 60_000;
 const DESCRIPTION_MAX = 128;
-const DESCRIPTIONS: Readonly<Record<Product, string>> = {
+// Название услуги: то же видно в кабинете ЮKassa и на странице чеков владелицы
+export const PRODUCT_DESCRIPTIONS: Readonly<Record<Product, string>> = {
   matrix_report: "Разбор матрицы судьбы — «Твой оракул»",
   lila_session: "Сессия Лилы с проводником — «Твой оракул»",
 };
@@ -49,7 +58,7 @@ export const purchaseReturnPath = (purchase: { id: string; product: Product }): 
 
 // Описание видно в кабинете ЮKassa: по нему владелица отправляет чек «Мой налог». Лимит ЮKassa — 128 знаков
 export function paymentDescription(email: string, product: Product = MATRIX_REPORT_PRODUCT): string {
-  const base = DESCRIPTIONS[product];
+  const base = PRODUCT_DESCRIPTIONS[product];
   const full = `${base}, чек: ${email}`;
   return full.length <= DESCRIPTION_MAX ? full : `${base}, чек: см. метаданные`;
 }
@@ -60,10 +69,20 @@ function readEmail(value: unknown): string | null {
   return parsed.success ? parsed.data : null;
 }
 
-async function purchaseFor(deps: PaymentsDeps, p: { userId: string; birthDate: string; email: string }): Promise<StartPurchaseOutcome> {
+const isOwner = async (deps: PaymentsDeps, userId: string): Promise<boolean> => (await deps.isOwner?.(userId)) === true;
+
+// Покупка на 0 ₽ сразу считается оплаченной: разбор готовится, партия запускается, как после настоящей оплаты
+async function grantFree(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<StartPurchaseOutcome> {
+  if (await markPurchaseSucceeded(deps.db, purchase.id, deps.now())) await onPaid(deps, purchase);
+  return { ok: true, url: purchaseReturnPath(purchase) };
+}
+
+async function purchaseFor(deps: PaymentsDeps, p: { userId: string; birthDate: string; email: string | null }): Promise<StartPurchaseOutcome> {
   const key = { userId: p.userId, product: MATRIX_REPORT_PRODUCT, birthDate: p.birthDate } as const;
   const paid = await findPaidPurchase(deps.db, key);
   if (paid) return { ok: false, error: "already_paid", purchaseId: paid.id };
+
+  if (p.email === null) return grantFree(deps, await createPurchase(deps.db, { ...key, amountKopecks: 0 }));
 
   const open = await findOpenPurchase(deps.db, { ...key, since: new Date(deps.now().getTime() - REUSE_WINDOW_MS) });
   if (open?.confirmationUrl && open.receiptEmail === p.email) return { ok: true, url: open.confirmationUrl };
@@ -94,8 +113,10 @@ async function createGatewayPayment(deps: PaymentsDeps, purchase: PurchaseRecord
 }
 
 export async function startLilaPurchase(deps: PaymentsDeps, p: { userId: string; email: unknown; intention: unknown }): Promise<StartPurchaseOutcome> {
-  const email = readEmail(p.email);
-  if (!email) return { ok: false, error: "invalid_email" };
+  const owner = await isOwner(deps, p.userId);
+  // Владелице почта не нужна, и платить она не будет, даже если почта пришла
+  const email = owner ? null : readEmail(p.email);
+  if (!owner && !email) return { ok: false, error: "invalid_email" };
   const intention = normalizeIntention(p.intention);
   if (!intention) return { ok: false, error: "invalid_intention" };
   if (await getActiveLilaGame(deps.db, p.userId)) return { ok: false, error: "active_game" };
@@ -107,16 +128,21 @@ export async function startLilaPurchase(deps: PaymentsDeps, p: { userId: string;
   if (waiting?.purchaseId) {
     const open = await getPurchase(deps.db, waiting.purchaseId);
     const fresh = open !== null && open.createdAt.getTime() >= deps.now().getTime() - REUSE_WINDOW_MS;
-    if (open && fresh && open.status === "pending" && open.confirmationUrl && open.receiptEmail === email && waiting.intention === intention) {
+    if (email && open && fresh && open.status === "pending" && open.confirmationUrl && open.receiptEmail === email && waiting.intention === intention) {
       return { ok: true, url: open.confirmationUrl };
     }
   }
   await abandonAwaitingLilaGames(deps.db, p.userId);
 
-  const purchase = await createPurchase(deps.db, { userId: p.userId, product: LILA_SESSION_PRODUCT, receiptEmail: email, amountKopecks: LILA_SESSION_PRICE_KOPECKS });
+  const purchase = await createPurchase(deps.db, {
+    userId: p.userId,
+    product: LILA_SESSION_PRODUCT,
+    receiptEmail: email,
+    amountKopecks: email ? LILA_SESSION_PRICE_KOPECKS : 0,
+  });
   const game = await createLilaGame(deps.db, { userId: p.userId, intention, mode: "guided", status: "awaiting_payment", purchaseId: purchase.id });
   if (!game.ok) return { ok: false, error: "active_game" };
-  return createGatewayPayment(deps, purchase, email);
+  return email ? createGatewayPayment(deps, purchase, email) : grantFree(deps, purchase);
 }
 
 // «Попробовать снова» после отмены: та же партия получает новую покупку
@@ -135,8 +161,10 @@ async function retryLilaPurchase(deps: PaymentsDeps, p: { userId: string; purcha
 
 // Покупается разбор даты из портрета: страница сохраняет дату в портрет до оплаты, клиенту здесь не верим
 export async function startPurchase(deps: PaymentsDeps, p: { userId: string; email: unknown }): Promise<StartPurchaseOutcome> {
-  const email = readEmail(p.email);
-  if (!email) return { ok: false, error: "invalid_email" };
+  // Владелица обходится без почты и шлюза; для остальных почта обязательна, как раньше
+  const owner = await isOwner(deps, p.userId);
+  const email = owner ? null : readEmail(p.email);
+  if (!owner && !email) return { ok: false, error: "invalid_email" };
   const birthDate = await getBirthDate(deps.db, p.userId);
   if (!birthDate) return { ok: false, error: "no_birth_date" };
   return purchaseFor(deps, { userId: p.userId, birthDate, email });

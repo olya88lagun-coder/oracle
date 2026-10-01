@@ -1541,6 +1541,18 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 /* Главная: что бесплатно, что платно */
 .practices-note { max-width: 70ch; margin: 0; color: var(--ink-soft); font-size: 15px; }
 
+/* Служебная страница владелицы: чеки к отправке */
+.receipts-lead { max-width: 70ch; margin-top: 14px !important; color: var(--ink-soft); font-size: 15px; }
+.receipts-empty { margin-top: 28px !important; color: var(--ink-soft); }
+.receipts { display: grid; gap: 0; margin: 28px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.receipt { display: grid; gap: 14px; padding-block: 22px; border-bottom: 1px solid var(--line); }
+.receipt h2 { font-size: 22px; }
+.receipt__amount { margin-top: 6px !important; color: var(--accent); font-size: 18px; }
+.receipt__details { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 20px; margin: 0; font-size: 15px; }
+.receipt__details dt { color: var(--ink-soft); }
+.receipt__details dd { margin: 0; overflow-wrap: anywhere; }
+@media (min-width: 860px) { .receipt { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) auto; align-items: center; gap: 32px; } }
+
 /* Таро: карта дня, страница карты, сетка колоды */
 .taro-day { display: grid; gap: 28px; }
 .taro-day-hero { position: relative; isolation: isolate; display: grid; gap: 28px; align-items: center; }
