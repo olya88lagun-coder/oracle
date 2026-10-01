@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { DocumentPage, type DocumentSection } from "@/components/document/DocumentPage";
 import { DATA_STORAGE, DISCLAIMER, LEGAL_DATES, LEGAL_VERSIONS, LOGIN_CONSENT_RECIPIENTS, OPERATOR } from "@/lib/legal";
 import { publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -12,46 +13,60 @@ export const metadata: Metadata = publicMetadata({
 
 export default function ConsentPage() {
   const host = new URL(SITE_URL).host;
-  return (
-    <main className="page">
-      <article className="stack">
-        <h1 className="display">Согласие на обработку персональных данных</h1>
-        <p className="muted">
-          Редакция {LEGAL_VERSIONS.consent} от {LEGAL_DATES.consent}
-        </p>
-        <p>
-          Отмечая согласие на сайте {host}, я свободно, своей волей и в своём интересе даю {OPERATOR.name} (ИНН {OPERATOR.inn}, далее —
-          оператор) согласие на обработку моих персональных данных на условиях ниже и <Link href="/privacy">политики обработки персональных данных</Link>.
-        </p>
-        <h2>Какие данные</h2>
-        <p>Идентификатор и имя в VK ID; дата рождения, если я сохраню её в портрете; дата и время согласия.</p>
-        <h2>Зачем</h2>
-        <p>Чтобы входить на сайт, хранить мою дату рождения и показывать мне расчёты символических практик в портрете.</p>
-        <h2>Что с ними делают</h2>
-        <p>
-          Сбор, запись, систематизация, хранение, уточнение, использование, удаление. Данные хранятся {DATA_STORAGE}.{" "}
-          {LOGIN_CONSENT_RECIPIENTS.length === 0
-            ? "Для работы сайта данные третьим лицам не передаются, кроме случаев, предусмотренных законом."
-            : "Для работы сайта данные передаются:"}
-        </p>
-        {LOGIN_CONSENT_RECIPIENTS.length > 0 && (
-          <ul>
-            {LOGIN_CONSENT_RECIPIENTS.map((recipient) => (
-              <li key={recipient.name}>
-                {recipient.name} — {recipient.what}; {recipient.why}.
-              </li>
-            ))}
-          </ul>
-        )}
-        {LOGIN_CONSENT_RECIPIENTS.length > 0 && <p>Другим лицам данные не передаются, кроме случаев, предусмотренных законом.</p>}
-        <p>На Яндекс.Метрику согласие даётся отдельно — в баннере cookie.</p>
-        <h2>Срок и отзыв</h2>
+  const sections: DocumentSection[] = [
+    { title: "Какие данные", body: <p>Идентификатор и имя в VK ID; дата рождения, если я сохраню её в портрете; дата и время согласия.</p> },
+    { title: "Зачем", body: <p>Чтобы входить на сайт, хранить мою дату рождения и показывать мне расчёты символических практик в портрете.</p> },
+    {
+      title: "Что с ними делают",
+      body: (
+        <>
+          <p>
+            Сбор, запись, систематизация, хранение, уточнение, использование, удаление. Данные хранятся {DATA_STORAGE}.{" "}
+            {LOGIN_CONSENT_RECIPIENTS.length === 0
+              ? "Для работы сайта данные третьим лицам не передаются, кроме случаев, предусмотренных законом."
+              : "Для работы сайта данные передаются:"}
+          </p>
+          {LOGIN_CONSENT_RECIPIENTS.length > 0 && (
+            <ul>
+              {LOGIN_CONSENT_RECIPIENTS.map((recipient) => (
+                <li key={recipient.name}>
+                  {recipient.name} — {recipient.what}; {recipient.why}.
+                </li>
+              ))}
+            </ul>
+          )}
+          {LOGIN_CONSENT_RECIPIENTS.length > 0 && <p>Другим лицам данные не передаются, кроме случаев, предусмотренных законом.</p>}
+          <p>На Яндекс.Метрику согласие даётся отдельно — в баннере cookie.</p>
+        </>
+      ),
+    },
+    {
+      title: "Срок и отзыв",
+      body: (
         <p>
           Согласие действует до отзыва. Отозвать его и удалить данные можно на странице <Link href="/portret/delete">«Удалить мои данные»</Link>{" "}
           или письмом на <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a> — по письму данные удаляются в течение 30 дней.
         </p>
-        <p className="muted">{DISCLAIMER}</p>
-      </article>
-    </main>
+      ),
+    },
+  ];
+  return (
+    <DocumentPage
+      current="/consent"
+      title="Согласие на обработку персональных данных"
+      version={
+        <>
+          Редакция {LEGAL_VERSIONS.consent} от {LEGAL_DATES.consent}
+        </>
+      }
+      intro={
+        <p>
+          Отмечая согласие на сайте {host}, я свободно, своей волей и в своём интересе даю {OPERATOR.name} (ИНН {OPERATOR.inn}, далее —
+          оператор) согласие на обработку моих персональных данных на условиях ниже и <Link href="/privacy">политики обработки персональных данных</Link>.
+        </p>
+      }
+      sections={sections}
+      footnote={<p className="muted">{DISCLAIMER}</p>}
+    />
   );
 }
