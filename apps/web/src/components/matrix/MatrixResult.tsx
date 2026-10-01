@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode, Ref } from "react";
 import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
+import { LILA_GAME_PATH } from "@/lib/lila-paths";
 import { KEY_POINTS, pointTitle, positionRows, PURPOSES } from "@/lib/matrix-view";
 import { MatrixDiagram } from "./MatrixDiagram";
 
@@ -103,8 +104,10 @@ export function MatrixResult({ matrix, dateLabel, headingRef, actions, offer }: 
       {actions}
 
       <aside className="card matrix-next">
-        <span className="tag">Скоро</span>
-        <p>Лила — игра с вашим вопросом</p>
+        <span className="tag tag--open">Открыто</span>
+        <p>
+          <Link href={LILA_GAME_PATH}>Лила — игра с вашим вопросом</Link>. Бесплатно, без входа.
+        </p>
       </aside>
     </section>
   );

@@ -16,6 +16,8 @@ export const metadata: Metadata = publicMetadata({
   description:
     "Рассчитайте матрицу судьбы по дате рождения: все 22 аркана на диаграмме и трактовка трёх ключевых точек — личности, центра и задачи. Бесплатно, без регистрации.",
   path: MATRIX_PATH,
+  // Каменная сцена первого экрана страницы — та же, что видит посетитель
+  image: { url: "/images/matrix/matrix-stone.webp", alt: "Матрица судьбы: каменная плита с золотым узором", width: 1536, height: 1024 },
 });
 
 export default async function MatrixPage() {
