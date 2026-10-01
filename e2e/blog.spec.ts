@@ -8,10 +8,32 @@ async function noHorizontalScroll(page: Page) {
 test("the blog lists its articles and the footer links to it and to the community", async ({ page }) => {
   await page.goto("/blog");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Блог");
-  // Статей становится больше: проверяем, что список не пустой и не короче первых четырёх
-  await expect.poll(() => page.getByRole("main").getByRole("heading", { level: 2 }).count()).toBeGreaterThanOrEqual(4);
+  // Статей становится больше: проверяем, что есть главный материал и сетка не короче первых пяти
+  await expect(page.getByRole("heading", { level: 2 }).first()).toBeVisible();
+  await expect.poll(() => page.locator('main a[href^="/blog/"]').count()).toBeGreaterThanOrEqual(6);
   await expect(page.getByRole("contentinfo").getByRole("link", { name: "Блог" })).toHaveAttribute("href", "/blog");
   await expect(page.getByRole("contentinfo").getByRole("link", { name: "ВКонтакте" })).toHaveAttribute("href", "https://vk.ru/tvoy_orakul");
+  await noHorizontalScroll(page);
+});
+
+test("the topic filters narrow the blog and the count follows", async ({ page }) => {
+  await page.goto("/blog");
+  const status = page.getByRole("status").filter({ hasText: /материал/ });
+  await expect(status).toContainText(/\d+ материал/);
+  await page.getByRole("button", { name: /^Лила/ }).click();
+  await expect(status).toHaveText("3 материала");
+  await expect(page.getByRole("button", { name: /^Лила/ })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: /^Все материалы/ }).click();
+  await expect(page.getByRole("button", { name: /^Все материалы/ })).toHaveAttribute("aria-pressed", "true");
+});
+
+test("an article shows its meta, a table of contents, a practice link and related articles", async ({ page }) => {
+  await page.goto("/blog/rasshifrovka-matritsy-sudby");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Расшифровка матрицы судьбы: как читать позиции");
+  await expect(page.getByText(/≈ \d+ мин/).first()).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Оглавление статьи" })).toBeAttached();
+  await expect(page.getByRole("complementary", { name: "Практика по теме статьи" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "Читайте дальше" })).toBeVisible();
   await noHorizontalScroll(page);
 });
 
