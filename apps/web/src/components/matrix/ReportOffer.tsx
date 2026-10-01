@@ -87,9 +87,10 @@ function BuyForm({ onSaveDate, clickGoal }: { onSaveDate: Props["onSaveDate"]; c
   );
 }
 
-// Цель «блок продажи показан» — один раз за показ страницы, когда блок хотя бы наполовину на экране
+// Цель «блок продажи показан» — один раз за показ страницы, когда заголовок блока хотя бы наполовину на экране.
+// Следим за заголовком, а не за всем блоком: на телефоне блок выше двух экранов и «наполовину виден» не наступал бы никогда
 function useOfferViewGoal(goal: Goal) {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     const element = ref.current;
     if (!element || typeof IntersectionObserver === "undefined") return;
@@ -140,10 +141,10 @@ export function ReportOffer({ state, matrix, onSaveDate, compat }: Props) {
   const goals = compat ? COMPAT_GOALS : MATRIX_GOALS;
   const ref = useOfferViewGoal(goals.view);
   return (
-    <section ref={ref} className="card card--accent report-offer" aria-labelledby="report-offer-title">
+    <section className="card card--accent report-offer" aria-labelledby="report-offer-title">
       <div className="stack report-offer__main">
         <p className="eyebrow">{compat ? `Разбор вашей матрицы · по дате ${compat.dateLabel}` : "Разбор всей матрицы"}</p>
-        <h2 id="report-offer-title" className="report-offer__title">
+        <h2 ref={ref} id="report-offer-title" className="report-offer__title">
           Разбор всей матрицы — {PRICE}
         </h2>
         <p className="lead">
