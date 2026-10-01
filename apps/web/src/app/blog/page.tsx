@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { BlogCatalog, type CatalogPost } from "@/components/blog/BlogCatalog";
 import { BLOG_PATH, BLOG_POSTS, BLOG_TOPIC_LABELS, blogPath, blogTopics } from "@/lib/blog";
-import { publicMetadata } from "@/lib/seo";
+import { publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
   title: "Блог о Лиле и матрице судьбы — Твой оракул",
   description: "Правила Лилы, значения змей и стрел, как формулировать намерение и читать матрицу судьбы: спокойные разборы для самопознания.",
   path: BLOG_PATH,
   absoluteTitle: true,
+  image: SITE_PREVIEW_IMAGE,
 });
 
 const dateLabel = (iso: string) => new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${iso}T00:00:00Z`));

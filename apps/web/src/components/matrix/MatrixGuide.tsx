@@ -77,7 +77,7 @@ export function MatrixGuide() {
                     {index + 1}
                   </span>
                   <div>
-                    <h4>{step.title}</h4>
+                    <h3>{step.title}</h3>
                     <p>{step.text}</p>
                   </div>
                 </li>

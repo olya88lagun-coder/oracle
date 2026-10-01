@@ -3,12 +3,13 @@ import Link from "next/link";
 import { LILA_SESSION_PRICE_KOPECKS, MATRIX_REPORT_PRICE_KOPECKS } from "@oracle/core";
 import { DocumentPage, type DocumentSection } from "@/components/document/DocumentPage";
 import { DISCLAIMER, formatRubles, OPERATOR } from "@/lib/legal";
-import { publicMetadata } from "@/lib/seo";
+import { publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
   title: "Контакты",
   description: "Кто стоит за сайтом «Твой оракул» и как связаться: исполнитель, ИНН, почта, платные услуги и цены.",
   path: "/contacts",
+  image: SITE_PREVIEW_IMAGE,
 });
 
 export default function ContactsPage() {
