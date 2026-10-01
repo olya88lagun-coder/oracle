@@ -1,119 +1,108 @@
 import { arcanumBySlug } from "@oracle/content";
 import { TAROT_DECK, TAROT_SECTION_TITLES, TAROT_SUIT_LABELS, type TarotCard } from "@oracle/content/tarot";
-import Image from "next/image";
 import Link from "next/link";
+import { DetailPager } from "@/components/detail/DetailPager";
+import { DetailToc } from "@/components/detail/DetailToc";
+import { ImageZoom } from "@/components/detail/ImageZoom";
 import { arcanumPath } from "@/lib/arcana-paths";
 import { TARO_AUTHOR_CREDIT, TARO_DAY_PATH, TARO_PATH, taroCardImage, taroCardPath } from "@/lib/taro-paths";
 
+// Соседи берутся внутри масти и замыкаются по кругу
 const neighbour = (card: TarotCard, shift: number) => {
   const suit = TAROT_DECK.filter((item) => item.suit === card.suit);
   const index = suit.findIndex((item) => item.slug === card.slug);
   return suit[(index + shift + suit.length) % suit.length]!;
 };
 
-const Paragraphs = ({ items }: { items: readonly string[] }) => (
-  <>
-    {items.map((paragraph) => (
-      <p key={paragraph}>{paragraph}</p>
-    ))}
-  </>
-);
+type SectionKey = keyof typeof TAROT_SECTION_TITLES;
+const SECTIONS: readonly SectionKey[] = ["essence", "love", "money", "resource", "distortion", "day", "action", "question"];
+const sectionId = (key: SectionKey) => `razdel-${key}`;
 
-const Bullets = ({ items }: { items: readonly string[] }) => (
-  <ul>
-    {items.map((item) => (
-      <li key={item}>{item}</li>
-    ))}
-  </ul>
-);
+function SectionBody({ card, sectionKey }: { card: TarotCard; sectionKey: SectionKey }) {
+  if (sectionKey === "resource" || sectionKey === "distortion") {
+    return (
+      <ul>
+        {card[sectionKey].map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    );
+  }
+  if (sectionKey === "action") return <p>{card.action}</p>;
+  if (sectionKey === "question") return <p className="detail-question">{card.question}</p>;
+  return (
+    <>
+      {card[sectionKey].map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+    </>
+  );
+}
 
 export function TaroCardView({ card }: { card: TarotCard }) {
   const matrix = card.suit === "major" ? arcanumBySlug(card.slug) : undefined;
   const previous = neighbour(card, -1);
   const next = neighbour(card, 1);
-  const T = TAROT_SECTION_TITLES;
+  const alt = `Карта Таро ${card.name}`;
+  const toc = SECTIONS.map((key) => ({ id: sectionId(key), title: TAROT_SECTION_TITLES[key] }));
   return (
-    <main className="page page--wide stack taro-page">
-      <nav aria-label="Навигация" className="muted">
+    <main className="detail-page taro-page">
+      <nav aria-label="Навигация" className="detail-crumbs">
         <Link className="touch-link" href={TARO_PATH}>
           Таро и карта дня
         </Link>{" "}
         › {TAROT_SUIT_LABELS[card.suit]}
       </nav>
 
-      <header className="taro-hero">
-        <Image className="taro-hero__art" src={taroCardImage(card)} alt={`Карта Таро ${card.name}`} width={554} height={960} priority unoptimized />
-        <div className="stack taro-hero__text">
-          <p className="eyebrow eyebrow--line">{card.suit === "major" ? `Старший аркан ${card.rank}` : TAROT_SUIT_LABELS[card.suit]}</p>
-          <h1 className="display">{card.name}</h1>
-          <ul className="row arcanum-hero__keywords" aria-label="Ключевые слова">
-            {card.keywords.map((keyword) => (
-              <li key={keyword} className="tag">
-                {keyword}
-              </li>
+      <div className="detail-grid">
+        <aside className="detail-side">
+          <figure className="detail-media detail-media--card">
+            <ImageZoom src={taroCardImage(card, "card")} fullSrc={taroCardImage(card)} alt={alt} width={277} height={480} priority />
+            <figcaption>{TARO_AUTHOR_CREDIT}</figcaption>
+          </figure>
+          <DetailToc items={toc} />
+        </aside>
+
+        <div className="detail-main">
+          <header className="detail-head">
+            <p className="detail-eyebrow">{card.suit === "major" ? `Старший аркан ${card.rank}` : TAROT_SUIT_LABELS[card.suit]}</p>
+            <h1 className={`display detail-title${card.name.length > 14 ? " detail-title--long" : ""}`}>{card.name}</h1>
+            <ul className="detail-tags" aria-label="Ключевые слова">
+              {card.keywords.map((keyword) => (
+                <li key={keyword}>{keyword}</li>
+              ))}
+            </ul>
+            {matrix && (
+              <p className="detail-note">
+                В матрице судьбы этот аркан имеет номер {matrix.number}. <Link href={arcanumPath(matrix)}>Аркан {matrix.number} в матрице</Link>
+              </p>
+            )}
+            <div className="detail-actions">
+              <Link className="button button--lavender" href={TARO_DAY_PATH}>
+                Вытянуть карту дня
+              </Link>
+              <Link className="matrix-link" href={`${TARO_PATH}#znacheniya`}>
+                Все карты
+              </Link>
+            </div>
+          </header>
+
+          <div className="detail-sections">
+            {SECTIONS.map((key) => (
+              <section key={key} id={sectionId(key)} className="detail-section" aria-labelledby={`${sectionId(key)}-title`}>
+                <h2 id={`${sectionId(key)}-title`}>{TAROT_SECTION_TITLES[key]}</h2>
+                <SectionBody card={card} sectionKey={key} />
+              </section>
             ))}
-          </ul>
-          {matrix && (
-            <p>
-              В матрице судьбы этот аркан имеет номер {matrix.number}. <Link href={arcanumPath(matrix)}>Аркан {matrix.number} в матрице</Link>
-            </p>
-          )}
-          <p className="muted">{TARO_AUTHOR_CREDIT}</p>
+          </div>
         </div>
-      </header>
-
-      <section className="stack" aria-labelledby="taro-essence">
-        <h2 id="taro-essence">{T.essence}</h2>
-        <Paragraphs items={card.essence} />
-      </section>
-      <div className="arcanum-poles arcanum-life">
-        <section className="card stack" aria-labelledby="taro-love">
-          <h2 id="taro-love">{T.love}</h2>
-          <Paragraphs items={card.love} />
-        </section>
-        <section className="card stack" aria-labelledby="taro-money">
-          <h2 id="taro-money">{T.money}</h2>
-          <Paragraphs items={card.money} />
-        </section>
-      </div>
-      <div className="arcanum-poles">
-        <section className="card stack" aria-labelledby="taro-resource">
-          <h2 id="taro-resource">{T.resource}</h2>
-          <Bullets items={card.resource} />
-        </section>
-        <section className="card stack" aria-labelledby="taro-distortion">
-          <h2 id="taro-distortion">{T.distortion}</h2>
-          <Bullets items={card.distortion} />
-        </section>
-      </div>
-      <section className="stack" aria-labelledby="taro-day">
-        <h2 id="taro-day">{T.day}</h2>
-        <Paragraphs items={card.day} />
-      </section>
-      <div className="arcanum-poles">
-        <section className="card stack" aria-labelledby="taro-action">
-          <h2 id="taro-action">{T.action}</h2>
-          <p>{card.action}</p>
-        </section>
-        <section className="card stack" aria-labelledby="taro-question">
-          <h2 id="taro-question">{T.question}</h2>
-          <p className="arcanum-question">{card.question}</p>
-        </section>
       </div>
 
-      <p>
-        <Link className="button button--lavender" href={TARO_DAY_PATH}>
-          Вытянуть карту дня
-        </Link>
-      </p>
-      <nav className="row arcanum-neighbours" aria-label="Соседние карты масти">
-        <Link className="button button--ghost" href={taroCardPath(previous)}>
-          ← {previous.name}
-        </Link>
-        <Link className="button button--ghost" href={taroCardPath(next)}>
-          {next.name} →
-        </Link>
-      </nav>
+      <DetailPager
+        label="Соседние карты масти"
+        previous={{ href: taroCardPath(previous), label: previous.name, image: taroCardImage(previous, "thumb"), imageSize: 64 }}
+        next={{ href: taroCardPath(next), label: next.name, image: taroCardImage(next, "thumb"), imageSize: 64 }}
+      />
     </main>
   );
 }

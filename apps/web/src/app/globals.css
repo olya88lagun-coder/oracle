@@ -192,13 +192,7 @@ body .stack > * + * { margin-top: 20px; }
 .login-card .choice input { accent-color: var(--lavender); }
 
 /* Страница аркана: крупный номер, секции карточками, соседи и сетка всех арканов */
-.arcanum-hero { display: grid; gap: 20px; align-items: center; }
 /* Иллюстрация аркана с крупным номером поверх; на телефоне — широкая полоса над заголовком */
-.arcanum-hero__art { position: relative; margin: 0; aspect-ratio: 16 / 10; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
-.arcanum-hero__art img { object-fit: cover; object-position: 50% 40%; }
-.arcanum-hero__art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgb(0 0 0 / 0.55), transparent 45%); pointer-events: none; }
-.arcanum-hero__number { position: absolute; right: 20px; bottom: 8px; z-index: 1; font-family: var(--font-display); font-weight: 300; font-size: clamp(72px, 14vw, 140px); line-height: 0.9; color: var(--accent); text-shadow: 0 2px 24px rgb(0 0 0 / 0.6); }
-.arcanum-hero__keywords { list-style: none; margin: 0; padding: 0; }
 /* Секции страницы аркана: на телефоне раскрываются по нажатию, заголовок — зона от 44px */
 .arcanum-section > summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 44px; cursor: pointer; list-style: none; }
 .arcanum-section > summary::-webkit-details-marker { display: none; }
@@ -215,11 +209,6 @@ body .stack > * + * { margin-top: 20px; }
 /* На компьютере секции развёрнуты всегда (data-static ставит ArcanumSectionsExpander) */
 .arcanum-section[data-static] > summary { cursor: default; pointer-events: none; min-height: 0; }
 .arcanum-section[data-static] .arcanum-section__icon { display: none; }
-.arcanum-grid { display: grid; gap: 20px; align-items: start; }
-.arcanum-positions, .arcanum-poles { display: grid; gap: 16px; }
-.arcanum-positions h2, .arcanum-poles h2 { font-size: 24px; }
-.arcanum-question { font-family: var(--font-display); font-size: 22px; line-height: 1.35; }
-.arcanum-neighbours { justify-content: space-between; }
 /* Ряд «Все 22 аркана»: карточки с миниатюрой. minmax(0, 1fr) — длинные имена переносятся, а не раздвигают ряд за край */
 .arcana-index { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
 @media (min-width: 1200px) { .arcana-index { grid-template-columns: repeat(11, minmax(0, 1fr)); } }
@@ -229,11 +218,6 @@ body .stack > * + * { margin-top: 20px; }
 .arcana-index__number { font-family: var(--font-display); font-size: 16px; color: var(--accent); }
 .arcana-index__name { font-size: 14px; line-height: 1.25; hyphens: auto; overflow-wrap: break-word; }
 @media (min-width: 760px) {
-  .arcanum-hero { grid-template-columns: 1fr minmax(320px, 480px); gap: 48px; }
-  .arcanum-hero__art { order: 2; aspect-ratio: 1; }
-  .arcanum-grid { grid-template-columns: 1.4fr 1fr; }
-  .arcanum-positions { grid-template-columns: repeat(3, 1fr); }
-  .arcanum-poles { grid-template-columns: 1fr 1fr; }
 }
 
 /* Доступный только скринридерам текст (таблица точек матрицы) */
@@ -732,19 +716,6 @@ a.report-toc__title:hover { color: var(--accent); }
 .lila-history__guide p { margin: 4px 0 0; }
 .lila-offer__sample { margin: 0; padding: 12px 16px; border: 1px dashed var(--line-strong); border-radius: var(--radius); color: var(--ink-soft); font-style: italic; }
 
-/* Страница клетки */
-.lila-cell-layout { display: grid; gap: 24px; grid-template-areas: "art" "head" "body" "board"; }
-.lila-cell-layout__head { grid-area: head; }
-.lila-cell-layout__art { grid-area: art; }
-.lila-cell-layout__body { grid-area: body; align-content: start; }
-.lila-cell-layout__board { grid-area: board; padding: 16px; }
-.lila-cell-layout__board .lila-board { max-width: 640px; margin-inline: auto; }
-@media (min-width: 900px) {
-  .lila-cell-layout { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr); grid-template-areas: "head art" "body board"; gap: 32px; align-items: start; }
-}
-.lila-cell-layout__art .lila-art, .lila-cell-layout__art .lila-fallback { border-radius: var(--radius-lg); }
-.lila-cell-page .card ol { display: grid; gap: 16px; margin: 0; padding-left: 20px; }
-
 /* Блог: таблицы переходов Лилы и примеры формулировок */
 .blog-table-wrap { overflow-x: auto; }
 .blog-table { width: 100%; border-collapse: collapse; font-size: 15px; }
@@ -1183,6 +1154,117 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 }
 @media (prefers-reduced-motion: reduce) { .blog-card__art img { transition: none; } .blog-card:hover .blog-card__art img { transform: none; } }
 
+/* Страницы значений: аркан матрицы, карта Таро, клетка Лилы — одно семейство (пакет Codex «detail templates premium») */
+.detail-page { display: block; width: min(1200px, calc(100% - 32px)); margin: 0 auto; padding-block: 12px 40px; }
+.detail-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 8px; color: var(--ink-soft); font-size: 14px; }
+.detail-crumbs a { color: var(--accent); text-decoration: none; }
+.detail-grid { display: flex; flex-direction: column; gap: 22px; }
+.detail-side, .detail-main { display: contents; }
+.detail-head { order: 1; display: grid; gap: 16px; }
+.detail-head > * { margin: 0; }
+.detail-media { order: 2; margin: 0; }
+.detail-toc { order: 3; }
+.detail-expand { order: 4; }
+.detail-sections { order: 5; }
+.detail-eyebrow { color: var(--accent); font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; }
+.detail-title { font-size: clamp(36px, 9vw, 54px); line-height: 1.12; text-wrap: balance; }
+.detail-title--long { font-size: clamp(30px, 7.5vw, 44px); }
+.detail-tags { display: flex; flex-wrap: wrap; gap: 6px 0; margin: 0; padding: 0; list-style: none; font-size: 14px; color: var(--accent); }
+.detail-tags li + li { margin-left: 14px; padding-left: 14px; border-left: 1px solid var(--line-strong); }
+.detail-note { color: var(--accent); font-size: 14px; }
+.detail-note a { color: var(--accent); }
+.detail-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; }
+.detail-actions .button { min-height: 50px; border-radius: 6px; }
+.detail-media__frame { position: relative; width: min(100%, 440px); overflow: hidden; background: var(--surface); }
+.detail-media--card .detail-media__frame { width: min(100%, 210px); }
+.detail-media__frame > img { display: block; width: 100%; height: auto; }
+.detail-media figcaption { margin-top: 10px; color: var(--ink-soft); font-size: 14px; }
+.detail-zoom { position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--line-strong); border-radius: 6px; background: rgba(10, 9, 14, 0.78); color: var(--ink); cursor: pointer; }
+.detail-zoom:hover { border-color: var(--accent); color: var(--accent); }
+.detail-zoom:focus-visible, .detail-dialog__close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.detail-dialog { max-width: min(96vw, 1100px); max-height: 96vh; padding: 0; border: 0; background: transparent; color: var(--ink); overflow: visible; }
+.detail-dialog::backdrop { background: rgba(5, 4, 8, 0.92); }
+.detail-dialog img { display: block; max-width: min(96vw, 1100px); max-height: 92vh; width: auto; height: auto; margin: 0 auto; object-fit: contain; }
+.detail-dialog__close { position: absolute; top: 8px; right: 8px; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--line-strong); border-radius: 6px; background: rgba(10, 9, 14, 0.85); color: var(--ink); cursor: pointer; }
+.detail-toc__fold { border-block: 1px solid var(--line); font-size: 14px; }
+.detail-toc__fold summary { display: flex; align-items: center; justify-content: space-between; min-height: 44px; list-style: none; cursor: pointer; }
+.detail-toc__fold summary::-webkit-details-marker { display: none; }
+.detail-toc__fold summary::after { content: "+"; color: var(--accent); }
+.detail-toc__fold[open] summary::after { content: "−"; }
+.detail-toc ol { display: grid; margin: 0; padding: 0 0 12px; list-style: none; }
+.detail-toc a { display: flex; align-items: center; min-height: 44px; color: var(--ink-soft); text-decoration: none; font-size: 14px; }
+.detail-toc a:hover { color: var(--accent); }
+.detail-toc__side { display: none; }
+.detail-expand { width: fit-content; min-height: 44px; padding: 0; border: 0; background: none; color: var(--accent); font: inherit; font-size: 14px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.detail-sections { display: grid; }
+.detail-section { padding-block: 26px; border-top: 1px solid var(--line); }
+.detail-section > h2 { margin: 0 0 16px; font-size: 27px; line-height: 1.25; scroll-margin-top: 24px; }
+.detail-section p, .detail-section li { font-size: 17px; line-height: 1.9; }
+.detail-section p { margin: 0 0 16px; }
+.detail-section p:last-child { margin-bottom: 0; }
+.detail-section ul { margin: 0; padding-left: 22px; }
+.detail-section li::marker { color: var(--accent); }
+.detail-question { color: var(--accent); font-family: var(--font-display); font-size: 24px !important; line-height: 1.4 !important; }
+.detail-questions { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.detail-questions li { display: grid; gap: 6px; padding: 16px 0; border-top: 1px solid var(--line); }
+.detail-questions__visit { color: var(--accent); font-size: 14px; }
+.detail-questions__text { font-family: var(--font-display); font-size: 22px; line-height: 1.4; }
+.detail-target { display: flex; align-items: center; gap: 16px; margin-top: 18px; color: var(--ink); text-decoration: none; }
+.detail-target img { width: 64px; height: 64px; object-fit: cover; border-radius: 2px; }
+.detail-target span { display: grid; gap: 2px; }
+.detail-target__label { color: var(--accent); font-size: 14px; }
+.detail-target__name { font-family: var(--font-display); font-size: 24px; }
+.detail-target:hover .detail-target__name { color: var(--accent); }
+.detail-board { max-width: 480px; margin-top: 8px; }
+.detail-board .lila-board { width: 100%; }
+.detail-board__caption { display: flex; justify-content: space-between; gap: 16px; max-width: 480px; margin: 12px 0 0 !important; color: var(--ink-soft); font-size: 14px !important; line-height: 1.5 !important; }
+.detail-board__caption span:last-child { color: var(--accent); }
+.detail-pager { display: grid; gap: 4px; margin-top: 36px; padding-block: 8px; border-block: 1px solid var(--line); }
+.detail-pager__link { display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 8px 0; color: var(--ink); text-decoration: none; }
+.detail-pager__link img { flex: none; width: 48px; height: 64px; object-fit: cover; border-radius: 2px; }
+.detail-pager__link > span { display: grid; gap: 2px; }
+.detail-pager__label { color: var(--ink-faint); font-size: 14px; }
+.detail-pager__title { font-family: var(--font-display); font-size: 22px; line-height: 1.25; }
+.detail-pager__link:hover .detail-pager__title { color: var(--accent); }
+.detail-pager__link--next { flex-direction: row-reverse; text-align: right; }
+.detail-index { margin-top: 36px; }
+/* Секции аркана: на компьютере открытые разделы без рамок, на телефоне раскрывающиеся с тонкой линией */
+.detail-section.arcanum-section { gap: 0; }
+.detail-section.arcanum-section > summary h2 { margin: 0; font-size: 27px; line-height: 1.25; }
+.detail-section.arcanum-section .arcanum-section__body { margin-top: 16px; }
+@media (max-width: 759px) {
+  .detail-section.arcanum-section { padding: 4px 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; }
+  .detail-section.arcanum-section[open] { padding-bottom: 22px; }
+  .detail-section.arcanum-section > summary h2 { font-size: 24px; }
+}
+@media (min-width: 760px) {
+  .detail-expand { display: none; }
+  .detail-section.arcanum-section { padding-block: 26px; }
+}
+@media (min-width: 860px) {
+  .detail-page { width: calc(100% - 128px); padding-block: 20px 56px; }
+  .detail-grid { display: grid; grid-template-columns: minmax(280px, 440px) minmax(0, 660px); gap: 0 72px; justify-content: center; align-items: start; }
+  .detail-side { display: block; }
+  .detail-main { display: block; }
+  .detail-head { padding-bottom: 8px; margin-bottom: 8px; }
+  .detail-title { font-size: clamp(44px, 4.2vw, 54px); }
+  .detail-title--long { font-size: clamp(36px, 3.4vw, 44px); }
+  .detail-media__frame { width: 100%; }
+  .detail-media--card .detail-media__frame { width: min(100%, 320px); }
+  .detail-toc { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line-strong); }
+  .detail-toc__fold { display: none; }
+  .detail-toc__side { display: block; }
+  .detail-toc__side p { margin: 0 0 8px; font-size: 14px; color: var(--ink); }
+  .detail-section p, .detail-section li { font-size: 17px; line-height: 1.85; }
+  .detail-section > h2, .detail-section.arcanum-section > summary h2 { font-size: 34px; }
+  .detail-questions__text { font-size: 24px; }
+  .detail-pager { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .detail-pager__link { min-height: 84px; }
+  .detail-pager__link img { width: 56px; height: 76px; }
+  .detail-pager__title { font-size: 26px; }
+}
+@media (prefers-reduced-motion: reduce) { .detail-dialog, .detail-dialog::backdrop { transition: none; } }
+
 /* Таро: карта дня, страница карты, сетка колоды */
 .taro-day { display: grid; gap: 28px; }
 .taro-day-hero { position: relative; isolation: isolate; display: grid; gap: 28px; align-items: center; }
@@ -1228,9 +1310,6 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 .taro-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .taro-pick:disabled { cursor: default; opacity: 0.4; }
 .taro-actions { flex-wrap: wrap; gap: 12px; align-items: center; }
-.taro-hero { display: grid; gap: 24px; justify-items: center; }
-.taro-hero__art { width: min(100%, 320px); height: auto; border-radius: 12px; border: 1px solid var(--line-strong); box-shadow: var(--shadow); }
-.taro-hero__text { width: 100%; }
 @media (min-width: 900px) {
   .taro-day { gap: 0; }
   .taro-day-hero { grid-template-columns: minmax(0, 0.92fr) minmax(380px, 0.84fr); gap: clamp(40px, 5vw, 80px); min-height: 620px; }
@@ -1241,9 +1320,6 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
   .taro-picked img { width: 100%; }
   .taro-reading { grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr); gap: 18px; margin-top: -40px; }
   .taro-panel { padding: 28px; }
-}
-@media (min-width: 760px) {
-  .taro-hero { grid-template-columns: minmax(240px, 320px) 1fr; align-items: start; justify-items: start; gap: 48px; }
 }
 @media (prefers-reduced-motion: no-preference) { .taro-picked--fresh img { animation: taro-reveal 500ms var(--ease-out); } }
 @keyframes taro-reveal { from { opacity: 0; transform: rotateY(90deg) scale(0.96); } to { opacity: 1; transform: none; } }

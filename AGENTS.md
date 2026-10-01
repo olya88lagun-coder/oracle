@@ -19,7 +19,7 @@
 | Список практик на главной | `apps/web/src/lib/practices.ts` |
 | Лила: вход и справочник | `apps/web/src/app/lila/page.tsx` |
 | Лила: игра | `apps/web/src/app/lila/igra/`, `apps/web/src/components/lila/` (поле — `Board`) |
-| Лила: страницы клеток | `apps/web/src/app/lila/kletki/[cell]/page.tsx` |
+| Лила: страницы клеток | `apps/web/src/app/lila/kletki/[cell]/page.tsx` (общая вёрстка страниц значений с аркана и карты Таро — `apps/web/src/components/detail/`: увеличение картинки, оглавление, переход к соседним) |
 | Лила: история партии | `apps/web/src/app/portret/lila/[id]/page.tsx` |
 | Лила: экран ожидания оплаты | `apps/web/src/app/lila/igra/oplata/[id]/`, `apps/web/src/components/lila/LilaPaymentWaiting.tsx` |
 | Лила: блок покупки и итог партии | `apps/web/src/components/lila/GuidedOffer.tsx`, `ConclusionView.tsx`, `ConclusionWaiting.tsx` |
