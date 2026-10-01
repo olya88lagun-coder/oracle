@@ -30,6 +30,7 @@
 | Тексты «Союз» (совместимость) | `packages/content/compat-arcana.md` (после правки — `pnpm content:build`) |
 | Тексты клеток Лилы | `packages/content/lila-cells.md` (после правки — `pnpm content:build`) |
 | Иллюстрации клеток Лилы | `apps/web/public/lila/NN-slug.webp` (960 px — страница клетки и превью ссылок), `NN-slug-480.webp` (карточка хода) и `NN-slug-160.webp` (сетка); путь даёт `lilaCellImage` в `apps/web/src/lib/lila-paths.ts`; пока файла нет, показывается запасная карточка `CellFallback`; когда добавлены все 72×3, в `lila-paths.ts` `LILA_IMAGES_READY = true` |
+| Документы: контакты, политика, оферта, согласие | `apps/web/src/app/{contacts,privacy,oferta,consent}/page.tsx` — только тексты и константы из `lib/legal.ts`; вёрстка, навигация по четырём документам и оглавление — `apps/web/src/components/document/` (`DocumentPage`, `DocumentToc`). Текст документов при вёрстке не менять: он сверяется с боевым сайтом посимвольно |
 | Направление визуала | `docs/design/visual-direction.md` |
 | Калькулятор матрицы | `apps/web/src/app/matrica-sudby/page.tsx`, `apps/web/src/components/matrix/` (первый экран с камнем — `MatrixCalculator`, секции ниже — `MatrixSections`, `MatrixGuide`; картинки камня — `apps/web/public/images/matrix/`) |
 | Страницы арканов | `apps/web/src/app/matrica-sudby/[arkan]/page.tsx` |

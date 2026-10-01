@@ -26,6 +26,8 @@ const PATHS = {
   list: ["M8 6h13", "M8 12h13", "M8 18h13", "M3 6h.01", "M3 12h.01", "M3 18h.01"],
   plus: ["M5 12h14", "M12 5v14"],
   x: ["M18 6 6 18", "m6 6 12 12"],
+  mail: ["M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z", "m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"],
+  "arrow-up": ["m5 12 7-7 7 7", "M12 19V5"],
 } as const;
 
 type Name = keyof typeof PATHS | "dice-1" | "dice-2" | "dice-3" | "dice-4" | "dice-5" | "dice-6" | "dice-empty";
