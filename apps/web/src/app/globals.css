@@ -162,31 +162,6 @@ body .stack > * + * { margin-top: 20px; }
   .scene--compact .login-card { max-width: 520px; }
 }
 
-.birth-card { position: relative; overflow: hidden; isolation: isolate; display: grid; gap: 24px; max-width: 980px; background: radial-gradient(circle at 100% 50%, var(--lavender-glow), transparent 45%), linear-gradient(135deg, var(--surface-3), var(--surface)); border-color: var(--line-strong); }
-.birth-card::after { content: ""; position: absolute; z-index: -1; top: 50%; right: -160px; width: 340px; height: 340px; border: 1px solid var(--accent-line); border-radius: 50%; transform: translateY(-50%); background: radial-gradient(circle at 35% 50%, var(--lavender-glow), transparent 70%); pointer-events: none; }
-.birth-card__info { display: flex; gap: 20px; align-items: flex-start; }
-.birth-card__icon { flex: none; display: grid; place-items: center; width: 64px; height: 64px; border: 1px solid var(--accent-line); border-radius: 50%; color: var(--accent); }
-.birth-card__info h2 { font-size: clamp(28px, 3.4vw, 36px); }
-.birth-card__info .lead { font-family: var(--font-display); font-size: 22px; color: var(--ink); }
-.birth-card__form { max-width: 360px; }
-@media (min-width: 760px) {
-  .birth-card { grid-template-columns: 1.1fr 1fr; align-items: center; padding: 36px 40px; }
-}
-
-.portrait-practices { display: grid; gap: 16px; list-style: none; margin: 0; padding: 0; }
-@media (min-width: 640px) { .portrait-practices { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 1100px) { .portrait-practices { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); } }
-.portrait-practice { overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); transition: border-color var(--dur-base) var(--ease-out); }
-.portrait-practice:hover { border-color: var(--line-strong); }
-.portrait-practice__art { position: relative; aspect-ratio: 16 / 7; -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent); mask-image: linear-gradient(to bottom, #000 60%, transparent); }
-.portrait-practice__art img { object-fit: cover; object-position: 70% 50%; opacity: 0.85; }
-.portrait-practice__body { display: flex; flex: 1; flex-direction: column; gap: 10px; padding: 4px 20px 22px; }
-.portrait-practice h3 { font-size: 24px; }
-.portrait-practice p { margin: 0 0 6px; color: var(--ink-soft); font-size: 14px; }
-.portrait-practice .tag { margin-top: auto; font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none; }
-
-.portrait-actions { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; padding-top: 8px; border-top: 1px solid var(--line); }
-
 .login-card { position: relative; overflow: hidden; background: radial-gradient(circle at 100% 0, var(--lavender-glow), transparent 55%), linear-gradient(180deg, var(--surface-2), var(--surface)); border-color: var(--line-strong); }
 .login-card .display { font-size: clamp(40px, 6vw, 60px); }
 .login-card .choice input { accent-color: var(--lavender); }
@@ -539,22 +514,6 @@ a.report-toc__title:hover { color: var(--accent); }
 .report-offer__teaser { position: relative; color: var(--ink); -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
 
 /* Лила: экраны по макетам Codex (docs/design/mockups/lila-*). Цвета — только переменные из :root */
-.chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 18px;
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  cursor: pointer;
-}
-.chip:hover { border-color: var(--accent); }
-.chip:focus-visible, .lila-tabs__tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-@media (prefers-reduced-motion: no-preference) { .chip { transition: border-color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out), transform 120ms var(--ease-out); } }
-
 /* Вход и справочник */
 .lila-hero { display: grid; gap: 24px; align-items: center; }
 .lila-hero__art { width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius-lg); object-fit: cover; object-position: 78% 50%; aspect-ratio: 1.5; }
@@ -603,83 +562,7 @@ a.report-toc__title:hover { color: var(--accent); }
 }
 .lila-tile__sep { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* Выбор намерения */
-.lila-setup { gap: 20px; }
-.lila-setup__themes { gap: 10px; }
-.lila-setup textarea { min-height: 96px; resize: vertical; }
-.lila-setup .button { align-self: start; }
-
-/* Партия */
-.lila-play__bar { display: grid; gap: 8px; align-items: center; }
-@media (min-width: 900px) { .lila-play__bar { display: flex; flex-wrap: wrap; gap: 8px 20px; } }
-.lila-play__bar .tag { max-width: 100%; text-transform: none; letter-spacing: 0; font-size: 14px; font-weight: 500; white-space: normal; }
-.lila-tabs { gap: 0; border-bottom: 1px solid var(--line); }
-.lila-tabs__tab { flex: 1; min-height: 44px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--ink-soft); font: inherit; cursor: pointer; }
-.lila-tabs__tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
-/* На телефоне блоки идут друг за другом: кубик, ход, поле, история (видимость — по вкладкам) */
-.lila-play__layout { display: grid; gap: 20px; grid-template-areas: "dice" "side" "board" "history"; }
-.lila-play__side { grid-area: side; }
-.lila-play__dice { grid-area: dice; display: grid; gap: 12px; padding: 16px 20px; }
-.lila-play__board { grid-area: board; }
-.lila-play__history { grid-area: history; }
-.lila-play__roll { margin: 0; color: var(--ink-soft); }
-.lila-play__rollrow { display: flex; align-items: center; gap: 16px; }
-/* Кубик: грань с точками 3×3; катится, пока сервер отвечает, и оседает на выпавшей грани */
-.die { flex: none; display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); width: 56px; height: 56px; padding: 9px; border: 1px solid var(--line-strong); border-radius: 14px; background: linear-gradient(160deg, var(--surface-3), var(--surface-2)); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35); }
-.die__pip { align-self: center; justify-self: center; width: 9px; height: 9px; border-radius: 50%; background: transparent; }
-.die__pip[data-on] { background: var(--lavender); }
-@media (prefers-reduced-motion: no-preference) {
-  .die[data-rolling] { animation: die-tumble var(--die-roll-ms, 700ms) cubic-bezier(.3, .6, .4, 1); }
-  .die[data-settled] { animation: die-settle 260ms cubic-bezier(.2, .8, .2, 1); }
-  .lila-turn__guide p { animation: fade-in 320ms ease-out; }
-  /* Подтверждение завершения и грани своего кубика появляются мягко, а не рывком */
-  .lila-play [role="alertdialog"], .lila-dice > [role="group"] { animation: reveal var(--dur-base) var(--ease-out); }
-  /* Отклик на нажатие: на телефоне нет hover, поэтому кнопка «садится» под пальцем */
-  .button:active:not(:disabled), .chip:active:not(:disabled) { transform: scale(0.97); }
-}
-@keyframes die-tumble {
-  0% { transform: translateY(0) rotate(0); }
-  25% { transform: translateY(-14px) rotate(140deg); }
-  55% { transform: translateY(0) rotate(290deg) scale(0.96); }
-  75% { transform: translateY(-5px) rotate(340deg); }
-  100% { transform: translateY(0) rotate(360deg); }
-}
-@keyframes die-settle { 0% { transform: scale(0.94); } 100% { transform: scale(1); } }
-@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes reveal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-/* hidden не работает у блоков со своим display: скрываем явно (вкладки на телефоне) */
-.lila-play__layout > [hidden] { display: none; }
-.lila-play__board { display: grid; gap: 12px; justify-items: center; padding: 16px; }
-.lila-play__board .lila-board { width: 100%; max-width: 640px; }
-.lila-board--full { display: none; }
-@media (min-width: 721px) {
-  .lila-board--full { display: block; }
-  .lila-board--compact { display: none; }
-}
-@media (min-width: 1024px) {
-  .lila-tabs { display: none; }
-  .lila-play__layout {
-    grid-template-columns: minmax(340px, 440px) minmax(0, 1fr);
-    grid-template-areas: "side dice" "side board" "history history";
-    /* Левая колонка (ход, абзац проводника) выше правой: лишняя высота уходит в ряд под полем, а кубик и поле остаются вплотную вверху */
-    grid-template-rows: auto 1fr auto;
-    align-items: start;
-  }
-  /* Вкладки нужны только на телефоне: на компьютере ход и поле всегда рядом, кубик над полем, история — ниже на всю ширину */
-  .lila-play__layout > [hidden] { display: grid !important; }
-}
-.lila-turn { gap: 16px; }
-.lila-turn__cell { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: center; }
-@media (max-width: 719px) {
-  .lila-turn__cell { grid-template-columns: 1fr; }
-  .lila-turn__cell .lila-art, .lila-turn__cell .lila-fallback { max-width: 320px; margin-inline: auto; }
-}
-.lila-turn h2 { font-size: clamp(30px, 5vw, 44px); }
-.lila-turn__question { margin: 0; padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
-.lila-turn__transition { margin: 0; color: var(--accent-soft); font-style: italic; }
-.lila-turn__guide { display: grid; gap: 6px; margin: 0; padding: 16px 18px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--surface); }
-.lila-turn__guide p { margin: 0; }
-.lila-turn textarea { min-height: 96px; resize: vertical; }
+/* Иллюстрация клетки и запасная карточка, пока файла нет */
 .lila-art, .lila-fallback { width: 100%; height: auto; aspect-ratio: 1; border-radius: var(--radius); }
 .lila-fallback {
   display: grid;
@@ -692,29 +575,6 @@ a.report-toc__title:hover { color: var(--accent); }
 }
 .lila-fallback__number { font-family: var(--font-display); font-size: clamp(28px, 6vw, 44px); line-height: 1; }
 .lila-fallback__mark { font-size: 18px; color: var(--lila-paper-soft); }
-.lila-dice { gap: 12px; }
-.lila-dice > .row { gap: 12px; }
-.lila-dice__face { justify-content: center; min-width: 44px; padding: 0; }
-@media (max-width: 519px) {
-  .lila-dice > .row { display: grid; }
-  .lila-dice > .row .button { width: 100%; }
-}
-.lila-guest-hint { display: grid; gap: 0; }
-.lila-history { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
-.lila-history__item { padding: 14px 18px; border-top: 1px solid var(--line); }
-.lila-history__item:first-child { border-top: 0; }
-.lila-history__row { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 4px 16px; margin: 0; }
-.lila-history__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.lila-history__cells { grid-column: 2; color: var(--ink-soft); }
-@media (min-width: 720px) {
-  .lila-history__row { grid-template-columns: 56px 160px minmax(0, 1fr); }
-  .lila-history__cells { grid-column: auto; }
-}
-.lila-history__note { margin: 6px 0 0; }
-.lila-history__guide { margin: 6px 0 0; }
-.lila-history__guide summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--accent-soft); }
-.lila-history__guide p { margin: 4px 0 0; }
-.lila-offer__sample { margin: 0; padding: 12px 16px; border: 1px dashed var(--line-strong); border-radius: var(--radius); color: var(--ink-soft); font-style: italic; }
 
 /* Блог: таблицы переходов Лилы и примеры формулировок */
 .blog-table-wrap { overflow-x: auto; }
@@ -1264,6 +1124,321 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
   .detail-pager__title { font-size: 26px; }
 }
 @media (prefers-reduced-motion: reduce) { .detail-dialog, .detail-dialog::backdrop { transition: none; } }
+
+/* Мой портрет и Лила: рабочие экраны (пакет Codex «portrait & Lila premium»). Контейнер — общий .matrix-wrap, цвета — переменные из :root */
+.workspace { position: relative; isolation: isolate; padding-block: 36px 64px; min-height: 66vh; }
+.workspace h1 { font-size: clamp(34px, 4.4vw, 44px); line-height: 1.2; }
+.workspace h2 { font-size: clamp(28px, 3vw, 30px); line-height: 1.25; }
+.workspace h3 { font-size: 25px; line-height: 1.3; }
+.workspace p { max-width: 70ch; margin: 0; }
+.workspace .button { min-height: 46px; padding: 10px 20px; border-radius: 6px; font-size: 14px; }
+.workspace input, .workspace textarea, .workspace select { max-width: 100%; padding: 11px 13px; border: 1px solid var(--line-strong); border-radius: 4px; background: var(--input-bg); color: var(--ink); font: inherit; font-size: 16px; color-scheme: dark; }
+.workspace input:focus, .workspace textarea:focus, .workspace select:focus { border-color: var(--lavender); outline: 2px solid var(--lavender); outline-offset: 2px; box-shadow: none; }
+.workspace textarea { width: 100%; line-height: 1.7; resize: vertical; }
+.workspace select { width: 100%; height: 47px; }
+.workspace label { display: block; margin-bottom: 9px; color: var(--ink-soft); font-size: 14px; }
+.workspace .error { margin: 0; min-height: 0; color: var(--danger); font-size: 14px; font-weight: 400; }
+.workspace .error:empty { display: none; }
+.workspace .quiet, .quiet { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 44px; padding: 8px 14px; border: 1px solid var(--line-strong); border-radius: 4px; background: none; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; text-decoration: none; }
+.quiet:hover { border-color: var(--accent); background: var(--surface-2); }
+.quiet:disabled, .workspace button:disabled { opacity: 0.45; cursor: default; }
+.text-link { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--ink); font-size: 14px; text-decoration: none; border-bottom: 1px solid transparent; }
+.text-link:hover { color: var(--accent); }
+.icon { flex: none; }
+
+/* Портрет: фон — исходный /portrait.webp, лицо и луна справа вверху, к спискам плавно гаснет */
+.portrait-backdrop { position: absolute; z-index: -1; top: 0; right: 0; width: min(76%, 1120px); height: 610px; overflow: hidden; pointer-events: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 27%), linear-gradient(180deg, #000 18%, rgba(0, 0, 0, 0.55) 50%, transparent 93%); mask-image: linear-gradient(90deg, transparent, #000 27%), linear-gradient(180deg, #000 18%, rgba(0, 0, 0, 0.55) 50%, transparent 93%); -webkit-mask-composite: source-in; mask-composite: intersect; }
+.portrait-backdrop img { object-fit: cover; object-position: 80% 20%; }
+.portrait-backdrop::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10, 9, 14, 0.19), rgba(10, 9, 14, 0.6) 34%, rgba(10, 9, 14, 0.92) 64%, var(--bg)), linear-gradient(90deg, rgba(10, 9, 14, 0.67), transparent 70%); }
+.account-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 30px; }
+.account-heading p { margin-top: 8px; color: var(--ink-soft); }
+.account-actions { display: flex; gap: 16px; }
+.account-action { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 10px; border: 0; border-radius: 4px; background: rgba(10, 9, 14, 0.94); color: var(--ink); font: inherit; font-size: 14px; text-decoration: none; cursor: pointer; }
+.account-action:hover { color: var(--accent); }
+.birth-section { display: flex; align-items: center; justify-content: space-between; gap: 40px; margin-bottom: 38px; padding-block: 24px; border-block: 1px solid var(--line); }
+.birth-section h2 { margin-bottom: 7px; font-size: 24px; }
+.birth-section p { max-width: 380px; color: var(--ink-soft); font-size: 14px; }
+.birth-section__date { margin-top: 6px !important; color: var(--accent) !important; }
+.birth-form { min-width: 348px; }
+.birth-form label { color: var(--ink); }
+.birth-controls { display: flex; align-items: center; gap: 12px; min-height: 48px; }
+.workspace .birth-controls input[type="date"] { width: 205px; height: 46px; }
+/* Место под «Сохранить» / «Сохранено.» постоянное: форма не прыгает; статус остаётся в области role="status" */
+.birth-result { display: flex; align-items: center; min-width: 140px; min-height: 46px; gap: 8px; }
+.birth-result .saved-note { min-height: 0; gap: 8px; color: var(--accent); font-size: 14px; font-weight: 400; }
+.portrait-columns { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 72px; }
+.section-title { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.section-title a { display: inline-flex; text-decoration: none; align-items: center; min-height: 44px; color: var(--accent); font-size: 14px; }
+.practice-list, .history-list { margin: 0; padding: 0; list-style: none; }
+.practice-row { display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; gap: 20px; align-items: center; padding-block: 24px; border-bottom: 1px solid var(--line); }
+.practice-row__art { width: 88px; height: 100px; object-fit: cover; border-radius: 3px; }
+.practice-row p { margin-top: 8px; color: var(--ink-soft); font-size: 14px; line-height: 1.75; }
+.practice-command { display: grid; place-items: center; width: 44px; min-height: 44px; border: 1px solid var(--line-strong); border-radius: 4px; color: var(--accent); }
+.practice-command:hover { border-color: var(--accent); background: var(--surface-2); }
+.practice-soon { align-self: start; margin-top: 7px; color: var(--ink-soft); font-size: 14px; }
+.portrait-key-list { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 15px 0 0; padding: 0; list-style: none; }
+.portrait-key { display: flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ink); font-size: 14px; text-decoration: none; }
+.portrait-key img { width: 36px; height: 43px; object-fit: cover; border-radius: 2px; }
+.portrait-key small { display: block; color: var(--accent); font-size: 14px; }
+.portrait-key:hover { color: var(--accent); }
+.portrait-sidebar section + section { margin-top: 38px; }
+.history-list > li { padding-block: 21px; border-bottom: 1px solid var(--line); }
+.history-status { display: flex; align-items: center; gap: 8px; color: var(--accent); font-size: 14px; }
+.history-list h3 { margin-top: 9px; font-size: 21px; line-height: 1.45; }
+.history-list p { margin-top: 9px; color: var(--ink-soft); font-size: 14px; }
+.history-list a { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 4px; color: var(--ink); font-size: 14px; text-decoration: none; }
+.history-list a:hover { color: var(--accent); }
+.empty-history { padding-block: 22px; color: var(--ink-soft); font-size: 14px; }
+.guest-portrait { max-width: 620px; padding-block: 18px; margin-inline: 0 auto; }
+.guest-portrait h1 { margin-bottom: 24px; }
+.guest-portrait p { margin-bottom: 22px; color: var(--ink); font-size: 16px; }
+.guest-portrait .text-link { margin-left: 22px; }
+
+/* Лила: выбор намерения */
+.lila-loading h1 { margin-bottom: 18px; }
+.game-start-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 70px; align-items: start; }
+.game-start-copy h1 { margin-bottom: 26px; }
+.game-start-copy > p { margin-top: 14px; color: var(--ink-soft); font-size: 16px; }
+.start-art { width: 100%; height: auto; aspect-ratio: 1920 / 1720; margin-top: 26px; object-fit: contain; }
+.intention-form { padding-top: 9px; }
+.intention-form h2 { margin-bottom: 23px; }
+.intention-form label:not(:first-of-type) { margin-top: 22px; }
+.intention-form textarea { min-height: 148px; }
+.hint { display: flex; justify-content: space-between; gap: 16px; margin-top: 8px !important; color: var(--ink-soft); font-size: 14px; }
+.intention-form .error { margin-top: 12px; }
+.intention-form .button { width: 100%; margin-top: 16px; }
+.guided-offer { margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--line); }
+.guided-offer h3 { margin-bottom: 15px; font-size: 24px; }
+.guided-offer p { margin-bottom: 14px; color: var(--ink-soft); font-size: 14px; }
+.guided-offer__sample { margin: 0 0 14px; padding: 12px 16px; border: 1px dashed var(--line-strong); border-radius: 4px; color: var(--ink-soft); font-size: 14px; font-style: italic; }
+.guided-offer__form { display: grid; gap: 4px; max-width: 420px; }
+.guided-offer__form .button { margin-top: 12px; }
+
+/* Лила: партия */
+.game-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
+.game-heading h1 { font-size: clamp(34px, 4vw, 40px); }
+.game-heading .text-link { border-bottom-color: var(--line-strong); }
+.workspace .game-intention { max-width: 850px; font-family: var(--font-display); font-size: 23px; line-height: 1.5; }
+.game-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 22px; margin-top: 12px; color: var(--accent); font-size: 14px; }
+.guest-save { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-top: 22px; padding-block: 15px; border-block: 1px solid var(--line); color: var(--ink-soft); font-size: 14px; }
+.guest-save a { display: flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.guest-save a:hover { color: var(--accent); }
+.guest-save__actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.game-tabs { display: flex; gap: 32px; margin-top: 23px; border-bottom: 1px solid var(--line); }
+.game-tabs button { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 8px 0; border: 0; border-bottom: 1px solid transparent; background: none; color: var(--ink-soft); font: inherit; font-size: 14px; cursor: pointer; }
+.game-tabs button[aria-selected="true"] { border-bottom-color: var(--accent); color: var(--ink); }
+.game-tabs + .error { margin-top: 14px; }
+.play-layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); grid-template-areas: "dice side" "board side" "history history"; grid-template-rows: auto 1fr auto; gap: 0 42px; margin-top: 24px; align-items: start; }
+.play-dice { grid-area: dice; }
+.play-side { grid-area: side; min-width: 0; }
+.play-board { grid-area: board; min-width: 0; }
+.play-history { grid-area: history; }
+.play-layout > [hidden] { display: none; }
+.dice-controls { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; min-height: 54px; margin-bottom: 20px; }
+.die-message { flex: 1; min-width: 190px; }
+.dice-caption { min-height: 21px; margin-top: 7px !important; color: var(--ink-soft); font-size: 14px; }
+.dice-controls .own-toggle { margin-left: auto; padding-inline: 10px; border: 0; color: var(--ink-soft); }
+.dice-controls .own-toggle:hover { background: none; color: var(--ink); }
+.own-die { display: flex; gap: 8px; width: 100%; }
+.own-die button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line-strong); border-radius: 4px; background: none; color: var(--ink); cursor: pointer; }
+.own-die button:hover:not(:disabled) { border-color: var(--accent); background: var(--surface-3); }
+/* Кубик: грань с точками 3×3; катится, пока сервер отвечает, и оседает на выпавшей грани */
+.die { flex: none; display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); width: 52px; height: 52px; padding: 9px; border: 1px solid var(--line-strong); border-radius: 4px; background: var(--surface-3); }
+.die__pip { align-self: center; justify-self: center; width: 8px; height: 8px; border-radius: 50%; background: transparent; }
+.die__pip[data-on] { background: var(--ink); }
+.play-board { display: grid; gap: 0; }
+.play-board .lila-board { width: 100%; max-width: none; gap: 0; }
+.board-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; color: var(--ink-soft); font-size: 14px; }
+.board-zoom { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 0; border: 0; background: none; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+.board-zoom:hover { color: var(--accent); }
+.board-dialog { width: min(960px, calc(100% - 32px)); max-width: none; max-height: 92vh; padding: 52px 20px 20px; overflow: auto; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface-2); color: var(--ink); }
+.board-dialog::backdrop, .confirm-dialog::backdrop { background: rgba(0, 0, 0, 0.66); }
+.board-dialog__close { position: absolute; top: 6px; right: 12px; display: grid; place-items: center; width: 44px; height: 44px; border: 0; background: none; color: var(--ink); cursor: pointer; }
+/* Поле целиком помещается в окно по высоте: ширина считается от высоты экрана (холст 1920 × 1720) */
+.board-dialog .lila-board { width: min(100%, calc((92vh - 96px) * 1.1163)); max-width: none; margin-inline: auto; }
+
+/* Лила: ход */
+.turn-panel { min-width: 0; padding-top: 4px; }
+.turn-art-heading { display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: 22px; align-items: center; margin-bottom: 23px; }
+.turn-art-heading .lila-art, .turn-art-heading .lila-fallback { width: 116px; border-radius: 3px; }
+.turn-art-heading small, .turn-arrival small, .turn-guide small, .previous-note small, .move-row small { display: block; color: var(--accent); font-size: 14px; }
+.turn-art-heading small { margin-bottom: 8px; }
+.turn-panel h2 { font-size: 32px; line-height: 1.2; }
+.turn-panel p { margin-bottom: 18px; color: #D8CFC8; font-size: 15px; line-height: 1.85; }
+.workspace .turn-panel .transition-copy { padding-block: 18px; border-block: 1px solid var(--line); color: var(--ink-soft); font-size: 14px; }
+.turn-arrival { display: flex; align-items: center; gap: 13px; margin-block: 20px; color: var(--ink); text-decoration: none; }
+.turn-arrival .lila-art, .turn-arrival .lila-fallback { flex: none; width: 56px; border-radius: 3px; }
+.turn-arrival > span { display: grid; flex: 1; gap: 3px; }
+.turn-arrival strong { font-family: var(--font-display); font-size: 24px; font-weight: 400; line-height: 1.25; }
+.turn-arrival:hover strong { color: var(--accent); }
+.turn-question { margin-block: 25px; }
+.workspace .turn-question p { margin: 0; color: var(--ink); font-family: var(--font-display); font-size: 22px; line-height: 1.65; }
+.previous-note { padding-block: 15px; border-top: 1px solid var(--line); }
+.workspace .previous-note p { margin: 6px 0 0; font-size: 14px; }
+.turn-guide { margin-block: 22px; padding: 16px 0; border-block: 1px solid var(--line-strong); }
+.turn-guide p { margin: 8px 0 0; }
+.note-form { padding-top: 24px; border-top: 1px solid var(--line); }
+.note-form textarea { min-height: 100px; font-size: 16px; }
+.note-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 54px; color: var(--ink-soft); font-size: 14px; }
+.turn-empty { padding-block: 25px; }
+.turn-empty h2 { margin-bottom: 20px; }
+.game-ending { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 30px; padding-top: 25px; border-top: 1px solid var(--line); }
+.game-ending p { color: var(--ink-soft); font-size: 14px; }
+.game-ending a { color: var(--ink); }
+.finished-note { margin-top: 20px !important; color: var(--ink-soft); font-size: 14px; }
+.confirm-dialog { width: min(520px, calc(100% - 32px)); padding: 30px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface-2); color: var(--ink); }
+.confirm-dialog h2 { margin-bottom: 20px; font-size: 30px; }
+.confirm-dialog p { color: var(--ink-soft); font-size: 15px; line-height: 1.8; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 26px; }
+
+/* Лила: история партии */
+.move-history { max-width: 900px; margin-top: 28px; }
+.move-history > h2 { margin-bottom: 15px; }
+.move-history > p { margin-bottom: 22px; color: var(--ink-soft); font-size: 14px; }
+.move-list { margin: 0; padding: 0; list-style: none; }
+.move-row { display: grid; grid-template-columns: 44px 36px minmax(0, 1fr); gap: 20px; padding-block: 22px; border-top: 1px solid var(--line); }
+.move-number { color: var(--accent); font-size: 14px; font-variant-numeric: tabular-nums; }
+.move-row > .icon { width: 28px; height: 28px; color: var(--ink-soft); }
+.move-row h3 { font-size: 22px; }
+.workspace .move-row p { margin-top: 8px; color: var(--ink-soft); font-size: 14px; }
+.move-guide summary { display: flex; align-items: center; min-height: 44px; margin-top: 4px; color: var(--accent); font-size: 14px; cursor: pointer; }
+.finished-history .move-history { margin-top: 28px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .die[data-rolling] { animation: die-tumble var(--die-roll-ms, 700ms) cubic-bezier(0.3, 0.6, 0.4, 1); }
+  .die[data-settled] { animation: die-settle 260ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .turn-guide p { animation: fade-in 320ms ease-out; }
+  .confirm-dialog[open], .own-die { animation: reveal var(--dur-base) var(--ease-out); }
+  .button:active:not(:disabled) { transform: scale(0.97); }
+}
+@keyframes die-tumble {
+  0% { transform: translateY(0) rotate(0); }
+  25% { transform: translateY(-14px) rotate(140deg); }
+  55% { transform: translateY(0) rotate(290deg) scale(0.96); }
+  75% { transform: translateY(-5px) rotate(340deg); }
+  100% { transform: translateY(0) rotate(360deg); }
+}
+@keyframes die-settle { 0% { transform: scale(0.94); } 100% { transform: scale(1); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes reveal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+.lila-board--full { display: none; }
+@media (min-width: 721px) {
+  .lila-board--full { display: block; }
+  .lila-board--compact { display: none; }
+}
+
+@media (max-width: 1100px) {
+  .portrait-backdrop { width: 80%; height: 560px; }
+  .portrait-columns { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 42px; }
+  .practice-row { grid-template-columns: 72px minmax(0, 1fr) 44px; gap: 15px; }
+  .practice-row__art { width: 72px; height: 84px; }
+  .portrait-key-list { gap: 6px 12px; }
+  .play-layout { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 0 30px; }
+  .turn-art-heading { grid-template-columns: 90px minmax(0, 1fr); gap: 16px; }
+  .turn-art-heading .lila-art, .turn-art-heading .lila-fallback { width: 90px; }
+  .turn-panel h2 { font-size: 28px; }
+  .game-start-layout { gap: 42px; }
+}
+@media (max-width: 850px) {
+  .portrait-backdrop { top: 0; width: 85%; height: 480px; }
+  .portrait-columns { grid-template-columns: 1fr; }
+  .portrait-sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 35px; }
+  .portrait-sidebar section + section { margin-top: 0; }
+  .birth-section { display: block; }
+  .birth-form { width: 360px; max-width: 100%; min-width: 0; margin-top: 22px; }
+  .game-start-layout { gap: 32px; }
+  .game-start-layout h1 { font-size: 40px; }
+  /* На узком экране вкладки делят блоки: «Ход» — кубик и ход, «Поле» — кубик и поле, «История» — только список */
+  .play-layout { display: block; }
+  .play-side { max-width: 680px; margin-top: 30px; }
+  .play-board { max-width: 720px; }
+  .play-layout[data-tab="turn"] .play-board { display: none; }
+  .turn-art-heading { grid-template-columns: 116px minmax(0, 1fr); gap: 22px; }
+  .turn-art-heading .lila-art, .turn-art-heading .lila-fallback { width: 116px; }
+  .turn-panel h2 { font-size: 32px; }
+}
+@media (max-width: 700px) {
+  .workspace { padding-block: 26px 40px; }
+  .workspace h2 { font-size: 28px; }
+  .portrait-backdrop { height: 400px; -webkit-mask-image: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.55) 45%, #000 75%), linear-gradient(180deg, #000 30%, transparent 92%); mask-image: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.55) 45%, #000 75%), linear-gradient(180deg, #000 30%, transparent 92%); }
+  .portrait-backdrop img { object-position: 80% 12%; }
+  .portrait-backdrop::after { background: linear-gradient(180deg, rgba(10, 9, 14, 0.27), rgba(10, 9, 14, 0.7) 45%, var(--bg)), linear-gradient(90deg, rgba(10, 9, 14, 0.9), rgba(10, 9, 14, 0.25) 70%); }
+  .account-heading { display: block; margin-bottom: 24px; }
+  .account-actions { margin-top: 10px; gap: 12px; }
+  .birth-section { padding-block: 22px; margin-bottom: 28px; }
+  .birth-section h2 { font-size: 22px; }
+  .birth-form { width: 100%; margin-top: 22px; }
+  .workspace .birth-controls input[type="date"] { flex: 1; width: auto; max-width: 190px; min-width: 0; }
+  .birth-result { min-width: 0; width: 125px; }
+  .birth-result .button { padding-inline: 11px; gap: 8px; }
+  .portrait-columns { gap: 34px; }
+  .practice-row { grid-template-columns: 64px minmax(0, 1fr) 44px; gap: 13px; padding-block: 22px; }
+  .practice-row__art { width: 64px; height: 82px; }
+  .workspace .practice-row h3 { font-size: 22px; }
+  .portrait-key-list { display: block; margin-top: 12px; }
+  .portrait-key img { display: none; }
+  .portrait-key { display: flex; min-height: 36px; }
+  .portrait-key span { display: block; }
+  .portrait-key small { display: inline; margin-right: 5px; }
+  .portrait-sidebar { display: block; }
+  .portrait-sidebar section + section { margin-top: 32px; }
+  .guest-portrait { padding-top: 0; }
+  .guest-portrait p { max-width: 29ch; }
+  .guest-portrait .text-link { display: flex; width: fit-content; margin: 18px 0 0; }
+  .game-start-layout { display: flex; flex-direction: column; gap: 26px; }
+  .game-start-copy h1 { margin-bottom: 17px; }
+  .game-start-copy > p { font-size: 15px; }
+  .start-art { display: none; }
+  .intention-form { width: 100%; padding-top: 0; }
+  .intention-form h2 { margin-bottom: 20px; font-size: 27px; }
+  .intention-form textarea { min-height: 122px; }
+  .game-heading { align-items: flex-start; margin-bottom: 14px; }
+  .game-heading h1 { font-size: 34px; }
+  .workspace .game-intention { font-size: 21px; line-height: 1.6; }
+  .guest-save { display: block; margin-top: 17px; padding-block: 12px; }
+  .guest-save a { margin-top: 4px; }
+  .game-tabs { justify-content: space-between; gap: 20px; margin-top: 13px; }
+  .play-layout { margin-top: 18px; }
+  .dice-controls { margin-bottom: 8px; }
+  .die { width: 46px; height: 46px; }
+  .dice-controls .own-toggle { flex-basis: 100%; justify-content: flex-start; margin-left: 0; padding: 0 2px; }
+  .dice-caption { min-height: 21px; }
+  .own-die { gap: 6px; margin-top: 3px; }
+  .own-die button { flex: none; }
+  .play-side { margin-top: 18px; padding-top: 0; }
+  .turn-art-heading { grid-template-columns: 102px minmax(0, 1fr); gap: 18px; }
+  .turn-art-heading .lila-art, .turn-art-heading .lila-fallback { width: 102px; }
+  .workspace .turn-panel h2 { font-size: 29px; }
+  .turn-panel p { font-size: 16px; line-height: 1.8; }
+  .play-board { margin-top: 17px; }
+  .game-ending { display: block; margin-top: 25px; padding-top: 20px; }
+  .game-ending button { margin-top: 12px; }
+  .move-history { margin-top: 24px; }
+  .move-row { grid-template-columns: 22px 28px minmax(0, 1fr); gap: 12px; padding-block: 20px; }
+  .move-row h3 { font-size: 21px; }
+  .move-row > .icon { width: 26px; height: 26px; }
+  .dialog-actions { flex-direction: column-reverse; }
+  .dialog-actions button { width: 100%; min-height: 46px; }
+  .confirm-dialog { padding: 24px; }
+  .board-dialog { padding: 44px 6px 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .die[data-rolling], .die[data-settled] { animation: none; }
+}
+
+/* Итог партии с проводником и страница партии в портрете */
+.lila-conclusion { margin-top: 28px; }
+.conclusion-chapter { padding-block: 26px; border-top: 1px solid var(--line); }
+.conclusion-chapter h2 { margin-bottom: 16px; }
+.workspace .conclusion-chapter p { margin: 0 0 16px; max-width: 70ch; font-size: 16px; line-height: 1.85; }
+.history-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 22px; }
+.history-actions .finished-note { margin: 0 !important; }
+.history-board { max-width: 720px; margin-top: 28px; }
+.history-board .lila-board { width: 100%; max-width: none; }
+.workspace .disclaimer { margin-top: 36px; padding-top: 25px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 14px; }
+/* Вопрос для двоих на странице совместимости */
+.lila-turn__question { margin: 0; padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 
 /* Таро: карта дня, страница карты, сетка колоды */
 .taro-day { display: grid; gap: 28px; }

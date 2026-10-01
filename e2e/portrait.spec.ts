@@ -24,7 +24,12 @@ test("the login button waits for consent", async ({ page }) => {
 
 test("a signed-in user saves the birth date and sees it after a reload", async ({ browser }) => {
   const { context, page } = await signIn(browser, uniqueName("Аня"));
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Здравствуйте, Аня");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Мой портрет");
+  await expect(page.getByText("Здравствуйте, Аня")).toBeVisible();
+  // Пять практик с точными названиями действий; «Скоро» только у натальной карты
+  await expect(page.getByRole("link", { name: "Играть в Лилу" })).toBeVisible();
+  await expect(page.getByText("Скоро", { exact: true })).toHaveCount(1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
   await page.getByRole("textbox", { name: "Дата рождения" }).fill("1990-03-07");
   await page.getByRole("button", { name: "Сохранить" }).click();

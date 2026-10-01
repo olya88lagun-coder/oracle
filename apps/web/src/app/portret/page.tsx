@@ -1,13 +1,16 @@
+import { arcanumByNumber } from "@oracle/content";
 import { calculateMatrix, formatBirthDateRu, toIsoDate } from "@oracle/core";
 import { listLilaGames, listPaidPurchases } from "@oracle/db";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Icon } from "@/components/Icon";
 import { LogoutButton } from "@/components/LogoutButton";
-import { Scene } from "@/components/Scene";
-import { PRACTICES } from "@/lib/practices";
+import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 import { LILA_GAME_PATH, lilaHistoryPath } from "@/lib/lila-paths";
+import { movesLabel } from "@/lib/lila-turn";
 import { keyArcana } from "@/lib/matrix-view";
+import { PRACTICES, type Practice } from "@/lib/practices";
 import { formatIsoDate, reportPath } from "@/lib/report-offer";
 import { getDb } from "@/server/db";
 import { loadPortrait } from "@/server/profile-service";
@@ -20,12 +23,26 @@ function firstName(displayName: string): string {
   return displayName.split(" ")[0] ?? displayName;
 }
 
-function CalendarIcon() {
+// Название действия у каждой практики своё: «Играть» одно на всех здесь не годится
+function practiceCommand(practice: Practice, hasKeys: boolean): string {
+  switch (practice.slug) {
+    case "matrix":
+      return hasKeys ? "Открыть матрицу" : "Рассчитать матрицу";
+    case "lila":
+      return "Играть в Лилу";
+    case "compat":
+      return "Рассчитать совместимость";
+    default:
+      return "Открыть Таро";
+  }
+}
+
+// Исходный фон портрета: женщина и лунный круг справа вверху, к спискам плавно гаснет. Декор, не аватар
+function PortraitBackdrop() {
   return (
-    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round">
-      <rect x="4" y="5.5" width="16" height="14" rx="2.5" />
-      <path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" />
-    </svg>
+    <div className="portrait-backdrop" aria-hidden="true">
+      <Image src="/portrait.webp" alt="" fill priority unoptimized sizes="(min-width: 900px) 70vw, 100vw" />
+    </div>
   );
 }
 
@@ -33,20 +50,23 @@ export default async function PortraitPage() {
   const user = await currentUser();
   if (!user) {
     return (
-      <Scene>
-        <div className="scene__intro stack">
-          <p className="eyebrow eyebrow--line">Мой портрет</p>
-          <h1 className="display">Одна дата — для всех практик</h1>
-          <p className="lead">
-            В портрете хранится дата рождения. Каждая практика, которая откроется на сайте, возьмёт её отсюда — вводить заново не придётся.
-          </p>
-          <p>
+      <main className="workspace portrait-page">
+        <PortraitBackdrop />
+        <div className="matrix-wrap">
+          <div className="guest-portrait">
+            <h1>Мой портрет</h1>
+            <p>В портрете хранится дата рождения. Каждая практика, которая откроется на сайте, возьмёт её отсюда — вводить заново не придётся.</p>
             <Link className="button button--lavender" href="/login">
+              <Icon name="log-in" />
               Войти через VK ID
             </Link>
-          </p>
+            <Link className="text-link" href={LILA_GAME_PATH}>
+              Играть в Лилу без входа
+              <Icon name="arrow-right" />
+            </Link>
+          </div>
         </div>
-      </Scene>
+      </main>
     );
   }
 
@@ -55,109 +75,135 @@ export default async function PortraitPage() {
   const reports = await listPaidPurchases(getDb(), user.id);
   const games = await listLilaGames(getDb(), user.id);
   return (
-    <Scene>
-      <div className="scene__intro stack">
-        <p className="eyebrow eyebrow--line">Мой портрет</p>
-        <h1 className="display">Здравствуйте, {firstName(user.displayName)}</h1>
-      </div>
-
-      <section className="card birth-card" aria-labelledby="birth">
-        <div className="birth-card__info">
-          <span className="birth-card__icon" aria-hidden="true">
-            <CalendarIcon />
-          </span>
-          <div className="stack">
-            <h2 id="birth">Дата рождения</h2>
-            {birthDate && <p className="lead">{formatBirthDateRu(birthDate)}</p>}
+    <main className="workspace portrait-page">
+      <PortraitBackdrop />
+      <div className="matrix-wrap">
+        <header className="account-heading">
+          <div>
+            <h1>Мой портрет</h1>
+            <p>Здравствуйте, {firstName(user.displayName)}</p>
           </div>
-        </div>
-        <div className="birth-card__form">
+          <div className="account-actions">
+            <LogoutButton />
+            <Link href="/portret/delete" className="account-action">
+              <Icon name="trash-2" />
+              Удалить мои данные
+            </Link>
+          </div>
+        </header>
+
+        <section className="birth-section" aria-labelledby="birth">
+          <div>
+            <h2 id="birth">Дата рождения</h2>
+            <p>Одна дата — для всех практик.</p>
+            {birthDate && <p className="birth-section__date">{formatBirthDateRu(birthDate)}</p>}
+          </div>
           <BirthDateForm initial={birthDate ? toIsoDate(birthDate) : null} />
-        </div>
-      </section>
+        </section>
 
-      <section className="stack" aria-labelledby="practices">
-        <h2 id="practices">Практики в портрете</h2>
-        <p className="muted">Практики открываются по очереди. Когда откроется следующая, её расчёт появится здесь автоматически.</p>
-        <ul className="portrait-practices">
-          {PRACTICES.map((practice) => (
-            <li key={practice.slug} className="portrait-practice">
-              <div className="portrait-practice__art">
-                <Image src={`/practices/${practice.slug}.webp`} alt="" fill unoptimized sizes="(min-width: 1100px) 25vw, (min-width: 640px) 50vw, 100vw" />
+        <div className="portrait-columns">
+          <section aria-labelledby="practices">
+            <div className="section-title">
+              <h2 id="practices">Мои практики</h2>
+            </div>
+            <ul className="practice-list">
+              {PRACTICES.map((practice) => (
+                <li key={practice.slug} className="practice-row">
+                  <Image className="practice-row__art" src={`/practices/${practice.slug}.webp`} alt="" width={88} height={100} unoptimized />
+                  <div>
+                    <h3>{practice.title}</h3>
+                    <p>{practice.summary}</p>
+                    {practice.slug === "matrix" && keys && (
+                      <ul className="portrait-key-list" aria-label="Ключевые арканы">
+                        {keys.map((key) => (
+                          <li key={key.point}>
+                            <Link className="portrait-key" href={arcanumPath(arcanumByNumber(key.number))}>
+                              <Image src={arcanumImage(arcanumByNumber(key.number), "thumb")} alt="" width={36} height={43} unoptimized />
+                              <span>
+                                <small>
+                                  {key.label} · {key.number}
+                                </small>
+                                {key.name}
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  {practice.href ? (
+                    <Link className="practice-command" href={practice.slug === "lila" ? LILA_GAME_PATH : practice.href} aria-label={practiceCommand(practice, keys !== null)} title={practiceCommand(practice, keys !== null)}>
+                      <Icon name={practice.slug === "lila" ? "dice-5" : "arrow-up-right"} size={20} />
+                    </Link>
+                  ) : (
+                    <span className="practice-soon">Скоро</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <aside className="portrait-sidebar">
+            <section aria-labelledby="games">
+              <div className="section-title">
+                <h2 id="games">Мои партии</h2>
+                <Link href={LILA_GAME_PATH}>Новая партия</Link>
               </div>
-              <div className="portrait-practice__body">
-                <h3>{practice.title}</h3>
-                {practice.slug === "matrix" && keys ? (
-                  <ul className="portrait-keys" aria-label="Ключевые арканы">
-                    {keys.map((key) => (
-                      <li key={key.point}>
-                        <span className="portrait-keys__number">{key.number}</span>
-                        <span>
-                          {key.label} · {key.name}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>{practice.summary}</p>
-                )}
-                {practice.href ? (
-                  <Link className="button button--ghost portrait-practice__cta" href={practice.href}>
-                    {practice.slug !== "matrix" ? "Играть" : keys ? "Открыть расчёт" : "Рассчитать матрицу"}
+              {games.length > 0 ? (
+                <ul className="history-list">
+                  {games.map((game) => (
+                    <li key={game.id}>
+                      <span className="history-status">
+                        <Icon name={game.status === "active" ? "circle-play" : "check"} />
+                        {game.status === "active" ? "Идёт" : "Завершена"} · {game.mode === "guided" ? "с проводником" : "без проводника"}
+                      </span>
+                      <h3>«{game.intention}»</h3>
+                      <p>{movesLabel(game.movesCount)}</p>
+                      <Link href={game.status === "active" ? LILA_GAME_PATH : lilaHistoryPath(game.id)}>
+                        {game.status === "active" ? "Продолжить партию" : "Открыть партию"}
+                        <Icon name="arrow-right" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <>
+                  <p className="empty-history">Пока нет партий.</p>
+                  <Link className="text-link" href={LILA_GAME_PATH}>
+                    Начать партию
+                    <Icon name="arrow-right" />
                   </Link>
-                ) : (
-                  <span className="tag">Скоро</span>
-                )}
+                </>
+              )}
+            </section>
+
+            <section aria-labelledby="reports">
+              <div className="section-title">
+                <h2 id="reports">Разборы</h2>
               </div>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {reports.length > 0 && (
-        <section className="card stack portrait-reports" aria-labelledby="reports">
-          <h2 id="reports">Разборы</h2>
-          <ul className="portrait-reports__list">
-            {reports.map((report) => (
-              <li key={report.id}>
-                <span>
-                  Разбор матрицы судьбы · по дате {formatIsoDate(report.birthDate)}
-                  {!report.ready && <span className="tag portrait-reports__tag">готовится</span>}
-                </span>
-                <Link className="button button--ghost" href={reportPath(report.id)}>
-                  Открыть разбор
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {games.length > 0 && (
-        <section className="card stack portrait-reports" aria-labelledby="games">
-          <h2 id="games">Мои партии</h2>
-          <ul className="portrait-reports__list">
-            {games.map((game) => (
-              <li key={game.id}>
-                <span>
-                  {game.status === "active" ? "Идёт" : "Завершена"} · «{game.intention}» · ходов {game.movesCount}
-                  {game.mode === "guided" && <span className="tag portrait-reports__tag">с проводником</span>}
-                </span>
-                <Link className="button button--ghost" href={game.status === "active" ? LILA_GAME_PATH : lilaHistoryPath(game.id)}>
-                  {game.status === "active" ? "Продолжить партию" : "Открыть партию"}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      <div className="portrait-actions">
-        <LogoutButton />
-        <Link href="/portret/delete" className="quiet-link">
-          Удалить мои данные
-        </Link>
+              {reports.length > 0 ? (
+                <ul className="history-list">
+                  {reports.map((report) => (
+                    <li key={report.id}>
+                      <span className="history-status">
+                        {report.ready ? <Icon name="check" /> : <Icon name="circle-play" />}
+                        {report.ready ? "Готов" : "готовится"}
+                      </span>
+                      <h3>Разбор матрицы судьбы · по дате {formatIsoDate(report.birthDate)}</h3>
+                      <Link href={reportPath(report.id)}>
+                        Открыть разбор
+                        <Icon name="arrow-right" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="empty-history">Пока нет разборов.</p>
+              )}
+            </section>
+          </aside>
+        </div>
       </div>
-    </Scene>
+    </main>
   );
 }

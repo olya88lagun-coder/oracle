@@ -6,10 +6,10 @@ const INTENTION = "Почему мне трудно принять решени�
 
 async function start(page: Page) {
   await page.goto("/lila/igra");
-  await page.getByRole("textbox", { name: "Или напишите своё намерение" }).fill(INTENTION);
+  await page.getByRole("textbox", { name: "Ваше намерение" }).fill(INTENTION);
   // «Играть» и «Играть без проводника» — разные режимы; платный блок в этом плане выключен
   await page.getByRole("button", { name: /^Играть( без проводника)?$/ }).click();
-  await expect(page.getByText(`Намерение: ${INTENTION}`)).toBeVisible();
+  await expect(page.locator(".game-intention")).toHaveText(INTENTION);
 }
 
 async function ownRoll(page: Page, value: number) {
@@ -42,15 +42,40 @@ test("a guest plays: waits for a six, meets a snake, keeps the game after a relo
   await expect(page.getByRole("heading", { level: 2, name: "Рождение" })).toBeVisible();
   await ownRoll(page, 5);
   await ownRoll(page, 6);
-  await expect(page.getByText("Клетка 12 ·")).toBeVisible();
-  await expect(page.getByRole("heading", { level: 2, name: "Алчность" })).toBeVisible();
-  await expect(page.getByText(/Открыто клеток: 4 из 72/)).toBeVisible();
+  // Змея: ход показывает клетку падения (12), а конечная клетка (8) — ссылкой с подписью перехода
+  await expect(page.getByRole("heading", { level: 2, name: "Зависть" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Змея · 12 → 8/ })).toContainText("Алчность");
+  await expect(page.getByText(/Открыто клеток · 4 \/ 72/)).toBeVisible();
   await expect(page.getByRole("link", { name: "Войти и сохранить партию" })).toHaveAttribute("href", "/login?next=%2Flila%2Figra");
   await noHorizontalScroll(page);
 
   await page.reload();
-  await expect(page.getByText(`Намерение: ${INTENTION}`)).toBeVisible();
-  await expect(page.getByText(/Ходов 4/)).toBeVisible();
+  await expect(page.locator(".game-intention")).toHaveText(INTENTION);
+  await expect(page.getByText("4 хода", { exact: true })).toBeVisible();
+});
+
+test("tabs split the game, the token waits for a six, and the zoomed board closes with Escape", async ({ page }) => {
+  await start(page);
+  const tabs = page.getByRole("tablist", { name: "Разделы партии" });
+  // До первой шестёрки фишки на поле нет, а не стоит на клетке 1
+  await page.getByRole("tab", { name: "Поле" }).click();
+  await expect(page.locator(".lila-board__token")).toHaveCount(0);
+  await ownRoll(page, 6);
+  await expect(page.locator(".lila-board__token")).toHaveCount(2);
+
+  await page.getByRole("button", { name: "Рассмотреть поле" }).click();
+  await expect(page.getByRole("dialog", { name: "Поле Лилы" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog", { name: "Поле Лилы" })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Рассмотреть поле" })).toBeFocused();
+
+  // Стрелки переключают вкладки; история — только список ходов, без кубика
+  await tabs.getByRole("tab", { name: "Поле" }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(tabs.getByRole("tab", { name: "История" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("heading", { level: 2, name: "История партии" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Бросить кубик" })).toBeHidden();
+  await noHorizontalScroll(page);
 });
 
 test("a guest game is saved to the portrait after login and shows in «Мои партии»", async ({ page, context }) => {
@@ -61,9 +86,9 @@ test("a guest game is saved to the portrait after login and shows in «Мои п
 
   await page.goto("/lila/igra");
   await page.getByRole("button", { name: "Сохранить партию" }).click();
-  await expect(page.getByText(`Намерение: ${INTENTION}`)).toBeVisible();
+  await expect(page.locator(".game-intention")).toHaveText(INTENTION);
   await page.reload();
-  await expect(page.getByText(/Ходов 1/)).toBeVisible();
+  await expect(page.getByText("1 ход", { exact: true })).toBeVisible();
 
   await page.goto("/portret");
   await expect(page.getByRole("region", { name: "Мои партии" })).toContainText(INTENTION);

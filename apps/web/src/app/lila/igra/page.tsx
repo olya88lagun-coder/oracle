@@ -3,7 +3,6 @@ import { getPaidWaitingLilaGame } from "@oracle/db";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { GameShell } from "@/components/lila/GameShell";
-import { Scene } from "@/components/Scene";
 import { lilaPaymentPath } from "@/lib/lila-paths";
 import { getDb } from "@/server/db";
 import { availableCellImages } from "@/server/lila-images";
@@ -22,13 +21,12 @@ export default async function LilaGamePage() {
     const paidWaiting = await getPaidWaitingLilaGame(getDb(), user.id);
     if (paidWaiting?.purchaseId) redirect(lilaPaymentPath(paidWaiting.purchaseId));
   }
+  // Заголовок страницы (один <h1>) выводит сам GameShell: у него три состояния — выбор намерения, партия и история
   return (
-    <Scene>
-      <div className="scene__intro stack">
-        <p className="eyebrow eyebrow--line">Лила</p>
-        <h1 className="display">Ваша партия</h1>
+    <main className="workspace lila-page">
+      <div className="matrix-wrap">
+        <GameShell initialGame={game} signedIn={user !== null} images={availableCellImages()} guidedEnabled={salesEnabled(LILA_SESSION_PRODUCT)} />
       </div>
-      <GameShell initialGame={game} signedIn={user !== null} images={availableCellImages()} guidedEnabled={salesEnabled(LILA_SESSION_PRODUCT)} />
-    </Scene>
+    </main>
   );
 }

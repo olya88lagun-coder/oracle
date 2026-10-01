@@ -1,7 +1,10 @@
 "use client";
 
 import { LILA_NOTE_MAX_CHARS } from "@oracle/core";
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Icon } from "@/components/Icon";
+import { lilaCellPath } from "@/lib/lila-paths";
 import type { Turn } from "@/lib/lila-turn";
 import { CellArt } from "./CellArt";
 
@@ -12,11 +15,13 @@ type Props = {
   images: readonly string[];
   editable: boolean;
   onSaveNote: (note: string) => Promise<boolean>;
+  // «стрела» или «змея» последнего хода — подпись у перехода; null, когда перехода не было
+  transition?: "arrow" | "snake" | null;
   // Абзац проводника платной партии; null — партия без проводника
   guide?: { text: string | null; pending: boolean; waitedTooLong: boolean } | null;
 };
 
-export function TurnPanel({ turn, moveNumber, note, images, editable, onSaveNote, guide = null }: Props) {
+export function TurnPanel({ turn, moveNumber, note, images, editable, onSaveNote, transition = null, guide = null }: Props) {
   const [draft, setDraft] = useState(note ?? "");
   const [saved, setSaved] = useState(false);
   useEffect(() => {
@@ -24,55 +29,76 @@ export function TurnPanel({ turn, moveNumber, note, images, editable, onSaveNote
     setSaved(false);
   }, [moveNumber, note]);
 
-  if (!turn) return <p className="lead">Бросьте кубик. Чтобы начать путь, нужна шестёрка.</p>;
-  const finalCell = turn.arrival ?? turn.landed;
+  if (!turn)
+    return (
+      <section className="turn-panel turn-empty" aria-labelledby="turn-title">
+        <h2 id="turn-title">Первый ход</h2>
+        <p>Бросьте кубик. Чтобы начать путь, нужна шестёрка.</p>
+      </section>
+    );
+  const { landed, arrival } = turn;
+  const changed = draft !== (note ?? "");
+  const status = saved && !changed ? "Сохранено." : draft.length > 0 ? `${draft.length} / ${LILA_NOTE_MAX_CHARS}` : `До ${LILA_NOTE_MAX_CHARS} символов`;
   return (
-    <section className="card stack lila-turn" aria-labelledby="turn-title">
-      <p className="eyebrow">
-        Ход {moveNumber} · выпало {turn.roll}
-        {turn.visit > 1 && ` · вы здесь уже были (${turn.visit}-й раз)`}
-      </p>
-      {turn.kind === "wait" || !finalCell ? (
-        <>
+    <section className="turn-panel" aria-labelledby="turn-title">
+      {turn.kind === "wait" || !landed ? (
+        <div className="turn-empty">
           <h2 id="turn-title">Пауза</h2>
-          <p className="lead">{turn.question}</p>
-        </>
+          <p>{turn.question}</p>
+        </div>
       ) : (
         <>
-          {turn.arrival && turn.landed && (
-            <>
-              <p className="eyebrow">
-                Клетка {turn.landed.number} · «{turn.landed.name}»
-              </p>
-              <p>{turn.landed.about}</p>
-              {turn.transitionText && <p className="lila-turn__transition">{turn.transitionText}</p>}
-            </>
-          )}
-          <div className="lila-turn__cell">
-            <CellArt cell={finalCell} available={images} priority />
-            <div className="stack">
-              <p className="eyebrow">Клетка {finalCell.number}</p>
-              <h2 id="turn-title">{finalCell.name}</h2>
+          <div className="turn-art-heading">
+            <CellArt cell={landed} available={images} priority />
+            <div>
+              <small>
+                Клетка {landed.number}
+                {turn.visit > 1 ? ` · визит ${turn.visit}` : ""}
+              </small>
+              <h2 id="turn-title">{landed.name}</h2>
             </div>
           </div>
-          {!turn.arrival && <p>{finalCell.about}</p>}
-          <p className="lila-turn__question">
-            <strong>Вопрос:</strong> {turn.question}
-          </p>
-          {turn.previousNote && <p className="muted">Ваша прошлая запись здесь: «{turn.previousNote}»</p>}
+          <p className="landed-about">{landed.about}</p>
+          {arrival && (
+            <>
+              {turn.transitionText && <p className="transition-copy">{turn.transitionText}</p>}
+              <Link className="turn-arrival" href={lilaCellPath(arrival)}>
+                <CellArt cell={arrival} size="thumb" available={images} decorative />
+                <span>
+                  <small>
+                    {transition === "snake" ? "Змея" : "Стрела"} · {landed.number} → {arrival.number}
+                  </small>
+                  <strong>{arrival.name}</strong>
+                </span>
+                <Icon name="arrow-up-right" size={18} />
+              </Link>
+            </>
+          )}
+          <div className="turn-question">
+            <p>
+              <span className="sr-only">Вопрос: </span>
+              {turn.question}
+            </p>
+          </div>
+          {turn.previousNote && (
+            <div className="previous-note">
+              <small>Запись с прошлого визита</small>
+              <p>{turn.previousNote}</p>
+            </div>
+          )}
         </>
       )}
       {guide && (guide.text || (guide.pending && !guide.waitedTooLong)) && (
-        <div className="lila-turn__guide" aria-live="polite">
-          <p className="eyebrow">Проводник</p>
+        <div className="turn-guide" aria-live="polite">
+          <small>Проводник</small>
           {guide.text ? <p>{guide.text}</p> : <p role="status">Проводник пишет…</p>}
         </div>
       )}
       {editable && (
-        <label className="stack">
-          <span>Записать мысль (по желанию)</span>
+        <div className="note-form">
+          <label htmlFor="move-note">Ваша запись — по желанию</label>
           <textarea
-            className="input"
+            id="move-note"
             rows={3}
             maxLength={LILA_NOTE_MAX_CHARS}
             value={draft}
@@ -81,13 +107,16 @@ export function TurnPanel({ turn, moveNumber, note, images, editable, onSaveNote
               setSaved(false);
             }}
           />
-          <span className="row">
-            <button type="button" className="button button--ghost" disabled={draft === (note ?? "")} onClick={async () => setSaved(await onSaveNote(draft))}>
-              Сохранить
-            </button>
-            {saved && <span role="status">Сохранено.</span>}
-          </span>
-        </label>
+          <div className="note-actions">
+            <span role="status">{status}</span>
+            {changed && (
+              <button type="button" className="quiet" onClick={async () => setSaved(await onSaveNote(draft))}>
+                <Icon name="save" />
+                Сохранить
+              </button>
+            )}
+          </div>
+        </div>
       )}
     </section>
   );
