@@ -33,7 +33,7 @@
 | Направление визуала | `docs/design/visual-direction.md` |
 | Калькулятор матрицы | `apps/web/src/app/matrica-sudby/page.tsx`, `apps/web/src/components/matrix/` (первый экран с камнем — `MatrixCalculator`, секции ниже — `MatrixSections`, `MatrixGuide`; картинки камня — `apps/web/public/images/matrix/`) |
 | Страницы арканов | `apps/web/src/app/matrica-sudby/[arkan]/page.tsx` |
-| Блок продажи разбора | `apps/web/src/components/matrix/ReportOffer.tsx` (стоит в результате сразу после трёх ключевых карточек; кнопка — под вводным абзацем, выше списка глав; «Сохранить в портрет» и «Поделиться» ниже и вторичные) |
+| Блок продажи разбора | `apps/web/src/components/matrix/ReportOffer.tsx` (стоит в результате сразу после трёх ключевых карточек; кнопка — под вводным абзацем, выше списка глав; «Сохранить в портрет» и «Поделиться» ниже и вторичные); тот же блок стоит под результатом совместимости (`compat` в `ReportOffer`): разбор покупается для собственной даты, дата партнёра на сервер не уходит; цели `compat_offer_view` / `compat_offer_click` |
 | Страница разбора (ожидание и готовый разбор) | `apps/web/src/app/portret/razbor/[id]/`, `apps/web/src/components/report/` |
 | Таро и карта дня | `apps/web/src/app/taro/`, `apps/web/src/components/taro/` (карта дня — `TaroDraw`, выбор и хранилище — `lib/taro-day.ts`, пути — `lib/taro-paths.ts`; каталог `/taro` — `TaroCatalog` и `lib/taro-catalog.ts`, картинки сцены — `apps/web/public/images/taro/`) |
 | Тексты карт Таро | `packages/content/tarot/NN-slug.md` (после правки — `pnpm content:build`) |

@@ -4,15 +4,21 @@ import { MATRIX_REPORT_PRICE_KOPECKS, reportChapters, type Matrix } from "@oracl
 import { arcanumByNumber } from "@oracle/content";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import { reachGoal } from "@/lib/analytics";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { reachGoal, type Goal } from "@/lib/analytics";
 import { arcanumImage, MATRIX_PATH } from "@/lib/arcana-paths";
 import { loginHref } from "@/lib/next-path";
 import { chapterArcanaLabel, EMAIL_ERROR, EMAIL_PATTERN, purchaseErrorMessage, reportPath, teaserText, type OfferState } from "@/lib/report-offer";
 
-type Props = { state: Exclude<OfferState, { kind: "hidden" }>; matrix: Matrix; onSaveDate: () => Promise<boolean> };
+// compat — предложение под результатом совместимости: разбор покупается для собственной даты человека, а не для пары.
+// Цели у него свои, чтобы конверсия матрицы не смешивалась с совместимостью
+type CompatContext = { dateLabel: string; saveFirstNote: ReactNode; onLoginClick: () => void };
+type Props = { state: Exclude<OfferState, { kind: "hidden" }>; matrix: Matrix; onSaveDate: () => Promise<boolean>; compat?: CompatContext };
+type Goals = { view: Goal; click: Goal };
 
 const PRICE = `${MATRIX_REPORT_PRICE_KOPECKS / 100} ₽`;
+const MATRIX_GOALS: Goals = { view: "report_offer_view", click: "report_offer_click" };
+const COMPAT_GOALS: Goals = { view: "compat_offer_view", click: "compat_offer_click" };
 
 function ChapterList({ matrix }: { matrix: Matrix }) {
   return (
@@ -30,7 +36,7 @@ function ChapterList({ matrix }: { matrix: Matrix }) {
   );
 }
 
-function BuyForm({ onSaveDate }: { onSaveDate: Props["onSaveDate"] }) {
+function BuyForm({ onSaveDate, clickGoal }: { onSaveDate: Props["onSaveDate"]; clickGoal: Goal }) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -44,7 +50,7 @@ function BuyForm({ onSaveDate }: { onSaveDate: Props["onSaveDate"] }) {
       emailRef.current?.focus();
       return;
     }
-    reachGoal("report_offer_click");
+    reachGoal(clickGoal);
     setBusy(true);
     setError(null);
     try {
@@ -82,7 +88,7 @@ function BuyForm({ onSaveDate }: { onSaveDate: Props["onSaveDate"] }) {
 }
 
 // Цель «блок продажи показан» — один раз за показ страницы, когда блок хотя бы наполовину на экране
-function useOfferViewGoal() {
+function useOfferViewGoal(goal: Goal) {
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     const element = ref.current;
@@ -90,30 +96,37 @@ function useOfferViewGoal() {
     const observer = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return;
-        reachGoal("report_offer_view");
+        reachGoal(goal);
         observer.disconnect();
       },
       { threshold: 0.5 },
     );
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [goal]);
   return ref;
 }
 
 // Действие по состоянию: кнопка стоит сразу под вводным абзацем, а не в конце колонки, и всегда с ценой
-function OfferAction({ state, onSaveDate }: { state: Props["state"]; onSaveDate: Props["onSaveDate"] }) {
+function OfferAction({ state, onSaveDate, goals, compat }: { state: Props["state"]; onSaveDate: Props["onSaveDate"]; goals: Goals; compat?: CompatContext }) {
   if (state.kind === "guest") {
     return (
-      <a className="button button--lavender report-offer__cta" href={loginHref(MATRIX_PATH)} onClick={() => reachGoal("report_offer_click")}>
+      <a
+        className="button button--lavender report-offer__cta"
+        href={loginHref(MATRIX_PATH)}
+        onClick={() => {
+          compat?.onLoginClick();
+          reachGoal(goals.click);
+        }}
+      >
         Войти и купить разбор — {PRICE}
       </a>
     );
   }
   if (state.kind === "save_first") {
-    return <p className="muted">Разбор покупается для даты из портрета. Чтобы купить разбор этой даты, сначала сохраните её в портрет — блок ниже.</p>;
+    return <p className="muted">{compat?.saveFirstNote ?? "Разбор покупается для даты из портрета. Чтобы купить разбор этой даты, сначала сохраните её в портрет — блок ниже."}</p>;
   }
-  if (state.kind === "buy") return <BuyForm onSaveDate={onSaveDate} />;
+  if (state.kind === "buy") return <BuyForm onSaveDate={onSaveDate} clickGoal={goals.click} />;
   return (
     <Link className="button button--lavender report-offer__cta" href={reportPath(state.purchaseId)}>
       Открыть разбор
@@ -121,23 +134,26 @@ function OfferAction({ state, onSaveDate }: { state: Props["state"]; onSaveDate:
   );
 }
 
-export function ReportOffer({ state, matrix, onSaveDate }: Props) {
+export function ReportOffer({ state, matrix, onSaveDate, compat }: Props) {
   const center = arcanumByNumber(matrix.E);
   const love = arcanumByNumber(matrix.love);
-  const ref = useOfferViewGoal();
+  const goals = compat ? COMPAT_GOALS : MATRIX_GOALS;
+  const ref = useOfferViewGoal(goals.view);
   return (
     <section ref={ref} className="card card--accent report-offer" aria-labelledby="report-offer-title">
       <div className="stack report-offer__main">
-        <p className="eyebrow">Разбор всей матрицы</p>
+        <p className="eyebrow">{compat ? `Разбор вашей матрицы · по дате ${compat.dateLabel}` : "Разбор всей матрицы"}</p>
         <h2 id="report-offer-title" className="report-offer__title">
           Разбор всей матрицы — {PRICE}
         </h2>
         <p className="lead">
-          Бесплатный расчёт показал три ключевые точки. В полном разборе — семь глав о том, как они работают вместе: в отношениях, в деньгах и деле, в
-          опыте семьи и в предназначении, и какой сценарий может повторяться. В конце — эксперимент на 7 дней.
+          {compat
+            ? "Совместимость показала, как ваша дата встречается с датой партнёра. Полный разбор — про вас: семь глав о том, как ваши ключевые точки работают вместе: "
+            : "Бесплатный расчёт показал три ключевые точки. В полном разборе — семь глав о том, как они работают вместе: "}
+          в отношениях, в деньгах и деле, в опыте семьи и в предназначении, и какой сценарий может повторяться. В конце — эксперимент на 7 дней.
         </p>
         <div className="stack report-offer__action">
-          <OfferAction state={state} onSaveDate={onSaveDate} />
+          <OfferAction state={state} onSaveDate={onSaveDate} goals={goals} compat={compat} />
           <p className="muted">Готов за несколько минут, хранится в «Моём портрете».</p>
         </div>
         <ChapterList matrix={matrix} />
