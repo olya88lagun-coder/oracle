@@ -55,3 +55,10 @@ test("the matrix method has no skipped heading level, and the matrix, blog and c
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /^https?:\/\/.+\.webp$/);
   }
 });
+
+// Нужны PAID_REPORTS=on и PAID_LILA=on, как в .env.development.example
+test("the home page says what is free and what is paid, with the current prices", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByText("Бесплатно: расчёт трёх ключевых позиций матрицы, совместимость, карта дня и Лила без проводника.")).toBeVisible();
+  await expect(page.getByText("По желанию: полный разбор матрицы — 390 ₽, Лила с ИИ-проводником — 490 ₽.")).toBeVisible();
+});

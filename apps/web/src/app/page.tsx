@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT, MATRIX_REPORT_PRICE_KOPECKS } from "@oracle/core";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { BLOG_PATH, BLOG_POSTS, blogPath } from "@/lib/blog";
+import { formatRubles } from "@/lib/legal";
 import { FREE_MATRIX_CTA, FREE_RESULT_PROMISE, FREE_RESULT_TERMS, PRACTICES } from "@/lib/practices";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE, websiteJsonLd } from "@/lib/seo";
+import { salesEnabled } from "@/server/payments-deps";
 
 export const metadata: Metadata = publicMetadata({
   title: "Твой оракул — символические практики для самопознания",
@@ -18,6 +21,19 @@ const OPEN = PRACTICES.filter((practice) => practice.href);
 const SOON = PRACTICES.filter((practice) => !practice.href);
 const LATEST_POSTS = BLOG_POSTS.slice(0, 3);
 const formatPostDate = (iso: string): string => new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${iso}T00:00:00Z`));
+
+// Платные предложения в строке «что бесплатно, что платно» показываются только при включённой продаже: флаги читаются во время запроса, а не сборки
+export const dynamic = "force-dynamic";
+
+const FREE_LINE = "Бесплатно: расчёт трёх ключевых позиций матрицы, совместимость, карта дня и Лила без проводника.";
+
+function freePaidLine(): string {
+  const paid = [
+    salesEnabled() ? `полный разбор матрицы — ${formatRubles(MATRIX_REPORT_PRICE_KOPECKS)}` : null,
+    salesEnabled(LILA_SESSION_PRODUCT) ? `Лила с ИИ-проводником — ${formatRubles(LILA_SESSION_PRICE_KOPECKS)}` : null,
+  ].filter((item): item is string => item !== null);
+  return paid.length === 0 ? FREE_LINE : `${FREE_LINE} По желанию: ${paid.join(", ")}.`;
+}
 
 // Картинки заранее ужаты до нужного размера (webp) — оптимизатор Next не нужен, и в standalone-сборке не требуется sharp
 export default function HomePage() {
@@ -56,6 +72,7 @@ export default function HomePage() {
       <div className="page page--wide stack">
         <section className="stack" aria-labelledby="practices">
           <h2 id="practices">Практики</h2>
+          <p className="practices-note">{freePaidLine()}</p>
           <ul className="practice-grid">
             {OPEN.map((practice) => (
               <li key={practice.slug} className="practice-card">
