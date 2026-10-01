@@ -38,7 +38,7 @@ export function MoveHistory({ game }: { game: GameView }) {
                 {move.note && <p>Запись: {move.note}</p>}
                 {move.guideText && (
                   <details className="move-guide">
-                    <summary>Проводник</summary>
+                    <summary>Проводник · ИИ</summary>
                     <p>{move.guideText}</p>
                   </details>
                 )}

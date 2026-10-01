@@ -1538,6 +1538,9 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 }
 @media (min-width: 860px) { .taro-day .taro-picks { max-width: 460px; } }
 
+/* Главная: что бесплатно, что платно */
+.practices-note { max-width: 70ch; margin: 0; color: var(--ink-soft); font-size: 15px; }
+
 /* Таро: карта дня, страница карты, сетка колоды */
 .taro-day { display: grid; gap: 28px; }
 .taro-day-hero { position: relative; isolation: isolate; display: grid; gap: 28px; align-items: center; }

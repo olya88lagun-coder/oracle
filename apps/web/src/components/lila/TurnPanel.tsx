@@ -90,7 +90,7 @@ export function TurnPanel({ turn, moveNumber, note, images, editable, onSaveNote
       )}
       {guide && (guide.text || (guide.pending && !guide.waitedTooLong)) && (
         <div className="turn-guide" aria-live="polite">
-          <small>Проводник</small>
+          <small>Проводник · ИИ</small>
           {guide.text ? <p>{guide.text}</p> : <p role="status">Проводник пишет…</p>}
         </div>
       )}

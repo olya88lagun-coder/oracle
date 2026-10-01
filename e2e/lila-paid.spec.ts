@@ -28,6 +28,9 @@ test("a guest is offered to log in before buying the guide", async ({ page }) =>
   await page.goto("/lila/igra");
   await expect(page.getByRole("link", { name: "Войти и начать с проводником" })).toHaveAttribute("href", "/login?next=%2Flila%2Figra");
   await expect(page.getByRole("button", { name: "Играть без проводника" })).toBeVisible();
+  // ИИ назван прямо, а передача текстов сервису — по-прежнему отдельной фразой
+  await expect(page.getByText(/Абзацы проводника пишет ИИ\./)).toBeVisible();
+  await expect(page.getByText(/GigaChat, ПАО Сбербанк/)).toBeVisible();
 });
 
 test("a signed-in player buys the guide, plays ten moves and reads the conclusion", async ({ browser }) => {
