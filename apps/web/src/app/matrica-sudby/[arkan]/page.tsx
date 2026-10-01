@@ -1,12 +1,15 @@
-import { ARCANA, arcanumByNumber, SECTION_TITLES } from "@oracle/content";
+import { ARCANA, arcanumByNumber, SECTION_TITLES, type Arcanum } from "@oracle/content";
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArcanaIndex } from "@/components/ArcanaIndex";
 import { ArcanumSection } from "@/components/ArcanumSection";
 import { ArcanumSectionsExpander } from "@/components/ArcanumSectionsExpander";
 import { CalculatorLink } from "@/components/CalculatorLink";
+import { DetailPager } from "@/components/detail/DetailPager";
+import { DetailToc } from "@/components/detail/DetailToc";
+import { ExpandAll } from "@/components/detail/ExpandAll";
+import { ImageZoom } from "@/components/detail/ImageZoom";
 import { arcanumFromParam, arcanumImage, arcanumJsonLd, arcanumParam, arcanumPath, MATRIX_PATH, shortDescription } from "@/lib/arcana-paths";
 import { publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -32,113 +35,97 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 const neighbour = (number: number) => arcanumByNumber(((number - 1 + ARCANA.length) % ARCANA.length) + 1);
 
+type SectionKey = "essence" | "personality" | "center" | "task" | "love" | "money" | "resource" | "distortion" | "action" | "question";
+// Порядок разделов страницы: те же десять, что и прежде
+const SECTIONS: readonly SectionKey[] = ["essence", "personality", "center", "task", "love", "money", "resource", "distortion", "action", "question"];
+const sectionId = (key: SectionKey) => `razdel-${key}`;
+
+function SectionBody({ arcanum, sectionKey }: { arcanum: Arcanum; sectionKey: SectionKey }) {
+  if (sectionKey === "resource" || sectionKey === "distortion") {
+    return (
+      <ul>
+        {arcanum[sectionKey].map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    );
+  }
+  if (sectionKey === "action") return <p>{arcanum.action}</p>;
+  if (sectionKey === "question") return <p className="detail-question">{arcanum.question}</p>;
+  return (
+    <>
+      {arcanum[sectionKey].map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+    </>
+  );
+}
+
 export default async function ArcanumPage({ params }: Params) {
   const arcanum = arcanumFromParam((await params).arkan);
   if (!arcanum) notFound();
   const previous = neighbour(arcanum.number - 1);
   const next = neighbour(arcanum.number + 1);
   const jsonLd = JSON.stringify(arcanumJsonLd(arcanum, SITE_URL)).replace(/</g, "\\u003c");
+  const toc = SECTIONS.map((key) => ({ id: sectionId(key), title: SECTION_TITLES[key] }));
 
   return (
-    <main className="page page--wide stack arcanum-page">
+    <main className="detail-page arcanum-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
-      <nav aria-label="Навигация" className="muted">
+      <nav aria-label="Навигация" className="detail-crumbs">
         <Link className="touch-link" href={MATRIX_PATH}>
           Матрица судьбы
-        </Link> › Аркан {arcanum.number}
+        </Link>{" "}
+        › Аркан {arcanum.number}
       </nav>
 
-      <header className="arcanum-hero">
-        <figure className="arcanum-hero__art">
-          <Image src={arcanumImage(arcanum)} alt={`Аркан ${arcanum.number} «${arcanum.name}»`} fill priority unoptimized sizes="(min-width: 900px) 480px, 100vw" />
-          <span className="arcanum-hero__number" aria-hidden="true">
-            {arcanum.number}
-          </span>
-        </figure>
-        <div className="stack arcanum-hero__text">
-          <p className="eyebrow eyebrow--line">Аркан {arcanum.number}</p>
-          <h1 className="display">{arcanum.name}</h1>
-          <ul className="row arcanum-hero__keywords" aria-label="Ключевые слова">
-            {arcanum.keywords.map((keyword) => (
-              <li key={keyword} className="tag">
-                {keyword}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </header>
-
-      <div className="arcanum-grid">
-        <ArcanumSection title={SECTION_TITLES.essence} className="arcanum-section--plain" defaultOpen>
-          {arcanum.essence.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-        </ArcanumSection>
-        <aside className="card card--accent stack">
-          <h2>Рассчитать свою матрицу</h2>
-          <p className="muted">Узнайте, где этот аркан стоит в вашей дате рождения.</p>
-          <p>
-            <CalculatorLink>Рассчитать свою матрицу</CalculatorLink>
-          </p>
+      <div className="detail-grid">
+        <aside className="detail-side">
+          <figure className="detail-media">
+            <ImageZoom src={arcanumImage(arcanum, "card")} fullSrc={arcanumImage(arcanum)} alt={`Аркан ${arcanum.number} «${arcanum.name}»`} width={440} height={440} priority />
+            <figcaption>
+              Аркан {arcanum.number} · {arcanum.name}
+            </figcaption>
+          </figure>
+          <DetailToc items={toc} />
         </aside>
-      </div>
 
-      <section className="arcanum-positions" aria-label="Аркан в позициях матрицы">
-        {(["personality", "center", "task"] as const).map((key) => (
-          <ArcanumSection key={key} title={SECTION_TITLES[key]} className="card">
-            {arcanum[key].map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </ArcanumSection>
-        ))}
-      </section>
-
-      {/* Две колонки, как у ресурса и перекоса: у позиций выше сетка на три карточки */}
-      <section className="arcanum-poles arcanum-life" aria-label="Аркан в отношениях и в деньгах">
-        {(["love", "money"] as const).map((key) => (
-          <ArcanumSection key={key} title={SECTION_TITLES[key]} className="card">
-            {arcanum[key].map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </ArcanumSection>
-        ))}
-      </section>
-
-      <section className="arcanum-poles" aria-label="Ресурс и перекос">
-        {(["resource", "distortion"] as const).map((key) => (
-          <ArcanumSection key={key} title={SECTION_TITLES[key]} className="card">
-            <ul>
-              {arcanum[key].map((item) => (
-                <li key={item}>{item}</li>
+        <div className="detail-main">
+          <header className="detail-head">
+            <h1 className={`display detail-title${arcanum.name.length > 14 ? " detail-title--long" : ""}`}>{arcanum.name}</h1>
+            <ul className="detail-tags" aria-label="Ключевые слова">
+              {arcanum.keywords.map((keyword) => (
+                <li key={keyword}>{keyword}</li>
               ))}
             </ul>
-          </ArcanumSection>
-        ))}
-      </section>
+            <div className="detail-actions">
+              <CalculatorLink className="button button--lavender">Рассчитать свою матрицу</CalculatorLink>
+              <a className="matrix-link" href="#arcana-index">
+                Все арканы
+              </a>
+            </div>
+          </header>
 
-      <section className="arcanum-poles" aria-label="Практика">
-        <ArcanumSection title={SECTION_TITLES.action} className="card">
-          <p>{arcanum.action}</p>
-        </ArcanumSection>
-        <ArcanumSection title={SECTION_TITLES.question} className="card">
-          <p className="arcanum-question">{arcanum.question}</p>
-        </ArcanumSection>
-      </section>
+          <ExpandAll selector="details.arcanum-section" />
+          <div className="detail-sections">
+            {SECTIONS.map((key) => (
+              <ArcanumSection key={key} id={sectionId(key)} title={SECTION_TITLES[key]} className="detail-section" defaultOpen={key === "essence"}>
+                <SectionBody arcanum={arcanum} sectionKey={key} />
+              </ArcanumSection>
+            ))}
+          </div>
+        </div>
+      </div>
 
-      <p>
-        <CalculatorLink>Рассчитать свою матрицу</CalculatorLink>
-      </p>
+      <DetailPager
+        label="Соседние арканы"
+        previous={{ href: arcanumPath(previous), label: `${previous.number} · ${previous.name}`, image: arcanumImage(previous, "thumb"), imageSize: 64 }}
+        next={{ href: arcanumPath(next), label: `${next.number} · ${next.name}`, image: arcanumImage(next, "thumb"), imageSize: 64 }}
+      />
 
-      <nav className="row arcanum-neighbours" aria-label="Соседние арканы">
-        <Link className="button button--ghost" href={arcanumPath(previous)}>
-          ← {previous.number} · {previous.name}
-        </Link>
-        <Link className="button button--ghost" href={arcanumPath(next)}>
-          {next.number} · {next.name} →
-        </Link>
-      </nav>
-
-      <ArcanaIndex current={arcanum.number} />
+      <div id="arcana-index" className="detail-index">
+        <ArcanaIndex current={arcanum.number} />
+      </div>
       <ArcanumSectionsExpander />
     </main>
   );
