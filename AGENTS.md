@@ -11,7 +11,7 @@
 | Что | Файл |
 |---|---|
 | Цвета, отступы, типографика | `apps/web/src/app/globals.css` — цвета заданы переменными в `:root`, новые цвета тоже добавлять переменными |
-| Шрифт | `apps/web/src/app/layout.tsx` (`next/font/google` — шрифт скачивается при сборке и отдаётся с нашего домена) |
+| Шрифт | `apps/web/src/app/layout.tsx` (`next/font/local`: файлы лежат в `apps/web/src/app/fonts`, сборка не ходит во внешнюю сеть; подробности — `docs/fonts.md`) |
 | Главная | `apps/web/src/app/page.tsx` |
 | Личный кабинет | `apps/web/src/app/portret/` (`page.tsx` — заголовок, дата, список практик, партии и разборы; фон — исходный `/portrait.webp`, декоративный; форма даты рождения, удаление данных) |
 | Вход | `apps/web/src/app/login/` |
