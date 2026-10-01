@@ -66,6 +66,9 @@ export function MatrixResult({ matrix, dateLabel, headingRef, actions, offer }: 
         </div>
       </div>
 
+      {/* Главный коммерческий блок — сразу после трёх бесплатных ключевых карточек, пока интерес самый горячий */}
+      {offer}
+
       <div className="matrix-today">
         <div className="card stack">
           <p className="eyebrow">{SECTION_TITLES.action}</p>
@@ -98,8 +101,6 @@ export function MatrixResult({ matrix, dateLabel, headingRef, actions, offer }: 
       </section>
 
       {actions}
-
-      {offer}
 
       <aside className="card matrix-next">
         <span className="tag">Скоро</span>

@@ -33,7 +33,7 @@ export function SaveBlock({ state, profileDate, onSave }: Props) {
       {state === "guest" && (
         <p>
           <a
-            className="button button--lavender"
+            className="button button--ghost"
             href={loginHref(MATRIX_PATH)}
             onClick={() => {
               markSaveIntent(sessionStore());
@@ -48,7 +48,7 @@ export function SaveBlock({ state, profileDate, onSave }: Props) {
         <p>
           <button
             type="button"
-            className="button button--lavender"
+            className="button button--ghost"
             onClick={() => {
               reachGoal("matrix_save_click");
               onSave();
@@ -78,7 +78,7 @@ export function SaveBlock({ state, profileDate, onSave }: Props) {
             Не получилось сохранить. Проверьте интернет и попробуйте ещё раз.
           </p>
           <p>
-            <button type="button" className="button button--lavender" onClick={onSave}>
+            <button type="button" className="button button--ghost" onClick={onSave}>
               Повторить
             </button>
           </p>

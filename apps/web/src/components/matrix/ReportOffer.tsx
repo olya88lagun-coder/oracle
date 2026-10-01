@@ -101,21 +101,45 @@ function useOfferViewGoal() {
   return ref;
 }
 
+// Действие по состоянию: кнопка стоит сразу под вводным абзацем, а не в конце колонки, и всегда с ценой
+function OfferAction({ state, onSaveDate }: { state: Props["state"]; onSaveDate: Props["onSaveDate"] }) {
+  if (state.kind === "guest") {
+    return (
+      <a className="button button--lavender report-offer__cta" href={loginHref(MATRIX_PATH)} onClick={() => reachGoal("report_offer_click")}>
+        Войти и купить разбор — {PRICE}
+      </a>
+    );
+  }
+  if (state.kind === "save_first") {
+    return <p className="muted">Разбор покупается для даты из портрета. Чтобы купить разбор этой даты, сначала сохраните её в портрет — блок ниже.</p>;
+  }
+  if (state.kind === "buy") return <BuyForm onSaveDate={onSaveDate} />;
+  return (
+    <Link className="button button--lavender report-offer__cta" href={reportPath(state.purchaseId)}>
+      Открыть разбор
+    </Link>
+  );
+}
+
 export function ReportOffer({ state, matrix, onSaveDate }: Props) {
   const center = arcanumByNumber(matrix.E);
   const love = arcanumByNumber(matrix.love);
   const ref = useOfferViewGoal();
   return (
-    <section ref={ref} className="card report-offer" aria-labelledby="report-offer-title">
+    <section ref={ref} className="card card--accent report-offer" aria-labelledby="report-offer-title">
       <div className="stack report-offer__main">
         <p className="eyebrow">Разбор всей матрицы</p>
         <h2 id="report-offer-title" className="report-offer__title">
           Разбор всей матрицы — {PRICE}
         </h2>
         <p className="lead">
-          Посмотрите, как ваши ключевые позиции работают вместе: в отношениях, в деньгах и деле, в опыте семьи и в предназначении, — и какой сценарий
-          может повторяться. В конце — эксперимент на 7 дней.
+          Бесплатный расчёт показал три ключевые точки. В полном разборе — семь глав о том, как они работают вместе: в отношениях, в деньгах и деле, в
+          опыте семьи и в предназначении, и какой сценарий может повторяться. В конце — эксперимент на 7 дней.
         </p>
+        <div className="stack report-offer__action">
+          <OfferAction state={state} onSaveDate={onSaveDate} />
+          <p className="muted">Готов за несколько минут, хранится в «Моём портрете».</p>
+        </div>
         <ChapterList matrix={matrix} />
       </div>
       <div className="stack report-offer__side">
@@ -127,25 +151,6 @@ export function ReportOffer({ state, matrix, onSaveDate }: Props) {
           </p>
           <p className="muted">Продолжение и то, как эта точка связана с сердцем матрицы, — в полном разборе.</p>
         </div>
-        <p className="muted">Готов за несколько минут, хранится в «Моём портрете».</p>
-        {state.kind === "guest" && (
-          <p>
-            <a className="button button--lavender" href={loginHref(MATRIX_PATH)} onClick={() => reachGoal("report_offer_click")}>
-              Войти и купить разбор
-            </a>
-          </p>
-        )}
-        {state.kind === "save_first" && (
-          <p className="muted">Разбор покупается для даты из портрета. Чтобы купить разбор этой даты, сначала сохраните её в портрет — блок выше.</p>
-        )}
-        {state.kind === "buy" && <BuyForm onSaveDate={onSaveDate} />}
-        {state.kind === "open" && (
-          <p>
-            <Link className="button button--lavender" href={reportPath(state.purchaseId)}>
-              Открыть разбор
-            </Link>
-          </p>
-        )}
       </div>
     </section>
   );
