@@ -49,12 +49,14 @@ const plural = (n: number, one: string, few: string, many: string) => {
   return mod10 === 1 && mod100 !== 11 ? one : mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20) ? few : many;
 };
 
+export const movesLabel = (n: number): string => `${n} ${plural(n, "ход", "хода", "ходов")}`;
+
 // «14 ходов · 3 змеи · 1 стрела · открыто клеток 11» — строка под заголовком истории партии
 export function describeGameFacts(view: GameView): string {
   const snakes = view.moves.filter((move) => move.transition === "snake").length;
   const arrows = view.moves.filter((move) => move.transition === "arrow").length;
   return [
-    `${view.movesCount} ${plural(view.movesCount, "ход", "хода", "ходов")}`,
+    movesLabel(view.movesCount),
     `${snakes} ${plural(snakes, "змея", "змеи", "змей")}`,
     `${arrows} ${plural(arrows, "стрела", "стрелы", "стрел")}`,
     `открыто клеток ${openedCells(view)}`,

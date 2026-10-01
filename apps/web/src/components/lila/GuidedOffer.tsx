@@ -3,6 +3,7 @@
 import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT } from "@oracle/core";
 import Link from "next/link";
 import { useRef, useState, type FormEvent } from "react";
+import { Icon } from "@/components/Icon";
 import { reachGoal } from "@/lib/analytics";
 import { LILA_GAME_PATH } from "@/lib/lila-paths";
 import { loginHref } from "@/lib/next-path";
@@ -50,18 +51,16 @@ export function GuidedOffer({ intention, signedIn }: Props) {
   }
 
   return (
-    <section className="card card--accent stack lila-offer" aria-labelledby="lila-offer-title">
-      <h2 id="lila-offer-title">С проводником — {PRICE}</h2>
+    <section className="guided-offer" aria-labelledby="lila-offer-title">
+      <h3 id="lila-offer-title">С проводником — {PRICE}</h3>
       <p>На каждом ходу — короткий абзац проводника, который связывает клетку с вашим намерением, а в конце партии — итоговый вывод.</p>
-      <blockquote className="lila-offer__sample">«На клетке «Алчность» стоит заметить, как сравнение с другими может связываться с вашим вопросом о работе…» — пример абзаца.</blockquote>
-      <p className="muted">Намерение и записи, которые вы оставите в этой партии, передаются сервису подготовки текста (GigaChat, ПАО Сбербанк).</p>
+      <blockquote className="guided-offer__sample">«На клетке «Алчность» стоит заметить, как сравнение с другими может связываться с вашим вопросом о работе…» — пример абзаца.</blockquote>
+      <p className="privacy">Намерение и записи, которые вы оставите в этой партии, передаются сервису подготовки текста (GigaChat, ПАО Сбербанк).</p>
       {signedIn ? (
-        <form className="stack" onSubmit={buy} noValidate>
-          <div className="field">
-            <label htmlFor="lila-receipt-email">E-mail для чека</label>
-            <input ref={emailRef} id="lila-receipt-email" className="input" type="email" autoComplete="email" inputMode="email" placeholder="name@example.ru" />
-          </div>
-          <button type="submit" className="button button--lavender" disabled={busy || !ready}>
+        <form className="guided-offer__form" onSubmit={buy} noValidate>
+          <label htmlFor="lila-receipt-email">E-mail для чека</label>
+          <input ref={emailRef} id="lila-receipt-email" type="email" autoComplete="email" inputMode="email" placeholder="name@example.ru" />
+          <button type="submit" className="button button--ghost" disabled={busy || !ready}>
             Начать с проводником — {PRICE}
           </button>
           {error && (
@@ -71,8 +70,9 @@ export function GuidedOffer({ intention, signedIn }: Props) {
           )}
         </form>
       ) : (
-        <Link className="button button--ghost" href={loginHref(LILA_GAME_PATH)}>
+        <Link className="text-link" href={loginHref(LILA_GAME_PATH)}>
           Войти и начать с проводником
+          <Icon name="arrow-up-right" />
         </Link>
       )}
     </section>

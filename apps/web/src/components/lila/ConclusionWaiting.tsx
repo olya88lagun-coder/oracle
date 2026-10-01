@@ -25,9 +25,9 @@ export function ConclusionWaiting({ gameId }: { gameId: string }) {
     return () => clearInterval(timer);
   }, [gameId, router]);
   return (
-    <section className="card stack lila-conclusion-waiting">
+    <section className="conclusion-chapter lila-conclusion-waiting">
       <h2>Итог партии</h2>
-      <p role="status" className="lead">
+      <p role="status">
         Готовим итог. Обычно до нескольких минут — можно уйти, итог будет в «Моём портрете».
       </p>
       {slow && <p className="muted">Итог задерживается. Загляните сюда позже: как только он будет готов, он появится на этой странице.</p>}

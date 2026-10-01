@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { Icon } from "@/components/Icon";
 import { reachGoal } from "@/lib/analytics";
 
 const ERRORS: Record<string, string> = {
@@ -51,27 +52,27 @@ export function BirthDateForm({ initial }: { initial: string | null }) {
   }
 
   return (
-    <form className="stack" onSubmit={save}>
-      <div className="field">
-        <label htmlFor="birth-date">Дата рождения</label>
+    <form className="birth-form" onSubmit={save} noValidate>
+      <label htmlFor="birth-date">Ваша дата рождения</label>
+      <div className="birth-controls">
         <input id="birth-date" className="input" type="date" required min="1900-01-01" value={value} onChange={(event) => change(event.target.value)} />
+        <div className="birth-result">
+          {!isSaved && (
+            <button type="submit" className="button button--lavender" disabled={!value || sending}>
+              <Icon name="save" />
+              {sending ? "Сохраняем…" : "Сохранить"}
+            </button>
+          )}
+          <p className="saved-note" role="status">
+            {isSaved && (
+              <>
+                <Icon name="check" />
+                Сохранено.
+              </>
+            )}
+          </p>
+        </div>
       </div>
-      {!isSaved && (
-        <button type="submit" className="button button--lavender" disabled={!value || sending}>
-          {sending ? "Сохраняем…" : "Сохранить"}
-        </button>
-      )}
-      <p className="saved-note" role="status">
-        {isSaved && (
-          <>
-            <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="9" />
-              <path d="m8 12.5 2.7 2.7L16 9.8" />
-            </svg>
-            Сохранено.
-          </>
-        )}
-      </p>
       {error && (
         <p className="error" role="alert">
           {error}

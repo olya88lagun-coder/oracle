@@ -17,7 +17,7 @@ async function ownRoll(page: Page, value: number) {
 
 async function buy(page: Page, outcome: "Оплатить" | "Отменить") {
   await page.goto("/lila/igra");
-  await page.getByRole("textbox", { name: "Или напишите своё намерение" }).fill(INTENTION);
+  await page.getByRole("textbox", { name: "Ваше намерение" }).fill(INTENTION);
   await page.getByRole("textbox", { name: "E-mail для чека" }).fill("test@example.ru");
   await page.getByRole("button", { name: "Начать с проводником — 490 ₽" }).click();
   await expect(page).toHaveURL(/\/dev\/pay\//);
@@ -36,13 +36,13 @@ test("a signed-in player buys the guide, plays ten moves and reads the conclusio
   const { context, page } = await signIn(browser, uniqueName("Проводник"));
   await buy(page, "Оплатить");
   await expect(page).toHaveURL(/\/lila\/igra$/, { timeout: 30_000 });
-  await expect(page.getByText(`Намерение: ${INTENTION}`)).toBeVisible();
+  await expect(page.locator(".game-intention")).toHaveText(INTENTION);
 
   await ownRoll(page, 6);
   // Ключа GigaChat нет: воркер отмечает абзац как «none», ожидание исчезает без ошибки
   await expect(page.getByText("Проводник пишет…")).toBeHidden({ timeout: 30_000 });
   for (let i = 0; i < 9; i += 1) await ownRoll(page, 1);
-  await expect(page.getByText(/Ходов 10/)).toBeVisible();
+  await expect(page.getByText("10 ходов", { exact: true })).toBeVisible();
 
   await page.getByRole("button", { name: "Завершить партию" }).first().click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Завершить партию" }).click();
@@ -80,9 +80,9 @@ test("a canceled payment offers to try again and keeps the intention", async ({ 
 test("a player with an active game cannot buy another one", async ({ browser }) => {
   const { context, page } = await signIn(browser, uniqueName("Занят"));
   await page.goto("/lila/igra");
-  await page.getByRole("textbox", { name: "Или напишите своё намерение" }).fill(INTENTION);
+  await page.getByRole("textbox", { name: "Ваше намерение" }).fill(INTENTION);
   await page.getByRole("button", { name: "Играть без проводника" }).click();
-  await expect(page.getByText(`Намерение: ${INTENTION}`)).toBeVisible();
+  await expect(page.locator(".game-intention")).toHaveText(INTENTION);
   const response = await page.request.post("/api/purchases", {
     data: { product: "lila_session", email: "a@b.ru", intention: INTENTION },
     headers: { origin: new URL(page.url()).origin },
@@ -94,13 +94,13 @@ test("a player with an active game cannot buy another one", async ({ browser }) 
 test("a finished free game points to the guide for the conclusion and PDF", async ({ browser }) => {
   const { context, page } = await signIn(browser, uniqueName("Свободная"));
   await page.goto("/lila/igra");
-  await page.getByRole("textbox", { name: "Или напишите своё намерение" }).fill(INTENTION);
+  await page.getByRole("textbox", { name: "Ваше намерение" }).fill(INTENTION);
   await page.getByRole("button", { name: "Играть без проводника" }).click();
 
   // Завершить партию можно после десяти ходов
   await ownRoll(page, 6);
   for (let i = 0; i < 9; i += 1) await ownRoll(page, 1);
-  await expect(page.getByText(/Ходов 10/)).toBeVisible();
+  await expect(page.getByText("10 ходов", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Завершить партию" }).first().click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Завершить партию" }).click();
   await expect(page.getByText("Итог партии и PDF — в игре с проводником.")).toBeVisible();

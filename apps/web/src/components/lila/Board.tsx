@@ -8,6 +8,8 @@ type BoardProps = {
   current: number;
   trail?: number[];
   variant?: LilaBoardVariant;
+  // Подписи «стрела / змея / текущая клетка» под полем; на странице партии их заменяет строка «Цель игры» с увеличением
+  legend?: boolean;
 };
 
 // Поле нарисовано на холсте 1920×1720: клетки по 200 px и поле 60 px вокруг под рамку (docs/design/codex-brief-lila-board.md).
@@ -24,8 +26,10 @@ function centerPoint(number: LilaCellNumber): Point {
   return { x: CANVAS.margin + col * CANVAS.cell + CANVAS.cell / 2, y: CANVAS.margin + row * CANVAS.cell + CANVAS.cell / 2 };
 }
 
-export function Board({ current, trail = [], variant = "full" }: BoardProps) {
-  const safeCurrent = isLilaCellNumber(current) ? current : 1;
+export function Board({ current, trail = [], variant = "full", legend = true }: BoardProps) {
+  // До первой шестёрки фишки на поле нет: позиция 0 не должна рисовать её на клетке 1
+  const onBoard = isLilaCellNumber(current);
+  const safeCurrent = onBoard ? current : 1;
   const safeTrail = trail.filter(isLilaCellNumber);
   const currentPoint = centerPoint(safeCurrent);
   const classes = ["lila-board", `lila-board--${variant}`].join(" ");
@@ -56,7 +60,7 @@ export function Board({ current, trail = [], variant = "full" }: BoardProps) {
                 key={cell.number}
                 className={[
                   "lila-board__cell",
-                  cell.number === safeCurrent ? "lila-board__cell--current" : "",
+                  onBoard && cell.number === safeCurrent ? "lila-board__cell--current" : "",
                   cell.number === GOAL_CELL ? "lila-board__cell--goal" : "",
                   safeTrail.includes(cell.number) ? "lila-board__cell--trail" : "",
                 ]
@@ -73,10 +77,10 @@ export function Board({ current, trail = [], variant = "full" }: BoardProps) {
           })}
         </div>
 
-        <span className="lila-board__token" aria-hidden="true" />
+        {onBoard ? <span className="lila-board__token" aria-hidden="true" /> : null}
       </div>
 
-      {variant !== "locator" ? (
+      {variant !== "locator" && legend ? (
         <figcaption className="lila-board__legend">
           <span>
             <i className="lila-board__legend-line lila-board__legend-line--arrow" aria-hidden="true" />
@@ -99,7 +103,7 @@ export function Board({ current, trail = [], variant = "full" }: BoardProps) {
 
       <ol className="visually-hidden">
         {CELLS.map((cell) => (
-          <li key={`sr-${cell.number}`}>{cellScreenReaderText(cell.number, safeCurrent)}</li>
+          <li key={`sr-${cell.number}`}>{cellScreenReaderText(cell.number, onBoard ? safeCurrent : 0)}</li>
         ))}
       </ol>
     </figure>
@@ -124,7 +128,7 @@ function cellLabel(number: LilaCellNumber) {
   return `${number}, ${cell.name}${relationText}${goalText}`;
 }
 
-function cellScreenReaderText(number: LilaCellNumber, current: LilaCellNumber) {
+function cellScreenReaderText(number: LilaCellNumber, current: number) {
   const currentText = number === current ? " — вы здесь" : "";
   return `${cellLabel(number)}${currentText}`;
 }
