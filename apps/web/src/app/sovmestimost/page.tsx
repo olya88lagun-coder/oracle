@@ -10,6 +10,7 @@ import { listPaidPurchases } from "@oracle/db";
 import { getDb } from "@/server/db";
 import { salesEnabled } from "@/server/payments-deps";
 import { loadPortrait } from "@/server/profile-service";
+import { isOwnerUser } from "@/server/owner";
 import { currentUser } from "@/server/viewer";
 
 export const metadata: Metadata = publicMetadata({
@@ -51,7 +52,7 @@ export default async function CompatibilityPage() {
           </h1>
           <p className="lead">Две даты — один общий аркан: как ваши матрицы судьбы разговаривают друг с другом. Без предсказаний — как повод для разговора.</p>
         </section>
-        <CompatCalculator profileDate={profileDate} signedIn={Boolean(user)} paidReports={salesEnabled()} paid={paid} />
+        <CompatCalculator profileDate={profileDate} signedIn={Boolean(user)} paidReports={salesEnabled()} paid={paid} ownerFree={user ? await isOwnerUser(user.id) : false} />
         <CompatPreview />
         <CompatGuide />
         <CompatCta />

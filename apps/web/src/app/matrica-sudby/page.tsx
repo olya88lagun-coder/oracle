@@ -9,6 +9,7 @@ import { listPaidPurchases } from "@oracle/db";
 import { getDb } from "@/server/db";
 import { salesEnabled } from "@/server/payments-deps";
 import { loadPortrait } from "@/server/profile-service";
+import { isOwnerUser } from "@/server/owner";
 import { currentUser } from "@/server/viewer";
 
 export const metadata: Metadata = publicMetadata({
@@ -34,6 +35,7 @@ export default async function MatrixPage() {
         profileDate={profileDate}
         paidReports={salesEnabled()}
         paid={paid}
+        ownerFree={user ? await isOwnerUser(user.id) : false}
         intro={
           <div className="stack matrix-intro">
             <h1 id="matrix-title" className="display">

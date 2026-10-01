@@ -5,6 +5,7 @@ import { createFakeGateway, type FakeGateway } from "./payments/fake";
 import type { PaymentGateway } from "./payments/gateway";
 import { createYooKassaGateway } from "./payments/yookassa";
 import type { PaymentsDeps } from "./payments-service";
+import { isOwnerUser } from "./owner";
 import { enqueueGenerate } from "./queue";
 
 export function createGateway(config: PaymentsConfig, p: { appUrl: string; fetchFn: typeof fetch }): PaymentGateway | null {
@@ -18,7 +19,7 @@ export function paymentsDeps(): PaymentsDeps | null {
   const env = getEnv();
   const gateway = createGateway(env.payments, { appUrl: env.APP_URL, fetchFn: (input, init) => fetch(input, init) });
   if (!gateway) return null;
-  return { db: getDb(), gateway, appUrl: env.APP_URL, now: () => new Date(), enqueueGenerate };
+  return { db: getDb(), gateway, appUrl: env.APP_URL, now: () => new Date(), enqueueGenerate, isOwner: isOwnerUser };
 }
 
 // Страница разбора работает и при выключенной оплате: купленные разборы остаются доступны, неоплаченные просто ждут

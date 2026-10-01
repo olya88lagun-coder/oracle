@@ -9,6 +9,7 @@ import { availableCellImages } from "@/server/lila-images";
 import { lilaDeps } from "@/server/lila-route";
 import { activeGame } from "@/server/lila-service";
 import { salesEnabled } from "@/server/payments-deps";
+import { isOwnerUser } from "@/server/owner";
 import { currentUser } from "@/server/viewer";
 
 export const metadata: Metadata = { title: "Играть в Лилу", robots: { index: false, follow: false } };
@@ -25,7 +26,7 @@ export default async function LilaGamePage() {
   return (
     <main className="workspace lila-page">
       <div className="matrix-wrap">
-        <GameShell initialGame={game} signedIn={user !== null} images={availableCellImages()} guidedEnabled={salesEnabled(LILA_SESSION_PRODUCT)} />
+        <GameShell initialGame={game} signedIn={user !== null} images={availableCellImages()} guidedEnabled={salesEnabled(LILA_SESSION_PRODUCT)} ownerFree={user ? await isOwnerUser(user.id) : false} />
       </div>
     </main>
   );

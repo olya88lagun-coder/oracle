@@ -1,5 +1,5 @@
 import type { GenerateReportJob } from "@oracle/core";
-import { createLilaGame, createTestDb, finishLilaGame, getActiveLilaGame, getLilaGameByPurchase, getPurchase, saveBirthDate, saveReport, seedUser, type Database } from "@oracle/db/testing";
+import { createLilaGame, createTestDb, finishLilaGame, getActiveLilaGame, getLilaGameByPurchase, getPurchase, listReceiptsToSend, saveBirthDate, saveReport, seedUser, type Database } from "@oracle/db/testing";
 import { afterEach, beforeEach, describe, expect, test, vi, type Mock } from "vitest";
 import { createFakeGateway, type FakeGateway } from "./payments/fake";
 import type { GatewayPayment } from "./payments/gateway";
@@ -309,5 +309,57 @@ describe("Lila session purchase", () => {
     expect(await getLilaPurchaseView(deps, { purchaseId, userId: stranger })).toBeNull();
     expect(purchaseReturnPath({ id: purchaseId, product: "lila_session" })).toBe(`/lila/igra/oplata/${purchaseId}`);
     expect(purchaseReturnPath({ id: purchaseId, product: "matrix_report" })).toBe(`/portret/razbor/${purchaseId}`);
+  });
+});
+
+describe("the owner gets paid services for free", () => {
+  beforeEach(() => {
+    deps = { ...deps, isOwner: async (id) => id === userId };
+  });
+
+  test("a report is granted at once: no payment, no e-mail, generation is queued", async () => {
+    const outcome = await startPurchase(deps, { userId, email: undefined });
+
+    if (!outcome.ok) throw new Error(outcome.error);
+    const purchaseId = outcome.url.split("/").pop()!;
+    expect(outcome.url).toBe(purchaseReturnPath({ id: purchaseId, product: "matrix_report" }));
+    expect(store.size).toBe(0);
+    expect(await getPurchase(db, purchaseId)).toMatchObject({ status: "succeeded", amountKopecks: 0, receiptEmail: null, birthDate: DATE });
+    expect(enqueue).toHaveBeenCalledWith({ purchaseId });
+    // Чек за 0 ₽ не нужен: покупки владелицы не попадают в список чеков к отправке
+    expect(await listReceiptsToSend(db)).toEqual([]);
+  });
+
+  test("even if an e-mail comes along the owner is not charged", async () => {
+    const outcome = await startPurchase(deps, { userId, email: "a@b.ru" });
+
+    expect(outcome.ok).toBe(true);
+    expect(store.size).toBe(0);
+  });
+
+  test("a second grant for the same date is refused as already paid", async () => {
+    await startPurchase(deps, { userId, email: undefined });
+
+    expect(await startPurchase(deps, { userId, email: undefined })).toMatchObject({ ok: false, error: "already_paid" });
+  });
+
+  test("a guided Lila game starts without payment and an e-mail", async () => {
+    const outcome = await startLilaPurchase(deps, { userId, email: undefined, intention: "Почему мне трудно принять решение о работе?" });
+
+    if (!outcome.ok) throw new Error(outcome.error);
+    const purchaseId = outcome.url.split("/").pop()!;
+    expect(outcome.url).toBe(purchaseReturnPath({ id: purchaseId, product: "lila_session" }));
+    expect(store.size).toBe(0);
+    expect(await getPurchase(db, purchaseId)).toMatchObject({ status: "succeeded", amountKopecks: 0, receiptEmail: null });
+    expect(await getActiveLilaGame(db, userId)).toMatchObject({ mode: "guided", status: "active" });
+  });
+
+  test("another user still has to pay and give an e-mail", async () => {
+    const { userId: stranger } = await seedUser(db, { externalId: "vk-stranger" });
+    await saveBirthDate(db, stranger, DATE, now);
+
+    expect(await startPurchase(deps, { userId: stranger, email: undefined })).toEqual({ ok: false, error: "invalid_email" });
+    const outcome = await startPurchase(deps, { userId: stranger, email: "x@y.ru" });
+    expect(outcome.ok && outcome.url.includes("/dev/pay/")).toBe(true);
   });
 });

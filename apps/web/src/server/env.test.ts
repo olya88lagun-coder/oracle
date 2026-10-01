@@ -10,7 +10,7 @@ const VALID = {
 
 describe("readEnv", () => {
   test("accepts a complete environment, drops unrelated variables and keeps sales off", () => {
-    expect(readEnv({ ...VALID, PATH: "/usr/bin" })).toEqual({ ...VALID, payments: null, paidReports: false, paidLila: false });
+    expect(readEnv({ ...VALID, PATH: "/usr/bin" })).toEqual({ ...VALID, payments: null, paidReports: false, paidLila: false, ownerVkId: null });
   });
 
   test("names the invalid variables without printing their values", () => {
@@ -44,5 +44,10 @@ describe("readEnv", () => {
     expect(readEnv({ ...VALID, PAYMENTS: "fake", DEV_LOGIN: "1" }).payments).toEqual({ kind: "fake" });
     expect(() => readEnv({ ...VALID, PAYMENTS: "fake" })).toThrow(/PAYMENTS/);
     expect(() => readEnv({ ...VALID, PAYMENTS: "fake", DEV_LOGIN: "1", NODE_ENV: "production" })).toThrow(/PAYMENTS/);
+  });
+
+  test("reads the owner VK ID and rejects a malformed one by name", () => {
+    expect(readEnv({ ...VALID, OWNER_VK_ID: "12345678" }).ownerVkId).toBe("12345678");
+    expect(() => readEnv({ ...VALID, OWNER_VK_ID: "vk id" })).toThrow(/OWNER_VK_ID/);
   });
 });

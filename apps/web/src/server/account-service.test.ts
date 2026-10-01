@@ -5,7 +5,7 @@ import { deleteAccount } from "./account-service";
 import type { AppEnv } from "./env";
 import { completeLogin, giveConsent } from "./login-service";
 
-const ENV: AppEnv = { APP_URL: "https://oracle.test", DATABASE_URL: "postgres://unused", SESSION_SECRET: "s".repeat(40), VK_CLIENT_ID: "555", payments: null, paidReports: false, paidLila: false };
+const ENV: AppEnv = { APP_URL: "https://oracle.test", DATABASE_URL: "postgres://unused", SESSION_SECRET: "s".repeat(40), VK_CLIENT_ID: "555", payments: null, paidReports: false, paidLila: false, ownerVkId: null };
 
 let db: Database;
 

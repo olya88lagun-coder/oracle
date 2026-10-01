@@ -47,6 +47,8 @@ type Props = {
   intro: ReactNode;
   paidReports: boolean;
   paid: readonly PaidReport[];
+  // Владелица сайта: разбор для неё бесплатный
+  ownerFree?: boolean;
 };
 
 const prefersReducedMotion = () =>
@@ -58,6 +60,7 @@ export function MatrixCalculator({
   intro,
   paidReports,
   paid,
+  ownerFree = false,
 }: Props) {
   const [value, setValue] = useState("");
   const [date, setDate] = useState<string | null>(null);
@@ -240,6 +243,7 @@ export function MatrixCalculator({
                   paid,
                 })}
                 matrix={matrix}
+                free={ownerFree}
                 onSaveDate={() =>
                   profileDate === date ? Promise.resolve(true) : save(date)
                 }

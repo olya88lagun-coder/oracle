@@ -8,6 +8,8 @@ import {
   getPurchase,
   getPurchaseByPaymentId,
   listPaidPurchases,
+  listReceiptsToSend,
+  markReceiptSent,
   markPurchaseCanceled,
   markPurchaseSucceeded,
   saveReport,
@@ -142,5 +144,47 @@ describe("paid purchases", () => {
       { id: newer.id, birthDate: "1990-05-14", ready: false, paidAt: T0 },
       { id: older.id, birthDate: DATE, ready: true, paidAt: olderPaidAt },
     ]);
+  });
+});
+
+describe("receipts to send", () => {
+  async function paid(userId: string, paymentId: string, paidAt: Date, email = "a@b.ru") {
+    const created = await purchase(userId, { email });
+    await attachPayment(db, created.id, { paymentId, confirmationUrl: `https://pay.test/${paymentId}` });
+    await markPurchaseSucceeded(db, created.id, paidAt);
+    return created;
+  }
+
+  test("lists only paid purchases without a sent receipt, oldest first, with the email and payment id", async () => {
+    const { userId: user } = await seedUser(db, { externalId: "vk-receipts" });
+    const later = await paid(user, "pay-2", new Date("2026-09-29T10:00:00Z"), "second@b.ru");
+    const earlier = await paid(user, "pay-1", T0, "first@b.ru");
+    await openPurchase(user, { birthDate: "1990-01-01", paymentId: "pay-open" });
+
+    const list = await listReceiptsToSend(db);
+
+    expect(list.map((item) => item.id)).toEqual([earlier.id, later.id]);
+    expect(list[0]).toMatchObject({ product: PRODUCT, amountKopecks: 29_000, paymentId: "pay-1", email: "first@b.ru", paidAt: T0 });
+  });
+
+  test("marking a receipt as sent removes the purchase from the list and erases the email", async () => {
+    const { userId: user } = await seedUser(db, { externalId: "vk-receipts" });
+    const created = await paid(user, "pay-1", T0);
+
+    expect(await markReceiptSent(db, created.id, new Date())).toBe(true);
+
+    expect(await listReceiptsToSend(db)).toEqual([]);
+    expect((await getPurchase(db, created.id))?.receiptEmail).toBeNull();
+    // Повторная отметка ничего не меняет
+    expect(await markReceiptSent(db, created.id, new Date())).toBe(false);
+  });
+
+  test("refuses an unpaid purchase and a malformed id", async () => {
+    const { userId: user } = await seedUser(db, { externalId: "vk-receipts" });
+    const unpaid = await openPurchase(user, { paymentId: "pay-open" });
+
+    expect(await markReceiptSent(db, unpaid.id, new Date())).toBe(false);
+    expect(await markReceiptSent(db, "not-a-uuid", new Date())).toBe(false);
+    expect((await getPurchase(db, unpaid.id))?.receiptEmail).toBe("a@b.ru");
   });
 });
