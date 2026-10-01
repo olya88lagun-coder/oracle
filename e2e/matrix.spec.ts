@@ -60,7 +60,7 @@ test("«Войти и сохранить» brings the person back and saves the 
 
   await page.goto("/portret");
   await expect(page.getByText("18 ноября 1988")).toBeVisible();
-  await expect(page.getByText("Центр · Сила")).toBeVisible();
+  await expect(page.getByText("Центр · 11")).toBeVisible();
 });
 
 test("the portrait date wins over another date in the browser", async ({ browser }) => {

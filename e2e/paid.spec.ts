@@ -29,8 +29,24 @@ test("a guest sees the offer with seven chapters and is sent to log in", async (
 
   await expect(offer(page).getByRole("listitem")).toHaveCount(7);
   await expect(offer(page)).toContainText("7 Колесница · 4 Император");
-  await expect(offer(page).getByRole("link", { name: "Войти и купить разбор" })).toHaveAttribute("href", "/login?next=%2Fmatrica-sudby");
+  await expect(offer(page).getByRole("link", { name: "Войти и купить разбор — 390 ₽" })).toHaveAttribute("href", "/login?next=%2Fmatrica-sudby");
   await noHorizontalScroll(page);
+});
+
+test("the offer is the first thing after the free result: its button sits above the chapters, the save and share blocks come below", async ({ page }) => {
+  await page.goto("/matrica-sudby");
+  await calculate(page);
+
+  // Позиция от верха страницы, а не окна: страница могла прокрутиться между замерами
+  const box = async (locator: ReturnType<Page["locator"]>) => ({ y: await locator.evaluate((element) => element.getBoundingClientRect().top + window.scrollY) });
+  const buy = await box(offer(page).getByRole("link", { name: "Войти и купить разбор — 390 ₽" }));
+  const chapters = await box(offer(page).getByRole("listitem").first());
+  const save = await box(page.getByRole("heading", { level: 3, name: "Сохранить в портрет" }));
+  const share = await box(page.getByRole("heading", { level: 3, name: "Поделиться" }));
+  const offerBox = await box(offer(page));
+  expect(buy.y).toBeLessThan(chapters.y);
+  expect(offerBox.y).toBeLessThan(save.y);
+  expect(offerBox.y).toBeLessThan(share.y);
 });
 
 // Удаление разборов вместе с данными проверяют юнит-тесты packages/db (delete-user.test.ts)
