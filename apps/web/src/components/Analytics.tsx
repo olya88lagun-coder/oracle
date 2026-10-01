@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { COOKIE_SETTINGS_EVENT, LOGIN_MARK, METRIKA_ID, reachGoal, readChoice, sanitizePath, sanitizeReferrer, saveChoice, type CookieChoice } from "@/lib/analytics";
+import { COOKIE_SETTINGS_EVENT, hitUrl, LOGIN_MARK, METRIKA_ID, reachGoal, readChoice, sanitizeReferrer, saveChoice, type CookieChoice } from "@/lib/analytics";
 import { SITE_URL } from "@/lib/site";
 
 type YmWindow = Window & { ym?: ((...args: unknown[]) => void) & { a?: unknown[][]; l?: number } };
@@ -32,7 +32,7 @@ function sendHit(counterId: number, pathname: string): void {
   const ym = (window as YmWindow).ym;
   if (!ym) return;
   const origin = window.location.origin;
-  ym(counterId, "hit", `${origin}${sanitizePath(pathname)}`, { referer: sanitizeReferrer(document.referrer, origin) });
+  ym(counterId, "hit", hitUrl(origin, pathname, window.location.search), { referer: sanitizeReferrer(document.referrer, origin) });
 }
 
 function takeLoginMark(): void {
