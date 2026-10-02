@@ -51,7 +51,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Аркан 6 «Влюблённые» — образ выбора и близости",
     basis: ["compat-formulas", "compat-texts"],
     internalLinks: ["/sovmestimost", "/matrica-sudby"],
-    status: "draft",
+    status: "published",
   },
   {
     slug: "lila-s-ii-provodnikom",
