@@ -197,6 +197,9 @@ body .stack > * + * { margin-top: 20px; }
 
 /* Доступный только скринридерам текст (таблица точек матрицы) */
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.nowrap { white-space: nowrap; }
+/* Подпись кнопки с ценой — один элемент flex-кнопки: иначе слова и цена расходятся по краям */
+.button__label { text-align: center; }
 
 /* Результат матрицы: диаграмма слева, справа позиции и три ключевые карточки; затем действие, вопрос, предназначения */
 .matrix-result__title { font-size: clamp(32px, 5vw, 48px); outline: none; scroll-margin-top: 96px; }

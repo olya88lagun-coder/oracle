@@ -4,11 +4,12 @@ import { MATRIX_REPORT_PRICE_KOPECKS, reportChapters, type Matrix } from "@oracl
 import { arcanumByNumber } from "@oracle/content";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { reachGoal, type Goal } from "@/lib/analytics";
+import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { checkoutParams, reachGoal, reachGoalThenNavigate, type CheckoutProduct, type Goal } from "@/lib/analytics";
 import { arcanumImage, MATRIX_PATH } from "@/lib/arcana-paths";
 import { loginHref } from "@/lib/next-path";
-import { chapterArcanaLabel, EMAIL_ERROR, EMAIL_PATTERN, purchaseErrorMessage, reportPath, teaserText, type OfferState } from "@/lib/report-offer";
+import { chapterArcanaLabel, EMAIL_ERROR, EMAIL_PATTERN, purchaseErrorCode, purchaseErrorMessage, reportPath, teaserText, type OfferState } from "@/lib/report-offer";
+import { useOfferViewGoal } from "../useOfferViewGoal";
 
 // compat — предложение под результатом совместимости: разбор покупается для собственной даты человека, а не для пары.
 // Цели у него свои, чтобы конверсия матрицы не смешивалась с совместимостью
@@ -37,7 +38,7 @@ function ChapterList({ matrix }: { matrix: Matrix }) {
   );
 }
 
-function BuyForm({ onSaveDate, clickGoal, free }: { onSaveDate: Props["onSaveDate"]; clickGoal: Goal; free: boolean }) {
+function BuyForm({ onSaveDate, clickGoal, product, free }: { onSaveDate: Props["onSaveDate"]; clickGoal: Goal; product: CheckoutProduct; free: boolean }) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -58,11 +59,17 @@ function BuyForm({ onSaveDate, clickGoal, free }: { onSaveDate: Props["onSaveDat
       if (!(await onSaveDate())) throw new Error("no_birth_date");
       const response = await fetch("/api/purchases", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(free ? {} : { email }) });
       const body = (await response.json().catch(() => ({}))) as { ok?: boolean; url?: string; error?: string; purchaseId?: string };
-      if (body.ok && body.url) return window.location.assign(body.url);
+      if (body.ok && body.url) {
+        if (free) return window.location.assign(body.url);
+        return reachGoalThenNavigate("checkout_redirect", checkoutParams(product), body.url, (url) => window.location.assign(url));
+      }
       if (body.error === "already_paid" && body.purchaseId) return window.location.assign(reportPath(body.purchaseId));
+      if (!free) reachGoal("checkout_error", checkoutParams(product, purchaseErrorCode(body.error)));
       setError(purchaseErrorMessage(body.error));
     } catch (failure) {
-      setError(purchaseErrorMessage(failure instanceof Error ? failure.message : null));
+      const code = failure instanceof Error ? failure.message : null;
+      if (!free) reachGoal("checkout_error", checkoutParams(product, purchaseErrorCode(code)));
+      setError(purchaseErrorMessage(code));
     }
     setBusy(false);
   }
@@ -76,7 +83,7 @@ function BuyForm({ onSaveDate, clickGoal, free }: { onSaveDate: Props["onSaveDat
         </div>
       )}
       <button type="submit" className="button button--lavender" disabled={busy}>
-        {free ? "Получить разбор бесплатно" : `Купить разбор — ${PRICE}`}
+        {free ? "Получить разбор бесплатно" : <span className="button__label">Купить разбор — <span className="nowrap">{PRICE}</span></span>}
       </button>
       {error && (
         <p className="error" role="alert">
@@ -94,27 +101,6 @@ function BuyForm({ onSaveDate, clickGoal, free }: { onSaveDate: Props["onSaveDat
   );
 }
 
-// Цель «блок продажи показан» — один раз за показ страницы, когда заголовок блока хотя бы наполовину на экране.
-// Следим за заголовком, а не за всем блоком: на телефоне блок выше двух экранов и «наполовину виден» не наступал бы никогда
-function useOfferViewGoal(goal: Goal, enabled: boolean) {
-  const ref = useRef<HTMLHeadingElement>(null);
-  useEffect(() => {
-    const element = ref.current;
-    if (!enabled || !element || typeof IntersectionObserver === "undefined") return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        reachGoal(goal);
-        observer.disconnect();
-      },
-      { threshold: 0.5 },
-    );
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [goal, enabled]);
-  return ref;
-}
-
 // Действие по состоянию: кнопка стоит сразу под вводным абзацем, а не в конце колонки, и всегда с ценой
 function OfferAction({ state, onSaveDate, goals, compat, free }: { state: Props["state"]; onSaveDate: Props["onSaveDate"]; goals: Goals; compat?: CompatContext; free: boolean }) {
   if (state.kind === "guest") {
@@ -127,14 +113,16 @@ function OfferAction({ state, onSaveDate, goals, compat, free }: { state: Props[
           reachGoal(goals.click);
         }}
       >
-        Войти и купить разбор — {PRICE}
+        <span className="button__label">
+          Войти и купить разбор — <span className="nowrap">{PRICE}</span>
+        </span>
       </a>
     );
   }
   if (state.kind === "save_first") {
     return <p className="muted">{compat?.saveFirstNote ?? "Разбор покупается для даты из портрета. Чтобы купить разбор этой даты, сначала сохраните её в портрет — блок ниже."}</p>;
   }
-  if (state.kind === "buy") return <BuyForm onSaveDate={onSaveDate} clickGoal={goals.click} free={free} />;
+  if (state.kind === "buy") return <BuyForm onSaveDate={onSaveDate} clickGoal={goals.click} product={compat ? "compat" : "matrix"} free={free} />;
   return (
     <Link className="button button--lavender report-offer__cta" href={reportPath(state.purchaseId)}>
       Открыть разбор
@@ -152,28 +140,30 @@ export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }:
       <div className="stack report-offer__main">
         <p className="eyebrow">{compat ? `Разбор вашей матрицы · по дате ${compat.dateLabel}` : "Разбор всей матрицы"}</p>
         <h2 ref={ref} id="report-offer-title" className="report-offer__title">
-          Разбор всей матрицы — {PRICE}
+          Разбор всей матрицы — <span className="nowrap">{PRICE}</span>
         </h2>
         <p className="lead">
           {compat
-            ? "Совместимость показала, как ваша дата встречается с датой партнёра. Полный разбор — про вас: семь глав о том, как ваши ключевые точки работают вместе: "
-            : "Бесплатный расчёт показал три ключевые точки. В полном разборе — семь глав о том, как они работают вместе: "}
-          в отношениях, в деньгах и деле, в опыте семьи и в предназначении, и какой сценарий может повторяться. В конце — эксперимент на 7 дней.
+            ? "Личный разбор по вашей дате рождения. Внутри семь глав вашей матрицы и эксперимент на 7 дней. Отдельный платный разбор пары здесь не предлагается."
+            : "Получите семь глав по вашей матрице: о личности и центре, задаче, отношениях, деньгах и деле, роде, предназначениях и вашем сценарии. В итоговой главе есть эксперимент на 7 дней и вопрос для себя."}
         </p>
         <div className="stack report-offer__action">
           <OfferAction state={state} onSaveDate={onSaveDate} goals={goals} compat={compat} free={free} />
-          <p className="muted">Готов за несколько минут, хранится в «Моём портрете».</p>
+          <p className="muted">
+            Разовая оплата за разбор одной даты. Готов за несколько минут, хранится в «Моём портрете», пока вы не удалите свои данные, и скачивается в PDF.
+          </p>
+          <p className="muted">Текст готовится автоматически с помощью ИИ на основе описаний арканов вашей матрицы.</p>
         </div>
         <ChapterList matrix={matrix} />
       </div>
       <div className="stack report-offer__side">
         <Image className="report-offer__art" src={arcanumImage(center, "card")} alt="" width={480} height={480} sizes="(min-width: 960px) 380px, 100vw" unoptimized />
         <div className="report-offer__sample stack">
-          <p className="eyebrow">Начало главы «Отношения»</p>
+          <p className="eyebrow">Пример трактовки вашего аркана</p>
           <p className="report-offer__teaser">
             Ваша точка любви — {love.number} {love.name}. {teaserText(love.love.join(" "), 280)}
           </p>
-          <p className="muted">Продолжение и то, как эта точка связана с сердцем матрицы, — в полном разборе.</p>
+          <p className="muted">Этот фрагмент показывает описание одной точки. Полный разбор связывает темы нескольких точек в семь глав.</p>
         </div>
       </div>
     </section>

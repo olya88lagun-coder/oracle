@@ -29,6 +29,11 @@ const PURCHASE_ERRORS: Readonly<Record<string, string>> = {
   unauthorized: "Сессия закончилась — войдите ещё раз.",
 };
 
+// Код ошибки для цели Метрики: только из известного списка, всё остальное — «unknown», чтобы в аналитику не попало ничего лишнего
+export function purchaseErrorCode(error: unknown): string {
+  return typeof error === "string" && Object.prototype.hasOwnProperty.call(PURCHASE_ERRORS, error) ? error : "unknown";
+}
+
 export function purchaseErrorMessage(error: unknown): string {
   return (typeof error === "string" && PURCHASE_ERRORS[error]) || "Не получилось перейти к оплате. Попробуйте ещё раз чуть позже.";
 }

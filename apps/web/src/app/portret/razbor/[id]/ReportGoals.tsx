@@ -1,22 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { reachGoal } from "@/lib/analytics";
-
-// Цель «оплачено» — один раз на покупку в этом браузере, даже если страницу открывали несколько раз
-function once(key: string): boolean {
-  try {
-    if (window.localStorage.getItem(key)) return false;
-    window.localStorage.setItem(key, "1");
-  } catch {
-    // Хранилище недоступно (приватный режим) — цель может засчитаться повторно, это не страшно
-  }
-  return true;
-}
+import { reachGoal, reachGoalOnce } from "@/lib/analytics";
 
 export function ReportGoals({ purchaseId, paid, opened = false }: { purchaseId: string; paid: boolean; opened?: boolean }) {
   useEffect(() => {
-    if (paid && once(`oracle-report-paid:${purchaseId}`)) reachGoal("report_paid");
+    // Цель «оплачено» — один раз на покупку в этом браузере; отметка ставится, только когда счётчик её принял
+    if (paid) reachGoalOnce("report_paid", `oracle-report-paid:${purchaseId}`);
     if (opened) reachGoal("report_opened");
   }, [purchaseId, paid, opened]);
   return null;
