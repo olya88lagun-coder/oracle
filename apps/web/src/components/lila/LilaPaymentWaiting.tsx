@@ -4,11 +4,12 @@ import { LILA_SESSION_PRODUCT } from "@oracle/core";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { reachGoal } from "@/lib/analytics";
+import { reachGoalOnce } from "@/lib/analytics";
 import { LILA_GAME_PATH } from "@/lib/lila-paths";
 import { purchaseErrorMessage } from "@/lib/report-offer";
 
-type Status = "pending" | "canceled" | "blocked";
+// ready — оплата подтверждена, партия запускается; страница показывается при быстром платеже, когда статус «готово» уже при первом открытии
+type Status = "pending" | "canceled" | "blocked" | "ready";
 type Props = { purchaseId: string; initial: Status };
 
 const POLL_MS = 3000;
@@ -17,7 +18,12 @@ const TEXT: Record<Status, { title: string; body: string }> = {
   pending: { title: "Ждём подтверждения оплаты", body: "Обычно это несколько секунд. Страницу можно не обновлять." },
   canceled: { title: "Оплата не прошла", body: "Деньги не списаны. Можно попробовать ещё раз." },
   blocked: { title: "Оплата прошла, но в портрете идёт другая партия", body: "Завершите её — и партия с проводником начнётся сама." },
+  ready: { title: "Оплата прошла", body: "Открываем партию с проводником…" },
 };
+
+// Продажа — это подтверждённая оплата, а не запуск партии: считаем её и при «готово», и при «оплачено, но ждёт очереди»; один раз на покупку
+const isPaid = (status: string): boolean => status === "ready" || status === "blocked";
+const countSale = (purchaseId: string): void => reachGoalOnce("lila_paid", `oracle-lila-paid:${purchaseId}`);
 
 function RetryButton({ purchaseId }: { purchaseId: string }) {
   const [error, setError] = useState<string | null>(null);
@@ -58,16 +64,24 @@ export function LilaPaymentWaiting({ purchaseId, initial }: Props) {
   const [status, setStatus] = useState<Status>(initial);
 
   useEffect(() => {
-    if (status === "canceled") return;
+    if (isPaid(initial)) countSale(purchaseId);
+    if (initial === "ready") router.replace(LILA_GAME_PATH);
+  }, [initial, purchaseId, router]);
+
+  useEffect(() => {
+    if (status === "canceled" || status === "ready") return;
     const timer = setInterval(async () => {
       try {
         const response = await fetch(`/api/purchases/${purchaseId}`, { cache: "no-store" });
         const body = (await response.json()) as { ok?: boolean; status?: string };
         if (!body.ok) return;
         if (body.status === "ready") {
-          reachGoal("lila_paid");
+          countSale(purchaseId);
           router.replace(LILA_GAME_PATH);
-        } else if (body.status === "pending" || body.status === "canceled" || body.status === "blocked") setStatus(body.status);
+        } else if (body.status === "pending" || body.status === "canceled" || body.status === "blocked") {
+          if (isPaid(body.status)) countSale(purchaseId);
+          setStatus(body.status);
+        }
       } catch {
         // Сеть мигнула — спросим на следующем круге
       }
