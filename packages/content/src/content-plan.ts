@@ -62,7 +62,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Клетка 68 «Космическое сознание» в игре Лила",
     basis: ["lila-guide", "lila-rules"],
     internalLinks: ["/lila", "/blog/kak-igrat-v-lilu-onlain", "/blog/kak-sformulirovat-namerenie-dlya-lily"],
-    status: "draft",
+    status: "published",
   },
   {
     slug: "prednaznachenie-v-matritse-sudby",
