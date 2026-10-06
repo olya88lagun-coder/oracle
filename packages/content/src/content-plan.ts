@@ -73,7 +73,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Аркан 1 «Маг» — образ первого шага",
     basis: ["positions", "matrix-formulas"],
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-1-mag"],
-    status: "draft",
+    status: "published",
   },
   {
     slug: "kletki-lily-znachenie",
