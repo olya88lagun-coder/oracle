@@ -84,7 +84,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Клетка 1 «Рождение» в игре Лила",
     basis: ["lila-cells", "lila-rules"],
     internalLinks: ["/lila", "/lila/kletki/01-rozhdenie", "/lila/kletki/68-kosmicheskoe-soznanie"],
-    status: "draft",
+    status: "published",
   },
   {
     slug: "zadacha-v-matritse-sudby",
