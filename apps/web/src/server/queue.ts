@@ -7,9 +7,13 @@ import {
   guideMoveJobKey,
   LILA_QUEUES,
   QUEUES,
+  RECEIPTS_JOB_OPTIONS,
+  RECEIPTS_QUEUE,
+  receiptsReminderJobKey,
   type ConclusionJob,
   type GenerateReportJob,
   type GuideMoveJob,
+  type ReceiptsReminderJob,
 } from "@oracle/core";
 import { jobIdFor } from "@oracle/db";
 import { PgBoss } from "pg-boss";
@@ -60,4 +64,11 @@ export async function enqueueConclusion(job: ConclusionJob): Promise<void> {
     // Страница итога поставит задачу заново
     console.error("enqueue conclusion failed", { gameId: job.gameId, error: String(error) });
   }
+}
+
+// Задача откладывается до конца окна и ставится один раз на окно (одинаковый id), поэтому серия оплат даёт одно сообщение.
+// Ошибку не глотаем: вызывающий код решает, что делать (оплата уже принята, напоминание вторично)
+export async function enqueueReceiptsReminder(job: ReceiptsReminderJob, startAfterSeconds: number): Promise<void> {
+  const boss = await queue();
+  await boss.send(RECEIPTS_QUEUE, job, { ...RECEIPTS_JOB_OPTIONS, id: jobIdFor(receiptsReminderJobKey(job)), startAfter: startAfterSeconds });
 }

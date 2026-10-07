@@ -9,6 +9,7 @@ import {
   getPurchaseByPaymentId,
   listPaidPurchases,
   listReceiptsToSend,
+  summarizeReceiptsToSend,
   markReceiptSent,
   markPurchaseCanceled,
   markPurchaseSucceeded,
@@ -165,6 +166,19 @@ describe("receipts to send", () => {
 
     expect(list.map((item) => item.id)).toEqual([earlier.id, later.id]);
     expect(list[0]).toMatchObject({ product: PRODUCT, amountKopecks: 29_000, paymentId: "pay-1", email: "first@b.ru", paidAt: T0 });
+  });
+
+  test("summarizes the receipts waiting without loading the buyers' e-mails", async () => {
+    const { userId: user } = await seedUser(db, { externalId: "vk-receipts" });
+    expect(await summarizeReceiptsToSend(db)).toEqual({ count: 0, totalKopecks: 0 });
+
+    const first = await paid(user, "pay-1", T0);
+    await paid(user, "pay-2", T0);
+    await openPurchase(user, { birthDate: "1990-01-01", paymentId: "pay-open" });
+    expect(await summarizeReceiptsToSend(db)).toEqual({ count: 2, totalKopecks: 58_000 });
+
+    await markReceiptSent(db, first.id, new Date());
+    expect(await summarizeReceiptsToSend(db)).toEqual({ count: 1, totalKopecks: 29_000 });
   });
 
   test("marking a receipt as sent removes the purchase from the list and erases the email", async () => {

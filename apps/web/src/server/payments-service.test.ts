@@ -363,3 +363,56 @@ describe("the owner gets paid services for free", () => {
     expect(outcome.ok && outcome.url.includes("/dev/pay/")).toBe(true);
   });
 });
+
+describe("the owner is reminded to send the receipt", () => {
+  let remind: Mock<(now: Date) => Promise<void>>;
+
+  beforeEach(() => {
+    remind = vi.fn<(now: Date) => Promise<void>>().mockResolvedValue(undefined);
+    deps = { ...deps, remindReceipts: remind };
+  });
+
+  const buyLila = async () => {
+    const outcome = await startLilaPurchase(deps, { userId, email: "a@b.ru", intention: "Что мне важно увидеть?" });
+    if (!outcome.ok) throw new Error(outcome.error);
+    return outcome.url;
+  };
+
+  test("once per real payment, for a report and for a Lila session", async () => {
+    await pay(await buy());
+    expect(remind).toHaveBeenCalledTimes(1);
+    expect(remind).toHaveBeenCalledWith(now);
+
+    await pay(await buyLila());
+    expect(remind).toHaveBeenCalledTimes(2);
+  });
+
+  test("not for a canceled payment, not for an unpaid purchase and not twice for the same payment", async () => {
+    await pay(await buy(), "canceled");
+    expect(remind).not.toHaveBeenCalled();
+
+    const url = await buy("c@d.ru");
+    await pay(url);
+    await syncPayment(deps, paymentOf(url));
+    expect(remind).toHaveBeenCalledTimes(1);
+  });
+
+  test("not for the owner's free purchase: there is no receipt for 0 ₽", async () => {
+    deps = { ...deps, isOwner: async (id) => id === userId };
+
+    await startPurchase(deps, { userId, email: undefined });
+
+    expect(remind).not.toHaveBeenCalled();
+  });
+
+  test("a failing reminder never breaks the paid purchase: the report is still queued and the error is logged", async () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    remind.mockRejectedValue(new Error("queue is down"));
+
+    const purchase = await pay(await buy());
+
+    expect(purchase?.status).toBe("succeeded");
+    expect(enqueue).toHaveBeenCalledWith({ purchaseId: purchase!.id });
+    expect(error).toHaveBeenCalledWith("receipts reminder failed", expect.anything());
+  });
+});
