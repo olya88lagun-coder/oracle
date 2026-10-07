@@ -95,7 +95,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Аркан 22 «Шут» — образ начала пути",
     basis: ["positions", "arcana"],
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-22-shut"],
-    status: "draft",
+    status: "published",
   },
   {
     slug: "pole-igry-lila",
