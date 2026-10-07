@@ -33,6 +33,8 @@ export type PaymentsDeps = {
   appUrl: string;
   now: () => Date;
   enqueueGenerate: (job: GenerateReportJob) => Promise<void>;
+  // Оплата принята, чек владелица формирует вручную: напоминание уходит ей одним сообщением на окно времени
+  remindReceipts?: (now: Date) => Promise<void>;
   isOwner?: (userId: string) => Promise<boolean>;
 };
 export type StartPurchaseError = "no_birth_date" | "invalid_email" | "invalid_intention" | "active_game" | "already_paid" | "not_found" | "payment_failed";
@@ -192,7 +194,18 @@ async function enqueueIfFirst(deps: PaymentsDeps, purchase: PurchaseRecord): Pro
   else console.warn("duplicate paid purchase — refund manually", { purchaseId: purchase.id });
 }
 
+// Напоминание о чеке не должно ломать выдачу оплаченного: при сбое оплата остаётся в списке на странице чеков
+async function remindAboutReceipt(deps: PaymentsDeps): Promise<void> {
+  try {
+    await deps.remindReceipts?.(deps.now());
+  } catch (error) {
+    console.error("receipts reminder failed", { error: String(error) });
+  }
+}
+
 async function onPaid(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<void> {
+  // За бесплатную покупку владелицы чек не нужен
+  if (purchase.amountKopecks > 0) await remindAboutReceipt(deps);
   if (purchase.product !== LILA_SESSION_PRODUCT) return enqueueIfFirst(deps, purchase);
   // Оплата пришла, а в портрете уже идёт другая партия: активация повторится при просмотре страницы ожидания
   if ((await activateLilaGameForPurchase(deps.db, purchase.id)) === "blocked") console.warn("paid Lila session waits for the active game to end", { purchaseId: purchase.id });

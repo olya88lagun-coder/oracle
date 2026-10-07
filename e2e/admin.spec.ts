@@ -41,6 +41,36 @@ test("a paid purchase shows up for the owner with its e-mail, and «Чек от�
   await context.close();
 });
 
+test("the receipts page counts what is waiting, says for how long and copies the lines for the tax app", async ({ browser }) => {
+  const email = `copy-${Date.now()}@example.ru`;
+  const { context: buyerContext, page: buyer } = await signIn(browser, uniqueName("Копирующий"));
+  await saveDate(buyer, DATE);
+  const purchase = await buyer.request.post("/api/purchases", { data: { email }, headers: { origin: BASE_URL } });
+  const { url } = (await purchase.json()) as { url: string };
+  await buyer.goto(url);
+  await buyer.getByRole("button", { name: "Оплатить" }).click();
+  await expect(buyer).toHaveURL(/\/portret\/razbor\//);
+  await buyerContext.close();
+
+  const { context, page } = await signIn(browser, OWNER_NAME);
+  await context.grantPermissions(["clipboard-read", "clipboard-write"], { origin: BASE_URL });
+  await page.goto("/admin/receipts");
+  await expect(page.getByRole("status")).toContainText(/К отправке: \d+ (чек|чека|чеков) на/);
+  const item = page.getByRole("listitem").filter({ hasText: email });
+  await expect(item).toContainText("оплачено сегодня");
+
+  await item.getByRole("button", { name: "Скопировать название" }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("Разбор матрицы судьбы — «Твой оракул»");
+  await item.getByRole("button", { name: "Скопировать сумму" }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("390");
+  await item.getByRole("button", { name: "Скопировать почту" }).click();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(email);
+
+  await item.getByRole("button", { name: "Чек отправлен" }).click();
+  await expect(page.getByText(email)).toHaveCount(0);
+  await context.close();
+});
+
 test("the owner gets the report and the Lila guide for free, without an e-mail, and they are not listed as receipts", async ({ browser }) => {
   const { context, page } = await signIn(browser, OWNER_NAME);
   await saveDate(page, "1985-06-15");

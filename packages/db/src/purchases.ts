@@ -1,5 +1,5 @@
 import type { Product } from "@oracle/core";
-import { and, asc, desc, eq, gt, gte, isNotNull, isNull } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, gte, isNotNull, isNull, sql } from "drizzle-orm";
 import { purchases, reports, type PurchaseStatus } from "./schema";
 import type { Database } from "./types";
 import { isUuid } from "./uuid";
@@ -124,6 +124,15 @@ export async function listReceiptsToSend(db: Database): Promise<ReceiptToSend[]>
     .where(and(eq(purchases.status, "succeeded"), gt(purchases.amountKopecks, 0), isNull(purchases.receiptSentAt)))
     .orderBy(asc(purchases.paidAt));
   return rows.map((row) => ({ ...row, product: row.product as Product }));
+}
+
+// Сколько чеков ждёт и на какую сумму — для напоминания владелице: без почт покупателей
+export async function summarizeReceiptsToSend(db: Database): Promise<{ count: number; totalKopecks: number }> {
+  const [row] = await db
+    .select({ count: count(), totalKopecks: sql<number>`coalesce(sum(${purchases.amountKopecks}), 0)::int` })
+    .from(purchases)
+    .where(and(eq(purchases.status, "succeeded"), gt(purchases.amountKopecks, 0), isNull(purchases.receiptSentAt)));
+  return { count: row?.count ?? 0, totalKopecks: row?.totalKopecks ?? 0 };
 }
 
 // Чек отправлен: почта больше не нужна и стирается. Повторная отметка и неоплаченная покупка ничего не меняют

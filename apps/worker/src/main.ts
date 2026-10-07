@@ -1,4 +1,4 @@
-import { LILA_QUEUES, QUEUES, type ConclusionJob, type GenerateReportJob, type GuideMoveJob } from "@oracle/core";
+import { LILA_QUEUES, QUEUES, RECEIPTS_QUEUE, type ConclusionJob, type GenerateReportJob, type GuideMoveJob, type ReceiptsReminderJob } from "@oracle/core";
 import { createDb } from "@oracle/db";
 import { PgBoss } from "pg-boss";
 import { createWriter, limitConcurrency } from "./ai";
@@ -6,6 +6,9 @@ import { readWorkerEnv } from "./env";
 import { runGenerate } from "./generate";
 import { runConclusion, runGuideMove } from "./lila";
 import { log } from "./log";
+import { runReceiptsReminder } from "./receipts";
+import { dryRunSender, type Sender } from "./senders";
+import { createVkSender } from "./vk";
 
 const SHUTDOWN_TIMEOUT_MS = 20_000;
 
@@ -14,12 +17,17 @@ const db = createDb(env.DATABASE_URL, { maxConnections: env.poolMax });
 // Один ограничитель на все очереди: запросов к модели одновременно не больше AI_CONCURRENCY
 const writer = limitConcurrency(createWriter(env.ai, fetch), env.aiConcurrency);
 
+// Без токена и без режима «в холостую» напоминание о чеках только пишет в лог, что оно не настроено
+const { receipts } = env;
+const sender: Sender | null = receipts.dryRun ? dryRunSender(log) : receipts.vkGroupToken ? createVkSender({ token: receipts.vkGroupToken, fetchFn: fetch }) : null;
+
 const boss = new PgBoss({ connectionString: env.DATABASE_URL, max: env.poolMax });
 boss.on("error", (error) => log("error", "pg-boss error", { error: String(error) }));
 await boss.start();
 await boss.createQueue(QUEUES.generateReport);
 await boss.createQueue(LILA_QUEUES.guideMove);
 await boss.createQueue(LILA_QUEUES.conclusion);
+await boss.createQueue(RECEIPTS_QUEUE);
 
 await boss.work<GenerateReportJob>(QUEUES.generateReport, async ([job]) => {
   if (!job) return;
@@ -49,6 +57,16 @@ await boss.work<ConclusionJob>(LILA_QUEUES.conclusion, async ([job]) => {
     await runConclusion(job.data, { db, writer, log });
   } catch (error) {
     log("warn", "conclusion job failed", { gameId: job.data.gameId, error: String(error) });
+    throw error;
+  }
+});
+
+await boss.work<ReceiptsReminderJob>(RECEIPTS_QUEUE, async ([job]) => {
+  if (!job) return;
+  try {
+    await runReceiptsReminder(job.data, { db, send: sender, ownerVkId: receipts.ownerVkId, appUrl: receipts.appUrl, log });
+  } catch (error) {
+    log("warn", "receipts reminder failed", { bucket: job.data.bucket, error: String(error), cause: error instanceof Error ? String(error.cause) : undefined });
     throw error;
   }
 });

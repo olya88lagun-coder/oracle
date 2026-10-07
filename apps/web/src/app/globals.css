@@ -1546,11 +1546,16 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 
 /* Служебная страница владелицы: чеки к отправке */
 .receipts-lead { max-width: 70ch; margin-top: 14px !important; color: var(--ink-soft); font-size: 15px; }
-.receipts-empty { margin-top: 28px !important; color: var(--ink-soft); }
+.receipts-steps { display: grid; gap: 4px; max-width: 70ch; margin: 14px 0 0; padding-left: 20px; color: var(--ink-soft); font-size: 14px; }
+.receipts-summary { margin: 22px 0 0 !important; color: var(--accent); font-size: 24px; }
 .receipts { display: grid; gap: 0; margin: 28px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
 .receipt { display: grid; gap: 14px; padding-block: 22px; border-bottom: 1px solid var(--line); }
 .receipt h2 { font-size: 22px; }
 .receipt__amount { margin-top: 6px !important; color: var(--accent); font-size: 18px; }
+.receipt__waiting { margin-top: 4px !important; color: var(--ink-soft); font-size: 14px; }
+.receipt__waiting--late { color: var(--danger); font-weight: 600; }
+.receipt__copies { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.receipt__copy { min-height: 40px; padding: 8px 14px; font-size: 14px; }
 .receipt__details { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 20px; margin: 0; font-size: 15px; }
 .receipt__details dt { color: var(--ink-soft); }
 .receipt__details dd { margin: 0; overflow-wrap: anywhere; }
