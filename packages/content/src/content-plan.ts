@@ -97,18 +97,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-22-shut"],
     status: "published",
   },
-  {
-    slug: "pole-igry-lila",
-    title: "Поле игры Лила: как устроены 72 клетки, змеи и стрелы",
-    primaryQuery: "лила поле игры",
-    cluster: "lila",
-    image: "/lila/12-zavist.webp",
-    imageAlt: "Клетка 12 «Зависть» в игре Лила",
-    basis: ["lila-rules", "lila-cells"],
-    internalLinks: ["/lila", "/blog/zmei-i-strely-lily", "/lila/kletki/12-zavist"],
-    status: "published",
-  },
-  {
+ {
     slug: "liniya-lyubvi-v-matritse-sudby",
     title: "Линия любви в матрице судьбы: как её читать",
     primaryQuery: "линия любви в матрице судьбы",
