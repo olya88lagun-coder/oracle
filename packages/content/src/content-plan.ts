@@ -106,7 +106,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Клетка 12 «Зависть» в игре Лила",
     basis: ["lila-rules", "lila-cells"],
     internalLinks: ["/lila", "/blog/zmei-i-strely-lily", "/lila/kletki/12-zavist"],
-    status: "draft",
+    status: "published",
   },
   {
     slug: "liniya-lyubvi-v-matritse-sudby",
