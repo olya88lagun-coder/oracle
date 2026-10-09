@@ -52,7 +52,7 @@ describe("checkArticle", () => {
 
   test("accepts Tarot articles linked to the catalogue and a card", () => {
     const body = DEFAULT_BODY.replaceAll("](/matrica-sudby)", "](/taro)").replaceAll("](/matrica-sudby/arkan-1-mag)", "](/taro/karty/mag)");
-    expect(errorsOf(sampleArticle({ cluster: "taro", basis: ["tarot", "tarot-deck"] }, body))).toBe("");
+    expect(errorsOf(sampleArticle({ cluster: "taro", basis: "tarot; tarot-deck" }, body))).toBe("");
   });
 
   test("reports unsupported markdown instead of throwing", () => {
