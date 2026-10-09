@@ -128,7 +128,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Аркан 2 «Верховная жрица» — образ внутренней опоры",
     basis: ["positions", "matrix-formulas"],
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-2-verkhovnaya-zhrica"],
-    status: "draft",
+    status: "published",
   },
   {
     slug: "liniya-deneg-v-matritse-sudby",
