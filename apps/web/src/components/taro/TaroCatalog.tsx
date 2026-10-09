@@ -76,8 +76,8 @@ export function TaroCatalog({ cards }: { cards: readonly CatalogCard[] }) {
     <section id="znacheniya" className="matrix-wrap taro-cat" aria-labelledby="taro-cat-title">
       <div className="taro-cat__heading">
         <div>
-          <h2 id="taro-cat-title">Значения карт</h2>
-          <p>Классическая колода. Личный взгляд.</p>
+          <h2 id="taro-cat-title">Старшие и младшие арканы Таро</h2>
+          <p>22 старших и 56 младших арканов. Выберите карту и изучите её значение.</p>
         </div>
         <form className="taro-cat__search" role="search" onSubmit={(event) => event.preventDefault()}>
           <label className="sr-only" htmlFor="taro-search">
