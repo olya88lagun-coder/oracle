@@ -8,7 +8,7 @@ import { BLOG_POSTS } from "./blog";
 import { PUBLIC_PATHS } from "./seo";
 
 const PUBLIC_DIR = fileURLToPath(new URL("../../public/", import.meta.url));
-const ALLOWED_IMAGE = /^\/(?:hero|(?:arcana|lila)\/\d{2}-[a-z]+(?:-[a-z]+)*)\.webp$/;
+const ALLOWED_IMAGE = /^\/(?:hero|(?:arcana|lila|taro)\/\d{2}-[a-z]+(?:-[a-z]+)*)\.webp$/;
 const MANUAL_SLUGS = new Set(BLOG_POSTS.filter((post) => !ARTICLES.some((article) => article.slug === post.slug)).map((post) => post.slug));
 
 const context: ArticleCheckContext = {
@@ -19,7 +19,7 @@ const context: ArticleCheckContext = {
 };
 
 const imageProblem = (url: string): string | null =>
-  !ALLOWED_IMAGE.test(url) ? `${url}: разрешены только /hero.webp и иллюстрации арканов и клеток` : existsSync(`${PUBLIC_DIR}${url.slice(1)}`) ? null : `${url}: файла нет в apps/web/public`;
+  !ALLOWED_IMAGE.test(url) ? `${url}: разрешены только /hero.webp и существующие иллюстрации арканов, клеток и карт Таро` : existsSync(`${PUBLIC_DIR}${url.slice(1)}`) ? null : `${url}: файла нет в apps/web/public`;
 
 describe("content plan", () => {
   test("uses only existing internal links and allowed existing images", () => {
