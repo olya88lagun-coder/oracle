@@ -142,7 +142,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Карта Таро «Маг» из колоды Райдера — Уэйта",
     basis: ["tarot", "tarot-deck"],
     internalLinks: ["/taro", "/taro/karty/mag", "/taro/karty/kubki-tuz"],
-    status: "draft",
+    status: "published",
   },
 
   // Wordstat D09: 146 запросов со строгим оператором (РФ; сентябрь–октябрь 2026).
