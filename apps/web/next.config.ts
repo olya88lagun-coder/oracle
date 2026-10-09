@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Значок разработки в углу перекрывал текст на локальных просмотрах; ошибки сборки Next.js показывает и без него
   devIndicators: false,
+  // SEO: статья от 09.10 повторяла материал от 07.10 — сохраняем старые входящие ссылки.
+  async redirects() {
+    return [
+      { source: "/blog/pole-igry-lila", destination: "/blog/kletki-lily-znachenie", statusCode: 301 },
+    ];
+  },
   // Базовые заголовки безопасности. CSP не включаем: Метрика подгружает свои скрипты
   async headers() {
     return [
