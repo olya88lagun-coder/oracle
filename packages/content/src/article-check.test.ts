@@ -3,7 +3,7 @@ import { checkArticle, type ArticleCheckContext } from "./article-check";
 import { DEFAULT_BODY, sampleArticle, section } from "./article-fixture";
 
 const context: ArticleCheckContext = {
-  publicPaths: ["/", "/matrica-sudby", "/matrica-sudby/arkan-1-mag", "/sovmestimost", "/lila"],
+  publicPaths: ["/", "/matrica-sudby", "/matrica-sudby/arkan-1-mag", "/sovmestimost", "/lila", "/taro", "/taro/karta-dnya", "/taro/karty/mag"],
   arcanumName: (number) => ({ 1: "Маг", 22: "Шут" })[number],
   cellName: (number) => ({ 1: "Рождение" })[number],
   today: "2026-10-05",
@@ -48,6 +48,11 @@ describe("checkArticle", () => {
     expect(errorsOf(withBody("См. [страницу](/net-takoj-stranicy)."))).toMatch(/net-takoj-stranicy/);
     const noTool = DEFAULT_BODY.replace("[рассчитать свою матрицу](/matrica-sudby)", "рассчитать матрицу").replace("[арканом Маг](/matrica-sudby/arkan-1-mag)", "арканом Маг");
     expect(errorsOf(sampleArticle({}, noTool))).toMatch(/ссылк/);
+  });
+
+  test("accepts Tarot articles linked to the catalogue and a card", () => {
+    const body = DEFAULT_BODY.replaceAll("](/matrica-sudby)", "](/taro)").replaceAll("](/matrica-sudby/arkan-1-mag)", "](/taro/karty/mag)");
+    expect(errorsOf(sampleArticle({ cluster: "taro", basis: ["tarot", "tarot-deck"] }, body))).toBe("");
   });
 
   test("reports unsupported markdown instead of throwing", () => {
