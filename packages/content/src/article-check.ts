@@ -11,7 +11,7 @@ export type ArticleCheckContext = {
   readonly today: string;
 };
 
-export const TOOL_PATHS: readonly string[] = ["/matrica-sudby", "/sovmestimost", "/lila"];
+export const TOOL_PATHS: readonly string[] = ["/matrica-sudby", "/sovmestimost", "/lila", "/taro", "/taro/karta-dnya"];
 export const BODY_MIN = 4000;
 export const BODY_MAX = 9000;
 const SECTIONS_MIN = 3;
@@ -64,7 +64,7 @@ function toneErrors(text: string): string[] {
 function linkErrors(blocks: readonly Block[], publicPaths: readonly string[]): string[] {
   const links = linksOf(blocks);
   const errors = [...new Set(links)].filter((href) => !publicPaths.includes(href)).map((href) => `ссылка ведёт на несуществующую страницу ${href}`);
-  if (!links.some((href) => TOOL_PATHS.includes(href))) errors.push(`нужна ссылка на калькулятор или Лилу: ${TOOL_PATHS.join(", ")}`);
+  if (!links.some((href) => TOOL_PATHS.includes(href))) errors.push(`нужна ссылка на практику сайта: ${TOOL_PATHS.join(", ")}`);
   if (new Set(links).size < 2) errors.push("нужно не меньше двух разных внутренних ссылок");
   return errors;
 }
