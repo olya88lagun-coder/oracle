@@ -129,7 +129,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Аркан 3 «Императрица» — образ созидания",
     basis: ["positions", "arcana"],
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-3-imperatrica"],
-    status: "draft",
+    status: "published",
   },
 
   // Wordstat D01: 1234 запросов со строгим оператором (РФ; сентябрь–октябрь 2026).
