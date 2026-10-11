@@ -14,7 +14,7 @@ const DOCUMENTS = [
 
 export type DocumentSection = { title: string; body: ReactNode; className?: string };
 type Props = {
-  current: (typeof DOCUMENTS)[number]["href"];
+  current?: (typeof DOCUMENTS)[number]["href"];
   title: string;
   // Редакция и дата — строка под заголовком
   version?: ReactNode;

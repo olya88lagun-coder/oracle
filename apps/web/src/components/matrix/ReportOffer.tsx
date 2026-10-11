@@ -164,6 +164,7 @@ export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }:
             Ваша точка любви — {love.number} {love.name}. {teaserText(love.love.join(" "), 280)}
           </p>
           <p className="muted">Этот фрагмент показывает описание одной точки. Полный разбор связывает темы нескольких точек в семь глав.</p>
+          <Link className="text-link" href="/matrica-sudby/primer">Посмотреть полный пример и PDF</Link>
         </div>
       </div>
     </section>

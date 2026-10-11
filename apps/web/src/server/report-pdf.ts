@@ -22,7 +22,7 @@ const COVER_ART_SIZE = 340;
 const COVER_ART_TOP = 104;
 const HIGHLIGHTED = new Set(["turningPoint", "experiment"]);
 
-export type ReportPdfInput = { matrix: Matrix; birthDate: string; chapters: readonly StoredChapter[]; assetsDir: string };
+export type ReportPdfInput = { matrix: Matrix; birthDate: string; chapters: readonly StoredChapter[]; assetsDir: string; demo?: boolean };
 
 function drawCover(doc: Doc, input: ReportPdfInput) {
   const center = arcanumByNumber(input.matrix.E);
@@ -33,11 +33,11 @@ function drawCover(doc: Doc, input: ReportPdfInput) {
 
   const width = PAGE.width - 2 * 80;
   doc.font("bodyBold").fontSize(8.5).fillColor(COLORS.gold);
-  doc.text(`РАЗБОР МАТРИЦЫ СУДЬБЫ · ПО ДАТЕ ${formatIsoDate(input.birthDate)}`, 80, COVER_ART_TOP + COVER_ART_SIZE + 48, { width, align: "center", characterSpacing: 1.6 });
+  doc.text(`${input.demo ? "ДЕМОНСТРАЦИОННЫЙ ПРИМЕР" : "РАЗБОР МАТРИЦЫ СУДЬБЫ"} · ПО ДАТЕ ${formatIsoDate(input.birthDate)}`, 80, COVER_ART_TOP + COVER_ART_SIZE + 48, { width, align: "center", characterSpacing: 1.6 });
   doc.font("display").fontSize(34).fillColor(COLORS.coverInk);
   doc.text(`Ваш центр — ${center.name}`, 80, doc.y + 18, { width, align: "center", lineGap: 4 });
   doc.font("body").fontSize(12).fillColor(COLORS.coverSoft);
-  doc.text("Семь глав о том, как устроена ваша матрица. Это материал для размышления, а не предсказание.", 80, doc.y + 16, { width, align: "center", lineGap: 4 });
+  doc.text(input.demo ? "Вымышленная дата. Семь глав собраны из готовых описаний без ИИ. Персональный текст может отличаться." : "Семь глав о том, как устроена ваша матрица. Это материал для размышления, а не предсказание.", 80, doc.y + 16, { width, align: "center", lineGap: 4 });
   // Без нулевого нижнего поля подпись у края страницы уходит на новую страницу
   doc.page.margins.bottom = 0;
   doc.font("bodyBold").fontSize(9).fillColor(COLORS.gold);

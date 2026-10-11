@@ -22,6 +22,7 @@ export type LilaPdfInput = {
   chapters: readonly StoredConclusionChapter[];
   moves: readonly { n: number; cell: string; note: string | null }[];
   assetsDir: string;
+  demo?: boolean;
 };
 
 const COVER_SIDE = 80;
@@ -31,11 +32,11 @@ function drawCover(doc: PdfDoc, input: LilaPdfInput) {
   const width = PAGE.width - 2 * COVER_SIDE;
   doc.rect(0, 0, PAGE.width, PAGE.height).fill(COLORS.coverBg);
   doc.font("bodyBold").fontSize(8.5).fillColor(COLORS.gold);
-  doc.text(`ПАРТИЯ ЛИЛЫ · ${dateLabel(input.finishedAt)}`, COVER_SIDE, 250, { width, align: "center", characterSpacing: 1.6 });
+  doc.text(`${input.demo ? "ДЕМОНСТРАЦИОННАЯ ПАРТИЯ ЛИЛЫ" : "ПАРТИЯ ЛИЛЫ"} · ${dateLabel(input.finishedAt)}`, COVER_SIDE, 250, { width, align: "center", characterSpacing: 1.6 });
   doc.font("display").fontSize(30).fillColor(COLORS.coverInk);
   doc.text(input.intention, COVER_SIDE, doc.y + 22, { width, align: "center", lineGap: 5 });
   doc.font("body").fontSize(12).fillColor(COLORS.coverSoft);
-  doc.text(`Ходов: ${input.movesCount}. Это материал для размышления, а не предсказание.`, COVER_SIDE, doc.y + 22, { width, align: "center", lineGap: 4 });
+  doc.text(input.demo ? `Вымышленный вопрос и записи. Ходов: ${input.movesCount}. Итог собран из фактов без ИИ; персональный текст может отличаться.` : `Ходов: ${input.movesCount}. Это материал для размышления, а не предсказание.`, COVER_SIDE, doc.y + 22, { width, align: "center", lineGap: 4 });
   // Без нулевого нижнего поля подпись у края страницы уходит на новую страницу
   doc.page.margins.bottom = 0;
   doc.font("bodyBold").fontSize(9).fillColor(COLORS.gold);

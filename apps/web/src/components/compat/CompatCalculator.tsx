@@ -106,7 +106,7 @@ export function CompatCalculator({ profileDate, signedIn, paidReports, paid, own
       <form id={COMPAT_CALC_ID} className="card compat-form" aria-labelledby="compat-calc-title" onSubmit={calculate} noValidate>
         <div className="compat-form__head stack">
           <h2 id="compat-calc-title">Рассчитать общий аркан</h2>
-          <p className="muted">Дата партнёра остаётся на вашем устройстве.</p>
+          <p className="muted">Расчёт выполняется на вашем устройстве. Исключение — подготовка PDF: обе даты временно передаются серверу.</p>
         </div>
         <div className="compat-form__fields">
           <div className="field">
@@ -137,7 +137,7 @@ export function CompatCalculator({ profileDate, signedIn, paidReports, paid, own
           headingRef={headingRef}
           actions={
             <>
-              <button type="button" className="button button--lavender" disabled={busy} onClick={() => void downloadPdf()}>
+              <button type="button" className="button button--lavender" aria-describedby="compat-pdf-privacy" disabled={busy} onClick={() => void downloadPdf()}>
                 Скачать PDF
               </button>
               <CompatShare />
@@ -148,6 +148,7 @@ export function CompatCalculator({ profileDate, signedIn, paidReports, paid, own
           }
         />
       )}
+      {compat && <p id="compat-pdf-privacy" className="muted">При скачивании PDF обе даты передаются серверу только для сборки файла и не сохраняются. В PDF остаются арканы, без дат рождения.</p>}
 
       {compat && dates && ownDate && offer && offer.kind !== "hidden" && (
         <ReportOffer

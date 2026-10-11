@@ -14,7 +14,7 @@ import { SITE_NAME, SITE_URL, SOCIAL_LINKS } from "./site";
 export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", "/lila/igra", "/admin"];
 
 // Практики и их справочники; следующие планы добавят свои
-export const PUBLIC_PATHS: string[] = ["/", MATRIX_PATH, COMPAT_PATH, ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, ...TAROT_DECK.map(taroCardPath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), ...DOCUMENT_PATHS];
+export const PUBLIC_PATHS: string[] = ["/", MATRIX_PATH, COMPAT_PATH, ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, ...TAROT_DECK.map(taroCardPath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), "/metodika", "/matrica-sudby/primer", "/lila/primer", ...DOCUMENT_PATHS];
 
 type PreviewImage = { url: string; alt: string; width?: number; height?: number };
 

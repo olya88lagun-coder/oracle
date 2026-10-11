@@ -9,6 +9,7 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@oracle/ai": "workspace:*",
     "@oracle/content": "workspace:*",
     "@oracle/core": "workspace:*",
     "@oracle/db": "workspace:*",

@@ -5,7 +5,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   outputFileTracingRoot: path.resolve(process.cwd(), "../.."),
-  transpilePackages: ["@oracle/core", "@oracle/content", "@oracle/db"],
+  transpilePackages: ["@oracle/core", "@oracle/content", "@oracle/db", "@oracle/ai"],
   // pdfkit читает свои шрифтовые данные с диска, поэтому его нельзя собирать в бандл
   serverExternalPackages: ["pdfkit"],
   poweredByHeader: false,
