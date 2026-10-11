@@ -8,7 +8,7 @@ import { DISCLAIMER } from "@/lib/legal";
 import { chapterAnchor, chapterArcanaLabel, formatIsoDate, orderedChapters } from "@/lib/report-offer";
 import { ReportPdfLink } from "./ReportPdfLink";
 
-type Props = { matrix: Matrix; birthDate: string; chapters: readonly StoredChapter[]; purchaseId: string };
+type Props = { matrix: Matrix; birthDate: string; chapters: readonly StoredChapter[] } & ({ demo: true; purchaseId?: never } | { demo?: false; purchaseId: string });
 
 const HIGHLIGHTED = new Set(["turningPoint", "experiment"]);
 
@@ -26,7 +26,7 @@ function Scenario({ chapter }: { chapter: StoredChapter }) {
   );
 }
 
-export function ReportView({ matrix, birthDate, chapters, purchaseId }: Props) {
+export function ReportView({ matrix, birthDate, chapters, purchaseId, demo = false }: Props) {
   const center = arcanumByNumber(matrix.E);
   const toc = reportChapters(matrix);
   const arcanaOf = new Map(toc.map((chapter) => [chapter.id, chapter.arcana]));
@@ -35,11 +35,12 @@ export function ReportView({ matrix, birthDate, chapters, purchaseId }: Props) {
       <header className="report-cover">
         <Image className="report-cover__art" src={arcanumImage(center)} alt="" width={960} height={960} sizes="(min-width: 960px) 420px, 100vw" priority unoptimized />
         <div className="stack">
-          <p className="eyebrow">Разбор матрицы судьбы · по дате {formatIsoDate(birthDate)}</p>
-          <h1 className="display report-cover__title">Ваш центр — {center.name}</h1>
+          <p className="eyebrow">{demo ? "Демонстрационная дата" : "Разбор матрицы судьбы · по дате"} {formatIsoDate(birthDate)}</p>
+          <h1 className="display report-cover__title">{demo ? "Пример полного разбора" : `Ваш центр — ${center.name}`}</h1>
+          {demo && <p className="muted">Вымышленный пример, семь глав. Текст собран из готовых описаний тем же способом, который используется, когда ИИ недоступен. Персональный текст с ИИ может отличаться. Пример не использует вашу дату и не является отзывом.</p>}
           <p className="lead">Семь глав о том, как устроена ваша матрица. Это материал для размышления, а не предсказание.</p>
           <p>
-            <ReportPdfLink purchaseId={purchaseId} />
+            {demo ? <a className="button button--ghost" href="/examples/matrix.pdf" download>Скачать пример PDF</a> : <ReportPdfLink purchaseId={purchaseId!} />}
           </p>
           <nav className="card report-contents" aria-labelledby="report-contents">
             <h2 id="report-contents">Оглавление</h2>
@@ -93,7 +94,7 @@ export function ReportView({ matrix, birthDate, chapters, purchaseId }: Props) {
 
       <p className="muted">{DISCLAIMER}</p>
       <p>
-        <Link href="/portret">← Мой портрет</Link>
+        <Link href={demo ? "/matrica-sudby" : "/portret"}>{demo ? "Рассчитать свою матрицу" : "← Мой портрет"}</Link>
       </p>
     </article>
   );

@@ -12,6 +12,7 @@ import { CellArt } from "@/components/lila/CellArt";
 import { lilaCellDescription, lilaCellFromParam, lilaCellImage, lilaCellJsonLd, lilaCellPath, lilaImageFile, lilaParam, LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
 import { publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
+import { LILA_EXAMPLES } from "@/lib/lila-examples";
 import { availableCellImages } from "@/server/lila-images";
 
 type Params = { params: Promise<{ cell: string }> };
@@ -50,9 +51,13 @@ export default async function LilaCellPage({ params }: Params) {
   const available = availableCellImages();
   const jsonLd = JSON.stringify(lilaCellJsonLd(cell, SITE_URL)).replace(/</g, "\\u003c");
   const hasTransition = targetCell !== undefined && Boolean(cell.transition);
+  const practice = LILA_EXAMPLES[cell.number]!;
+  const related = lilaCellByNumber(practice.related);
+  const incoming = [...Object.entries(LILA_SNAKES), ...Object.entries(LILA_ARROWS)].filter(([, to]) => to === cell.number).map(([from]) => lilaCellByNumber(Number(from)));
   const toc = [
     { id: "o-chem-eto", title: "О чём это" },
     { id: "voprosy", title: "Вопросы для размышления" },
+    { id: "primer", title: "Пример из повседневности" },
     ...(hasTransition ? [{ id: "perehod", title: kind }] : []),
     { id: "kletka-na-pole", title: "Клетка на поле" },
   ];
@@ -118,6 +123,15 @@ export default async function LilaCellPage({ params }: Params) {
               </ol>
             </section>
 
+            <section id="primer" className="detail-section" aria-labelledby="example-title">
+              <h2 id="example-title">Пример из повседневности</h2>
+              <p>{practice.example}</p>
+              <h3>Границы трактовки</h3>
+              <p>{practice.limit}</p>
+              <p>Это современный пример редакции, а не описание вашей ситуации. Если он не откликается, можно ответить на вопрос клетки своими словами. <Link href="/metodika">О текстах и методике</Link>.</p>
+              <p>Связанная тема: <Link href={lilaCellPath(related)}>{related.number} · {related.name}</Link>.</p>
+            </section>
+
             {hasTransition && targetCell && (
               <section id="perehod" className="detail-section" aria-labelledby="transition">
                 <h2 id="transition">
@@ -136,6 +150,8 @@ export default async function LilaCellPage({ params }: Params) {
 
             <section id="kletka-na-pole" className="detail-section" aria-labelledby="board-title">
               <h2 id="board-title">Клетка на поле</h2>
+              <p>Клетка {cell.number} находится в {Math.floor((cell.number - 1) / 9) + 1}-м ряду из восьми. Номер обозначает место на поле, а не уровень человека. Цель этой версии игры — клетка {GOAL_CELL}, попасть на неё нужно точным броском.</p>
+              {incoming.length > 0 && <p>Сюда ведёт переход с клетки {incoming.map((from, index) => <span key={from.number}>{index > 0 && ", "}<Link href={lilaCellPath(from)}>{from.number} · {from.name}</Link></span>)}. Переход задан правилами поля и не оценивает события вашей жизни.</p>}
               <div className="detail-board">
                 <Board current={cell.number} variant="locator" />
               </div>

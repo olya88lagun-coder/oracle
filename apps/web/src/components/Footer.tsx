@@ -9,6 +9,7 @@ const MORE = [
   { href: "/blog", label: "Блог" },
   { href: "/portret", label: "Мой портрет" },
   { href: "/contacts", label: "Контакты" },
+  { href: "/metodika", label: "О текстах и методике" },
 ] as const;
 const LEGAL = [
   { href: "/privacy", label: "Политика обработки данных" },

@@ -8,6 +8,7 @@ import { reachGoal } from "@/lib/analytics";
 import { guestApi, importGuestGame, lilaErrorMessage, serverApi, startServerGame } from "@/lib/lila-api";
 import { clearGuestGame, guestStart, guestView, readGuestGame, writeGuestGame, type GuestGame } from "@/lib/lila-guest";
 import { LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
+import { clearLilaDraft, readLilaDraft } from "@/lib/lila-draft";
 import { movesLabel, openedCells } from "@/lib/lila-turn";
 import type { GameView } from "@/lib/lila-view";
 import { loginHref } from "@/lib/next-path";
@@ -38,10 +39,13 @@ export function GameShell({ initialGame, signedIn, images, guidedEnabled = false
   // Гостевая партия читается только в браузере; вошедшему она предлагается к переносу
   useEffect(() => {
     const saved = readGuestGame(storage());
+    const draft = readLilaDraft(storage());
+    const started = initialGame ?? (!signedIn && saved ? guestView(saved) : null);
+    if (draft && started?.status === "active" && draft.text.replace(/\s+/g, " ").trim() === started.intention) clearLilaDraft(storage());
     setGuest(saved);
     if (!signedIn && saved) setGame(guestView(saved));
     setReady(true);
-  }, [signedIn]);
+  }, [signedIn, initialGame]);
 
   async function start(intention: string) {
     setBusy(true);
@@ -49,6 +53,7 @@ export function GameShell({ initialGame, signedIn, images, guidedEnabled = false
     if (!signedIn) {
       const next = guestStart(intention.replace(/\s+/g, " ").trim());
       writeGuestGame(storage(), next);
+      clearLilaDraft(storage());
       setGuest(next);
       setGame(guestView(next));
       setNewGame(false);
@@ -59,6 +64,7 @@ export function GameShell({ initialGame, signedIn, images, guidedEnabled = false
     const result = await startServerGame(intention);
     setBusy(false);
     if (!result.ok) return setError(lilaErrorMessage(result.error));
+    clearLilaDraft(storage());
     reachGoal("lila_start");
     setGame(result.game);
     setNewGame(false);

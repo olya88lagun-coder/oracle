@@ -67,6 +67,7 @@ export function GuidedOffer({ intention, signedIn, free = false }: Props) {
       <p>Одна партия с сопровождением по вашему вопросу. На каждом ходу проводник связывает клетку с вашим намерением. Абзацы проводника пишет ИИ.</p>
       <p>После завершения партии получите итог из четырёх глав: {CONCLUSION_CHAPTERS}. Итог можно скачать в PDF.</p>
       <blockquote className="guided-offer__sample">«На клетке «Алчность» стоит заметить, как сравнение с другими может связываться с вашим вопросом о работе…» — пример абзаца.</blockquote>
+      <p><Link className="text-link" href="/lila/primer">Посмотреть четыре главы итога и PDF</Link></p>
       <p className="privacy">Намерение и записи, которые вы оставите в этой партии, передаются сервису подготовки текста (GigaChat, ПАО Сбербанк).</p>
       {signedIn ? (
         <form className="guided-offer__form" onSubmit={buy} noValidate>

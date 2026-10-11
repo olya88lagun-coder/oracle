@@ -1,14 +1,16 @@
 import { LILA_CELLS } from "@oracle/content/lila";
+import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT } from "@oracle/core";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Board } from "@/components/lila/Board";
 import { CellArt } from "@/components/lila/CellArt";
 import { Scene } from "@/components/Scene";
-import { DISCLAIMER } from "@/lib/legal";
+import { DISCLAIMER, formatRubles } from "@/lib/legal";
 import { lilaCellPath, LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
 import { jsonLdScript, lilaGameJsonLd, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { availableCellImages } from "@/server/lila-images";
+import { salesEnabled } from "@/server/payments-deps";
 
 export const metadata: Metadata = publicMetadata({
   title: "Лила онлайн — игра с намерением, поле из 72 клеток",
@@ -18,8 +20,12 @@ export const metadata: Metadata = publicMetadata({
   image: SITE_PREVIEW_IMAGE,
 });
 
+// Продажа зависит от настроек работающего сервера, а не окружения сборки.
+export const dynamic = "force-dynamic";
+
 export default function LilaPage() {
   const images = availableCellImages();
+  const guided = salesEnabled(LILA_SESSION_PRODUCT);
   return (
     <Scene>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(lilaGameJsonLd()) }} />
@@ -52,6 +58,16 @@ export default function LilaPage() {
           <li>Стрелы поднимают на другую клетку, змеи возвращают к теме, которая просит внимания. Цель пути — клетка 68, попасть на неё можно только точным броском.</li>
         </ol>
       </section>
+
+      {guided && <section className="card stack" aria-labelledby="modes-title">
+        <h2 id="modes-title">Два способа играть</h2>
+        <div className="lila-modes">
+          <div className="stack"><h3>Без проводника · бесплатно</h3><p>Поле, кубик, тексты клеток, три вопроса для повторных визитов и ваши записи. Можно начать без регистрации. Гостевая партия хранится в браузере; через VK ID её можно сохранить в портрете.</p></div>
+          <div className="stack"><h3>С проводником · {formatRubles(LILA_SESSION_PRICE_KOPECKS)}</h3><p>Одна новая партия. ИИ связывает ходы с намерением. После завершения — четыре главы: «Намерение и путь», «Что повторялось», «Что вы замечали», «Вывод и шаг на неделю», а также PDF.</p><p>Вход через VK ID и разовая оплата до начала. Намерение и записи передаются GigaChat для подготовки текста. Если ИИ недоступен, итог собирается из фактов и готовых описаний.</p><Link className="text-link" href="/lila/primer">Посмотреть пример итога и PDF</Link></div>
+        </div>
+        <p className="muted">В обоих режимах одинаковые правила поля. Проводник предлагает гипотезы для размышления и не предсказывает исход вашего вопроса.</p>
+        <p><Link className="button button--ghost" href={LILA_GAME_PATH}>Выбрать режим и сформулировать вопрос</Link></p>
+      </section>}
 
       <section className="stack" aria-labelledby="field">
         <h2 id="field">Поле Лилы</h2>

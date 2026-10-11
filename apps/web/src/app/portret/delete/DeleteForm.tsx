@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { browserStorage, clearStoredBirthDate } from "@/lib/birth-date-storage";
+import { clearLilaDraft } from "@/lib/lila-draft";
 
 export function DeleteForm() {
   const [confirmed, setConfirmed] = useState(false);
@@ -15,6 +16,7 @@ export function DeleteForm() {
       const response = await fetch("/api/me/delete", { method: "POST" });
       if (response.ok) {
         clearStoredBirthDate(browserStorage());
+        clearLilaDraft();
         window.location.assign("/?deleted=1");
         return;
       }
