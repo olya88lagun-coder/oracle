@@ -155,7 +155,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Карта Таро «Туз Жезлов» из колоды Райдера — Уэйта",
     basis: ["tarot", "tarot-deck"],
     internalLinks: ["/taro", "/taro/karty/zhezly-tuz", "/taro/karty/kubki-tuz"],
-    status: "draft",
+    status: "published",
   },
 
   // Wordstat D03: 114 запросов со строгим оператором (РФ; сентябрь–октябрь 2026).
