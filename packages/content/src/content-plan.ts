@@ -233,7 +233,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Карта Таро «Верховная Жрица» из колоды Райдера — Уэйта",
     basis: ["tarot", "tarot-practice"],
     internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/verkhovnaya-zhrica"],
-    status: "draft",
+    status: "published",
   },
 ];
 
