@@ -207,7 +207,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Карта Таро «Королева Жезлов» из колоды Райдера — Уэйта",
     basis: ["tarot", "tarot-deck"],
     internalLinks: ["/taro", "/taro/karty/zhezly-koroleva", "/taro/karty/kubki-pazh"],
-    status: "draft",
+    status: "published",
   },
 
   // Wordstat D06: 33 запросов со строгим оператором (РФ; сентябрь–октябрь 2026).
