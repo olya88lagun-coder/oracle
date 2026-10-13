@@ -168,7 +168,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Карта Таро «Шут» из колоды Райдера — Уэйта",
     basis: ["tarot", "tarot-deck", "tarot-practice"],
     internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/shut"],
-    status: "draft",
+    status: "published",
   },
 
   // Wordstat D04: 89 запросов со строгим оператором (РФ; сентябрь–октябрь 2026).
