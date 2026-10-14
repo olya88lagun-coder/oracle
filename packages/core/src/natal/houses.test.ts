@@ -1,5 +1,6 @@
 import * as Astronomy from "astronomy-engine";
 import { describe, expect, test } from "vitest";
+import { ascendantAndMidheaven } from "./angles";
 import { houseCusps, houseOf } from "./houses";
 import { normalizeDegrees } from "./zodiac";
 
@@ -81,6 +82,29 @@ describe("houseCusps beyond latitude 66°", () => {
     const below = normalizeDegrees(ic - asc) / 3;
     expect(normalizeDegrees(cusp2 - asc)).toBeCloseTo(below, 9);
     expect(normalizeDegrees(cusp3 - asc)).toBeCloseTo(below * 2, 9);
+  });
+});
+
+describe("houseCusps beyond latitude 66° all year", () => {
+  const THREE_HOURS_MS = 3 * 3600 * 1000;
+  const START_1990_MS = Date.parse("1990-01-01T00:00:00Z");
+  const STEPS_IN_YEAR = 365 * 8;
+
+  test.each([68.96, 75, -68.96])("Porphyry cusps close the circle without overlaps: latitude %s", (latitude) => {
+    for (let step = 0; step < STEPS_IN_YEAR; step++) {
+      const date = new Date(START_1990_MS + step * THREE_HOURS_MS);
+      const houses = houseCusps(date, latitude, 33.08);
+      expect(houses.system).toBe("porphyry");
+      let total = 0;
+      for (let i = 0; i < 12; i++) {
+        const span = normalizeDegrees(houses.cusps[(i + 1) % 12]! - houses.cusps[i]!);
+        expect(span).toBeGreaterThan(0);
+        expect(span).toBeLessThan(180);
+        total += span;
+      }
+      expect(total).toBeCloseTo(360, 6);
+      expect(houses.cusps[0]).toBe(ascendantAndMidheaven(date, latitude, 33.08).ascendant);
+    }
   });
 });
 

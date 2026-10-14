@@ -2,7 +2,7 @@ import * as Astronomy from "astronomy-engine";
 import { describe, expect, test } from "vitest";
 import { ascendantAndMidheaven } from "./angles";
 import { eclipticLongitude } from "./bodies";
-import { angularDistance } from "./zodiac";
+import { angularDistance, normalizeDegrees } from "./zodiac";
 
 const PLACES = [
   { name: "Москва", latitude: 55.7558, longitude: 37.6173 },
@@ -42,6 +42,23 @@ describe("ascendantAndMidheaven", () => {
       expect(behind).toBeGreaterThan(0);
       expect(behind).toBeLessThan(180);
       expect(Number.isFinite(ascendantAndMidheaven(new Date(Date.UTC(1990, 2, 7, hour)), 68.97, 33.08).ascendant)).toBe(true);
+    }
+  });
+});
+
+const THREE_HOURS_MS = 3 * 3600 * 1000;
+const START_1990_MS = Date.parse("1990-01-01T00:00:00Z");
+const STEPS_IN_YEAR = 365 * 8;
+
+describe("ascendantAndMidheaven above the polar circle", () => {
+  test.each([55.75, 66.5, 68.96, 75, -68.96])("the ascendant stays 0…180° east of the midheaven all year: latitude %s", (latitude) => {
+    for (let step = 0; step < STEPS_IN_YEAR; step++) {
+      const { ascendant, midheaven } = ascendantAndMidheaven(new Date(START_1990_MS + step * THREE_HOURS_MS), latitude, 33.08);
+      expect(Number.isFinite(ascendant)).toBe(true);
+      expect(Number.isFinite(midheaven)).toBe(true);
+      const behind = normalizeDegrees(ascendant - midheaven);
+      expect(behind).toBeGreaterThan(0);
+      expect(behind).toBeLessThan(180);
     }
   });
 });

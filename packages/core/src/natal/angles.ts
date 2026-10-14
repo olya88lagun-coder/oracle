@@ -11,5 +11,10 @@ export function ascendantAndMidheaven(date: Date, latitude: number, longitude: n
   const ramc = normalizeDegrees(Astronomy.SiderealTime(time) * 15 + longitude) * RAD;
   const ascendant = Math.atan2(Math.cos(ramc), -(Math.sin(ramc) * Math.cos(obliquity) + Math.tan(latitude * RAD) * Math.sin(obliquity))) * DEG;
   const midheaven = Math.atan2(Math.sin(ramc), Math.cos(ramc) * Math.cos(obliquity)) * DEG;
-  return { ascendant: normalizeDegrees(ascendant), midheaven: normalizeDegrees(midheaven) };
+  const midheavenDegrees = normalizeDegrees(midheaven);
+  let ascendantDegrees = normalizeDegrees(ascendant);
+  // За полярным кругом эклиптика может целиком уйти под горизонт: точки горизонта меняются местами, и формула даёт
+  // противоположную точку. Берём ту, что лежит в 0…180° к востоку от МС, чтобы четверти домов замыкали круг.
+  if (normalizeDegrees(ascendantDegrees - midheavenDegrees) > 180) ascendantDegrees = normalizeDegrees(ascendantDegrees + 180);
+  return { ascendant: ascendantDegrees, midheaven: midheavenDegrees };
 }
