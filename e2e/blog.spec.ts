@@ -20,11 +20,21 @@ test("the topic filters narrow the blog and the count follows", async ({ page })
   await page.goto("/blog");
   const status = page.getByRole("status").filter({ hasText: /материал/ });
   await expect(status).toContainText(/\d+ материал/);
+
+  // Статей становится больше: берём числа с самих кнопок фильтров, а не жёстко заданные
+  const countOf = async (name: RegExp) => Number((await page.getByRole("button", { name }).locator("b").innerText()).trim());
+  const total = await countOf(/^Все материалы/);
+  const lila = await countOf(/^Лила/);
+  expect(lila).toBeGreaterThan(0);
+  expect(lila).toBeLessThan(total);
+
+  await expect(status).toHaveText(new RegExp(`^${total} материал`));
   await page.getByRole("button", { name: /^Лила/ }).click();
-  await expect(status).toHaveText("3 материала");
+  await expect(status).toHaveText(new RegExp(`^${lila} материал`));
   await expect(page.getByRole("button", { name: /^Лила/ })).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: /^Все материалы/ }).click();
   await expect(page.getByRole("button", { name: /^Все материалы/ })).toHaveAttribute("aria-pressed", "true");
+  await expect(status).toHaveText(new RegExp(`^${total} материал`));
 });
 
 test("an article shows its meta, a table of contents, a practice link and related articles", async ({ page }) => {
