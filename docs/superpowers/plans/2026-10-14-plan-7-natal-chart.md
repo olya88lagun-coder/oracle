@@ -845,7 +845,7 @@ git commit -m "feat(core): ascendant, midheaven, Placidus houses (Porphyry beyon
 
 **Interfaces:**
 - Consumes: всё из задач 1–3.
-- Produces: `type BirthMoment = { instant: Date; latitude: number; longitude: number; timeKnown: boolean }`, `type ChartPoint = { id: BodyId | "northNode"; longitude; sign: SignId; degree; retrograde; house: number | null }`, `type ChartAngle = { longitude; sign; degree }`, `type NatalChart = { points: ChartPoint[]; ascendant: ChartAngle | null; midheaven: ChartAngle | null; houses: Houses | null; aspects: Aspect[]; uncertainSigns: BodyId[] }`, `computeNatalChart(moment): NatalChart` (бросает `RangeError` на неверный момент и координаты); `index.ts` реэкспортирует всё из `natal/*`.
+- Produces: `type BirthMoment = { instant: Date; latitude: number; longitude: number; timeKnown: boolean }`, `type ChartPoint = { id: BodyId | "northNode"; longitude; sign: SignId; degree; retrograde; house: number | null }`, `type ChartAngle = { longitude; sign; degree }`, `type NatalChart = { points: ChartPoint[]; ascendant: ChartAngle | null; midheaven: ChartAngle | null; houses: Houses | null; aspects: Aspect[]; uncertainSigns: BodyId[]; timeKnown: boolean }`, `computeNatalChart(moment): NatalChart` (бросает `RangeError` на неверный момент и координаты); `index.ts` реэкспортирует всё из `natal/*`.
 
 - [ ] **Step 1: Тесты**
 
@@ -883,6 +883,16 @@ describe("computeNatalChart", () => {
     expect(chart.houses).toBeNull();
     expect(chart.points.every((point) => point.house === null)).toBe(true);
     expect(chart.uncertainSigns).toContain("sun"); // 20 марта 2024 Солнце перешло из Рыб в Овен
+  });
+
+  test("without a birth time the Moon's aspects are left out, because its noon position can be off by about 6.5°", () => {
+    const known = computeNatalChart({ instant: new Date("1990-03-07T09:00:00Z"), ...MOSCOW, timeKnown: true });
+    const unknown = computeNatalChart({ instant: new Date("1990-03-07T09:00:00Z"), ...MOSCOW, timeKnown: false });
+    expect(known.timeKnown).toBe(true);
+    expect(known.aspects.some((aspect) => aspect.a === "moon" || aspect.b === "moon")).toBe(true);
+    expect(unknown.timeKnown).toBe(false);
+    expect(unknown.aspects.some((aspect) => aspect.a === "moon" || aspect.b === "moon")).toBe(false);
+    expect(unknown.aspects).toEqual(known.aspects.filter((aspect) => aspect.a !== "moon" && aspect.b !== "moon"));
   });
 
   test("with a known time nothing is reported as uncertain", () => {
@@ -954,8 +964,9 @@ export type NatalChart = {
   ascendant: ChartAngle | null; // без времени рождения асцендента, МС и домов нет
   midheaven: ChartAngle | null;
   houses: Houses | null; // система (Плацидус или Порфирий) и куспиды; без времени рождения — null
-  aspects: Aspect[];
+  aspects: Aspect[]; // без времени рождения — без аспектов с Луной (на полдень она неточна до ≈ 6,5°)
   uncertainSigns: BodyId[]; // без времени: тела, которые в течение суток меняют знак
+  timeKnown: boolean; // передан в BirthMoment
 };
 
 const HALF_DAY_MS = 12 * 3_600_000;
@@ -994,8 +1005,9 @@ export function computeNatalChart(moment: BirthMoment): NatalChart {
     ascendant: angles ? { longitude: angles.ascendant, ...placement(angles.ascendant) } : null,
     midheaven: angles ? { longitude: angles.midheaven, ...placement(angles.midheaven) } : null,
     houses,
-    aspects: findAspects(longitudes, BODIES),
+    aspects: findAspects(longitudes, timeKnown ? BODIES : BODIES.filter((body) => body !== "moon")),
     uncertainSigns,
+    timeKnown,
   };
 }
 ```
@@ -1363,7 +1375,7 @@ git commit -m "content(natal): manifest, text checks and the first batch of draf
 
 - [ ] **Step 3: Результат**
 
-`NatalResult` — `<section aria-labelledby>` «Ваша натальная карта»: сводка «Солнце в Рыбах · Луна в Раке · Асцендент в Раке» (без времени: «Асцендент: нужно время рождения»), затем три ключевых текста (если партия принята — полный текст с ссылкой «Читать полностью», иначе краткая сводка без текстов — страницы-пустышки не открываем), колесо, таблица позиций (знак, градусы и минуты, «℞» для обратного движения с подписью «обратное движение», дом), под таблицей подпись «Дома: Плацидус» (за 66° с. ш. — «Дома: Порфирий»), у узла подпись «лунный узел (средний)», аспекты (строка на аспект: «Солнце — Плутон: тригон, точность 1°11′» плюс однострочное описание типа из `ASPECT_TEXTS`), дисклеймер. Уведомления: `gap` — «В это время часы переводили вперёд: такого времени не было. Считаем по ближайшему существующему — 01:30»; `ambiguous` — два переключателя «Первый раз» / «Второй раз», пока не выбрано, карта не строится; `uncertainSigns` — «В этот день {тело} сменило знак — точный знак зависит от времени рождения»; широта выше 66° — «За полярным кругом асцендент сильно зависит от минуты рождения. Дома считаются по системе Порфирия: Плацидус там не определён»; рождение до 1930 — «Для ранних лет история часовых поясов менее надёжна».
+`NatalResult` — `<section aria-labelledby>` «Ваша натальная карта»: сводка «Солнце в Рыбах · Луна в Раке · Асцендент в Раке» (без времени: «Асцендент: нужно время рождения»), затем три ключевых текста (если партия принята — полный текст с ссылкой «Читать полностью», иначе краткая сводка без текстов — страницы-пустышки не открываем), колесо, таблица позиций (знак, градусы и минуты, «℞» для обратного движения с подписью «обратное движение», дом), под таблицей подпись «Дома: Плацидус» (за 66° с. ш. — «Дома: Порфирий»), у узла подпись «лунный узел (средний)», аспекты (строка на аспект: «Солнце — Плутон: тригон, точность 1°11′» плюс однострочное описание типа из `ASPECT_TEXTS`; без времени рождения `chart.aspects` уже без Луны — показать строку «Аспекты Луны без времени рождения не считаются.»), дисклеймер. Уведомления: `gap` — «В это время часы переводили вперёд: такого времени не было. Считаем по ближайшему существующему — 01:30»; `ambiguous` — два переключателя «Первый раз» / «Второй раз», пока не выбрано, карта не строится; `uncertainSigns` — «В этот день {тело} сменило знак — точный знак зависит от времени рождения»; широта выше 66° — «За полярным кругом асцендент сильно зависит от минуты рождения. Дома считаются по системе Порфирия: Плацидус там не определён»; рождение до 1930 — «Для ранних лет история часовых поясов менее надёжна».
 
 - [ ] **Step 4: Колесо**
 
