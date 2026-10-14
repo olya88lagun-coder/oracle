@@ -1,0 +1,98 @@
+{
+  "checks": {
+    "sprite_24_unique_ids": true,
+    "all_symbols_have_title": true,
+    "all_symbols_24_viewbox": true,
+    "known_12_cusp_lines": true,
+    "known_12_house_numbers": true,
+    "known_11_planet_points": true,
+    "known_14_aspects": true,
+    "known_2_angle_labels": true,
+    "unknown_has_no_houses_or_angles": true,
+    "unknown_11_planet_points": true,
+    "unknown_11_aspects": true,
+    "unknown_no_moon_aspects": true,
+    "known_svg_unchanged": true,
+    "glyph_sprite_unchanged": true,
+    "index_has_wheel_and_list_notes": true,
+    "board_has_no_time_note": true,
+    "all_use_refs_resolve": true,
+    "minimum_label_separation_8_degrees": true,
+    "all_text_contrasts_4_5": true,
+    "no_external_http_resources": true,
+    "qa-mobile.json_no_overflow": true,
+    "qa-mobile.json_links_44": true,
+    "qa-mobile.json_visible_svg_font_11": true,
+    "qa-desktop.json_no_overflow": true,
+    "qa-desktop.json_links_44": true
+  },
+  "failed": [],
+  "contrast_checks": [
+    {
+      "foreground": "ink",
+      "background": "#0A090E",
+      "ratio": 16.499
+    },
+    {
+      "foreground": "ink",
+      "background": "#121017",
+      "ratio": 15.7
+    },
+    {
+      "foreground": "ink",
+      "background": "#17141D",
+      "ratio": 15.128
+    },
+    {
+      "foreground": "ink-soft",
+      "background": "#0A090E",
+      "ratio": 9.202
+    },
+    {
+      "foreground": "ink-soft",
+      "background": "#121017",
+      "ratio": 8.756
+    },
+    {
+      "foreground": "ink-soft",
+      "background": "#17141D",
+      "ratio": 8.437
+    },
+    {
+      "foreground": "accent",
+      "background": "#0A090E",
+      "ratio": 8.745
+    },
+    {
+      "foreground": "accent",
+      "background": "#121017",
+      "ratio": 8.322
+    },
+    {
+      "foreground": "accent",
+      "background": "#17141D",
+      "ratio": 8.019
+    },
+    {
+      "foreground": "lavender",
+      "background": "#0A090E",
+      "ratio": 9.013
+    },
+    {
+      "foreground": "lavender",
+      "background": "#121017",
+      "ratio": 8.576
+    },
+    {
+      "foreground": "lavender",
+      "background": "#17141D",
+      "ratio": 8.264
+    }
+  ],
+  "minimum_label_separation_degrees": 10,
+  "reviewed_viewports": [
+    375,
+    1280
+  ],
+  "scope": "Static visual artifacts only. No astronomical calculation or live product changes."
+}
