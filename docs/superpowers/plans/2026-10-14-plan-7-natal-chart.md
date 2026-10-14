@@ -29,7 +29,7 @@
 Что спецификация подразумевает, но чего не проверяют основные тесты; каждая строка получает свой тест в указанной задаче.
 
 1. **Время «в зазоре» и «дважды» при переводе часов** (СССР 1981–1991, Москва 01.04.1981 00:30 и 30.09.1990 02:30): человек не должен молча получить карту «не на то время». Сдвиг вперёд с объяснением; для повтора — выбор «первый раз / второй раз». Задачи 1 и 7.
-2. **Города за полярным кругом** (Мурманск 68,96° с. ш.): асцендент считается без NaN, дома по знакам, но около горизонта асцендент «прыгает» на десятки градусов за минуты — показываем пояснение. Задачи 3 и 7.
+2. **Города за полярным кругом** (Мурманск 68,96° с. ш.): асцендент считается без NaN, дома считаются по Порфирию (Плацидус за 66° не определён), но около горизонта асцендент «прыгает» на десятки градусов за минуты — показываем оба пояснения. Задачи 3 и 7.
 3. **Долгота западнее 180° (Уэлен, −169,8°) и Южное полушарие**: формулы не должны ломаться на знаке долготы. Задача 4.
 4. **Время неизвестно**: в результате нет асцендента, МС, домов и «домовых» фраз; для тел, сменивших знак в течение суток, — явное предупреждение; никакого «приблизительного» асцендента. Задачи 4 и 7.
 5. **Названия городов**: омонимы («Новгород», «Александров»), буква ё/е, дефисы («Ростов-на-Дону»), регистр, пустой и однобуквенный запрос, слишком длинный запрос, частые запросы (ограничение частоты). Задача 5.
@@ -41,7 +41,7 @@
 | Файл | Ответственность |
 |---|---|
 | `packages/core/src/natal/zodiac.ts`, `time.ts` (+ tests) | Знаки и градусы; местное время → UTC с зазорами и повторами |
-| `packages/core/src/natal/bodies.ts`, `angles.ts`, `aspects.ts` (+ tests) | Положения тел, асцендент и МС, дома по знакам, аспекты |
+| `packages/core/src/natal/bodies.ts`, `angles.ts`, `houses.ts`, `aspects.ts` (+ tests) | Положения тел, асцендент и МС, дома (Плацидус, за 66° — Порфирий), аспекты |
 | `packages/core/src/natal/chart.ts`, `index.ts`, `reference-charts.json`, `reference.test.ts` | Карта целиком, вход `@oracle/core/natal`, эталоны |
 | `packages/geo/**` | База городов, сборка из GeoNames, поиск |
 | `apps/web/src/app/api/cities/route.ts` (+ test) | Поиск городов |
@@ -53,8 +53,8 @@
 
 ## Гейты владелицы (до начала кода)
 
-- [ ] **G1. Решения D1–D4 и D6:** дома по знакам, средний узел, база GeoNames, объём первой партии текстов (рекомендация: Солнце, Луна, асцендент — 36 текстов, плюс 12 коротких о домах и 5 об аспектах).
-- [ ] **G2. Спрос и риск шаблонных страниц (D9):** замеры Wordstat по запросам вида «солнце в овне», «луна в тельце», «асцендент в весах», «натальная карта онлайн» — до задачи 8.
+- [x] **G1. Решения D1–D4 и D6 приняты по источникам** (спецификация, раздел 2): дома — Плацидус, за 66° — Порфирий; узел — средний; города — GeoNames CC BY 4.0; первая партия — Солнце, Луна, асцендент (36 текстов) плюс 12 коротких о домах и 5 об аспектах. Владелица может отменить любое из них до начала соответствующей задачи.
+- [ ] **G2. Спрос и риск шаблонных страниц (D9):** замеры Wordstat по запросам вида «меркурий в деве», «венера в рыбах», «натальная карта онлайн» — нужны **до партии 2** (задача 6, шаги после первой партии), на задачи 1–8 с первой партией не влияют.
 - [ ] **G0. Макеты Codex приняты** (глифы, колесо, макеты калькулятора и страницы значения): нужны до задач 7 и 8 — от них зависят радиусы колеса и список классов. Задачи 1–6 от макетов не зависят и идут параллельно с работой Codex.
 - [ ] **G3. Юридическое решение по времени и месту рождения (D8):** до задачи 9. Задачи 1–8 и 10 от него не зависят.
 
@@ -404,14 +404,14 @@ git commit -m "feat(core): geocentric ecliptic longitudes, retrograde flag and m
 
 ---
 
-### Task 3: Асцендент, дома и аспекты
+### Task 3: Асцендент, дома (Плацидус) и аспекты
 
 **Files:**
-- Create: `packages/core/src/natal/angles.ts`, `angles.test.ts`, `aspects.ts`, `aspects.test.ts`
+- Create: `packages/core/src/natal/angles.ts`, `angles.test.ts`, `houses.ts`, `houses.test.ts`, `aspects.ts`, `aspects.test.ts`
 
 **Interfaces:**
 - Consumes: `normalizeDegrees`, `signOf`, `angularDistance` (задача 1), `BodyId`, `BODIES` (задача 2).
-- Produces: `ascendantAndMidheaven(date, latitude, longitude): { ascendant: number; midheaven: number }` (долгота на восток положительна), `wholeSignHouse(longitude, ascendant): number` (1…12); `ASPECTS`, `type AspectId`, `type Aspect = { a: BodyId; b: BodyId; aspect: AspectId; orb: number }`, `findAspects(longitudes: Readonly<Record<BodyId, number>>, bodies: readonly BodyId[]): Aspect[]`.
+- Produces: `ascendantAndMidheaven(date, latitude, longitude): { ascendant: number; midheaven: number }` (долгота на восток положительна), `type HouseSystem = "placidus" | "porphyry"`, `type Houses = { system: HouseSystem; cusps: number[] }` (`cusps[0]` — начало 1-го дома = асцендент, `cusps[9]` — МС, 12 значений в градусах), `houseCusps(date, latitude, longitude): Houses`, `houseOf(longitude, houses): number` (1…12); `ASPECTS`, `type AspectId`, `type Aspect = { a: BodyId; b: BodyId; aspect: AspectId; orb: number }`, `findAspects(longitudes: Readonly<Record<BodyId, number>>, bodies: readonly BodyId[]): Aspect[]`.
 
 - [ ] **Step 1: Тесты углов**
 
@@ -422,7 +422,7 @@ git commit -m "feat(core): geocentric ecliptic longitudes, retrograde flag and m
 ```ts
 import * as Astronomy from "astronomy-engine";
 import { describe, expect, test } from "vitest";
-import { ascendantAndMidheaven, wholeSignHouse } from "./angles";
+import { ascendantAndMidheaven } from "./angles";
 import { eclipticLongitude } from "./bodies";
 import { angularDistance } from "./zodiac";
 
@@ -467,22 +467,12 @@ describe("ascendantAndMidheaven", () => {
     }
   });
 });
-
-describe("wholeSignHouse", () => {
-  test("counts houses by signs starting from the ascendant sign", () => {
-    expect(wholeSignHouse(10, 15)).toBe(1); // тот же знак, что у асцендента
-    expect(wholeSignHouse(40, 15)).toBe(2);
-    expect(wholeSignHouse(5, 15)).toBe(1);
-    expect(wholeSignHouse(350, 15)).toBe(12);
-    expect(wholeSignHouse(195, 15)).toBe(7);
-  });
-});
 ```
 
 - [ ] **Step 2: Запустить — упасть**
 
-Run: `pnpm test packages/core/src/natal/angles.test.ts`
-Expected: FAIL — модуль `./angles` не найден.
+Run: `pnpm test packages/core/src/natal/angles.test.ts packages/core/src/natal/houses.test.ts`
+Expected: FAIL — модули `./angles` и `./houses` не найдены.
 
 - [ ] **Step 3: Реализация**
 
@@ -490,7 +480,7 @@ Expected: FAIL — модуль `./angles` не найден.
 
 ```ts
 import * as Astronomy from "astronomy-engine";
-import { normalizeDegrees, signOf } from "./zodiac";
+import { normalizeDegrees } from "./zodiac";
 
 const RAD = Math.PI / 180;
 const DEG = 180 / Math.PI;
@@ -504,13 +494,203 @@ export function ascendantAndMidheaven(date: Date, latitude: number, longitude: n
   const midheaven = Math.atan2(Math.sin(ramc), Math.cos(ramc) * Math.cos(obliquity)) * DEG;
   return { ascendant: normalizeDegrees(ascendant), midheaven: normalizeDegrees(midheaven) };
 }
+```
 
-// Дома по знакам: первый дом — знак асцендента, дальше по порядку.
-// Работает на любой широте (Плацидус за полярным кругом не определён)
-export function wholeSignHouse(longitude: number, ascendant: number): number {
-  return ((signOf(longitude).index - signOf(ascendant).index + 12) % 12) + 1;
+- [ ] **Step 3a: Тесты домов**
+
+Плацидус проверяется **по определению**, а не сравнением с чужим результатом: у куспиды 11 часовой угол точки (к востоку от меридиана) равен 1/3 её дневной полудуги, у 12 — 2/3; у куспид 2 и 3 — дневная полудуга плюс 1/3 и 2/3 ночной. Плюс: на экваторе полудуга всегда 90°, поэтому куспида 11 лежит в точке эклиптики с прямым восхождением РАМС + 30°. Выше 66° с. ш. Плацидус не определён (у части точек эклиптики нет восхода или захода), поэтому берётся Порфирий: углы делятся на три равные дуги эклиптики.
+
+`packages/core/src/natal/houses.test.ts`:
+
+```ts
+import * as Astronomy from "astronomy-engine";
+import { describe, expect, test } from "vitest";
+import { houseCusps, houseOf } from "./houses";
+import { normalizeDegrees } from "./zodiac";
+
+const RAD = Math.PI / 180;
+const DEG = 180 / Math.PI;
+
+function context(iso: string, longitude: number) {
+  const time = Astronomy.MakeTime(new Date(iso));
+  return { obliquity: Astronomy.e_tilt(time).tobl * RAD, ramc: normalizeDegrees(Astronomy.SiderealTime(time) * 15 + longitude) };
+}
+
+// Прямое восхождение и склонение точки эклиптики
+function equatorial(longitude: number, obliquity: number) {
+  return {
+    rightAscension: normalizeDegrees(Math.atan2(Math.sin(longitude * RAD) * Math.cos(obliquity), Math.cos(longitude * RAD)) * DEG),
+    declination: Math.asin(Math.sin(obliquity) * Math.sin(longitude * RAD)) * DEG,
+  };
+}
+
+const PLACES = [
+  { name: "Москва", iso: "1990-03-07T09:00:00Z", latitude: 55.7558, longitude: 37.6173 },
+  { name: "Москва, осень", iso: "2005-09-23T00:00:00Z", latitude: 55.7558, longitude: 37.6173 },
+  { name: "Сочи, зима", iso: "1978-12-21T17:00:00Z", latitude: 43.5855, longitude: 39.7231 },
+  { name: "Новосибирск", iso: "2011-07-01T05:00:00Z", latitude: 55.0084, longitude: 82.9357 },
+  { name: "Буэнос-Айрес (юг)", iso: "1990-03-07T09:00:00Z", latitude: -34.6, longitude: -58.38 },
+  { name: "65,9° с. ш. (граница Плацидуса)", iso: "2000-06-21T10:00:00Z", latitude: 65.9, longitude: 66.6 },
+];
+
+describe("houseCusps (Placidus)", () => {
+  test.each(PLACES)("$name: 12 cusps that close the circle, and the Placidus definition holds", ({ iso, latitude, longitude }) => {
+    const houses = houseCusps(new Date(iso), latitude, longitude);
+    expect(houses.system).toBe("placidus");
+    const { obliquity, ramc } = context(iso, longitude);
+    let total = 0;
+    for (let i = 0; i < 12; i++) {
+      const span = normalizeDegrees(houses.cusps[(i + 1) % 12] - houses.cusps[i]);
+      expect(span).toBeGreaterThan(0);
+      expect(span).toBeLessThan(180);
+      total += span;
+    }
+    expect(total).toBeCloseTo(360, 6);
+
+    const semiArc = (cusp: number) => {
+      const { declination } = equatorial(cusp, obliquity);
+      return Math.acos(-Math.tan(latitude * RAD) * Math.tan(declination * RAD)) * DEG;
+    };
+    const eastOfMeridian = (cusp: number) => normalizeDegrees(equatorial(cusp, obliquity).rightAscension - ramc);
+    // куспиды 11 и 12 — доли дневной полудуги; 2 и 3 — дневная полудуга и доля ночной
+    expect(eastOfMeridian(houses.cusps[10])).toBeCloseTo(semiArc(houses.cusps[10]) / 3, 3);
+    expect(eastOfMeridian(houses.cusps[11])).toBeCloseTo((semiArc(houses.cusps[11]) * 2) / 3, 3);
+    expect(eastOfMeridian(houses.cusps[1])).toBeCloseTo(semiArc(houses.cusps[1]) + (180 - semiArc(houses.cusps[1])) / 3, 3);
+    expect(eastOfMeridian(houses.cusps[2])).toBeCloseTo(semiArc(houses.cusps[2]) + ((180 - semiArc(houses.cusps[2])) * 2) / 3, 3);
+  });
+
+  test("the 1st and 10th cusps are the ascendant and the midheaven, the 4th and 7th are opposite", () => {
+    const { cusps } = houseCusps(new Date("1990-03-07T09:00:00Z"), 55.7558, 37.6173);
+    expect(cusps[0]).toBeCloseTo(104.12, 1);
+    expect(cusps[9]).toBeCloseTo(335.64, 1);
+    expect(normalizeDegrees(cusps[3] - cusps[9])).toBeCloseTo(180, 9);
+    expect(normalizeDegrees(cusps[6] - cusps[0])).toBeCloseTo(180, 9);
+  });
+
+  test("on the equator cusp 11 sits at right ascension of the midheaven + 30°", () => {
+    const iso = "1990-03-07T09:00:00Z";
+    const { obliquity, ramc } = context(iso, 0);
+    const expected = normalizeDegrees(Math.atan2(Math.sin((ramc + 30) * RAD), Math.cos((ramc + 30) * RAD) * Math.cos(obliquity)) * DEG);
+    expect(houseCusps(new Date(iso), 0, 0).cusps[10]).toBeCloseTo(expected, 6);
+  });
+});
+
+describe("houseCusps beyond latitude 66°", () => {
+  test("falls back to Porphyry: the arcs midheaven→ascendant and ascendant→IC are split into thirds", () => {
+    const houses = houseCusps(new Date("1990-03-07T09:00:00Z"), 68.9585, 33.0827);
+    expect(houses.system).toBe("porphyry");
+    const [asc, cusp2, cusp3, ic, , , , , , mc, cusp11, cusp12] = houses.cusps;
+    const above = normalizeDegrees(asc - mc) / 3;
+    expect(normalizeDegrees(cusp11 - mc)).toBeCloseTo(above, 9);
+    expect(normalizeDegrees(cusp12 - mc)).toBeCloseTo(above * 2, 9);
+    const below = normalizeDegrees(ic - asc) / 3;
+    expect(normalizeDegrees(cusp2 - asc)).toBeCloseTo(below, 9);
+    expect(normalizeDegrees(cusp3 - asc)).toBeCloseTo(below * 2, 9);
+  });
+});
+
+describe("houseOf", () => {
+  const houses = houseCusps(new Date("1990-03-07T09:00:00Z"), 55.7558, 37.6173);
+
+  test("takes the house from the cusps, including the wrap through 0°", () => {
+    expect(houseOf(houses.cusps[0] + 0.001, houses)).toBe(1);
+    expect(houseOf(houses.cusps[0] - 0.001, houses)).toBe(12);
+    expect(houseOf(houses.cusps[9] + 0.001, houses)).toBe(10);
+    expect(houseOf(houses.cusps[6] + 0.001, houses)).toBe(7);
+    expect(houseOf(houses.cusps[10] + 0.001, houses)).toBe(11); // куспида 11 лежит сразу за 0° Овна
+  });
+
+  test("regression for the sample chart: Sun 10, Moon 2, Jupiter 12, Pluto 5", () => {
+    expect([346.53, 118.12, 90.99, 227.71].map((value) => houseOf(value, houses))).toEqual([10, 2, 12, 5]);
+  });
+});
+```
+
+- [ ] **Step 3b: Реализация домов**
+
+`packages/core/src/natal/houses.ts`:
+
+```ts
+import * as Astronomy from "astronomy-engine";
+import { ascendantAndMidheaven } from "./angles";
+import { normalizeDegrees } from "./zodiac";
+
+const RAD = Math.PI / 180;
+const DEG = 180 / Math.PI;
+const PLACIDUS_MAX_LATITUDE = 66; // у полярного круга (66,56°) у части точек эклиптики исчезают восход или заход
+const MAX_ITERATIONS = 50;
+const EPSILON_DEGREES = 1e-9;
+
+export type HouseSystem = "placidus" | "porphyry";
+// cusps[0] — начало 1-го дома (асцендент), cusps[3] — IC, cusps[6] — десцендент, cusps[9] — МС; градусы 0…360
+export type Houses = { system: HouseSystem; cusps: number[] };
+
+// Долгота точки эклиптики с заданным прямым восхождением
+const longitudeOfRightAscension = (rightAscension: number, obliquity: number): number =>
+  normalizeDegrees(Math.atan2(Math.sin(rightAscension * RAD), Math.cos(rightAscension * RAD) * Math.cos(obliquity)) * DEG);
+
+const declinationOf = (longitude: number, obliquity: number): number => Math.asin(Math.sin(obliquity) * Math.sin(longitude * RAD)) * DEG;
+
+// Плацидус делит суточную дугу тела по времени на три равные части. Для каждой куспиды ищем точку эклиптики, у которой
+// положение в собственной дуге равно нужной доле; итерация сходится за 5–10 шагов до широты 66°.
+// above=true — куспиды 11 и 12 (к востоку от меридиана, над горизонтом); false — 2 и 3 (после восхода, под горизонтом)
+function placidusCusp(ramc: number, latitude: number, obliquity: number, startOffset: number, fraction: number, above: boolean): number {
+  let rightAscension = normalizeDegrees(ramc + startOffset);
+  for (let i = 0; i < MAX_ITERATIONS; i++) {
+    const declination = declinationOf(longitudeOfRightAscension(rightAscension, obliquity), obliquity);
+    const semiArc = Math.acos(-Math.tan(latitude * RAD) * Math.tan(declination * RAD)) * DEG; // дневная полудуга
+    const next = normalizeDegrees(above ? ramc + semiArc * fraction : ramc + semiArc + (180 - semiArc) * fraction);
+    const change = ((next - rightAscension + 540) % 360) - 180;
+    rightAscension = next;
+    if (Math.abs(change) < EPSILON_DEGREES) break;
+  }
+  return longitudeOfRightAscension(rightAscension, obliquity);
+}
+
+// Куспиды домов: Плацидус, а за широтой 66° — Порфирий (угол делится на три равные дуги эклиптики)
+export function houseCusps(date: Date, latitude: number, longitude: number): Houses {
+  const { ascendant, midheaven } = ascendantAndMidheaven(date, latitude, longitude);
+  const time = Astronomy.MakeTime(date);
+  const obliquity = Astronomy.e_tilt(time).tobl * RAD;
+  const ramc = normalizeDegrees(Astronomy.SiderealTime(time) * 15 + longitude);
+  const imumCoeli = normalizeDegrees(midheaven + 180);
+
+  let system: HouseSystem = "placidus";
+  let cusp11: number, cusp12: number, cusp2: number, cusp3: number;
+  if (Math.abs(latitude) <= PLACIDUS_MAX_LATITUDE) {
+    cusp11 = placidusCusp(ramc, latitude, obliquity, 30, 1 / 3, true);
+    cusp12 = placidusCusp(ramc, latitude, obliquity, 60, 2 / 3, true);
+    cusp2 = placidusCusp(ramc, latitude, obliquity, 120, 1 / 3, false);
+    cusp3 = placidusCusp(ramc, latitude, obliquity, 150, 2 / 3, false);
+  } else {
+    system = "porphyry";
+    const above = normalizeDegrees(ascendant - midheaven) / 3;
+    const below = normalizeDegrees(imumCoeli - ascendant) / 3;
+    cusp11 = normalizeDegrees(midheaven + above);
+    cusp12 = normalizeDegrees(midheaven + above * 2);
+    cusp2 = normalizeDegrees(ascendant + below);
+    cusp3 = normalizeDegrees(ascendant + below * 2);
+  }
+  const opposite = (value: number) => normalizeDegrees(value + 180);
+  return {
+    system,
+    cusps: [ascendant, cusp2, cusp3, imumCoeli, opposite(cusp11), opposite(cusp12), opposite(ascendant), opposite(cusp2), opposite(cusp3), midheaven, cusp11, cusp12],
+  };
+}
+
+// Номер дома (1…12), в который попадает долгота
+export function houseOf(longitude: number, houses: Houses): number {
+  const value = normalizeDegrees(longitude);
+  for (let i = 0; i < 12; i++) {
+    const start = houses.cusps[i];
+    const span = normalizeDegrees(houses.cusps[(i + 1) % 12] - start);
+    if (normalizeDegrees(value - start) < span) return i + 1;
+  }
+  return 12;
 }
 ```
+
+Проверено на черновике: определение Плацидуса выполняется до 1e-4° на широтах от −35° до 65,9°, Мурманск (68,96°) уходит на Порфирий. Ожидаемые дома образца (Москва, 07.03.1990 12:00): Солнце 10, Луна 2, Меркурий 10, Венера 8, Марс 7, Юпитер 12, Сатурн 7, Уран 6, Нептун 7, Плутон 5, узел 9. Для сравнения: при «домах по знакам» Луна и Юпитер оказались бы в 1-м доме, а Солнце — в 9-м; поэтому выбран Плацидус, как на других сайтах.
 
 - [ ] **Step 4: Тесты аспектов**
 
@@ -603,8 +783,8 @@ Expected: PASS.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add packages/core/src/natal/angles.ts packages/core/src/natal/angles.test.ts packages/core/src/natal/aspects.ts packages/core/src/natal/aspects.test.ts
-git commit -m "feat(core): ascendant, midheaven, whole-sign houses and major aspects"
+git add packages/core/src/natal/angles.ts packages/core/src/natal/angles.test.ts packages/core/src/natal/houses.ts packages/core/src/natal/houses.test.ts packages/core/src/natal/aspects.ts packages/core/src/natal/aspects.test.ts
+git commit -m "feat(core): ascendant, midheaven, Placidus houses (Porphyry beyond 66°) and major aspects"
 ```
 
 ---
@@ -617,7 +797,7 @@ git commit -m "feat(core): ascendant, midheaven, whole-sign houses and major asp
 
 **Interfaces:**
 - Consumes: всё из задач 1–3.
-- Produces: `type BirthMoment = { instant: Date; latitude: number; longitude: number; timeKnown: boolean }`, `type ChartPoint = { id: BodyId | "northNode"; longitude; sign: SignId; degree; retrograde; house: number | null }`, `type ChartAngle = { longitude; sign; degree }`, `type NatalChart = { points: ChartPoint[]; ascendant: ChartAngle | null; midheaven: ChartAngle | null; aspects: Aspect[]; uncertainSigns: BodyId[] }`, `computeNatalChart(moment): NatalChart` (бросает `RangeError` на неверный момент и координаты); `index.ts` реэкспортирует всё из `natal/*`.
+- Produces: `type BirthMoment = { instant: Date; latitude: number; longitude: number; timeKnown: boolean }`, `type ChartPoint = { id: BodyId | "northNode"; longitude; sign: SignId; degree; retrograde; house: number | null }`, `type ChartAngle = { longitude; sign; degree }`, `type NatalChart = { points: ChartPoint[]; ascendant: ChartAngle | null; midheaven: ChartAngle | null; houses: Houses | null; aspects: Aspect[]; uncertainSigns: BodyId[] }`, `computeNatalChart(moment): NatalChart` (бросает `RangeError` на неверный момент и координаты); `index.ts` реэкспортирует всё из `natal/*`.
 
 - [ ] **Step 1: Тесты**
 
@@ -631,7 +811,7 @@ const MOSCOW = { latitude: 55.7558, longitude: 37.6173 };
 const find = (chart: ReturnType<typeof computeNatalChart>, id: string) => chart.points.find((point) => point.id === id)!;
 
 describe("computeNatalChart", () => {
-  test("Moscow, 7 March 1990 12:00 MSK: Sun in Pisces, Moon in Cancer, Jupiter in Cancer, retrograde Pluto in Scorpio", () => {
+  test("Moscow, 7 March 1990 12:00 MSK: Sun in Pisces, Moon in Cancer, Jupiter in Cancer, retrograde Pluto in Scorpio, Placidus houses", () => {
     const chart = computeNatalChart({ instant: new Date("1990-03-07T09:00:00Z"), ...MOSCOW, timeKnown: true });
     expect(find(chart, "sun")).toMatchObject({ sign: "pisces", retrograde: false });
     expect(find(chart, "sun").degree).toBeCloseTo(16.5, 0);
@@ -640,6 +820,10 @@ describe("computeNatalChart", () => {
     expect(find(chart, "pluto")).toMatchObject({ sign: "scorpio", retrograde: true });
     expect(chart.ascendant).not.toBeNull();
     expect(chart.midheaven?.sign).toBe("pisces");
+    expect(chart.houses?.system).toBe("placidus");
+    expect(find(chart, "sun").house).toBe(10); // регрессия: при Плацидусе Солнце в 10-м, Луна во 2-м, Юпитер в 12-м
+    expect(find(chart, "moon").house).toBe(2);
+    expect(find(chart, "jupiter").house).toBe(12);
     expect(chart.points.every((point) => point.house !== null && point.house >= 1 && point.house <= 12)).toBe(true);
     expect(find(chart, "northNode").retrograde).toBe(true);
   });
@@ -648,12 +832,18 @@ describe("computeNatalChart", () => {
     const chart = computeNatalChart({ instant: new Date("2024-03-20T09:00:00Z"), ...MOSCOW, timeKnown: false });
     expect(chart.ascendant).toBeNull();
     expect(chart.midheaven).toBeNull();
+    expect(chart.houses).toBeNull();
     expect(chart.points.every((point) => point.house === null)).toBe(true);
     expect(chart.uncertainSigns).toContain("sun"); // 20 марта 2024 Солнце перешло из Рыб в Овен
   });
 
   test("with a known time nothing is reported as uncertain", () => {
     expect(computeNatalChart({ instant: new Date("2024-03-20T09:00:00Z"), ...MOSCOW, timeKnown: true }).uncertainSigns).toEqual([]);
+  });
+
+  test("beyond 66° N the houses are Porphyry, otherwise Placidus", () => {
+    expect(computeNatalChart({ instant: new Date("1990-03-07T09:00:00Z"), latitude: 68.9585, longitude: 33.0827, timeKnown: true }).houses?.system).toBe("porphyry");
+    expect(computeNatalChart({ instant: new Date("1990-03-07T09:00:00Z"), ...MOSCOW, timeKnown: true }).houses?.system).toBe("placidus");
   });
 
   test("works at the polar circle, west of 180° and in the Southern Hemisphere", () => {
@@ -664,6 +854,7 @@ describe("computeNatalChart", () => {
     ]) {
       const chart = computeNatalChart({ instant: new Date("1990-03-07T09:00:00Z"), ...place, timeKnown: true });
       expect(Number.isFinite(chart.ascendant!.longitude)).toBe(true);
+      expect(chart.houses!.cusps.every(Number.isFinite)).toBe(true);
       expect(chart.points.every((point) => Number.isFinite(point.longitude))).toBe(true);
     }
   });
@@ -687,9 +878,10 @@ Expected: FAIL — модуль `./chart` не найден.
 `packages/core/src/natal/chart.ts`:
 
 ```ts
-import { ascendantAndMidheaven, wholeSignHouse } from "./angles";
+import { ascendantAndMidheaven } from "./angles";
 import { findAspects, type Aspect } from "./aspects";
 import { BODIES, eclipticLongitude, isRetrograde, meanLunarNode, type BodyId } from "./bodies";
+import { houseCusps, houseOf, type Houses } from "./houses";
 import { signOf, type SignId } from "./zodiac";
 
 export type BirthMoment = {
@@ -713,6 +905,7 @@ export type NatalChart = {
   points: ChartPoint[];
   ascendant: ChartAngle | null; // без времени рождения асцендента, МС и домов нет
   midheaven: ChartAngle | null;
+  houses: Houses | null; // система (Плацидус или Порфирий) и куспиды; без времени рождения — null
   aspects: Aspect[];
   uncertainSigns: BodyId[]; // без времени: тела, которые в течение суток меняют знак
 };
@@ -732,17 +925,18 @@ export function computeNatalChart(moment: BirthMoment): NatalChart {
 
   const angles = timeKnown ? ascendantAndMidheaven(instant, latitude, longitude) : null;
   const longitudes = Object.fromEntries(BODIES.map((body) => [body, eclipticLongitude(body, instant)])) as Record<BodyId, number>;
-  const houseOf = (value: number) => (angles ? wholeSignHouse(value, angles.ascendant) : null);
+  const houses = timeKnown ? houseCusps(instant, latitude, longitude) : null;
+  const houseFor = (value: number) => (houses ? houseOf(value, houses) : null);
 
   const points: ChartPoint[] = BODIES.map((body) => ({
     id: body,
     longitude: longitudes[body],
     ...placement(longitudes[body]),
     retrograde: isRetrograde(body, instant),
-    house: houseOf(longitudes[body]),
+    house: houseFor(longitudes[body]),
   }));
   const node = meanLunarNode(instant);
-  points.push({ id: "northNode", longitude: node, ...placement(node), retrograde: true, house: houseOf(node) });
+  points.push({ id: "northNode", longitude: node, ...placement(node), retrograde: true, house: houseFor(node) });
 
   const signAt = (body: BodyId, shiftMs: number) => signOf(eclipticLongitude(body, new Date(instant.getTime() + shiftMs))).sign;
   const uncertainSigns = timeKnown ? [] : BODIES.filter((body) => signAt(body, -HALF_DAY_MS) !== signAt(body, HALF_DAY_MS));
@@ -751,6 +945,7 @@ export function computeNatalChart(moment: BirthMoment): NatalChart {
     points,
     ascendant: angles ? { longitude: angles.ascendant, ...placement(angles.ascendant) } : null,
     midheaven: angles ? { longitude: angles.midheaven, ...placement(angles.midheaven) } : null,
+    houses,
     aspects: findAspects(longitudes, BODIES),
     uncertainSigns,
   };
@@ -764,6 +959,7 @@ export * from "./zodiac";
 export * from "./time";
 export * from "./bodies";
 export * from "./angles";
+export * from "./houses";
 export * from "./aspects";
 export * from "./chart";
 ```
@@ -869,7 +1065,7 @@ git commit -m "feat(core): compute a natal chart with reference charts and a sep
 
 - [ ] **Step 1: Данные и лицензия (подготовка, не код)**
 
-Скачать владелицей/разработчиком **вручную** в `C:\dev\geonames\` (не в репозиторий): `cities5000.zip`, `alternateNamesV2.zip`, `admin1CodesASCII.txt` с https://download.geonames.org/export/dump/ (лицензия CC BY 4.0, нужно указание источника). Сверить на странице GeoNames текущие условия лицензии и состав колонок `cities5000.txt` (id, name, asciiname, alternatenames, latitude, longitude, feature class, feature code, country code, admin1 code, population, timezone). Порог 5000 жителей — стартовый: он отсекает села, поэтому в форме есть подсказка «не нашли? укажите ближайший город».
+Скачать владелицей/разработчиком **вручную** в `C:\dev\geonames\` (не в репозиторий): `cities5000.zip`, `cities1000.zip`, `alternateNamesV2.zip`, `admin1CodesASCII.txt` с https://download.geonames.org/export/dump/ (лицензия CC BY 4.0, нужно указание источника). Лицензия CC BY 4.0 подтверждена в readme GeoNames (проверено 14.10.2026); перед сборкой ещё раз сверить условия и состав колонок `cities5000.txt` (id, name, asciiname, alternatenames, latitude, longitude, feature class, feature code, country code, admin1 code, population, timezone). Состав базы: весь мир — места от 5000 жителей (`cities5000`, ≈ 50 тыс. записей) и дополнительно Россия, Беларусь, Казахстан и Украина — от 1000 (`cities1000`); села меньше 1000 в базу не входят, поэтому в форме есть подсказка «нет вашего города? выберите ближайший крупный».
 
 - [ ] **Step 2: Тесты поиска на небольшой фикстуре**
 
@@ -999,7 +1195,7 @@ Expected: после реализации PASS.
 
 - [ ] **Step 4: Сборка базы из дампа GeoNames**
 
-`packages/geo/scripts/build-cities.mjs` читает `cities5000.txt`, `alternateNamesV2.txt` (только записи с языком `ru` и признаком `isPreferredName`, иначе первая русская), `admin1CodesASCII.txt` и пишет `packages/geo/data/cities.json` в порядке убывания населения (поля `City`; название страны — `new Intl.DisplayNames(["ru"], { type: "region" }).of(countryCode)`). Запуск: `node packages/geo/scripts/build-cities.mjs C:\dev\geonames`. Скрипт печатает число городов, число без русского названия и число с пустым часовым поясом (должно быть 0 — такие строки отбрасывать с предупреждением).
+`packages/geo/scripts/build-cities.mjs` читает `cities5000.txt` и из `cities1000.txt` строки только для кодов стран `RU`, `BY`, `KZ`, `UA` (объединяет по `geonameid`), затем `alternateNamesV2.txt` (только записи с языком `ru` и признаком `isPreferredName`, иначе первая русская), `admin1CodesASCII.txt` и пишет `packages/geo/data/cities.json` в порядке убывания населения (поля `City`; название страны — `new Intl.DisplayNames(["ru"], { type: "region" }).of(countryCode)`). Запуск: `node packages/geo/scripts/build-cities.mjs C:\dev\geonames`. Скрипт печатает число городов, число без русского названия и число с пустым часовым поясом (должно быть 0 — такие строки отбрасывать с предупреждением).
 Проверка результата тестом `packages/geo/src/data.test.ts`: в базе есть Москва, Новосибирск, Мурманск, Анадырь, Владивосток, Калининград, Екатеринбург; у каждого города зона проходит `isValidZone` из `@oracle/core/natal`; нет дубликатов `id`; файл меньше 8 МБ.
 Добавить `packages/geo/README.md`: источник, лицензия CC BY 4.0, дата загрузки, команда сборки.
 
@@ -1119,11 +1315,11 @@ git commit -m "content(natal): manifest, text checks and the first batch of draf
 
 - [ ] **Step 3: Результат**
 
-`NatalResult` — `<section aria-labelledby>` «Ваша натальная карта»: сводка «Солнце в Рыбах · Луна в Раке · Асцендент в Раке» (без времени: «Асцендент: нужно время рождения»), затем три ключевых текста (если партия принята — полный текст с ссылкой «Читать полностью», иначе краткая сводка без текстов — страницы-пустышки не открываем), колесо, таблица позиций (знак, градусы и минуты, «℞» для обратного движения с подписью «обратное движение», дом), аспекты (строка на аспект: «Солнце — Плутон: тригон, точность 1°11′» плюс однострочное описание типа из `ASPECT_TEXTS`), дисклеймер. Уведомления: `gap` — «В это время часы переводили вперёд: такого времени не было. Считаем по ближайшему существующему — 01:30»; `ambiguous` — два переключателя «Первый раз» / «Второй раз», пока не выбрано, карта не строится; `uncertainSigns` — «В этот день {тело} сменило знак — точный знак зависит от времени рождения»; широта выше 66,5° — «За полярным кругом асцендент сильно зависит от минуты рождения»; рождение до 1930 — «Для ранних лет история часовых поясов менее надёжна».
+`NatalResult` — `<section aria-labelledby>` «Ваша натальная карта»: сводка «Солнце в Рыбах · Луна в Раке · Асцендент в Раке» (без времени: «Асцендент: нужно время рождения»), затем три ключевых текста (если партия принята — полный текст с ссылкой «Читать полностью», иначе краткая сводка без текстов — страницы-пустышки не открываем), колесо, таблица позиций (знак, градусы и минуты, «℞» для обратного движения с подписью «обратное движение», дом), под таблицей подпись «Дома: Плацидус» (за 66° с. ш. — «Дома: Порфирий»), у узла подпись «лунный узел (средний)», аспекты (строка на аспект: «Солнце — Плутон: тригон, точность 1°11′» плюс однострочное описание типа из `ASPECT_TEXTS`), дисклеймер. Уведомления: `gap` — «В это время часы переводили вперёд: такого времени не было. Считаем по ближайшему существующему — 01:30»; `ambiguous` — два переключателя «Первый раз» / «Второй раз», пока не выбрано, карта не строится; `uncertainSigns` — «В этот день {тело} сменило знак — точный знак зависит от времени рождения»; широта выше 66° — «За полярным кругом асцендент сильно зависит от минуты рождения. Дома считаются по системе Порфирия: Плацидус там не определён»; рождение до 1930 — «Для ранних лет история часовых поясов менее надёжна».
 
 - [ ] **Step 4: Колесо**
 
-`natal-wheel.ts` (чистая геометрия, тесты вперёд): `wheelPoints` раздвигает метки так, что соседние не ближе 8° (в том числе через 0/360), порядок сохраняется; при `timeKnown` асцендент слева (на «9 часов»), знаки идут против часовой стрелки от него — так принято в западной астрологии: МС оказывается сверху; без времени — Овен слева и без линий домов. `NatalWheel` — `<svg role="img" aria-label="Колесо натальной карты: …">` с краткой сводкой в `aria-label`, подробности — в таблице под ним; внешний вид (цвета, толщины, начертания) задают классы `.wheel-*` из ТЗ Codex; в коде — только геометрия: радиусы, шрифты подписей и толщины берутся из комментария в `natal-wheel.svg` и записываются константами в `natal-wheel.ts`; тест сверяет положение каждого тела образца с таблицей из ТЗ (Москва, 07.03.1990 12:00). Глифы — `<use href="#glyph-…">` из спрайта Codex (Unicode-символы и шрифты не используются: на телефонах они превращаются в эмодзи).
+`natal-wheel.ts` (чистая геометрия, тесты вперёд): `wheelPoints` раздвигает метки так, что соседние не ближе 8° (в том числе через 0/360), порядок сохраняется; при `timeKnown` линии домов проводятся по куспидам `chart.houses.cusps` (а не по границам знаков), асцендент слева (на «9 часов»), знаки идут против часовой стрелки от него — так принято в западной астрологии: МС оказывается сверху; без времени — Овен слева и без линий домов. `NatalWheel` — `<svg role="img" aria-label="Колесо натальной карты: …">` с краткой сводкой в `aria-label`, подробности — в таблице под ним; внешний вид (цвета, толщины, начертания) задают классы `.wheel-*` из ТЗ Codex; в коде — только геометрия: радиусы, шрифты подписей и толщины берутся из комментария в `natal-wheel.svg` и записываются константами в `natal-wheel.ts`; тест сверяет положение каждого тела образца с таблицей из ТЗ (Москва, 07.03.1990 12:00). Глифы — `<use href="#glyph-…">` из спрайта Codex (Unicode-символы и шрифты не используются: на телефонах они превращаются в эмодзи).
 
 - [ ] **Step 4a: Размер**
 
@@ -1158,7 +1354,7 @@ git commit -m "feat(web): natal chart calculator with city search, wheel, table 
 
 - [ ] **Step 3: Открыть практику**
 
-`practices.ts`: у `natal` `href: NATAL_PATH`, карточка перестаёт быть «Скоро» (метка «Открыто»; тексты кнопок и меток — дословно по `AGENTS.md`); `app/page.tsx` и общие описания снова упоминают натальную карту (аудит 11.10 убрал их до запуска); `/metodika` — абзац «Натальная карта»: библиотека `astronomy-engine`, дома по знакам, средний узел, база городов GeoNames (CC BY 4.0) со ссылкой, база часовых поясов IANA, точность и её пределы. Не заявлять неподтверждённых квалификаций.
+`practices.ts`: у `natal` `href: NATAL_PATH`, карточка перестаёт быть «Скоро» (метка «Открыто»; тексты кнопок и меток — дословно по `AGENTS.md`); `app/page.tsx` и общие описания снова упоминают натальную карту (аудит 11.10 убрал их до запуска); `/metodika` — абзац «Натальная карта»: библиотека `astronomy-engine`, дома по Плацидусу (за 66° с. ш. — по Порфирию), средний узел, база городов GeoNames (CC BY 4.0) со ссылкой, база часовых поясов IANA, точность и её пределы. Не заявлять неподтверждённых квалификаций.
 
 - [ ] **Step 4: Commit**
 
@@ -1202,7 +1398,7 @@ git commit -m "feat(web): natal chart reference pages and open the practice"
   - Москва, 07.03.1990, 12:00: ответ содержит «Солнце в Рыбах» и «Асцендент в Раке»; `<h1>` ровно один; `role="status"` после расчёта; нет горизонтальной прокрутки на 375 px;
   - «Время рождения неизвестно»: нет слов «Асцендент в» и колонки «Дом»; для 20.03.2024 есть предупреждение о смене знака Солнцем;
   - 01.04.1981, 00:30, Москва: сообщение «такого времени не было»; 30.09.1990, 02:30: появляются «Первый раз» / «Второй раз», до выбора карты нет;
-  - Мурманск: результат построен, есть пояснение про полярный круг;
+  - Москва: под таблицей подпись «Дома: Плацидус»; Мурманск: результат построен, есть пояснение про полярный круг и подпись «Дома: Порфирий»;
   - поиск города: ввод «ростов на дону» находит «Ростов-на-Дону», навигация стрелками и Enter, ошибка без города — `role="alert"`;
   - дата 31.12.1899 и дата в будущем — сообщение о диапазоне;
   - в запросах сети при расчёте нет ни даты, ни времени (проверка `page.on("request")`: единственные обращения к нашему серверу — `/api/cities?q=…` и статические файлы);
@@ -1230,7 +1426,7 @@ git commit -m "feat(web): natal chart reference pages and open the practice"
 
 ## Self-Review
 
-1. **Покрытие спецификации.** Бесплатный результат (колесо, таблица, три ключевых текста, аспекты) — задачи 4, 6, 7; режим «время неизвестно» — 4, 7, 10; D1 (дома по знакам) — 3; D2 (средний узел) — 2; D3 (расчёт в браузере) — 7, 10 (проверка сети); D4 (города) — 5, указание источника — 8; D5 (часовые пояса, зазоры) — 1, 7; D6 (тексты партиями) — 6; D7 (диапазон дат) — 7; D8 (сохранение — после гейта) — 9; D9 (спрос) — G2. Платный разбор — вне плана (спецификация, раздел 3).
+1. **Покрытие спецификации.** Бесплатный результат (колесо, таблица, три ключевых текста, аспекты) — задачи 4, 6, 7; режим «время неизвестно» — 4, 7, 10; D1 (дома: Плацидус, за 66° — Порфирий) — 3; D2 (средний узел) — 2; D3 (расчёт в браузере) — 7, 10 (проверка сети); D4 (города) — 5, указание источника — 8; D5 (часовые пояса, зазоры) — 1, 7; D6 (тексты партиями) — 6; D7 (диапазон дат) — 7; D8 (сохранение — после гейта) — 9; D9 (спрос) — G2. Платный разбор — вне плана (спецификация, раздел 3).
 2. **Заглушки.** Намеренно «снимаемые» данные: эталонные карты (шаг 5 задачи 4 — источник и порядок снятия описаны; файл с нулями не коммитить), дамп GeoNames (задача 5, шаг 1), сами тексты (задача 6, шаг 5 — формат, объём и проверки заданы). Остальное — полный код и тесты.
 3. **Согласованность типов.** `BodyId`, `SignId`, `ChartPoint`, `NatalChart`, `LocalToUtc`, `BirthMoment`, `City`, `NatalPageRef` определены в задачах 1–6 и в поздних задачах используются под теми же именами; `computeNatalChart`/`localToUtc` импортируются только из `@oracle/core/natal`.
 4. **Review Focus.** Строки 1–5 покрыты: (1) — тесты `localToUtc` (задача 1) и сценарии 01.04.1981/30.09.1990 (задача 10); (2) — `angles.test` (Мурманск) и `chart.test`, пояснение в задаче 7, сценарий в задаче 10; (3) — `chart.test` (Уэлен, Буэнос-Айрес); (4) — `chart.test` и сценарий неизвестного времени; (5) — `search.test` и `route.test`.
