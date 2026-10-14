@@ -115,3 +115,40 @@ test("buying the guide fires redirect and sale goals once, and the only paramete
   expect(fired).toContain("lila_offer_click");
   await context.close();
 });
+
+test("buying the report fires the sale goal once per purchase and the open goal when it is ready, with no data", async ({ browser }) => {
+  test.setTimeout(120_000);
+  const { context, page } = await signIn(browser, uniqueName("Метрика разбор"));
+  await page.addInitScript(() => {
+    (window as unknown as { ym: (id: number, method: string, goal?: string, params?: unknown) => void }).ym = (_id, method, goal, params) => {
+      if (method !== "reachGoal") return;
+      const calls = JSON.parse(sessionStorage.getItem("test-goals") ?? "[]");
+      calls.push({ goal, hasParams: params !== undefined, params });
+      sessionStorage.setItem("test-goals", JSON.stringify(calls));
+    };
+  });
+  await page.goto("/matrica-sudby");
+  await page.getByRole("textbox", { name: "Дата рождения" }).fill("1988-11-18");
+  await page.getByRole("button", { name: "Рассчитать" }).click();
+  const offer = page.getByRole("region", { name: "Разбор всей матрицы — 390 ₽" });
+  await offer.getByRole("textbox", { name: "E-mail для чека" }).fill("test@example.ru");
+  await offer.getByRole("button", { name: "Купить разбор — 390 ₽" }).click();
+  await expect(page).toHaveURL(/\/dev\/pay\//);
+  await page.getByRole("button", { name: "Оплатить" }).click();
+  await expect(page).toHaveURL(/\/portret\/razbor\/[0-9a-f-]{36}$/);
+
+  // Разбор собирает воркер; цель «открыт готовый разбор» ставится, когда он готов
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ваш центр — Сила", { timeout: 60_000 });
+  // report_opened считает каждое открытие и не защищена от повтора; в next dev эффекты React выполняются дважды, поэтому «не меньше одного»
+  await expect.poll(async () => (await names(page)).filter((goal) => goal === "report_opened").length).toBeGreaterThanOrEqual(1);
+  expect((await names(page)).filter((goal) => goal === "report_paid")).toHaveLength(1);
+
+  // Повторное открытие той же покупки в этом браузере не засчитывает продажу второй раз
+  await page.reload();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ваш центр — Сила");
+  const fired = await goals(page);
+  expect(fired.filter((call) => call.goal === "report_paid")).toHaveLength(1);
+  // Ни у продажи, ни у открытия нет параметров: ни дат, ни почты, ни номера покупки
+  for (const call of fired.filter((c) => c.goal === "report_paid" || c.goal === "report_opened")) expect(call.hasParams).toBe(false);
+  await context.close();
+});
