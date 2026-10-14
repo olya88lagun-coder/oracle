@@ -424,7 +424,7 @@ import * as Astronomy from "astronomy-engine";
 import { describe, expect, test } from "vitest";
 import { ascendantAndMidheaven } from "./angles";
 import { eclipticLongitude } from "./bodies";
-import { angularDistance } from "./zodiac";
+import { angularDistance, normalizeDegrees } from "./zodiac";
 
 const PLACES = [
   { name: "Москва", latitude: 55.7558, longitude: 37.6173 },
@@ -467,6 +467,25 @@ describe("ascendantAndMidheaven", () => {
     }
   });
 });
+
+const THREE_HOURS_MS = 3 * 3600 * 1000;
+const START_1990_MS = Date.parse("1990-01-01T00:00:00Z");
+const STEPS_IN_YEAR = 365 * 8;
+
+// Найдено при проверке задачи: выше 66,56° МС бывает под горизонтом (на 68,96° — в 15 % моментов, на 75° — в 29 %),
+// и без разворота асцендента четверти домов перекрываются
+describe("ascendantAndMidheaven above the polar circle", () => {
+  test.each([55.75, 66.5, 68.96, 75, -68.96])("the ascendant stays 0…180° east of the midheaven all year: latitude %s", (latitude) => {
+    for (let step = 0; step < STEPS_IN_YEAR; step++) {
+      const { ascendant, midheaven } = ascendantAndMidheaven(new Date(START_1990_MS + step * THREE_HOURS_MS), latitude, 33.08);
+      expect(Number.isFinite(ascendant)).toBe(true);
+      expect(Number.isFinite(midheaven)).toBe(true);
+      const behind = normalizeDegrees(ascendant - midheaven);
+      expect(behind).toBeGreaterThan(0);
+      expect(behind).toBeLessThan(180);
+    }
+  });
+});
 ```
 
 - [ ] **Step 2: Запустить — упасть**
@@ -492,7 +511,12 @@ export function ascendantAndMidheaven(date: Date, latitude: number, longitude: n
   const ramc = normalizeDegrees(Astronomy.SiderealTime(time) * 15 + longitude) * RAD;
   const ascendant = Math.atan2(Math.cos(ramc), -(Math.sin(ramc) * Math.cos(obliquity) + Math.tan(latitude * RAD) * Math.sin(obliquity))) * DEG;
   const midheaven = Math.atan2(Math.sin(ramc), Math.cos(ramc) * Math.cos(obliquity)) * DEG;
-  return { ascendant: normalizeDegrees(ascendant), midheaven: normalizeDegrees(midheaven) };
+  const midheavenDegrees = normalizeDegrees(midheaven);
+  let ascendantDegrees = normalizeDegrees(ascendant);
+  // За полярным кругом эклиптика может целиком уйти под горизонт: точки горизонта меняются местами, и формула даёт
+  // противоположную точку. Берём ту, что лежит в 0…180° к востоку от МС, чтобы четверти домов замыкали круг.
+  if (normalizeDegrees(ascendantDegrees - midheavenDegrees) > 180) ascendantDegrees = normalizeDegrees(ascendantDegrees + 180);
+  return { ascendant: ascendantDegrees, midheaven: midheavenDegrees };
 }
 ```
 
@@ -505,6 +529,7 @@ export function ascendantAndMidheaven(date: Date, latitude: number, longitude: n
 ```ts
 import * as Astronomy from "astronomy-engine";
 import { describe, expect, test } from "vitest";
+import { ascendantAndMidheaven } from "./angles";
 import { houseCusps, houseOf } from "./houses";
 import { normalizeDegrees } from "./zodiac";
 
@@ -586,6 +611,29 @@ describe("houseCusps beyond latitude 66°", () => {
     const below = normalizeDegrees(ic - asc) / 3;
     expect(normalizeDegrees(cusp2 - asc)).toBeCloseTo(below, 9);
     expect(normalizeDegrees(cusp3 - asc)).toBeCloseTo(below * 2, 9);
+  });
+});
+
+describe("houseCusps beyond latitude 66° all year", () => {
+  const THREE_HOURS_MS = 3 * 3600 * 1000;
+  const START_1990_MS = Date.parse("1990-01-01T00:00:00Z");
+  const STEPS_IN_YEAR = 365 * 8;
+
+  test.each([68.96, 75, -68.96])("Porphyry cusps close the circle without overlaps: latitude %s", (latitude) => {
+    for (let step = 0; step < STEPS_IN_YEAR; step++) {
+      const date = new Date(START_1990_MS + step * THREE_HOURS_MS);
+      const houses = houseCusps(date, latitude, 33.08);
+      expect(houses.system).toBe("porphyry");
+      let total = 0;
+      for (let i = 0; i < 12; i++) {
+        const span = normalizeDegrees(houses.cusps[(i + 1) % 12]! - houses.cusps[i]!);
+        expect(span).toBeGreaterThan(0);
+        expect(span).toBeLessThan(180);
+        total += span;
+      }
+      expect(total).toBeCloseTo(360, 6);
+      expect(houses.cusps[0]).toBe(ascendantAndMidheaven(date, latitude, 33.08).ascendant);
+    }
   });
 });
 
@@ -986,7 +1034,7 @@ describe("natal entry point", () => {
 });
 ```
 
-- [ ] **Step 5: Эталонные карты (независимый источник)**
+- [ ] **Step 5: Эталонные карты (независимый источник)** — *отложено при исполнении (запуск 15.10.2026): значения должны прийти из JPL Horizons и Swiss Ephemeris, придумывать их нельзя; остаётся открытым пунктом. Долготу Horizons брать от эклиптики и равноденствия даты, не J2000.*
 
 Снять один раз с JPL Horizons шесть карт: Москва 07.03.1990 12:00 MSK; Новосибирск 01.07.2011 12:00; Анадырь 15.12.1975 08:30; Мурманск 21.12.2000 00:15; Буэнос-Айрес 21.06.1960 18:00; Лондон 01.01.2000 12:00 UTC. По каждой — геоцентрическая видимая долгота Солнца, Луны, Меркурия, Венеры, Марса, Юпитера, Сатурна, Урана, Нептуна, Плутона. В запросе Horizons использовать величину «Observer ecliptic lon & lat»; **проверить по документации Horizons, что долгота отсчитывается от эклиптики и равноденствия даты, а не J2000** — если от J2000, добавить прецессию (≈ 0,0139°/год от 2000) или взять другую величину. Асцендент и МС для тех же карт взять из независимого калькулятора на Swiss Ephemeris (например, astro.com, система домов не важна — нужны только углы). Записать в `packages/core/src/natal/reference-charts.json`:
 
