@@ -59,4 +59,19 @@ describe("computeNatalChart", () => {
     expect(() => computeNatalChart({ instant: new Date(), latitude: 0, longitude: 181, timeKnown: true })).toThrow(RangeError);
     expect(() => computeNatalChart({ instant: new Date(), latitude: Number.NaN, longitude: 0, timeKnown: true })).toThrow(RangeError);
   });
+
+  test("with a known time the Moon takes part in aspects", () => {
+    const chart = computeNatalChart({ instant: new Date("1990-03-07T09:00:00Z"), ...MOSCOW, timeKnown: true });
+    expect(chart.timeKnown).toBe(true);
+    expect(chart.aspects.some((aspect) => aspect.a === "moon" || aspect.b === "moon")).toBe(true);
+  });
+
+  test("without a birth time the Moon is left out of aspects, the rest are unchanged", () => {
+    const instant = new Date("1990-03-07T09:00:00Z");
+    const known = computeNatalChart({ instant, ...MOSCOW, timeKnown: true });
+    const unknown = computeNatalChart({ instant, ...MOSCOW, timeKnown: false });
+    expect(unknown.timeKnown).toBe(false);
+    expect(unknown.aspects.some((aspect) => aspect.a === "moon" || aspect.b === "moon")).toBe(false);
+    expect(unknown.aspects).toEqual(known.aspects.filter((aspect) => aspect.a !== "moon" && aspect.b !== "moon"));
+  });
 });

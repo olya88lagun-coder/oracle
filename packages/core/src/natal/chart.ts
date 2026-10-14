@@ -28,6 +28,7 @@ export type NatalChart = {
   houses: Houses | null; // система (Плацидус или Порфирий) и куспиды; без времени рождения — null
   aspects: Aspect[];
   uncertainSigns: BodyId[]; // без времени: тела, которые в течение суток меняют знак
+  timeKnown: boolean; // передан в BirthMoment; без времени рождения Луна на полдень неточна, поэтому аспекты с Луной не считаются
 };
 
 const HALF_DAY_MS = 12 * 3_600_000;
@@ -61,12 +62,15 @@ export function computeNatalChart(moment: BirthMoment): NatalChart {
   const signAt = (body: BodyId, shiftMs: number) => signOf(eclipticLongitude(body, new Date(instant.getTime() + shiftMs))).sign;
   const uncertainSigns = timeKnown ? [] : BODIES.filter((body) => signAt(body, -HALF_DAY_MS) !== signAt(body, HALF_DAY_MS));
 
+  const aspectBodies = timeKnown ? BODIES : BODIES.filter((body) => body !== "moon");
+
   return {
     points,
     ascendant: angles ? { longitude: angles.ascendant, ...placement(angles.ascendant) } : null,
     midheaven: angles ? { longitude: angles.midheaven, ...placement(angles.midheaven) } : null,
     houses,
-    aspects: findAspects(longitudes, BODIES),
+    aspects: findAspects(longitudes, aspectBodies),
     uncertainSigns,
+    timeKnown,
   };
 }
