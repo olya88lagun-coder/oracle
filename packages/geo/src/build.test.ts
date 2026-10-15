@@ -27,7 +27,17 @@ const PARIS = cityLine({ id: "2988507", name: "Paris", latitude: "48.85341", lon
 const ALT_MOSCOW = ["311864", "524901", "ru", "Москва", "1", "", "", "", "", ""].join("\t");
 const ADMIN1_MOSCOW = ["RU.48", "Moscow", "Moscow", "524894"].join("\t");
 
-type Files = { cities5000?: string[]; cities1000?: string[]; alt?: string[]; admin1?: string[] };
+// Строка alternateNamesV2: id записи, id объекта, язык, название, предпочтительное, короткое, разговорное, историческое, с, по
+const altLine = (geonameId: string, language: string, name: string, flags: { preferred?: boolean; historic?: boolean; id?: string } = {}) =>
+  [flags.id ?? "1", geonameId, language, name, flags.preferred ? "1" : "", "", "", flags.historic ? "1" : "", "", ""].join("	");
+
+const LONDON = cityLine({ id: "2643743", name: "London", latitude: "51.50853", longitude: "-0.12574", country: "GB", admin1: "ENG", population: "8961989", zone: "Europe/London" });
+const ADMIN1_ENGLAND = ["GB.ENG", "England", "England", "6269131"].join("	");
+// Места от 1000 до 5000 жителей: есть только в cities1000
+const SMALL_UZBEK = cityLine({ id: "1001", name: "Kleiner Ort", latitude: "41.3", longitude: "69.2", country: "UZ", population: "3000", zone: "Asia/Tashkent" });
+const SMALL_FRENCH = cityLine({ id: "1002", name: "Petit Lieu", latitude: "46.1", longitude: "2.3", country: "FR", population: "3000", zone: "Europe/Paris" });
+
+type Files = { cities5000?: string[]; cities1000?: string[]; alt?: string[]; admin1?: string[]; world?: string[] };
 
 let workDir = "";
 beforeEach(() => {
@@ -46,6 +56,7 @@ function writeDump(files: Files): string {
   write("cities1000/cities1000.txt", files.cities1000 ?? [MOSCOW, PARIS]);
   for (const country of ["RU", "BY", "KZ", "UA"]) write(`alt-${country}/${country}.txt`, country === "RU" ? (files.alt ?? [ALT_MOSCOW]) : []);
   write("admin1CodesASCII.txt", files.admin1 ?? [ADMIN1_MOSCOW]);
+  if (files.world) write("alt-world/alternateNamesV2.txt", files.world);
   return dump;
 }
 
@@ -64,6 +75,124 @@ describe("build-cities.mjs", () => {
     expect(data.rows).toHaveLength(2);
     expect(data.rows[0]).toHaveLength(COMPACT_ROW_COLUMNS);
     expect(data.rows[0]?.[1]).toBe("Москва");
+  });
+
+  describe("with alt-world/alternateNamesV2.txt", () => {
+    const WORLD_FILES: Files = {
+      cities5000: [MOSCOW, LONDON],
+      cities1000: [MOSCOW, LONDON, SMALL_UZBEK, SMALL_FRENCH],
+      admin1: [ADMIN1_MOSCOW, ADMIN1_ENGLAND],
+      world: [
+        altLine("2643743", "en", "London", { preferred: true }),
+        altLine("2643743", "ru", "Лондиний", { historic: true, preferred: true }),
+        altLine("2643743", "ru", "Лондон"),
+        altLine("2643743", "ru", "Ландан", { preferred: true }),
+        altLine("6269131", "ru", "Англия"),
+        altLine("1001", "ru", "Малый Ор́т"),
+      ],
+    };
+    const cityByName = (output: string) => {
+      const data = JSON.parse(readFileSync(output, "utf8")) as { regions: string[]; rows: [number, string, number, ...unknown[]][] };
+      return { data, find: (id: number) => data.rows.find((row) => row[0] === id) };
+    };
+
+    test("takes Russian names from it for a city outside the former USSR, ignoring historic rows, and for regions", () => {
+      const run = runBuild(writeDump(WORLD_FILES), "--min-cities", "1");
+
+      expect(run.status).toBe(0);
+      const { data, find } = cityByName(run.output);
+      // Предпочтительное название выигрывает у первого; историческое (хотя и «предпочтительное») не берётся
+      expect(find(2643743)?.[1]).toBe("Ландан");
+      expect(data.regions[find(2643743)?.[2] ?? -1]).toBe("Англия");
+    });
+
+    test("is the only source: the per-country files are not read and a place without a Russian row keeps the GeoNames name", () => {
+      const run = runBuild(writeDump(WORLD_FILES), "--min-cities", "1");
+
+      const { find } = cityByName(run.output);
+      expect(find(524901)?.[1]).toBe("Moscow"); // в alt-RU есть «Москва», но alt-world главнее
+    });
+
+    test("removes the stress mark from a Russian name", () => {
+      const run = runBuild(writeDump(WORLD_FILES), "--min-cities", "1");
+
+      expect(cityByName(run.output).find(1001)?.[1]).toBe("Малый Орт");
+    });
+
+    test("keeps a 1000-5000 place of a former USSR country and drops a similar place elsewhere", () => {
+      const run = runBuild(writeDump(WORLD_FILES), "--min-cities", "1");
+
+      const { find } = cityByName(run.output);
+      expect(find(1001)).toBeDefined();
+      expect(find(1002)).toBeUndefined();
+      expect(find(2643743)).toBeDefined();
+    });
+
+    // В GeoNames латинские транслитерации иногда помечены языком ru и стоят в файле раньше кириллицы
+    test("takes only Cyrillic Russian names: a Latin ru row with a lower id does not beat the Cyrillic one", () => {
+      const run = runBuild(
+        writeDump({
+          ...WORLD_FILES,
+          world: [
+            altLine("2643743", "ru", "Londonn", { id: "10", preferred: true }),
+            altLine("2643743", "ru", "Лондон", { id: "11" }),
+            altLine("6269131", "ru", "Angliya", { id: "12", preferred: true }),
+            altLine("6269131", "ru", "Англия", { id: "13" }),
+          ],
+        }),
+        "--min-cities",
+        "1",
+      );
+
+      const { data, find } = cityByName(run.output);
+      expect(find(2643743)?.[1]).toBe("Лондон");
+      expect(data.regions[find(2643743)?.[2] ?? -1]).toBe("Англия");
+    });
+
+    test("keeps the GeoNames name for a place and a region whose only ru rows are Latin", () => {
+      const run = runBuild(writeDump({ ...WORLD_FILES, world: [altLine("2643743", "ru", "Londonn", { preferred: true }), altLine("6269131", "ru", "Angliya")] }), "--min-cities", "1");
+
+      const { data, find } = cityByName(run.output);
+      expect(find(2643743)?.[1]).toBe("London");
+      expect(data.regions[find(2643743)?.[2] ?? -1]).toBe("England");
+    });
+
+    test("fails loudly on a malformed 9-column row and writes nothing", () => {
+      const malformed = ["1", "2643743", "ru", "Лондон", "1", "", "", "", ""].join("	");
+      const run = runBuild(writeDump({ ...WORLD_FILES, world: [...(WORLD_FILES.world ?? []), malformed] }), "--min-cities", "1");
+
+      expect(run.status).toBe(1);
+      expect(run.stderr).toContain(`alternateNamesV2.txt:${(WORLD_FILES.world?.length ?? 0) + 1}`);
+      expect(run.stderr).toContain("10 tab-separated columns");
+      expect(existsSync(run.output)).toBe(false);
+    });
+
+    test("fails loudly on an unparsable geonameid in a Russian row", () => {
+      const run = runBuild(writeDump({ ...WORLD_FILES, world: [altLine("x", "ru", "Что-то")] }), "--min-cities", "1");
+
+      expect(run.status).toBe(1);
+      expect(run.stderr).toContain("alternateNamesV2.txt:1");
+      expect(run.stderr).toContain("geonameid");
+      expect(existsSync(run.output)).toBe(false);
+    });
+  });
+
+  test("the per-country files follow the same Cyrillic-only rule", () => {
+    const alt = [["1", "524901", "ru", "Moskva", "1", "", "", "", "", ""].join("	"), ALT_MOSCOW];
+    const run = runBuild(writeDump({ alt }), "--min-cities", "1");
+
+    expect(run.status).toBe(0);
+    const names = (JSON.parse(readFileSync(run.output, "utf8")) as { rows: [number, string][] }).rows.map((row) => row[1]);
+    expect(names).toContain("Москва");
+    expect(names).not.toContain("Moskva");
+  });
+
+  test("without alt-world falls back to the per-country files: Russian names only for RU/BY/KZ/UA", () => {
+    const run = runBuild(writeDump({ cities5000: [MOSCOW, LONDON], cities1000: [MOSCOW, LONDON], admin1: [ADMIN1_MOSCOW, ADMIN1_ENGLAND] }), "--min-cities", "1");
+
+    expect(run.status).toBe(0);
+    const names = (JSON.parse(readFileSync(run.output, "utf8")) as { rows: [number, string][] }).rows.map((row) => row[1]);
+    expect(names).toEqual(["Москва", "London"]);
   });
 
   test.each([

@@ -7,11 +7,42 @@ import { CITIES } from "./index";
 
 const DATA_FILE = fileURLToPath(new URL("../data/cities.json", import.meta.url));
 const MAX_DATA_BYTES = 6 * 1024 * 1024;
+// Сейчас без кириллицы 289 мест RU/BY/KZ/UA (в GeoNames нет русского названия); до правки было 344 из-за латинских «ru»-строк
+const MAX_NON_CYRILLIC_IN_RU_BY_KZ_UA = 300;
+const RU_BY_KZ_UA = ["Россия", "Беларусь", "Казахстан", "Украина"];
 const byName = (name: string) => CITIES.find((city) => city.name === name);
 
 describe("city database", () => {
   test.each(["Москва", "Новосибирск", "Мурманск", "Анадырь", "Владивосток", "Калининград", "Екатеринбург"])("has %s under its Russian name", (name) => {
     expect(byName(name)).toBeDefined();
+  });
+
+  // Бывший СССР (Тбилиси, Ташкент, Баку, Ереван, Рига) и мир: русские названия и часовые пояса из GeoNames
+  test.each([
+    ["Лондон", "Europe/London"],
+    ["Париж", "Europe/Paris"],
+    ["Берлин", "Europe/Berlin"],
+    ["Стамбул", "Europe/Istanbul"],
+    ["Тбилиси", "Asia/Tbilisi"],
+    ["Ташкент", "Asia/Tashkent"],
+    ["Баку", "Asia/Baku"],
+    ["Ереван", "Asia/Yerevan"],
+    ["Рига", "Europe/Riga"],
+  ])("has %s under its Russian name in zone %s", (name, zone) => {
+    expect(byName(name)?.zone).toBe(zone);
+  });
+
+  test("takes the Cyrillic row, not a Latin transliteration marked as ru (Ставрополь, Уральск)", () => {
+    const stavropol = byName("Ставрополь");
+    expect(stavropol?.zone).toBe("Europe/Moscow");
+    expect(stavropol?.population).toBeGreaterThan(400_000);
+    expect(CITIES.find((city) => city.name === "Уральск")?.country).toBe("Казахстан");
+    expect(byName("Stavropol’")).toBeUndefined();
+  });
+
+  test("almost every place of RU/BY/KZ/UA has a Cyrillic name", () => {
+    const latin = CITIES.filter((city) => RU_BY_KZ_UA.includes(city.country) && !/\p{Script=Cyrillic}/u.test(city.name));
+    expect(latin.length).toBeLessThan(MAX_NON_CYRILLIC_IN_RU_BY_KZ_UA);
   });
 
   test("has no duplicate ids and every zone is a valid IANA zone", () => {
@@ -55,5 +86,15 @@ describe("city database", () => {
     const index = buildCityIndex(CITIES);
     expect(searchCities(index, "моск")[0]?.name).toBe("Москва");
     expect(searchCities(index, "анадыр").map((city) => city.name)).toContain("Анадырь");
+  });
+
+  test("finds London first by «лондон» and Russian cities still win for the required seven", () => {
+    const index = buildCityIndex(CITIES);
+    expect(searchCities(index, "лондон")[0]?.name).toBe("Лондон");
+    expect(searchCities(index, "лондон")[0]?.country).toBe("Великобритания");
+    for (const name of ["Москва", "Новосибирск", "Мурманск", "Анадырь", "Владивосток", "Калининград", "Екатеринбург"]) {
+      const first = searchCities(index, name)[0];
+      expect([first?.name, first?.country], name).toEqual([name, "Россия"]);
+    }
   });
 });
