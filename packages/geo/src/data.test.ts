@@ -21,16 +21,14 @@ describe("city database", () => {
   });
 
   test("every city has a name, a country and coordinates in range", () => {
-    for (const city of CITIES) {
-      expect(city.name).not.toBe("");
-      expect(city.country).not.toBe("");
-      expect(Math.abs(city.latitude)).toBeLessThanOrEqual(90);
-      expect(Math.abs(city.longitude)).toBeLessThanOrEqual(180);
-    }
+    // Один expect на всю базу: 75 тысяч отдельных проверок упираются во время теста
+    const broken = CITIES.filter((city) => city.name === "" || city.country === "" || Math.abs(city.latitude) > 90 || Math.abs(city.longitude) > 180);
+    expect(broken).toEqual([]);
   });
 
   test("is sorted by population, biggest first", () => {
-    for (let i = 1; i < CITIES.length; i += 1) expect(CITIES[i - 1]!.population).toBeGreaterThanOrEqual(CITIES[i]!.population);
+    const outOfOrder = CITIES.filter((city, i) => i > 0 && CITIES[i - 1]!.population < city.population);
+    expect(outOfOrder).toEqual([]);
   });
 
   test("keeps the file compact", () => {
