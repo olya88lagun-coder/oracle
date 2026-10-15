@@ -14,6 +14,21 @@ describe("city database", () => {
     expect(byName(name)).toBeDefined();
   });
 
+  // Бывший СССР (Тбилиси, Ташкент, Баку, Ереван, Рига) и мир: русские названия и часовые пояса из GeoNames
+  test.each([
+    ["Лондон", "Europe/London"],
+    ["Париж", "Europe/Paris"],
+    ["Берлин", "Europe/Berlin"],
+    ["Стамбул", "Europe/Istanbul"],
+    ["Тбилиси", "Asia/Tbilisi"],
+    ["Ташкент", "Asia/Tashkent"],
+    ["Баку", "Asia/Baku"],
+    ["Ереван", "Asia/Yerevan"],
+    ["Рига", "Europe/Riga"],
+  ])("has %s under its Russian name in zone %s", (name, zone) => {
+    expect(byName(name)?.zone).toBe(zone);
+  });
+
   test("has no duplicate ids and every zone is a valid IANA zone", () => {
     expect(new Set(CITIES.map((city) => city.id)).size).toBe(CITIES.length);
     const zones = new Set(CITIES.map((city) => city.zone));
@@ -55,5 +70,15 @@ describe("city database", () => {
     const index = buildCityIndex(CITIES);
     expect(searchCities(index, "моск")[0]?.name).toBe("Москва");
     expect(searchCities(index, "анадыр").map((city) => city.name)).toContain("Анадырь");
+  });
+
+  test("finds London first by «лондон» and Russian cities still win for the required seven", () => {
+    const index = buildCityIndex(CITIES);
+    expect(searchCities(index, "лондон")[0]?.name).toBe("Лондон");
+    expect(searchCities(index, "лондон")[0]?.country).toBe("Великобритания");
+    for (const name of ["Москва", "Новосибирск", "Мурманск", "Анадырь", "Владивосток", "Калининград", "Екатеринбург"]) {
+      const first = searchCities(index, name)[0];
+      expect([first?.name, first?.country], name).toEqual([name, "Россия"]);
+    }
   });
 });
