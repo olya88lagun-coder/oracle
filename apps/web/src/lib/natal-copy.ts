@@ -1,4 +1,5 @@
 import type { Aspect, AspectId, BodyId, HouseSystem, NatalChart, SignId } from "@oracle/core/natal";
+import { pluralRu } from "./plural";
 
 // Тексты экрана калькулятора натальной карты дословно из принятого макета docs/design/mockups/natal/natal-calculator.html.
 // Из @oracle/core/natal здесь только типы: модуль попадает в бандл страницы, а ядро расчёта грузится после нажатия «Рассчитать карту».
@@ -80,6 +81,9 @@ export const SIGN_NAMES: Readonly<Record<SignId, string>> = {
   pisces: "Рыбы",
 };
 
+// Знаки по порядку от Овна (порядок ключей SIGN_NAMES зафиксирован тестом)
+export const SIGN_ORDER: readonly SignId[] = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+
 // Предложный падеж без предлога («в Овне»); готовую фразу даёт inSign
 export const SIGN_NAMES_PREPOSITIONAL: Readonly<Record<SignId, string>> = {
   aries: "Овне",
@@ -112,6 +116,17 @@ export const BODY_NAMES: Readonly<Record<BodyId | "northNode", string>> = {
 
 // Подпись узла в всплывающей подсказке колеса: в принятом SVG там «Восходящий лунный узел», а в таблице — «Лунный узел (средний)»
 export const WHEEL_NODE_TITLE = "Восходящий лунный узел";
+export const WHEEL_HOUSE_NOT_SHOWN = "дом не показан";
+
+// Описание колеса для программ экрана (aria-label); образец и формулировки взяты из принятых natal-wheel.svg и natal-wheel-no-time.svg
+export const WHEEL_ARIA_TITLE = "Колесо натальной карты";
+export const WHEEL_ARIA_NO_TIME = "Колесо натальной карты без времени рождения";
+export const WHEEL_ARIA_NOON = "планеты на местный полдень";
+export const WHEEL_ARIA_NOON_SAMPLE = "планеты образца на местный полдень";
+export const WHEEL_ARIA_NO_ANGLES = "Асцендент, MC и дома не показаны.";
+export const WHEEL_ARIA_MOON_SIGN = "Знак Луны мог смениться.";
+export const WHEEL_ARIA_DATA = "Данные рождения";
+export const WHEEL_ARIA_DATA_SAMPLE = "Данные образца";
 
 export const ANGLE_NAMES = { ascendant: "Асцендент", midheaven: "МС" } as const;
 // Короткие метки осей: на колесе и перед названием в таблице
@@ -205,10 +220,29 @@ export function formatCityRegion(city: { region: string; country: string }): str
   return [city.region, city.country].filter((part) => part !== "").join(", ");
 }
 
-// «Москва · 7 марта 1990 · 12:00»; без времени в принятом макете — «Москва · 7 марта 1990 · время неизвестно»
-export function formatBirthMeta(birth: { city: string; date: string; time: string | null }): string {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(birth.date);
+// «7 марта 1990» из ГГГГ-ММ-ДД
+export function formatBirthDate(date: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
   const month = match ? MONTHS_GENITIVE[Number(match[2]) - 1] : undefined;
   if (!match || !month) throw new RangeError("Дата должна быть в формате ГГГГ-ММ-ДД");
-  return [birth.city, `${Number(match[3])} ${month} ${Number(match[1])}`, birth.time ?? BIRTH_TIME_UNKNOWN].join(" · ");
+  return `${Number(match[3])} ${month} ${Number(match[1])}`;
+}
+
+// «Москва · 7 марта 1990 · 12:00»; без времени в принятом макете — «Москва · 7 марта 1990 · время неизвестно»
+export function formatBirthMeta(birth: { city: string; date: string; time: string | null }): string {
+  return [birth.city, formatBirthDate(birth.date), birth.time ?? BIRTH_TIME_UNKNOWN].join(" · ");
+}
+
+// «Знак Луны мог смениться.» или, если знак мог смениться и у других тел, «Знак мог смениться у: Солнце, Луна.»; пустой список — пустая строка
+export function uncertainSignsNote(bodies: readonly BodyId[]): string {
+  if (bodies.length === 0) return "";
+  if (bodies.length === 1 && bodies[0] === "moon") return WHEEL_ARIA_MOON_SIGN;
+  return `Знак мог смениться у: ${bodies.map((body) => BODY_NAMES[body]).join(", ")}.`;
+}
+
+// «Показано 11 аспектов.», «Показан 1 аспект.», «Показано 2 аспекта.»
+export function aspectCountNote(count: number): string {
+  const word = pluralRu(count, ["аспект", "аспекта", "аспектов"]);
+  const verb = count % 10 === 1 && count % 100 !== 11 ? "Показан" : "Показано";
+  return `${verb} ${count} ${word}.`;
 }

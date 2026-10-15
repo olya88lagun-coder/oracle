@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { computeNatalChart, signOf, type Aspect, type ChartPoint, type NatalChart } from "@oracle/core/natal";
+import { SIGNS, computeNatalChart, signOf, type Aspect, type ChartPoint, type NatalChart } from "@oracle/core/natal";
 import * as copy from "./natal-copy";
 
 // Все строки экрана калькулятора из принятого макета (docs/design/mockups/natal/natal-calculator.html): проверочный список этапа 2
@@ -125,6 +125,10 @@ describe("natal copy: every mockup string is reachable from natal-copy.ts", () =
 });
 
 describe("name tables", () => {
+  test("SIGN_ORDER is the core zodiac order", () => {
+    expect(copy.SIGN_ORDER).toEqual(SIGNS);
+  });
+
   test("signs: nominative and prepositional forms in zodiac order", () => {
     expect(Object.keys(copy.SIGN_NAMES)).toEqual(["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]);
     expect(Object.values(copy.SIGN_NAMES)).toEqual(["Овен", "Телец", "Близнецы", "Рак", "Лев", "Дева", "Весы", "Скорпион", "Стрелец", "Козерог", "Водолей", "Рыбы"]);

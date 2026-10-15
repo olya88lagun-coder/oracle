@@ -46,8 +46,7 @@ describe("findImports", () => {
   });
 });
 
-// natal-wheel.ts добавляется в список вместе с самим модулем
-const EAGER_MODULES = ["natal-copy.ts", "natal-input.ts"];
+const EAGER_MODULES = ["natal-copy.ts", "natal-input.ts", "natal-wheel.ts"];
 
 describe("modules loaded together with the page import only types from the core and the city base", () => {
   test.each(EAGER_MODULES)("%s: no value import from @oracle/core or @oracle/geo", (name) => {
