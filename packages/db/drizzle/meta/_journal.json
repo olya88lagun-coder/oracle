@@ -43,6 +43,13 @@
       "when": 1790858327884,
       "tag": "0005_wealthy_madelyne_pryor",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792059439917,
+      "tag": "0006_tearful_genesis",
+      "breakpoints": true
     }
   ]
 }
