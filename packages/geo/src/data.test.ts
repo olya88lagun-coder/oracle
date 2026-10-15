@@ -20,9 +20,19 @@ describe("city database", () => {
     expect([...zones].filter((zone) => !isValidZone(zone))).toEqual([]);
   });
 
-  test("every city has a name, a country and coordinates in range", () => {
-    // Один expect на всю базу: 75 тысяч отдельных проверок упираются во время теста
-    const broken = CITIES.filter((city) => city.name === "" || city.country === "" || Math.abs(city.latitude) > 90 || Math.abs(city.longitude) > 180);
+  test("every city has a name, a country, finite numbers and coordinates in range", () => {
+    // Один expect на всю базу: 75 тысяч отдельных проверок упираются во время теста; Number.isFinite отсекает null и NaN
+    const broken = CITIES.filter(
+      (city) =>
+        !Number.isFinite(city.id) ||
+        !Number.isFinite(city.latitude) ||
+        !Number.isFinite(city.longitude) ||
+        !Number.isFinite(city.population) ||
+        city.name === "" ||
+        city.country === "" ||
+        Math.abs(city.latitude) > 90 ||
+        Math.abs(city.longitude) > 180,
+    );
     expect(broken).toEqual([]);
   });
 
