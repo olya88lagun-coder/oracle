@@ -302,6 +302,12 @@ importers:
         specifier: 0.31.10
         version: 0.31.10
 
+  packages/geo:
+    devDependencies:
+      '@oracle/core':
+        specifier: workspace:*
+        version: link:../core
+
 packages:
 
   '@babel/helper-string-parser@7.29.7':
