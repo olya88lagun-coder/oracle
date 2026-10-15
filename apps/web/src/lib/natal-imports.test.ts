@@ -57,3 +57,20 @@ describe("modules loaded together with the page import only types from the core 
     expect(dynamicImports(source).filter((specifier) => PACKAGE_PATTERN.test(specifier))).toEqual([]);
   });
 });
+
+describe("natal-moment.ts", () => {
+  test("takes values only from @oracle/core/natal, and only types from @oracle/geo", () => {
+    const records = findImports(read("natal-moment.ts"));
+    for (const record of records.filter((item) => PACKAGE_PATTERN.test(item.specifier))) {
+      if (record.specifier.startsWith("@oracle/geo")) expect(record.typeOnly, record.specifier).toBe(true);
+      else expect(record.specifier).toBe("@oracle/core/natal");
+    }
+    expect(records.some((record) => record.specifier === "@oracle/core/natal" && !record.typeOnly)).toBe(true);
+  });
+
+  test("is not imported statically by the modules loaded with the page", () => {
+    for (const name of EAGER_MODULES) {
+      expect(findImports(read(name)).some((record) => /natal-moment$/.test(record.specifier)), name).toBe(false);
+    }
+  });
+});
