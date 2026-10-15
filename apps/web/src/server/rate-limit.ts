@@ -8,6 +8,7 @@ const REPORT_PDFS_PER_MINUTE = 10;
 const COMPAT_PDFS_PER_MINUTE = 6;
 const LILA_ACTIONS_PER_MINUTE = 60;
 const LILA_POLLS_PER_MINUTE = 120;
+const CITY_SEARCHES_PER_MINUTE = 30;
 
 // Память процесса: на одном контейнере web этого достаточно, чтобы не дать засыпать базу запросами
 export function createRateLimiter(p: { limit: number; windowMs: number; now?: () => number }): RateLimiter {
@@ -42,6 +43,9 @@ export const lilaLimiter = createRateLimiter({ limit: LILA_ACTIONS_PER_MINUTE, w
 
 // Опрос итога платной партии: вкладка спрашивает раз в 3 секунды (20 в минуту), запас — на несколько вкладок
 export const lilaPollLimiter = createRateLimiter({ limit: LILA_POLLS_PER_MINUTE, windowMs: MINUTE_MS });
+
+// Подсказки городов в форме места рождения: запросы идут по мере набора текста, ключ — адрес клиента (вход не нужен)
+export const citiesLimiter = createRateLimiter({ limit: CITY_SEARCHES_PER_MINUTE, windowMs: MINUTE_MS });
 
 // Caddy заменяет X-Forwarded-For, пришедший от клиента, поэтому первый адрес — настоящий
 export function clientKeyFromHeaders(headers: Headers): string {
