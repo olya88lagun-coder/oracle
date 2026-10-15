@@ -1,0 +1,156 @@
+{
+  "source_commit": "31981ab359c7720b46fa9fa9054ee9eec70b48c3",
+  "stage": "1–2: original SVG glyphs and static wheel appearance",
+  "glyph_count": 24,
+  "glyph_ids": [
+    "glyph-sun",
+    "glyph-moon",
+    "glyph-mercury",
+    "glyph-venus",
+    "glyph-mars",
+    "glyph-jupiter",
+    "glyph-saturn",
+    "glyph-uranus",
+    "glyph-neptune",
+    "glyph-pluto",
+    "glyph-node",
+    "glyph-aries",
+    "glyph-taurus",
+    "glyph-gemini",
+    "glyph-cancer",
+    "glyph-leo",
+    "glyph-virgo",
+    "glyph-libra",
+    "glyph-scorpio",
+    "glyph-sagittarius",
+    "glyph-capricorn",
+    "glyph-aquarius",
+    "glyph-pisces",
+    "glyph-retro"
+  ],
+  "sample_points": [
+    {
+      "id": "sun",
+      "longitude": 346.53,
+      "degrees": "16°32′",
+      "house": 10,
+      "retrograde": false
+    },
+    {
+      "id": "moon",
+      "longitude": 118.12,
+      "degrees": "28°07′",
+      "house": 2,
+      "retrograde": false
+    },
+    {
+      "id": "mercury",
+      "longitude": 336.31,
+      "degrees": "6°19′",
+      "house": 10,
+      "retrograde": false
+    },
+    {
+      "id": "venus",
+      "longitude": 302.6,
+      "degrees": "2°36′",
+      "house": 8,
+      "retrograde": false
+    },
+    {
+      "id": "mars",
+      "longitude": 296.83,
+      "degrees": "26°50′",
+      "house": 7,
+      "retrograde": false
+    },
+    {
+      "id": "jupiter",
+      "longitude": 90.99,
+      "degrees": "1°00′",
+      "house": 12,
+      "retrograde": false
+    },
+    {
+      "id": "saturn",
+      "longitude": 292.68,
+      "degrees": "22°41′",
+      "house": 7,
+      "retrograde": false
+    },
+    {
+      "id": "uranus",
+      "longitude": 278.99,
+      "degrees": "8°59′",
+      "house": 6,
+      "retrograde": false
+    },
+    {
+      "id": "neptune",
+      "longitude": 284.14,
+      "degrees": "14°08′",
+      "house": 7,
+      "retrograde": false
+    },
+    {
+      "id": "pluto",
+      "longitude": 227.71,
+      "degrees": "17°43′",
+      "house": 5,
+      "retrograde": true
+    },
+    {
+      "id": "node",
+      "longitude": 315,
+      "degrees": "15°00′",
+      "house": 9,
+      "retrograde": true
+    }
+  ],
+  "cusps": [
+    104.1,
+    117.7,
+    133.7,
+    155.6,
+    190.3,
+    241.8,
+    284.1,
+    297.7,
+    313.7,
+    335.6,
+    10.3,
+    61.8
+  ],
+  "label_longitudes": {
+    "uranus": 272,
+    "neptune": 282,
+    "saturn": 292,
+    "mars": 302,
+    "venus": 312,
+    "node": 322
+  },
+  "aspect_count": 14,
+  "composition_state": {
+    "canvas": [
+      720,
+      720
+    ],
+    "centre": [
+      360,
+      360
+    ],
+    "grid": "concentric radial",
+    "primary_anchor": "wheel outline and zodiac ring",
+    "secondary_anchor": "planet glyphs",
+    "tertiary_anchor": "house numbers and aspect chords",
+    "outer_safety_margin": 45
+  },
+  "mobile": "Hide degree labels at <=480px; values remain in HTML table; smallest visible SVG text 26 units = 12.39 px at 343px width.",
+  "no_time_aspect_count": 11,
+  "no_time_excluded_aspects": [
+    "moon-mars",
+    "moon-venus",
+    "moon-saturn"
+  ],
+  "no_time_aspects_note": "Аспекты Луны без времени рождения не считаются."
+}
