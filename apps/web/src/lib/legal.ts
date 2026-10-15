@@ -1,8 +1,8 @@
 // Оператор персональных данных — самозанятая, указана так же, как в «Мой налог»
 export const OPERATOR = { name: "Лагутенкова Ольга Валентиновна", inn: "744923234850", email: "lagutenkova.olga@yandex.ru" } as const;
 
-export const LEGAL_VERSIONS = { consent: "2026-09-v1", privacy: "2026-09-v6", offer: "2026-09-v2" } as const;
-export const LEGAL_DATES = { consent: "24 сентября 2026 года", privacy: "30 сентября 2026 года", offer: "30 сентября 2026 года" } as const;
+export const LEGAL_VERSIONS = { consent: "2026-10-v2", privacy: "2026-10-v7", offer: "2026-09-v2" } as const;
+export const LEGAL_DATES = { consent: "15 октября 2026 года", privacy: "15 октября 2026 года", offer: "30 сентября 2026 года" } as const;
 
 export const DATA_STORAGE = "на сервере в Москве (Timeweb Cloud)";
 
