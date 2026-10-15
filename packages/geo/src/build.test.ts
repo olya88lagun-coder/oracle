@@ -28,8 +28,8 @@ const ALT_MOSCOW = ["311864", "524901", "ru", "Москва", "1", "", "", "", "
 const ADMIN1_MOSCOW = ["RU.48", "Moscow", "Moscow", "524894"].join("\t");
 
 // Строка alternateNamesV2: id записи, id объекта, язык, название, предпочтительное, короткое, разговорное, историческое, с, по
-const altLine = (geonameId: string, language: string, name: string, flags: { preferred?: boolean; historic?: boolean } = {}) =>
-  ["1", geonameId, language, name, flags.preferred ? "1" : "", "", "", flags.historic ? "1" : "", "", ""].join("	");
+const altLine = (geonameId: string, language: string, name: string, flags: { preferred?: boolean; historic?: boolean; id?: string } = {}) =>
+  [flags.id ?? "1", geonameId, language, name, flags.preferred ? "1" : "", "", "", flags.historic ? "1" : "", "", ""].join("	");
 
 const LONDON = cityLine({ id: "2643743", name: "London", latitude: "51.50853", longitude: "-0.12574", country: "GB", admin1: "ENG", population: "8961989", zone: "Europe/London" });
 const ADMIN1_ENGLAND = ["GB.ENG", "England", "England", "6269131"].join("	");
@@ -128,6 +128,35 @@ describe("build-cities.mjs", () => {
       expect(find(2643743)).toBeDefined();
     });
 
+    // В GeoNames латинские транслитерации иногда помечены языком ru и стоят в файле раньше кириллицы
+    test("takes only Cyrillic Russian names: a Latin ru row with a lower id does not beat the Cyrillic one", () => {
+      const run = runBuild(
+        writeDump({
+          ...WORLD_FILES,
+          world: [
+            altLine("2643743", "ru", "Londonn", { id: "10", preferred: true }),
+            altLine("2643743", "ru", "Лондон", { id: "11" }),
+            altLine("6269131", "ru", "Angliya", { id: "12", preferred: true }),
+            altLine("6269131", "ru", "Англия", { id: "13" }),
+          ],
+        }),
+        "--min-cities",
+        "1",
+      );
+
+      const { data, find } = cityByName(run.output);
+      expect(find(2643743)?.[1]).toBe("Лондон");
+      expect(data.regions[find(2643743)?.[2] ?? -1]).toBe("Англия");
+    });
+
+    test("keeps the GeoNames name for a place and a region whose only ru rows are Latin", () => {
+      const run = runBuild(writeDump({ ...WORLD_FILES, world: [altLine("2643743", "ru", "Londonn", { preferred: true }), altLine("6269131", "ru", "Angliya")] }), "--min-cities", "1");
+
+      const { data, find } = cityByName(run.output);
+      expect(find(2643743)?.[1]).toBe("London");
+      expect(data.regions[find(2643743)?.[2] ?? -1]).toBe("England");
+    });
+
     test("fails loudly on a malformed 9-column row and writes nothing", () => {
       const malformed = ["1", "2643743", "ru", "Лондон", "1", "", "", "", ""].join("	");
       const run = runBuild(writeDump({ ...WORLD_FILES, world: [...(WORLD_FILES.world ?? []), malformed] }), "--min-cities", "1");
@@ -146,6 +175,16 @@ describe("build-cities.mjs", () => {
       expect(run.stderr).toContain("geonameid");
       expect(existsSync(run.output)).toBe(false);
     });
+  });
+
+  test("the per-country files follow the same Cyrillic-only rule", () => {
+    const alt = [["1", "524901", "ru", "Moskva", "1", "", "", "", "", ""].join("	"), ALT_MOSCOW];
+    const run = runBuild(writeDump({ alt }), "--min-cities", "1");
+
+    expect(run.status).toBe(0);
+    const names = (JSON.parse(readFileSync(run.output, "utf8")) as { rows: [number, string][] }).rows.map((row) => row[1]);
+    expect(names).toContain("Москва");
+    expect(names).not.toContain("Moskva");
   });
 
   test("without alt-world falls back to the per-country files: Russian names only for RU/BY/KZ/UA", () => {
