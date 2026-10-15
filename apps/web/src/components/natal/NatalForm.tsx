@@ -52,9 +52,10 @@ type Props = {
   dateRef?: Ref<HTMLInputElement>;
   timeRef?: Ref<HTMLInputElement>;
   cityRef?: Ref<HTMLInputElement>;
+  prefillStoredDate?: boolean; // false — в портрете уже есть данные рождения, дату из браузера подставлять не надо
 };
 
-export function NatalForm({ values, errors, busy, failed, note = "", onChange, onSubmit, onCityBlur, dateRef, timeRef, cityRef }: Props) {
+export function NatalForm({ values, errors, busy, failed, note = "", onChange, onSubmit, onCityBlur, dateRef, timeRef, cityRef, prefillStoredDate = true }: Props) {
   const baseId = useId();
   const [maxDate, setMaxDate] = useState<string | undefined>(undefined);
   const ids = { date: `${baseId}-date`, time: `${baseId}-time`, dateError: `${baseId}-date-error`, timeError: `${baseId}-time-error` };
@@ -63,7 +64,7 @@ export function NatalForm({ values, errors, busy, failed, note = "", onChange, o
     const now = new Date();
     setMaxDate(localIsoDate(now));
     // Дата с калькулятора матрицы: только если поле ещё пустое (человек мог успеть ввести свою)
-    if (values.date === "") {
+    if (prefillStoredDate && values.date === "") {
       const stored = readStoredBirthDate(browserStorage(), now);
       if (stored) onChange({ date: stored });
     }

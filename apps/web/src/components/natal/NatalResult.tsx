@@ -1,5 +1,5 @@
 import type { NatalChart } from "@oracle/core/natal";
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 import { ACTION_RECALCULATE, RESULT_TITLE, formatBirthMeta, sunMoonAscSummary } from "@/lib/natal-copy";
 import type { NatalKeyRegistry } from "@/lib/natal-texts";
 import { NatalAspects } from "./NatalAspects";
@@ -15,9 +15,10 @@ type Props = {
   keyTexts?: NatalKeyRegistry; // опубликованные ключевые тексты; по умолчанию реестр из lib/natal-texts.ts
   titleId?: string; // id заголовка h2: на него ссылается обёртка результата; без параметра берётся свой уникальный
   onRecalculate?: () => void;
+  saveAction?: ReactNode; // «Сохранить в портрет» и его состояние: ведёт NatalCalculator, первым в ряду действий
 };
 
-export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate }: Props) {
+export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate, saveAction }: Props) {
   const ownId = useId();
   const headingId = titleId ?? `${ownId}-title`;
   const summary = sunMoonAscSummary(chart);
@@ -54,8 +55,7 @@ export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate }: 
       <NatalAspects chart={chart} />
       <NatalKeys chart={chart} registry={keyTexts} />
       <div className="natal-actions">
-        {/* «Сохранить в портрет» (кнопка .natal-button--save) встанет сюда первой, когда пройдёт юридический барьер G3 (план 7, задача 9):
-            до тех пор данные рождения никуда не сохраняются, и кнопки на странице нет. */}
+        {saveAction}
         <NatalShareButton />
         <button type="button" className="natal-button" onClick={onRecalculate}>
           {ACTION_RECALCULATE}

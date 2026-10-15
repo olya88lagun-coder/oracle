@@ -1,5 +1,5 @@
 import type { NatalChart } from "@oracle/core/natal";
-import type { Ref } from "react";
+import type { ReactNode, Ref } from "react";
 import type { NatalInput } from "@/lib/natal-input";
 import type { ClockKind, ZoneChoice } from "@/lib/natal-moment";
 import { NatalNotices } from "./NatalNotices";
@@ -20,12 +20,13 @@ type Props = {
   choiceRef?: Ref<HTMLDivElement>;
   onChoose?: (choice: ZoneChoice) => void;
   onRecalculate?: () => void;
+  saveAction?: ReactNode; // блок «Сохранить в портрет» для результата
 };
 
 // Плашки и результат под формой — в порядке макета (плашки выше результата). Когда карта построена, обёртка — цель фокуса и прокрутки:
 // так плашки (перевод часов, полярный круг, ранние годы, смена знака, нет времени) остаются в поле зрения и читаются перед заголовком
 // результата, а группа подписана этим заголовком («Ваша натальная карта»). Пока карта ждёт выбора, обёртка просто контейнер.
-export function NatalOutcome({ outcome, titleId, outcomeRef, choiceRef, onChoose, onRecalculate }: Props) {
+export function NatalOutcome({ outcome, titleId, outcomeRef, choiceRef, onChoose, onRecalculate, saveAction }: Props) {
   const { chart, input } = outcome;
   // Время в подписи карты — то, по которому её посчитали (при переводе часов вперёд это исправленное время)
   const birth = { city: input.city.name, date: input.date, time: input.time === null ? null : (outcome.correctedTime ?? input.time) };
@@ -43,7 +44,7 @@ export function NatalOutcome({ outcome, titleId, outcomeRef, choiceRef, onChoose
         date={input.date}
         latitude={input.city.latitude}
       />
-      {chart && <NatalResult chart={chart} birth={birth} titleId={titleId} onRecalculate={onRecalculate} />}
+      {chart && <NatalResult chart={chart} birth={birth} titleId={titleId} onRecalculate={onRecalculate} saveAction={saveAction} />}
     </div>
   );
 }
