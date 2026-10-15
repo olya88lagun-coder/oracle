@@ -199,6 +199,9 @@ importers:
       '@oracle/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@oracle/geo':
+        specifier: workspace:*
+        version: link:../../packages/geo
       drizzle-orm:
         specifier: 0.45.2
         version: 0.45.2(@electric-sql/pglite@0.5.8)(pg@8.23.0)(postgres@3.4.9)
