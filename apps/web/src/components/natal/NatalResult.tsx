@@ -1,5 +1,5 @@
 import type { NatalChart } from "@oracle/core/natal";
-import type { Ref } from "react";
+import { useId } from "react";
 import { ACTION_RECALCULATE, RESULT_TITLE, formatBirthMeta, sunMoonAscSummary } from "@/lib/natal-copy";
 import type { NatalKeyRegistry } from "@/lib/natal-texts";
 import { NatalAspects } from "./NatalAspects";
@@ -9,24 +9,24 @@ import { NatalShareButton } from "./NatalShareButton";
 import { NatalTable } from "./NatalTable";
 import { NatalWheel, type NatalBirth } from "./NatalWheel";
 
-export const NATAL_RESULT_TITLE_ID = "natal-result-title";
-
 type Props = {
   chart: NatalChart;
   birth: NatalBirth;
   keyTexts?: NatalKeyRegistry; // опубликованные ключевые тексты; по умолчанию реестр из lib/natal-texts.ts
-  headingRef?: Ref<HTMLHeadingElement>; // на заголовок переводят фокус после расчёта
+  titleId?: string; // id заголовка h2: на него ссылается обёртка результата; без параметра берётся свой уникальный
   onRecalculate?: () => void;
 };
 
-export function NatalResult({ chart, birth, keyTexts, headingRef, onRecalculate }: Props) {
+export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate }: Props) {
+  const ownId = useId();
+  const headingId = titleId ?? `${ownId}-title`;
   const summary = sunMoonAscSummary(chart);
   const hasAscendant = chart.timeKnown && chart.ascendant !== null;
 
   return (
-    <section className="natal-result" aria-labelledby={NATAL_RESULT_TITLE_ID}>
+    <section className="natal-result" aria-labelledby={headingId}>
       <div className="natal-result__heading">
-        <h2 id={NATAL_RESULT_TITLE_ID} ref={headingRef} tabIndex={-1}>
+        <h2 id={headingId}>
           {RESULT_TITLE}
         </h2>
       </div>

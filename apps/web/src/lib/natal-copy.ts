@@ -264,3 +264,8 @@ export const SHARE_FAILED = "Не получилось поделиться. С�
 export function citiesFoundNote(count: number): string {
   return `Найдено: ${count}`;
 }
+
+// Подписи вариантов в списке городов: число жителей и координаты (формы слова «житель» — для 1, 2–4 и 5–20)
+export const CITY_POPULATION_FORMS = ["житель", "жителя", "жителей"] as const;
+export const COORD_LATITUDE = { north: "с. ш.", south: "ю. ш." } as const;
+export const COORD_LONGITUDE = { east: "в. д.", west: "з. д." } as const;

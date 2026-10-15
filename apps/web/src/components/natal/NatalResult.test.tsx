@@ -11,6 +11,8 @@ const noTime = realChart("Москва", "1990-03-07", null);
 const polar = realChart("Мурманск", "1990-03-07", "12:00");
 const BIRTH_NO_TIME = { ...SAMPLE_BIRTH, time: null };
 
+// Идентификаторы блоков «Что это значит» уникальны у каждого экземпляра (useId): в сравнениях отбрасываем префикс
+const stableIds = (markup: string) => markup.replace(/id="[^"]*-meaning-(sun|moon|ascendant)"/g, 'id="meaning-$1"');
 const count = (markup: string, pattern: RegExp) => markup.match(pattern)?.length ?? 0;
 const rowsOf = (markup: string) => [...markup.matchAll(/<tr><td>([\s\S]*?)<\/tr>/g)].map((match) => match[1] as string);
 const textOf = (markup: string) => markup.replace(/<svg[\s\S]*?<\/svg>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
@@ -19,8 +21,9 @@ describe("NatalResult with a known time", () => {
   const markup = renderToStaticMarkup(<NatalResult chart={withTime} birth={SAMPLE_BIRTH} />);
 
   test("is a section labelled by its h2, with the title, the meta line and a focusable heading", () => {
-    expect(markup).toMatch(/^<section class="natal-result" aria-labelledby="natal-result-title">/);
-    expect(markup).toContain('<div class="natal-result__heading"><h2 id="natal-result-title" tabindex="-1">Ваша натальная карта</h2></div>');
+    const titleId = /^<section class="natal-result" aria-labelledby="([^"]+)">/.exec(markup)?.[1];
+    expect(titleId).toBeTruthy();
+    expect(markup).toContain(`<div class="natal-result__heading"><h2 id="${titleId}">Ваша натальная карта</h2></div>`);
     expect(markup).toContain('<p class="natal-result__meta">Москва · 7 марта 1990 · 12:00</p>');
     expect(count(markup, /<h1/g)).toBe(0);
     expect(count(markup, /<h2/g)).toBe(1);
@@ -44,8 +47,9 @@ describe("NatalResult with a known time", () => {
     expect(textOf(rows[5] as string)).toBe("Юпитер Рак 1°00′ 12");
     expect(textOf(rows[9] as string)).toBe("Плутон Скорпион 17°43′ обратное движение 5");
     expect(textOf(rows[10] as string)).toBe("Лунный узел (средний) Водолей 15°00′ обратное движение 9");
-    // Асцендент образца 14°08′ посчитан по округлённым координатам Москвы; координаты в базе городов чуть другие
-    expect(textOf(rows[11] as string)).toMatch(/^AC Асцендент Рак 14°0[78]′ —$/);
+    // Асцендент образца в макете — 14°08′: он посчитан для округлённых координат Москвы (55.75, 37.62).
+    // В базе городов Москва стоит в (55.752, 37.6178), поэтому настоящий расчёт даёт 14°07′. Точный образец проверяют тесты 7a.
+    expect(textOf(rows[11] as string)).toBe("AC Асцендент Рак 14°07′ —");
     expect(textOf(rows[12] as string)).toBe("MC МС Рыбы 5°38′ —");
     expect(markup).toContain('<p class="natal-table__caption">Дома: Плацидус</p>');
   });
@@ -96,7 +100,7 @@ describe("NatalResult with a known time", () => {
 });
 
 describe("NatalResult without a time", () => {
-  const markup = renderToStaticMarkup(<NatalResult chart={noTime} birth={BIRTH_NO_TIME} />);
+  const markup = stableIds(renderToStaticMarkup(<NatalResult chart={noTime} birth={BIRTH_NO_TIME} />));
 
   test("says the time is unknown in the meta line and the wheel caption", () => {
     expect(markup).toContain('<p class="natal-result__meta">Москва · 7 марта 1990 · время неизвестно</p>');
@@ -124,7 +128,7 @@ describe("NatalResult without a time", () => {
   });
 
   test("the Ascendant block explains that the time is needed", () => {
-    expect(markup).toContain('<article class="natal-key natal-key--pending" id="natal-meaning-ascendant"><h4 class="natal-key__title">Асцендент: нужно время рождения</h4><p>Без времени рождения асцендента, середины неба и домов нет.</p></article>');
+    expect(markup).toContain('<article class="natal-key natal-key--pending" id="meaning-ascendant"><h4 class="natal-key__title">Асцендент: нужно время рождения</h4><p>Без времени рождения асцендента, середины неба и домов нет.</p></article>');
     expect(markup).toContain('<h4 class="natal-key__title">Солнце в Рыбах</h4><p>Подробный текст скоро появится.</p>');
   });
 });
@@ -139,12 +143,12 @@ describe("NatalKeys", () => {
   const registry = { "sun-pisces": { summary: "Солнце в Рыбах — чувствительность и воображение.", href: "/natalnaya-karta/solntse/ryby" } };
 
   test("shows the published text with a link and keeps the others pending", () => {
-    const markup = renderToStaticMarkup(<NatalKeys chart={withTime} registry={registry} />);
+    const markup = stableIds(renderToStaticMarkup(<NatalKeys chart={withTime} registry={registry} />));
     expect(markup).toContain(
-      '<article class="natal-key" id="natal-meaning-sun"><h4 class="natal-key__title">Солнце в Рыбах</h4><p>Солнце в Рыбах — чувствительность и воображение.</p><a class="natal-key__link" href="/natalnaya-karta/solntse/ryby">Читать полностью</a></article>',
+      '<article class="natal-key" id="meaning-sun"><h4 class="natal-key__title">Солнце в Рыбах</h4><p>Солнце в Рыбах — чувствительность и воображение.</p><a class="natal-key__link" href="/natalnaya-karta/solntse/ryby">Читать полностью</a></article>',
     );
-    expect(markup).toContain('<article class="natal-key natal-key--pending" id="natal-meaning-moon">');
-    expect(markup).toContain('<article class="natal-key natal-key--pending" id="natal-meaning-ascendant">');
+    expect(markup).toContain('<article class="natal-key natal-key--pending" id="meaning-moon">');
+    expect(markup).toContain('<article class="natal-key natal-key--pending" id="meaning-ascendant">');
     expect(count(markup, /natal-key__link/g)).toBe(1);
   });
 

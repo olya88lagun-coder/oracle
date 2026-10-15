@@ -1,26 +1,16 @@
 "use client";
 
-import type { NatalChart } from "@oracle/core/natal";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { ERROR_CITY_REQUIRED } from "@/lib/natal-copy";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { ERROR_CITY_REQUIRED, NOTICE_AMBIGUOUS } from "@/lib/natal-copy";
 import { planCalculation } from "@/lib/natal-calc";
 import { validateAll, validateNatalInput, type NatalField, type NatalInput } from "@/lib/natal-input";
-import type { ClockKind, ZoneChoice } from "@/lib/natal-moment";
+import type { ZoneChoice } from "@/lib/natal-moment";
 import { EMPTY_FORM_VALUES, NO_FORM_ERRORS, NatalForm, type NatalFormErrors, type NatalFormValues } from "./NatalForm";
-import { NatalNotices } from "./NatalNotices";
-import { NatalResult } from "./NatalResult";
+import { NatalOutcome, type Outcome } from "./NatalOutcome";
 
 // Калькулятор натальной карты: форма, плашки и результат. Всё считается в браузере; на сервер уходит только поиск города (GET /api/cities).
 // Дата, время и выбранный город живут в состоянии компонента — ни в адресе, ни в хранилище браузера, ни в запросах их нет.
 // Ядро расчёта (~47 КБ gzip) подгружается отдельным куском после нажатия «Рассчитать карту».
-
-type Outcome = {
-  input: NatalInput; // проверенные данные, по которым считали
-  chart: NatalChart | null; // null — время было дважды, и человек ещё не выбрал
-  clock: ClockKind;
-  correctedTime: string | null;
-  choice: ZoneChoice | null;
-};
 
 const prefersReducedMotion = (): boolean => typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -39,19 +29,23 @@ export function NatalCalculator() {
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
   const [outcome, setOutcome] = useState<Outcome | null>(null);
-  const [revealed, setRevealed] = useState(0);
+  // Куда вести фокус после расчёта: на обёртку с результатом и плашками или, если нужен выбор времени, на группу выбора
+  const [reveal, setReveal] = useState<{ target: "outcome" | "choice"; count: number }>({ target: "outcome", count: 0 });
+  const titleId = `${useId()}-result-title`;
   const run = useRef(0); // номер расчёта: ответ устаревшего расчёта отбрасывается
   const dateRef = useRef<HTMLInputElement>(null);
   const timeRef = useRef<HTMLInputElement>(null);
   const cityRef = useRef<HTMLInputElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
+  const outcomeRef = useRef<HTMLDivElement>(null);
+  const choiceRef = useRef<HTMLDivElement>(null);
 
-  // После успешного расчёта переносим фокус на заголовок результата и прокручиваем к нему
+  // После расчёта переносим фокус и прокрутку: плашки над результатом не должны остаться выше экрана
   useEffect(() => {
-    if (revealed === 0) return;
-    headingRef.current?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
-    headingRef.current?.focus({ preventScroll: true });
-  }, [revealed]);
+    if (reveal.count === 0) return;
+    const target = reveal.target === "choice" ? choiceRef.current : outcomeRef.current;
+    target?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+    target?.focus({ preventScroll: true });
+  }, [reveal]);
 
   const discardOutcome = useCallback(() => {
     run.current += 1; // расчёт, который ещё идёт, больше не нужен
@@ -81,10 +75,11 @@ export function NatalCalculator() {
       const planned = planCalculation(input, choice, { buildBirthMoment, computeNatalChart });
       if (planned.kind === "needs-choice") {
         setOutcome({ input, chart: null, clock: "ambiguous", correctedTime: null, choice: null });
+        setReveal((current) => ({ target: "choice", count: current.count + 1 }));
         return;
       }
       setOutcome({ input, chart: planned.chart, clock: planned.clock, correctedTime: planned.correctedTime, choice });
-      setRevealed((count) => count + 1);
+      setReveal((current) => ({ target: "outcome", count: current.count + 1 }));
     } catch {
       // Данные рождения в сообщение не попадают и нигде не пишутся
       if (mine === run.current) {
@@ -121,9 +116,6 @@ export function NatalCalculator() {
     if (values.city === null && values.cityText.trim() !== "") setErrors((current) => ({ ...current, city: ERROR_CITY_REQUIRED }));
   }
 
-  // Время в подписи карты — то, по которому её посчитали (при переводе часов вперёд это исправленное время)
-  const birth = outcome ? { city: outcome.input.city.name, date: outcome.input.date, time: outcome.input.time === null ? null : (outcome.correctedTime ?? outcome.input.time) } : null;
-
   return (
     <>
       <NatalForm
@@ -131,6 +123,7 @@ export function NatalCalculator() {
         errors={errors}
         busy={busy}
         failed={failed}
+        note={outcome && !outcome.chart ? NOTICE_AMBIGUOUS : ""}
         onChange={change}
         onSubmit={submit}
         onCityBlur={cityBlurred}
@@ -139,17 +132,15 @@ export function NatalCalculator() {
         cityRef={cityRef}
       />
       {outcome && (
-        <NatalNotices
-          clock={outcome.clock}
-          correctedTime={outcome.correctedTime}
-          choice={outcome.choice}
+        <NatalOutcome
+          outcome={outcome}
+          titleId={titleId}
+          outcomeRef={outcomeRef}
+          choiceRef={choiceRef}
           onChoose={(choice) => void calculate(outcome.input, choice)}
-          chart={outcome.chart}
-          date={outcome.input.date}
-          latitude={outcome.input.city.latitude}
+          onRecalculate={recalculate}
         />
       )}
-      {outcome?.chart && birth && <NatalResult chart={outcome.chart} birth={birth} headingRef={headingRef} onRecalculate={recalculate} />}
     </>
   );
 }

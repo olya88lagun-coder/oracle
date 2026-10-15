@@ -1,6 +1,6 @@
 import type { City } from "@oracle/geo";
 import { MAX_QUERY_LENGTH, MIN_QUERY_LENGTH, normalizeQuery } from "@oracle/geo/query";
-import { formatCityRegion } from "./natal-copy";
+import { CITY_POPULATION_FORMS, COORD_LATITUDE, COORD_LONGITUDE, formatCityRegion } from "./natal-copy";
 import { pluralRu } from "./plural";
 
 // Клиент поиска города для калькулятора натальной карты. Из @oracle/geo берём только тип City и «лёгкий» адрес @oracle/geo/query
@@ -143,17 +143,16 @@ export function createCitySearch(options: { fetchImpl: FetchLike; delayMs?: numb
 export type CityOption = { city: City; name: string; regionLine: string };
 
 const THIN_NO_BREAK_SPACE = " ";
-const CITY_FORMS = ["житель", "жителя", "жителей"] as const;
 
 // 12345 → «12 345 жителей» (тонкие неразрывные пробелы между тысячами)
 export function formatPopulation(population: number): string {
   const count = Math.round(population);
-  return `${String(count).replace(/\B(?=(\d{3})+(?!\d))/g, THIN_NO_BREAK_SPACE)} ${pluralRu(count, CITY_FORMS)}`;
+  return `${String(count).replace(/\B(?=(\d{3})+(?!\d))/g, THIN_NO_BREAK_SPACE)} ${pluralRu(count, CITY_POPULATION_FORMS)}`;
 }
 
 // «55.75° с. ш., 37.62° в. д.»; южная широта и западная долгота — «ю. ш.» и «з. д.»
 export function formatCoordinates(latitude: number, longitude: number): string {
-  return `${Math.abs(latitude).toFixed(2)}° ${latitude < 0 ? "ю" : "с"}. ш., ${Math.abs(longitude).toFixed(2)}° ${longitude < 0 ? "з" : "в"}. д.`;
+  return `${Math.abs(latitude).toFixed(2)}° ${latitude < 0 ? COORD_LATITUDE.south : COORD_LATITUDE.north}, ${Math.abs(longitude).toFixed(2)}° ${longitude < 0 ? COORD_LONGITUDE.west : COORD_LONGITUDE.east}`;
 }
 
 const sameBirthplaceLabel = (city: City): string => [city.name, city.region, city.country].join("\u0000");

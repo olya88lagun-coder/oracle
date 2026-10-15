@@ -1,4 +1,5 @@
 import type { NatalChart } from "@oracle/core/natal";
+import type { Ref } from "react";
 import {
   CHOICE_FIRST,
   CHOICE_GROUP_LABEL,
@@ -21,6 +22,7 @@ export type NatalNoticesProps = {
   correctedTime: string | null;
   choice: ZoneChoice | null;
   onChoose?: (choice: ZoneChoice) => void;
+  choiceRef?: Ref<HTMLDivElement>; // на группу выбора переводят фокус, когда карта ждёт выбора
   chart: NatalChart | null; // null — время было дважды, и карта ещё не построена
   date: string; // ГГГГ-ММ-ДД
   latitude: number;
@@ -61,7 +63,7 @@ export function NatalNotices(props: NatalNoticesProps) {
         ))}
       </div>
       {props.clock === "ambiguous" && (
-        <div className="natal-choice-group" role="group" aria-label={CHOICE_GROUP_LABEL}>
+        <div className="natal-choice-group" role="group" aria-label={CHOICE_GROUP_LABEL} tabIndex={-1} ref={props.choiceRef}>
           {choices.map((choice) => (
             <button key={choice.value} type="button" className="natal-choice" aria-pressed={props.choice === choice.value} onClick={() => props.onChoose?.(choice.value)}>
               {choice.label}

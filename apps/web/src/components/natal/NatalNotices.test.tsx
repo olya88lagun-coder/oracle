@@ -36,7 +36,7 @@ describe("NatalNotices", () => {
     expect(props.chart).toBeNull();
     const markup = renderToStaticMarkup(<NatalNotices {...props} />);
     expect(markup).toContain('<div class="natal-notice natal-notice--ambiguous" role="status"><span class="natal-notice__icon" aria-hidden="true">i</span><p>В это время часы переводили назад: оно было дважды. Выберите, какое ваше.</p></div>');
-    expect(markup).toContain('<div class="natal-choice-group" role="group" aria-label="Какое время рождения">');
+    expect(markup).toContain('<div class="natal-choice-group" role="group" aria-label="Какое время рождения" tabindex="-1">');
     expect(markup).toContain('<button type="button" class="natal-choice" aria-pressed="false">Первый раз</button>');
     expect(markup).toContain('<button type="button" class="natal-choice" aria-pressed="false">Второй раз</button>');
     expect(count(markup, /natal-notice /g)).toBe(1);

@@ -45,6 +45,7 @@ type Props = {
   errors: NatalFormErrors;
   busy: boolean; // расчёт идёт
   failed: boolean; // расчёт закончился ошибкой
+  note?: string; // сообщение для живой области статуса, когда расчёт не идёт (например, «выберите время»)
   onChange: (patch: Partial<NatalFormValues>) => void;
   onSubmit: () => void;
   onCityBlur?: () => void;
@@ -53,7 +54,7 @@ type Props = {
   cityRef?: Ref<HTMLInputElement>;
 };
 
-export function NatalForm({ values, errors, busy, failed, onChange, onSubmit, onCityBlur, dateRef, timeRef, cityRef }: Props) {
+export function NatalForm({ values, errors, busy, failed, note = "", onChange, onSubmit, onCityBlur, dateRef, timeRef, cityRef }: Props) {
   const baseId = useId();
   const [maxDate, setMaxDate] = useState<string | undefined>(undefined);
   const ids = { date: `${baseId}-date`, time: `${baseId}-time`, dateError: `${baseId}-date-error`, timeError: `${baseId}-time-error` };
@@ -139,7 +140,7 @@ export function NatalForm({ values, errors, busy, failed, onChange, onSubmit, on
           {busy ? BUTTON_CALCULATING : BUTTON_CALCULATE}
         </button>
         <p className="natal-status" role="status" aria-live="polite">
-          {busy ? BUTTON_CALCULATING : ""}
+          {busy ? BUTTON_CALCULATING : note}
         </p>
         {failed && (
           <p className="natal-form__error" role="alert">
