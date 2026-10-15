@@ -2,6 +2,7 @@
 
 import type { City } from "@oracle/geo";
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type Ref } from "react";
+import { keepOptionVisible } from "@/lib/natal-list-scroll";
 import { CITY_HINT, CITY_LIST_EMPTY, CITY_LIST_ERROR, CITY_LIST_LABEL, CITY_PLACEHOLDER, LABEL_CITY, citiesFoundNote } from "@/lib/natal-copy";
 import { createCitySearch, describeCities, navigateCityList, type CityOption, type CitySearch, type CityState } from "@/lib/natal-cities";
 
@@ -137,6 +138,13 @@ export function CityField({ value, selected, error, inputRef, onTextChange, onSe
   }, []);
 
   const options = useMemo(() => (state.status === "results" ? describeCities(state.cities) : []), [state]);
+
+  // Пункт, выбранный стрелками, остаётся в видимой части списка (на узком экране список прокручивается)
+  useEffect(() => {
+    if (!open || activeIndex < 0) return;
+    const option = document.getElementById(optionId(baseId, activeIndex));
+    if (option?.parentElement) keepOptionVisible(option.parentElement, option);
+  }, [open, activeIndex, baseId, options]);
 
   function choose(index: number) {
     const option = options[index];
