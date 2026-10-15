@@ -1,0 +1,75 @@
+{
+  "page_variants": [
+    "Солнце в Овне",
+    "Асцендент в Овне"
+  ],
+  "required_sections": 5,
+  "paragraphs": {
+    "essence": 3,
+    "expression": 2,
+    "pitfalls": 2,
+    "limits": 2
+  },
+  "questions": 4,
+  "sign_links_per_variant": 12,
+  "neighbor_links_per_variant": 2,
+  "h1": 1,
+  "local_resources_only": true,
+  "sprite_unchanged": true,
+  "accepted_calculator_forms_unchanged": true,
+  "toc_keyboard_outline": "2px solid",
+  "browser_checks": [
+    {
+      "client": 1265,
+      "h1": 1,
+      "height": 3794,
+      "minTextPx": 14,
+      "scroll": 1265,
+      "sections": 5,
+      "signLinks": 12,
+      "smallTargets": [],
+      "title": "Солнце в Овне",
+      "variant": "sun",
+      "viewport": 1280
+    },
+    {
+      "client": 1265,
+      "h1": 1,
+      "height": 3794,
+      "minTextPx": 14,
+      "scroll": 1265,
+      "sections": 5,
+      "signLinks": 12,
+      "smallTargets": [],
+      "title": "Асцендент в Овне",
+      "variant": "asc",
+      "viewport": 1280
+    },
+    {
+      "client": 360,
+      "h1": 1,
+      "height": 6591,
+      "minTextPx": 14,
+      "scroll": 360,
+      "sections": 5,
+      "signLinks": 12,
+      "smallTargets": [],
+      "title": "Солнце в Овне",
+      "variant": "sun",
+      "viewport": 375
+    },
+    {
+      "client": 360,
+      "h1": 1,
+      "height": 6642,
+      "minTextPx": 14,
+      "scroll": 360,
+      "sections": 5,
+      "signLinks": 12,
+      "smallTargets": [],
+      "title": "Асцендент в Овне",
+      "variant": "asc",
+      "viewport": 375
+    }
+  ]
+}
