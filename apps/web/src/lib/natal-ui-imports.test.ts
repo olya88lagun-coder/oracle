@@ -51,6 +51,7 @@ describe("which modules of the calculator may reach the city base and the chart 
   test("scans the calculator components and the natal-*.ts libraries", () => {
     const names = sources.map((item) => item.name);
     expect(names).toContain("NatalSprite.tsx");
+    expect(names).toContain("NatalCalculator.tsx");
     expect(names).toContain("natal-moment.ts");
     expect(names).toContain("natal-cities.ts");
   });

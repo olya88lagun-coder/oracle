@@ -1,6 +1,6 @@
 import type { City } from "@oracle/geo";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { CITY_SEARCH_DELAY_MS, createCitySearch, describeCities, formatCoordinates, formatPopulation, type CityState, type FetchLike } from "./natal-cities";
+import { CITY_SEARCH_DELAY_MS, createCitySearch, describeCities, formatCoordinates, formatPopulation, navigateCityList, type CityState, type FetchLike } from "./natal-cities";
 
 const city = (patch: Partial<City> & Pick<City, "id" | "name">): City => ({
   region: "Ростовская область",
@@ -315,5 +315,49 @@ describe("describeCities", () => {
   test("the same name in different regions is not a homonym", () => {
     const options = describeCities([city({ id: 10, name: "Заречное", population: 500 }), city({ id: 11, name: "Заречное", region: "Пензенская область", population: 700 })]);
     expect(options.map((option) => option.regionLine)).toEqual(["Ростовская область, Россия", "Пензенская область, Россия"]);
+  });
+});
+
+describe("navigateCityList", () => {
+  const open = { visible: true, count: 3, active: 0 };
+
+  test("ArrowDown walks down the options and wraps from the last to the first", () => {
+    expect(navigateCityList({ ...open, key: "ArrowDown" })).toEqual({ handled: true, open: true, active: 1, select: null });
+    expect(navigateCityList({ ...open, key: "ArrowDown", active: 2 })).toEqual({ handled: true, open: true, active: 0, select: null });
+  });
+
+  test("ArrowUp walks up and wraps from the first to the last", () => {
+    expect(navigateCityList({ ...open, key: "ArrowUp", active: 2 })).toMatchObject({ active: 1 });
+    expect(navigateCityList({ ...open, key: "ArrowUp" })).toMatchObject({ handled: true, active: 2 });
+  });
+
+  test("an arrow reopens a closed list: ArrowDown on the first option, ArrowUp on the last", () => {
+    expect(navigateCityList({ key: "ArrowDown", visible: false, count: 3, active: 1 })).toEqual({ handled: true, open: true, active: 0, select: null });
+    expect(navigateCityList({ key: "ArrowUp", visible: false, count: 3, active: 1 })).toEqual({ handled: true, open: true, active: 2, select: null });
+  });
+
+  test("arrows do nothing when there is nothing to choose from", () => {
+    expect(navigateCityList({ key: "ArrowDown", visible: true, count: 0, active: -1 }).handled).toBe(false);
+    expect(navigateCityList({ key: "ArrowUp", visible: false, count: 0, active: -1 }).handled).toBe(false);
+  });
+
+  test("Enter picks the highlighted option and closes the list", () => {
+    expect(navigateCityList({ ...open, key: "Enter", active: 2 })).toEqual({ handled: true, open: false, active: 2, select: 2 });
+  });
+
+  test("Enter is left to the form when no option is highlighted, the list is closed or empty", () => {
+    expect(navigateCityList({ ...open, key: "Enter", active: -1 }).handled).toBe(false);
+    expect(navigateCityList({ key: "Enter", visible: false, count: 3, active: 0 }).handled).toBe(false);
+    expect(navigateCityList({ key: "Enter", visible: true, count: 0, active: -1 }).handled).toBe(false);
+    expect(navigateCityList({ ...open, key: "Enter", active: 5 }).handled).toBe(false);
+  });
+
+  test("Escape closes an open list and is left alone when it is already closed", () => {
+    expect(navigateCityList({ ...open, key: "Escape" })).toEqual({ handled: true, open: false, active: 0, select: null });
+    expect(navigateCityList({ key: "Escape", visible: false, count: 3, active: 0 }).handled).toBe(false);
+  });
+
+  test("Tab and typing keys are never taken, so there is no keyboard trap", () => {
+    for (const key of ["Tab", "a", "Backspace", "Home", "End", " "]) expect(navigateCityList({ ...open, key }).handled).toBe(false);
   });
 });

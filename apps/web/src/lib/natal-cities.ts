@@ -179,3 +179,30 @@ export function describeCities(cities: readonly City[]): CityOption[] {
     return { city, name: city.name, regionLine: [formatCityRegion(city), suffix].filter((part) => part !== "").join(" · ") };
   });
 }
+
+// ---------- Клавиатура в списке городов ----------
+
+export type ListKeyInput = { key: string; visible: boolean; count: number; active: number }; // visible — список показан; count — число вариантов
+export type ListKeyResult = { handled: boolean; open: boolean; active: number; select: number | null };
+
+// Что делает клавиша в поле с выпадающим списком (шаблон ARIA «combobox»). Фокус остаётся в поле, выбранный пункт — active (-1 — никакой):
+// стрелки ходят по кругу и заново открывают закрытый список, Enter выбирает пункт, Escape закрывает. Остальные клавиши (в том числе Tab) не трогаем
+export function navigateCityList({ key, visible, count, active }: ListKeyInput): ListKeyResult {
+  const ignored: ListKeyResult = { handled: false, open: visible, active, select: null };
+  switch (key) {
+    case "ArrowDown":
+    case "ArrowUp": {
+      if (count === 0) return ignored;
+      const down = key === "ArrowDown";
+      if (!visible) return { handled: true, open: true, active: down ? 0 : count - 1, select: null };
+      return { handled: true, open: true, active: down ? (active + 1) % count : (active - 1 + count) % count, select: null };
+    }
+    case "Enter":
+      // Пока список открыт, Enter выбирает город, а не отправляет форму
+      return visible && count > 0 && active >= 0 && active < count ? { handled: true, open: false, active, select: active } : ignored;
+    case "Escape":
+      return visible ? { handled: true, open: false, active, select: null } : ignored;
+    default:
+      return ignored;
+  }
+}
