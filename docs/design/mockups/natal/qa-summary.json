@@ -1,98 +1,54 @@
 {
-  "checks": {
-    "sprite_24_unique_ids": true,
-    "all_symbols_have_title": true,
-    "all_symbols_24_viewbox": true,
-    "known_12_cusp_lines": true,
-    "known_12_house_numbers": true,
-    "known_11_planet_points": true,
-    "known_14_aspects": true,
-    "known_2_angle_labels": true,
-    "unknown_has_no_houses_or_angles": true,
-    "unknown_11_planet_points": true,
-    "unknown_11_aspects": true,
-    "unknown_no_moon_aspects": true,
-    "known_svg_unchanged": true,
-    "glyph_sprite_unchanged": true,
-    "index_has_wheel_and_list_notes": true,
-    "board_has_no_time_note": true,
-    "all_use_refs_resolve": true,
-    "minimum_label_separation_8_degrees": true,
-    "all_text_contrasts_4_5": true,
-    "no_external_http_resources": true,
-    "qa-mobile.json_no_overflow": true,
-    "qa-mobile.json_links_44": true,
-    "qa-mobile.json_visible_svg_font_11": true,
-    "qa-desktop.json_no_overflow": true,
-    "qa-desktop.json_links_44": true
+  "kind": "static visual mockup; no product functionality or calculation",
+  "states": 13,
+  "h1": 1,
+  "main_stylesheet": 1,
+  "accepted_svg_byte_identical": true,
+  "inline_sprite_byte_identical": true,
+  "embedded_svg_byte_identical": true,
+  "local_resources_only": true,
+  "aspect_counts": {
+    "with_time": 14,
+    "without_time": 11
   },
-  "failed": [],
-  "contrast_checks": [
-    {
-      "foreground": "ink",
-      "background": "#0A090E",
-      "ratio": 16.499
-    },
-    {
-      "foreground": "ink",
-      "background": "#121017",
-      "ratio": 15.7
-    },
-    {
-      "foreground": "ink",
-      "background": "#17141D",
-      "ratio": 15.128
-    },
-    {
-      "foreground": "ink-soft",
-      "background": "#0A090E",
-      "ratio": 9.202
-    },
-    {
-      "foreground": "ink-soft",
-      "background": "#121017",
-      "ratio": 8.756
-    },
-    {
-      "foreground": "ink-soft",
-      "background": "#17141D",
-      "ratio": 8.437
-    },
-    {
-      "foreground": "accent",
-      "background": "#0A090E",
-      "ratio": 8.745
-    },
-    {
-      "foreground": "accent",
-      "background": "#121017",
-      "ratio": 8.322
-    },
-    {
-      "foreground": "accent",
-      "background": "#17141D",
-      "ratio": 8.019
-    },
-    {
-      "foreground": "lavender",
-      "background": "#0A090E",
-      "ratio": 9.013
-    },
-    {
-      "foreground": "lavender",
-      "background": "#121017",
-      "ratio": 8.576
-    },
-    {
-      "foreground": "lavender",
-      "background": "#17141D",
-      "ratio": 8.264
-    }
-  ],
-  "minimum_label_separation_degrees": 10,
-  "reviewed_viewports": [
-    375,
-    1280
-  ],
-  "scope": "Static visual artifacts only. No astronomical calculation or live product changes."
+  "contrasts": {
+    "ink/bg": 16.5,
+    "ink/surface": 15.7,
+    "ink/surface-2": 15.13,
+    "ink/input-bg": 16.28,
+    "ink-soft/bg": 9.2,
+    "ink-soft/surface": 8.76,
+    "ink-soft/surface-2": 8.44,
+    "ink-soft/input-bg": 9.08,
+    "ink-faint/bg": 5.61,
+    "ink-faint/surface": 5.34,
+    "ink-faint/surface-2": 5.15,
+    "ink-faint/input-bg": 5.54,
+    "accent/bg": 8.75,
+    "accent/surface": 8.32,
+    "accent/surface-2": 8.02,
+    "accent/input-bg": 8.63,
+    "danger/bg": 8.74,
+    "danger/surface": 8.32,
+    "danger/surface-2": 8.02,
+    "danger/input-bg": 8.63,
+    "accent-ink/accent": 8.34,
+    "lavender-ink/lavender": 8.41,
+    "ink-soft/disabled-bg": 6.51
+  },
+  "input_boundary_contrast": 3.63,
+  "svg_mobile_width": 328,
+  "svg_smallest_visible_text_px": 11.84,
+  "keyboard_city_focus": {
+    "observed": true,
+    "outline": "2px solid",
+    "option_height_px": 73.484375
+  },
+  "form_height_1280_px": {
+    "idle": 325.59375,
+    "calculating": 325.59375
+  },
+  "page_of_meaning": "created; pending visual approval",
+  "calculator_accepted": true,
+  "background_revision": "full-width first-screen photo; original asset unchanged"
 }
