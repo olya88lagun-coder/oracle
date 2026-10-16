@@ -235,6 +235,114 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/verkhovnaya-zhrica"],
     status: "published",
   },
+
+  // Пополнение очереди 16.10.2026. Спрос — выгрузки Яндекс Вордстата за 21.08–21.09.2026 (все регионы, широкое соответствие,
+  // не строгая частотность); отбор и отброшенные идеи — docs/seo/wordstat-2026-10-09-plan.md, раздел «Пополнение 16.10.2026».
+  // Перед письмом автописатель обязан сравнить тему с опубликованными статьями: ответ на главный вопрос не должен повторяться.
+
+  // «расчет матрицы судьбы» 16491, «расчет матрицы судьбы по дате рождения» 1136, «матрица судьбы самостоятельно» 1185.
+  {
+    slug: "kak-rasschitat-matritsu-sudby",
+    title: "Как рассчитать матрицу судьбы по дате рождения самостоятельно",
+    primaryQuery: "расчет матрицы судьбы по дате рождения",
+    cluster: "matrix",
+    image: "/hero.webp",
+    imageAlt: HERO_ALT,
+    basis: ["matrix-formulas", "positions"],
+    internalLinks: ["/matrica-sudby", "/blog/rasshifrovka-matritsy-sudby", "/blog/zadacha-v-matritse-sudby"],
+    status: "draft",
+  },
+
+  // «матрица судьбы мужчина» 3877, «матрица судьбы женщина» 3445, «матрица судьбы мужская» 743.
+  {
+    slug: "matritsa-sudby-dlya-muzhchiny-i-zhenshchiny",
+    title: "Матрица судьбы для мужчины и для женщины: чем отличается расчёт",
+    primaryQuery: "матрица судьбы для мужчины и женщины",
+    cluster: "matrix",
+    image: "/arcana/04-imperator.webp",
+    imageAlt: "Аркан 4 «Император» — образ опоры и порядка",
+    basis: ["matrix-formulas", "positions", "arcana"],
+    internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-4-imperator", "/blog/rasshifrovka-matritsy-sudby"],
+    status: "draft",
+  },
+
+  // «матрица судьбы род» 1479, «матрица судьбы линии рода» 575.
+  {
+    slug: "rodovoj-kvadrat-v-matritse-sudby",
+    title: "Родовой квадрат в матрице судьбы: как читать линии отца и матери",
+    primaryQuery: "род в матрице судьбы",
+    cluster: "matrix",
+    image: "/arcana/05-ierofant.webp",
+    imageAlt: "Аркан 5 «Иерофант» — образ преемственности и опыта семьи",
+    basis: ["positions", "arcana", "matrix-formulas"],
+    internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-5-ierofant", "/blog/rasshifrovka-matritsy-sudby"],
+    status: "draft",
+  },
+
+  // «какие вопросы задать таро про отношения» 869, «…про парня» 677, «…про мужчину» 247, «…про бывшего» 230.
+  {
+    slug: "voprosy-dlya-taro-pro-otnosheniya",
+    title: "Вопросы для Таро об отношениях: как спросить о близости, а не о чужих мыслях",
+    primaryQuery: "какие вопросы задать таро про отношения",
+    cluster: "taro",
+    image: "/taro/07-vlyublennye.webp",
+    imageAlt: "Карта Таро «Влюблённые» из колоды Райдера — Уэйта",
+    basis: ["tarot", "tarot-deck", "tarot-practice"],
+    internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/vlyublennye", "/taro/karty/kubki-dvoyka", "/blog/kak-zadat-vopros-taro"],
+    status: "draft",
+  },
+
+  // «таро вопрос про будущее какой задать» 171, «какие вопросы задать таро на будущее» 148, «как задавать вопрос про будущее таро» 110.
+  {
+    slug: "voprosy-dlya-taro-pro-buduschee",
+    title: "Вопросы для Таро о будущем: как спрашивать без предсказаний",
+    primaryQuery: "какие вопросы задать таро на будущее",
+    cluster: "taro",
+    image: "/taro/11-koleso-fortuny.webp",
+    imageAlt: "Карта Таро «Колесо Фортуны» из колоды Райдера — Уэйта",
+    basis: ["tarot", "tarot-deck", "tarot-practice"],
+    internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/koleso-fortuny", "/blog/kak-zadat-vopros-taro"],
+    status: "draft",
+  },
+
+  // «как задать вопрос таро про работу» 152, «как правильно задать вопрос таро про работу» 100, «какие вопросы задать таро про работу» 50.
+  {
+    slug: "voprosy-dlya-taro-pro-rabotu-i-dengi",
+    title: "Вопросы для Таро о работе и деньгах: примеры формулировок",
+    primaryQuery: "как задать вопрос таро про работу",
+    cluster: "taro",
+    image: "/taro/65-pentakli-tuz.webp",
+    imageAlt: "Карта Таро «Туз Пентаклей» из колоды Райдера — Уэйта",
+    basis: ["tarot", "tarot-deck", "tarot-practice"],
+    internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/pentakli-tuz", "/blog/kak-zadat-vopros-taro"],
+    status: "draft",
+  },
+
+  // «трансформационная игра лила» 848, «лила игра самопознания» 456, «игра лила зачем» 443, «психологическая игра лила» 322.
+  {
+    slug: "lila-igra-samopoznaniya",
+    title: "Игра Лила: игра самопознания, а не гадание — зачем в неё играют",
+    primaryQuery: "лила игра самопознания",
+    cluster: "lila",
+    image: "/lila/36-yasnost-soznaniya.webp",
+    imageAlt: "Клетка 36 «Ясность сознания» в игре Лила",
+    basis: ["lila-rules", "lila-cells", "lila-guide"],
+    internalLinks: ["/lila", "/lila/kletki/36-yasnost-soznaniya", "/blog/kak-igrat-v-lilu-onlain", "/blog/kak-sformulirovat-namerenie-dlya-lily"],
+    status: "draft",
+  },
+
+  // «пример игры лила» 89, «игра лила ход игры» 50, «как проходит игра лила» 19.
+  {
+    slug: "primer-partii-v-lilu",
+    title: "Пример партии в Лилу: ход за ходом от первой шестёрки до стрелы",
+    primaryQuery: "пример игры лила",
+    cluster: "lila",
+    image: "/lila/10-ochishchenie.webp",
+    imageAlt: "Клетка 10 «Очищение» в игре Лила",
+    basis: ["lila-rules", "lila-cells"],
+    internalLinks: ["/lila", "/lila/kletki/10-ochishchenie", "/lila/kletki/23-nebesnyy-plan", "/blog/kak-igrat-v-lilu-onlain"],
+    status: "draft",
+  },
 ];
 
 export const nextDraftTopic = (plan: readonly PlanTopic[] = CONTENT_PLAN): PlanTopic | undefined => plan.find((topic) => topic.status === "draft");
