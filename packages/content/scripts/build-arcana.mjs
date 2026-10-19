@@ -47,5 +47,6 @@ if (import.meta.main) {
   write(join(root, "src", "generated", "lila.json"), collectLila(join(root, "lila-cells.md")));
   write(join(root, "src", "generated", "compat.json"), collectCompat(join(root, "compat-arcana.md")));
   write(join(root, "src", "generated", "tarot.json"), collectArcana(join(root, "tarot")));
+  write(join(root, "src", "generated", "natal.json"), collectArcana(join(root, "natal")));
   write(join(root, "src", "generated", "articles.json"), collectArticles(join(root, "articles")));
 }
