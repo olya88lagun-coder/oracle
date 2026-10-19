@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { reachGoal } from "@/lib/analytics";
 import { SHARE_COPIED, SHARE_FAILED, SHARE_TEXT, SHARE_TITLE, ACTION_SHARE } from "@/lib/natal-copy";
 import { NATAL_PATH } from "@/lib/natal-paths";
 import { SITE_URL } from "@/lib/site";
@@ -10,6 +11,7 @@ export function NatalShareButton() {
   const [note, setNote] = useState("");
 
   async function share() {
+    reachGoal("natal_share");
     const url = `${SITE_URL}${NATAL_PATH}`;
     setNote("");
     if (typeof navigator.share === "function") {
