@@ -288,3 +288,33 @@ export const PORTRAIT_TIME_UNKNOWN = "время не указано";
 export function portraitNatalLine(p: { date: string; time: string | null; placeName: string }): string {
   return [formatBirthDate(p.date), p.time ?? PORTRAIT_TIME_UNKNOWN, p.placeName].join(" · ");
 }
+
+// Страницы значений («Солнце в Овне» и др.): подписи из макета natal-page.html
+export const MEANING_BREADCRUMBS_LABEL = "Хлебные крошки";
+export const MEANING_TOC_TITLE = "На этой странице";
+export const MEANING_TOC_LABEL = "Разделы значения";
+export const MEANING_CTA_TITLE = "Рассчитайте свою карту";
+export const MEANING_CTA_TEXT = "Посмотрите это положение в контексте всей вашей карты.";
+export const MEANING_OTHER_SIGNS_TITLE = "Это же тело в других знаках";
+export const MEANING_NEIGHBORS_TITLE = "Соседние знаки";
+export const MEANING_PREVIOUS = "Предыдущий знак";
+export const MEANING_NEXT = "Следующий знак";
+export const MEANING_CURRENT_PAGE = " — текущая страница";
+export const meaningTitle = (name: string): string => `${name}: значение в натальной карте`;
+export const meaningEmblemLabel = (body: string, signGenitive: string): string => `${body} и знак ${signGenitive}`;
+
+// «Солнце и знак Овна»: родительный падеж знака для подписи эмблемы
+export const SIGN_NAMES_GENITIVE: Readonly<Record<SignId, string>> = {
+  aries: "Овна",
+  taurus: "Тельца",
+  gemini: "Близнецов",
+  cancer: "Рака",
+  leo: "Льва",
+  virgo: "Девы",
+  libra: "Весов",
+  scorpio: "Скорпиона",
+  sagittarius: "Стрельца",
+  capricorn: "Козерога",
+  aquarius: "Водолея",
+  pisces: "Рыб",
+};

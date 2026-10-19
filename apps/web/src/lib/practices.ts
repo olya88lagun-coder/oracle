@@ -1,6 +1,7 @@
 import { MATRIX_PATH } from "./arcana-paths";
 import { COMPAT_PATH } from "./compat";
 import { LILA_PATH } from "./lila-paths";
+import { NATAL_PATH } from "./natal-paths";
 import { TARO_PATH } from "./taro-paths";
 
 export type Practice = { slug: "matrix" | "lila" | "compat" | "tarot" | "natal"; title: string; summary: string; href: string | null };
@@ -11,7 +12,7 @@ export const PRACTICES: readonly Practice[] = [
   { slug: "lila", title: "Лила", summary: "Сформулируйте один личный вопрос и исследуйте его через игру на поле из 72 клеток. На каждом шаге можно прочитать вопрос и записать мысль.", href: LILA_PATH },
   { slug: "compat", title: "Совместимость", summary: "Рассчитайте общий аркан по двум датам и прочитайте вопрос для разговора вдвоём.", href: COMPAT_PATH },
   { slug: "tarot", title: "Таро", summary: "Карта дня и значения 78 карт: образ, небольшое действие и вопрос для себя.", href: TARO_PATH },
-  { slug: "natal", title: "Натальная карта", summary: "Настоящий расчёт по дате, времени и месту рождения.", href: null },
+  { slug: "natal", title: "Натальная карта", summary: "Положения Солнца, Луны и планет, асцендент, дома и аспекты по дате, времени и месту рождения. Считается в вашем браузере.", href: NATAL_PATH },
 ];
 
 // Один призыв для бесплатного входа по всему сайту и одно обещание результата

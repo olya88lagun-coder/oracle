@@ -71,5 +71,6 @@ export function natalPageFile(slug: string): string {
   return `${String(natalPageOrder(slug)).padStart(3, "0")}-${slug}.md`;
 }
 
-// Партии, которые владелица приняла: пока партия не принята, её страницы закрыты. Меняется отдельным PR после вычитки
-export const ACCEPTED_BATCHES: ReadonlySet<number> = new Set<number>();
+// Партии, которые владелица приняла: пока партия не принята, её страницы закрыты (404, нет в карте сайта, в калькуляторе «скоро появится»).
+// Номер добавляется отдельным коммитом после вычитки. Партия 1 (Солнце, Луна, асцендент) принята 19 октября 2026
+export const ACCEPTED_BATCHES: ReadonlySet<number> = new Set<number>([1]);

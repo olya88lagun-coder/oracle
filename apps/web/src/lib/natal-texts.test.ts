@@ -3,13 +3,18 @@ import { SIGN_ORDER } from "./natal-copy";
 import { NATAL_KEY_TEXTS, keyTextFor, natalKeyId } from "./natal-texts";
 
 describe("natal key texts", () => {
-  test("the shipped registry is empty until the texts are published", () => {
-    expect(Object.keys(NATAL_KEY_TEXTS)).toEqual([]);
+  test("the shipped registry holds the accepted batch 1: Sun, Moon and ascendant in all twelve signs", () => {
+    expect(Object.keys(NATAL_KEY_TEXTS)).toHaveLength(36);
     for (const sign of SIGN_ORDER) {
-      expect(keyTextFor("sun", sign)).toBeNull();
-      expect(keyTextFor("moon", sign)).toBeNull();
-      expect(keyTextFor("ascendant", sign)).toBeNull();
+      for (const body of ["sun", "moon", "ascendant"] as const) {
+        const text = keyTextFor(body, sign);
+        expect(text, `${body}-${sign}`).not.toBeNull();
+        expect(text?.summary.length).toBeGreaterThanOrEqual(60);
+        expect(text?.href).toMatch(/^\/natalnaya-karta\/[a-z-]+$/);
+      }
     }
+    expect(keyTextFor("sun", "pisces")?.href).toBe("/natalnaya-karta/solntse-v-rybah");
+    expect(keyTextFor("ascendant", "leo")?.href).toBe("/natalnaya-karta/ascendent-vo-lve");
   });
 
   test("keys are written as <body>-<sign>", () => {

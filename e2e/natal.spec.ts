@@ -124,7 +124,33 @@ test("nothing about the birth data leaves the browser: only the city search and 
   }
 });
 
-test("a meaning page answers 404 until its batch is accepted", async ({ request }) => {
-  const response = await request.get("/natalnaya-karta/solntse-v-ovne");
-  expect(response.status()).toBe(404);
+test("a page of an accepted batch is open, and a page of a batch that is not accepted answers 404", async ({ page, request }) => {
+  expect((await request.get("/natalnaya-karta/merkuriy-v-ovne")).status()).toBe(404);
+  expect((await request.get("/natalnaya-karta/net-takoy-stranitsy")).status()).toBe(404);
+
+  const response = await page.goto("/natalnaya-karta/solntse-v-ovne");
+  expect(response?.status()).toBe(200);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Солнце в Овне");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/natalnaya-karta\/solntse-v-ovne$/);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /index/);
+  const json = await page.locator('script[type="application/ld+json"]').first().textContent();
+  expect(JSON.parse(json ?? "{}")["@graph"].map((item: { "@type": string }) => item["@type"])).toEqual(["Article", "BreadcrumbList"]);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+
+  // Приглашение ведёт к калькулятору, а в блоке «Что это значит» калькулятора есть ссылка обратно на страницу
+  await page.getByRole("link", { name: "Рассчитать карту" }).click();
+  await expect(page).toHaveURL(/\/natalnaya-karta$/);
+});
+
+test("the key blocks under the result link to the meaning pages", async ({ page }) => {
+  await fillBirth(page, { date: "1990-03-07", time: "12:00", city: "Москва" });
+  await calculate(page);
+  await expect(result(page)).toBeVisible();
+  const link = page.getByRole("link", { name: "Читать полностью" }).first();
+  await expect(link).toHaveAttribute("href", "/natalnaya-karta/solntse-v-rybah");
+  await link.click();
+  await expect(page).toHaveURL(/\/natalnaya-karta\/solntse-v-rybah$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Солнце в Рыбах");
 });
