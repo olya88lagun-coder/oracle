@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { reachGoal } from "@/lib/analytics";
 import { loginHref } from "@/lib/next-path";
 import {
   ACTION_SAVE,
@@ -31,12 +32,26 @@ export function SaveToPortrait({ state, input, replacesOther, onSave }: Props) {
     <div className="natal-save">
       {state === "offer" && replacesOther && <p className="natal-save__note">{SAVE_OTHER_DATA_NOTE}</p>}
       {state === "guest" && (
-        <a className="natal-button natal-button--save" href={loginHref(NATAL_PATH)} onClick={() => markNatalSaveIntent(sessionStore(), input)}>
+        <a
+          className="natal-button natal-button--save"
+          href={loginHref(NATAL_PATH)}
+          onClick={() => {
+            reachGoal("natal_save_click");
+            markNatalSaveIntent(sessionStore(), input);
+          }}
+        >
           {SAVE_LOGIN_AND_SAVE}
         </a>
       )}
       {(state === "offer" || state === "error") && (
-        <button type="button" className="natal-button natal-button--save" onClick={onSave}>
+        <button
+          type="button"
+          className="natal-button natal-button--save"
+          onClick={() => {
+            if (state === "offer") reachGoal("natal_save_click"); // повтор после ошибки — та же попытка, второй раз не считается
+            onSave();
+          }}
+        >
           {state === "error" ? SAVE_RETRY : ACTION_SAVE}
         </button>
       )}

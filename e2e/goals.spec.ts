@@ -41,6 +41,32 @@ test("the matrix funnel fires its goals, and none of them carries any data", asy
   expect((await goals(page)).every((call) => !call.hasParams)).toBe(true);
 });
 
+test("the natal chart fires its calculated and share goals without any data", async ({ page }) => {
+  await page.goto("/natalnaya-karta");
+  // Поля, заполненные до гидрации страницы, сбрасываются: повторяем, пока карта не построится
+  await expect(async () => {
+    await page.getByRole("textbox", { name: "Дата рождения" }).fill("1990-03-07");
+    await page.getByLabel("Время рождения", { exact: true }).fill("12:00");
+    const city = page.getByRole("combobox", { name: "Место рождения" });
+    if ((await city.inputValue()) !== "Москва") {
+      await city.fill("Москва");
+      await page.getByRole("option", { name: "Москва" }).first().click({ timeout: 4000 });
+    }
+    await page.getByRole("button", { name: "Рассчитать карту" }).click({ timeout: 2000 });
+    await expect(page.getByRole("heading", { name: "Ваша натальная карта" })).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 25_000 });
+  await expect.poll(() => names(page)).toContain("natal_calculated");
+
+  await page.getByRole("button", { name: "Поделиться" }).click();
+  await expect.poll(() => names(page)).toContain("natal_share");
+
+  await page.getByRole("link", { name: "Войти и сохранить" }).click();
+  await expect(page).toHaveURL(/\/login/);
+  expect(await names(page)).toContain("natal_save_click");
+  // Цели — только названия: ни даты, ни времени, ни города в параметрах
+  expect((await goals(page)).every((call) => !call.hasParams)).toBe(true);
+});
+
 test("the compatibility funnel has its own offer goals", async ({ page }) => {
   await page.goto("/sovmestimost");
   await expect(async () => {

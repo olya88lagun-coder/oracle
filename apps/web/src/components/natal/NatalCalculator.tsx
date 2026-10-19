@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { reachGoal } from "@/lib/analytics";
 import { sessionStore, type SaveStatus } from "@/lib/matrix-save";
 import { ERROR_CITY_REQUIRED, NOTICE_AMBIGUOUS } from "@/lib/natal-copy";
 import { planCalculation } from "@/lib/natal-calc";
@@ -105,7 +106,11 @@ export function NatalCalculator({ signedIn = false, savedProfile = null }: Props
         return;
       }
       setOutcome({ input, chart: planned.chart, clock: planned.clock, correctedTime: planned.correctedTime, choice });
-      if (!quiet) setReveal((current) => ({ target: "outcome", count: current.count + 1 }));
+      if (!quiet) {
+        // Цель — только название: ни даты, ни времени, ни города в ней нет. Подстановка из портрета и после входа не считается
+        reachGoal("natal_calculated");
+        setReveal((current) => ({ target: "outcome", count: current.count + 1 }));
+      }
     } catch {
       // Данные рождения в сообщение не попадают и нигде не пишутся
       if (mine === run.current) {
