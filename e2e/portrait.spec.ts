@@ -4,8 +4,8 @@ import { signIn, uniqueName } from "./helpers";
 test("a visitor goes from the home page to the portrait and is invited to sign in", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Иногда нужен не ответ");
-  await expect(page.getByText("Скоро", { exact: true })).toHaveCount(1);
-  await expect(page.getByText("Открыто", { exact: true })).toHaveCount(4);
+  await expect(page.getByText("Скоро", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Открыто", { exact: true })).toHaveCount(5);
 
   await page.getByRole("link", { name: "Открыть портрет" }).click();
 
@@ -26,9 +26,10 @@ test("a signed-in user saves the birth date and sees it after a reload", async (
   const { context, page } = await signIn(browser, uniqueName("Аня"));
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Мой портрет");
   await expect(page.getByText("Здравствуйте, Аня")).toBeVisible();
-  // Пять практик с точными названиями действий; «Скоро» только у натальной карты
+  // Пять практик с точными названиями действий; «Скоро» не осталось ни у одной
   await expect(page.getByRole("link", { name: "Играть в Лилу" })).toBeVisible();
-  await expect(page.getByText("Скоро", { exact: true })).toHaveCount(1);
+  await expect(page.getByRole("link", { name: "Открыть натальную карту" })).toBeVisible();
+  await expect(page.getByText("Скоро", { exact: true })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
   await page.getByRole("textbox", { name: "Дата рождения" }).fill("1990-03-07");

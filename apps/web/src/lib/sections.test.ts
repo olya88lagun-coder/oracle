@@ -4,7 +4,7 @@ import { PUBLIC_PATHS } from "./seo";
 
 describe("SECTIONS", () => {
   test("lists the practices and the blog in the order of the header", () => {
-    expect(SECTIONS.map((section) => section.short)).toEqual(["Матрица", "Совместимость", "Лила", "Таро", "Блог"]);
+    expect(SECTIONS.map((section) => section.short)).toEqual(["Матрица", "Совместимость", "Лила", "Таро", "Натальная карта", "Блог"]);
   });
 
   test("every section leads to a public page", () => {

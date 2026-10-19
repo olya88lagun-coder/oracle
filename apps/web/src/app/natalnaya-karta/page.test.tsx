@@ -53,13 +53,17 @@ describe("/natalnaya-karta page", () => {
     expect(markup).toContain("Рассчитать карту");
   });
 
-  test("is closed to search engines until the practice is launched, but keeps its canonical address", () => {
-    expect(metadata.robots).toEqual({ index: false, follow: true });
+  test("is open to search engines and keeps its canonical address", () => {
+    expect(metadata.robots).toEqual({ index: true, follow: true });
     expect(metadata.alternates?.canonical).toBe("/natalnaya-karta");
     expect(String(metadata.description)).not.toMatch(/предскажем|узнайте будущее|судьб/i);
   });
 
-  test("is not added to the sitemap paths before launch", () => {
-    expect(PUBLIC_PATHS).not.toContain("/natalnaya-karta");
+  test("is in the sitemap paths together with the 36 pages of the accepted batch, and no others", () => {
+    expect(PUBLIC_PATHS).toContain("/natalnaya-karta");
+    const meaning = PUBLIC_PATHS.filter((path) => path.startsWith("/natalnaya-karta/"));
+    expect(meaning).toHaveLength(36);
+    expect(meaning).toContain("/natalnaya-karta/solntse-v-ovne");
+    expect(PUBLIC_PATHS).not.toContain("/natalnaya-karta/merkuriy-v-ovne");
   });
 });

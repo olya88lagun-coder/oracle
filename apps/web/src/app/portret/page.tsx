@@ -33,6 +33,8 @@ function practiceCommand(practice: Practice, hasKeys: boolean): string {
       return "Играть в Лилу";
     case "compat":
       return "Рассчитать совместимость";
+    case "natal":
+      return "Открыть натальную карту";
     default:
       return "Открыть Таро";
   }

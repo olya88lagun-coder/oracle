@@ -25,8 +25,9 @@ describe("natal texts data", () => {
     for (const page of first) expect(natalText(page.slug), page.slug).toBeDefined();
   });
 
-  test("no batch is accepted before the owner has read it", () => {
-    expect([...ACCEPTED_BATCHES]).toEqual([]);
+  test("only batch 1 is accepted, and every page of an accepted batch has its text", () => {
+    expect([...ACCEPTED_BATCHES]).toEqual([1]);
+    for (const page of NATAL_PAGES.filter((item) => ACCEPTED_BATCHES.has(item.batch))) expect(natalText(page.slug), page.slug).toBeDefined();
   });
 });
 

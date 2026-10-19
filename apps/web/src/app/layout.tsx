@@ -17,7 +17,7 @@ const notoSerifDisplay = localFont({ src: "./fonts/NotoSerifDisplay-latin-cyrill
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: `${SITE_NAME} — символические практики для самопознания`, template: `%s — ${SITE_NAME}` },
-  description: "Матрица судьбы, совместимость, Лила и таро как инструменты самопознания — без обещаний предсказать будущее.",
+  description: "Матрица судьбы, совместимость, Лила, таро и натальная карта как инструменты самопознания — без обещаний предсказать будущее.",
   // По умолчанию страницы закрыты от поиска: вход и портрет личные. Публичные страницы включают индексацию через publicMetadata
   robots: { index: false, follow: false },
   ...(YANDEX_VERIFICATION ? { verification: { yandex: YANDEX_VERIFICATION } } : {}),

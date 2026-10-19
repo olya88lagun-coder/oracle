@@ -11,7 +11,7 @@ import { salesEnabled } from "@/server/payments-deps";
 
 export const metadata: Metadata = publicMetadata({
   title: "Твой оракул — символические практики для самопознания",
-  description: "Матрица судьбы, совместимость, Лила и таро как инструменты самопознания — без обещаний предсказать будущее.",
+  description: "Матрица судьбы, совместимость, Лила, таро и натальная карта как инструменты самопознания — без обещаний предсказать будущее.",
   path: "/",
   absoluteTitle: true,
   image: SITE_PREVIEW_IMAGE,

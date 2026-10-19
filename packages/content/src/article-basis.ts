@@ -8,6 +8,7 @@ export const ARTICLE_BASIS = {
   tarot: { label: "Проверенные тексты 78 карт Таро", files: ["packages/content/tarot"] },
   "tarot-deck": { label: "Состав и порядок колоды Райдера — Уэйта", files: ["packages/content/src/tarot-deck.ts"] },
   "tarot-practice": { label: "Правила карты дня и ограничения сервиса", files: ["apps/web/src/components/taro/TaroGuide.tsx", "apps/web/src/app/taro/karta-dnya/page.tsx"] },
+  natal: { label: "Принятые тексты натальной карты «Твоего оракула»", files: ["packages/content/natal"] },
   "lila-cells": { label: "Тексты клеток Лилы", files: ["packages/content/lila-cells.md"] },
   "lila-rules": { label: "Правила и логика игры Лила", files: ["packages/core/src/lila.ts"] },
   "lila-guide": { label: "Как работает проводник в Лиле", files: ["packages/ai/src/lila-validate.ts", "packages/ai/src/lila-fallback.ts"] },

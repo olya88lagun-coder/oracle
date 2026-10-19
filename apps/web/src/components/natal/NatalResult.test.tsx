@@ -18,7 +18,8 @@ const rowsOf = (markup: string) => [...markup.matchAll(/<tr><td>([\s\S]*?)<\/tr>
 const textOf = (markup: string) => markup.replace(/<svg[\s\S]*?<\/svg>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 
 describe("NatalResult with a known time", () => {
-  const markup = renderToStaticMarkup(<NatalResult chart={withTime} birth={SAMPLE_BIRTH} />);
+  // Блоки «Что это значит» без текстов: пустой реестр (с принятыми текстами — отдельные тесты ниже)
+  const markup = renderToStaticMarkup(<NatalResult chart={withTime} birth={SAMPLE_BIRTH} keyTexts={{}} />);
 
   test("is a section labelled by its h2, with the title, the meta line and a focusable heading", () => {
     const titleId = /^<section class="natal-result" aria-labelledby="([^"]+)">/.exec(markup)?.[1];
@@ -100,7 +101,7 @@ describe("NatalResult with a known time", () => {
 });
 
 describe("NatalResult without a time", () => {
-  const markup = stableIds(renderToStaticMarkup(<NatalResult chart={noTime} birth={BIRTH_NO_TIME} />));
+  const markup = stableIds(renderToStaticMarkup(<NatalResult chart={noTime} birth={BIRTH_NO_TIME} keyTexts={{}} />));
 
   test("says the time is unknown in the meta line and the wheel caption", () => {
     expect(markup).toContain('<p class="natal-result__meta">Москва · 7 марта 1990 · время неизвестно</p>');
@@ -168,8 +169,20 @@ describe("NatalKeys", () => {
     expect(markup).not.toContain('href="/x"');
   });
 
-  test("uses the shipped (empty) registry by default", () => {
-    expect(renderToStaticMarkup(<NatalKeys chart={withTime} />)).toBe(renderToStaticMarkup(<NatalKeys chart={withTime} registry={{}} />));
+  test("uses the shipped registry of the accepted texts by default: three links to the meaning pages", () => {
+    const markup = stableIds(renderToStaticMarkup(<NatalKeys chart={withTime} />));
+    expect(count(markup, /class="natal-key__link"/g)).toBe(3);
+    expect(count(markup, /natal-key--pending/g)).toBe(0);
+    expect(markup).toContain('href="/natalnaya-karta/solntse-v-rybah"');
+    expect(markup).toContain('href="/natalnaya-karta/luna-v-rake"');
+    expect(markup).toContain('href="/natalnaya-karta/ascendent-v-rake"');
+    expect(markup).toContain("Читать полностью");
+  });
+
+  test("a chart without a time links only the Sun and the Moon: the ascendant block asks for the time", () => {
+    const markup = stableIds(renderToStaticMarkup(<NatalKeys chart={noTime} />));
+    expect(count(markup, /class="natal-key__link"/g)).toBe(2);
+    expect(markup).toContain("Асцендент: нужно время рождения");
   });
 });
 
