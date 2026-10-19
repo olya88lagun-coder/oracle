@@ -269,3 +269,22 @@ export function citiesFoundNote(count: number): string {
 export const CITY_POPULATION_FORMS = ["житель", "жителя", "жителей"] as const;
 export const COORD_LATITUDE = { north: "с. ш.", south: "ю. ш." } as const;
 export const COORD_LONGITUDE = { east: "в. д.", west: "з. д." } as const;
+
+// ---------- Добавлено в задаче 9 (сохранение в портрет) ----------
+
+export const SAVE_LOGIN_AND_SAVE = "Войти и сохранить";
+export const SAVE_OTHER_DATA_NOTE = "В портрете сейчас другие данные рождения. Сохранить эти вместо них?";
+export const SAVE_SAVING = "Сохраняем…";
+export const SAVE_SAVED = "Сохранено.";
+export const SAVE_OPEN_PORTRAIT = "Открыть портрет";
+export const SAVE_ERROR = "Не получилось сохранить. Проверьте интернет и попробуйте ещё раз.";
+export const SAVE_RETRY = "Повторить";
+
+// Раздел «Натальная карта» в портрете: «7 марта 1990 · 12:05 · Москва», без времени — «… · время не указано · …»
+export const PORTRAIT_NATAL_TITLE = "Натальная карта";
+export const PORTRAIT_NATAL_OPEN = "Открыть карту";
+export const PORTRAIT_TIME_UNKNOWN = "время не указано";
+
+export function portraitNatalLine(p: { date: string; time: string | null; placeName: string }): string {
+  return [formatBirthDate(p.date), p.time ?? PORTRAIT_TIME_UNKNOWN, p.placeName].join(" · ");
+}

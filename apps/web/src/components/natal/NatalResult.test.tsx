@@ -179,3 +179,21 @@ describe("NatalAspects", () => {
     expect(markup).toBe('<div class="natal-aspects-section"><h3>Аспекты</h3></div>');
   });
 });
+
+describe("NatalResult save slot", () => {
+  test("puts the save action first in the actions row, before the share and recalculate buttons", () => {
+    const markup = renderToStaticMarkup(<NatalResult chart={withTime} birth={SAMPLE_BIRTH} saveAction={<span data-testid="save-slot">save</span>} />);
+    const row = /<div class="natal-actions">([\s\S]*?)<\/div>/.exec(markup)?.[1] ?? "";
+
+    expect(row.startsWith('<span data-testid="save-slot">save</span>')).toBe(true);
+    expect(row.indexOf("save-slot")).toBeLessThan(row.indexOf("Поделиться"));
+    expect(row.indexOf("Поделиться")).toBeLessThan(row.indexOf("Пересчитать"));
+  });
+
+  test("renders the actions row as before without the slot", () => {
+    const markup = renderToStaticMarkup(<NatalResult chart={withTime} birth={SAMPLE_BIRTH} />);
+
+    expect(markup).not.toContain("Сохранить в портрет");
+    expect(markup).toContain('<div class="natal-actions"><button');
+  });
+});

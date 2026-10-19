@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, date, index, integer, jsonb, pgEnum, pgTable, primaryKey, smallint, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { boolean, check, date, doublePrecision, index, integer, jsonb, pgEnum, pgTable, primaryKey, smallint, text, time, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const authProviderEnum = pgEnum("auth_provider", ["vk"]);
 export const productEnum = pgEnum("product", ["matrix_report", "lila_session"]);
@@ -37,14 +37,32 @@ export const authIdentities = pgTable(
   ],
 );
 
-// Время и город рождения добавятся вместе с натальной картой (план 6)
-export const birthProfiles = pgTable("birth_profiles", {
-  userId: uuid("user_id")
-    .primaryKey()
-    .references(() => users.id, { onDelete: "cascade" }),
-  birthDate: date("birth_date", { mode: "string" }).notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-});
+// Дата рождения общая для матрицы и натальной карты. Время (HH:MM; пусто = время неизвестно) и место рождения
+// добавляются сохранением натальной карты. Колонки места — все пусты или все заполнены; время без места не хранится.
+// Смена даты через матрицу стирает время и место (см. saveBirthDate)
+export const birthProfiles = pgTable(
+  "birth_profiles",
+  {
+    userId: uuid("user_id")
+      .primaryKey()
+      .references(() => users.id, { onDelete: "cascade" }),
+    birthDate: date("birth_date", { mode: "string" }).notNull(),
+    birthTime: time("birth_time"),
+    birthPlaceName: text("birth_place_name"),
+    birthLatitude: doublePrecision("birth_latitude"),
+    birthLongitude: doublePrecision("birth_longitude"),
+    birthZone: text("birth_zone"),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    check(
+      "birth_profiles_place_all_or_none",
+      sql`(${t.birthPlaceName} IS NULL AND ${t.birthLatitude} IS NULL AND ${t.birthLongitude} IS NULL AND ${t.birthZone} IS NULL)
+        OR (${t.birthPlaceName} IS NOT NULL AND ${t.birthLatitude} IS NOT NULL AND ${t.birthLongitude} IS NOT NULL AND ${t.birthZone} IS NOT NULL)`,
+    ),
+    check("birth_profiles_time_needs_place", sql`${t.birthTime} IS NULL OR ${t.birthPlaceName} IS NOT NULL`),
+  ],
+);
 
 export const purchases = pgTable(
   "purchases",

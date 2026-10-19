@@ -17,6 +17,7 @@ import {
   listLilaGames,
   markPurchaseSucceeded,
   saveBirthDate,
+  saveBirthPlace,
   saveLilaConclusion,
   saveLilaGuide,
   saveLilaNote,
@@ -83,6 +84,30 @@ describe("deleteUserData", () => {
     const [user] = await db.select().from(users).where(eq(users.id, userId));
     expect(user!.deletedAt).toBeInstanceOf(Date);
     expect(await getUser(db, userId)).toBeNull();
+  });
+
+  test("leaves no row with the birth time and place", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-natal" });
+    const { userId: otherId } = await seedUser(db, { externalId: "vk-natal-2" });
+    const place = { name: "Москва", latitude: 55.7558, longitude: 37.6173, zone: "Europe/Moscow" };
+    await saveBirthPlace(db, userId, { birthDate: "1990-03-07", time: "12:05", place }, new Date());
+    await saveBirthPlace(db, otherId, { birthDate: "1991-04-08", time: null, place }, new Date());
+
+    await deleteUserData(db, userId);
+
+    const rows = await db
+      .select({
+        userId: birthProfiles.userId,
+        birthDate: birthProfiles.birthDate,
+        birthTime: birthProfiles.birthTime,
+        birthPlaceName: birthProfiles.birthPlaceName,
+        birthLatitude: birthProfiles.birthLatitude,
+        birthLongitude: birthProfiles.birthLongitude,
+        birthZone: birthProfiles.birthZone,
+      })
+      .from(birthProfiles);
+    expect(rows.map((r) => r.userId)).toEqual([otherId]);
+    expect(rows.some((r) => r.userId === userId)).toBe(false);
   });
 
   test("lets the same VK account sign up again as a new user", async () => {

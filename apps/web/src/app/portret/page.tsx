@@ -16,6 +16,7 @@ import { getDb } from "@/server/db";
 import { loadPortrait } from "@/server/profile-service";
 import { currentUser } from "@/server/viewer";
 import { BirthDateForm } from "./BirthDateForm";
+import { PortraitNatal } from "./PortraitNatal";
 
 export const metadata: Metadata = { title: "Мой портрет" };
 
@@ -70,7 +71,7 @@ export default async function PortraitPage() {
     );
   }
 
-  const { birthDate } = await loadPortrait({ db: getDb(), now: () => new Date() }, user.id);
+  const { birthDate, time, place } = await loadPortrait({ db: getDb(), now: () => new Date() }, user.id);
   const keys = birthDate ? keyArcana(calculateMatrix(birthDate)) : null;
   const reports = await listPaidPurchases(getDb(), user.id);
   const games = await listLilaGames(getDb(), user.id);
@@ -100,6 +101,8 @@ export default async function PortraitPage() {
           </div>
           <BirthDateForm initial={birthDate ? toIsoDate(birthDate) : null} />
         </section>
+
+        {birthDate && place && <PortraitNatal date={toIsoDate(birthDate)} time={time} placeName={place.name} />}
 
         <div className="portrait-columns">
           <section aria-labelledby="practices">

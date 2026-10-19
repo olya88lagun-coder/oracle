@@ -1,10 +1,38 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { PUBLIC_PATHS } from "@/lib/seo";
-import NatalPage, { metadata } from "./page";
+
+// Страница читает вход и портрет: без базы и cookies проверяем разметку гостя и то, что у вошедшего портрет запрашивается по его id
+const mocks = vi.hoisted(() => ({
+  currentUser: vi.fn(),
+  loadPortrait: vi.fn(),
+}));
+vi.mock("@/server/viewer", () => ({ currentUser: mocks.currentUser }));
+vi.mock("@/server/db", () => ({ getDb: () => ({}) }));
+vi.mock("@/server/profile-service", () => ({ loadPortrait: mocks.loadPortrait }));
+
+const { default: NatalPage, metadata } = await import("./page");
 
 describe("/natalnaya-karta page", () => {
-  const markup = renderToStaticMarkup(<NatalPage />);
+  let markup = "";
+  beforeAll(async () => {
+    mocks.currentUser.mockResolvedValue(null);
+    markup = renderToStaticMarkup(await NatalPage());
+  });
+
+  test("a guest does not trigger a portrait lookup", () => {
+    expect(mocks.loadPortrait).not.toHaveBeenCalled();
+  });
+
+  test("a signed-in person gets the portrait of their own id and the same empty form", async () => {
+    mocks.currentUser.mockResolvedValue({ id: "11111111-1111-4111-8111-111111111111", displayName: "Аня" });
+    mocks.loadPortrait.mockResolvedValue({ birthDate: { year: 1990, month: 3, day: 7 }, time: "12:05", place: { name: "Москва", latitude: 55.75, longitude: 37.62, zone: "Europe/Moscow" } });
+
+    const signedIn = renderToStaticMarkup(await NatalPage());
+
+    expect(mocks.loadPortrait).toHaveBeenCalledWith(expect.anything(), "11111111-1111-4111-8111-111111111111");
+    expect(signedIn).toBe(markup);
+  });
 
   test("has one main and exactly one h1 with the intro under it", () => {
     expect(markup.match(/<main/g)).toHaveLength(1);
