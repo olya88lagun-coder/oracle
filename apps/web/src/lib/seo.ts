@@ -7,6 +7,7 @@ import { BLOG_PATH, BLOG_POSTS, blogPath } from "./blog";
 import { COMPAT_PATH } from "./compat";
 import { lilaCellPath, LILA_PATH } from "./lila-paths";
 import { acceptedNatalPages } from "./natal-pages";
+import { GLOSSARY_PATH } from "./natal-glossary";
 import { NATAL_PATH, natalPagePath } from "./natal-paths";
 import { QUICK_PAGES, QUICK_VARIANTS } from "./natal-quick-pages";
 import { DOCUMENT_PATHS } from "./legal";
@@ -17,7 +18,7 @@ import { SITE_NAME, SITE_URL, SOCIAL_LINKS } from "./site";
 export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", "/lila/igra", "/admin"];
 
 // Практики и их справочники; следующие планы добавят свои
-export const PUBLIC_PATHS: string[] = ["/", MATRIX_PATH, COMPAT_PATH, ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, ...TAROT_DECK.map(taroCardPath), NATAL_PATH, ...QUICK_VARIANTS.map((variant) => QUICK_PAGES[variant].path), `${NATAL_PATH}/primer`, ...acceptedNatalPages().map(natalPagePath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), "/metodika", "/matrica-sudby/primer", "/lila/primer", ...DOCUMENT_PATHS];
+export const PUBLIC_PATHS: string[] = ["/", MATRIX_PATH, COMPAT_PATH, ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, ...TAROT_DECK.map(taroCardPath), NATAL_PATH, ...QUICK_VARIANTS.map((variant) => QUICK_PAGES[variant].path), `${NATAL_PATH}/primer`, GLOSSARY_PATH, ...acceptedNatalPages().map(natalPagePath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), "/metodika", "/matrica-sudby/primer", "/lila/primer", ...DOCUMENT_PATHS];
 
 type PreviewImage = { url: string; alt: string; width?: number; height?: number };
 

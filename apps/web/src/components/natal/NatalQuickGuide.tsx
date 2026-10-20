@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { acceptedNatalPages } from "@/lib/natal-pages";
 import { natalPageName } from "@oracle/content/natal";
+import { GLOSSARY_PATH } from "@/lib/natal-glossary";
 import { NATAL_PATH, natalPagePath } from "@/lib/natal-paths";
 import { QUICK_PAGES, type QuickVariant } from "@/lib/natal-quick-pages";
 
@@ -47,6 +48,7 @@ export function NatalQuickGuide({ variant }: { variant: QuickVariant }) {
       <nav className="natal-quick__more" aria-label="Другие расчёты">
         <Link href={NATAL_PATH}>Полная натальная карта</Link>
         <Link href={other.path}>{other.breadcrumb}: рассчитать</Link>
+        <Link href={GLOSSARY_PATH}>Словарь терминов</Link>
         <Link href="/metodika">О текстах и методике</Link>
       </nav>
     </article>
