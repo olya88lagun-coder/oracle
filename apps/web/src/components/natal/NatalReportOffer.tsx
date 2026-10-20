@@ -1,7 +1,7 @@
 "use client";
 
 import { NATAL_REPORT_PRICE_KOPECKS } from "@oracle/core";
-import { natalChapterOutline } from "@oracle/core/natal-report";
+import { NATAL_CHAPTER_TITLES, natalChapterOutline } from "@oracle/core/natal-report";
 import type { NatalChart } from "@oracle/core/natal";
 import Link from "next/link";
 import { useId, useRef, useState, type FormEvent } from "react";
@@ -22,6 +22,7 @@ import {
 import type { NatalInput } from "@/lib/natal-input";
 import type { ZoneChoice } from "@/lib/natal-moment";
 import { NATAL_PATH } from "@/lib/natal-paths";
+import { OFFER_TOPICS, OFFER_TOPIC_GROUP_LABEL, OFFER_TOPIC_QUESTION, PICKED_MARK, chapterNumberFor, pickedNote, toggleTopic, type OfferTopicId } from "@/lib/natal-offer-topics";
 import { chapterLabel, type NatalOfferState } from "@/lib/natal-report-offer";
 import { EMAIL_ERROR, EMAIL_PATTERN, purchaseErrorCode, purchaseErrorMessage, reportPath } from "@/lib/report-offer";
 import { useOfferViewGoal } from "../useOfferViewGoal";
@@ -101,6 +102,8 @@ export function NatalReportOffer({ state, chart, input, choice, free = false }: 
   const id = useId();
   const headingRef = useOfferViewGoal("natal_offer_view", !free && state.kind !== "no_time");
   const outline = chart.timeKnown ? natalChapterOutline(chart) : [];
+  const [topic, setTopic] = useState<OfferTopicId | null>(null);
+  const pickedNumber = chapterNumberFor(topic, outline);
   return (
     <section className="natal-offer card card--accent" aria-labelledby={`${id}-title`}>
       <h3 ref={headingRef} id={`${id}-title`} className="natal-offer__title">
@@ -115,14 +118,32 @@ export function NatalReportOffer({ state, chart, input, choice, free = false }: 
       )}
       {state.kind === "buy" && <BuyForm input={input} choice={choice} free={free} inputId={`${id}-email`} />}
       <p className="muted">{OFFER_TERMS}</p>
+      {outline.length > 0 && state.kind !== "no_time" && (
+        <div className="natal-offer__topics" role="group" aria-label={OFFER_TOPIC_GROUP_LABEL}>
+          <p className="natal-offer__question">{OFFER_TOPIC_QUESTION}</p>
+          <div className="natal-offer__topic-buttons">
+            {OFFER_TOPICS.map((item) => (
+              <button key={item.id} type="button" className="natal-offer__topic" aria-pressed={topic === item.id} onClick={() => setTopic((current) => toggleTopic(current, item.id))}>
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <p className="muted natal-offer__picked-note" aria-live="polite">
+            {topic !== null && pickedNumber !== null ? pickedNote(pickedNumber, NATAL_CHAPTER_TITLES[OFFER_TOPICS.find((item) => item.id === topic)?.chapter ?? "core"]) : ""}
+          </p>
+        </div>
+      )}
       {outline.length > 0 && (
         <ol className="natal-offer__chapters report-toc">
           {outline.map((chapter, index) => (
-            <li key={chapter.id}>
+            <li key={chapter.id} className={pickedNumber === index + 1 ? "natal-offer__chapter natal-offer__chapter--picked" : "natal-offer__chapter"}>
               <span className="report-toc__number" aria-hidden="true">
                 {index + 1}
               </span>
-              <span className="report-toc__title">{chapter.title}</span>
+              <span className="report-toc__title">
+                {chapter.title}
+                {pickedNumber === index + 1 && <span className="natal-offer__picked-mark"> · {PICKED_MARK}</span>}
+              </span>
               <span className="report-toc__arcana">{chapterLabel(chapter)}</span>
             </li>
           ))}
