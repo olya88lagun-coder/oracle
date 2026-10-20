@@ -22,8 +22,8 @@ export const HOUSE_BODY_BATCH: Readonly<Record<BodyId, number>> = {
 export const HOUSE_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
 
 // Принятые владелицей партии: 1 — Солнце, Луна, Меркурий, Венера и функции всех планет; 2 — Марс, Юпитер, Сатурн; 3 — Уран, Нептун, Плутон.
-// Номер добавляется отдельным коммитом после вычитки. Партия 1 принята владелицей 21 октября 2026
-export const ACCEPTED_HOUSE_BATCHES: ReadonlySet<number> = new Set<number>([1]);
+// Номер добавляется отдельным коммитом после вычитки. Партия 1 принята владелицей 21 октября 2026, партия 2 — 21 октября 2026
+export const ACCEPTED_HOUSE_BATCHES: ReadonlySet<number> = new Set<number>([1, 2]);
 
 export class NatalHouseFormatError extends Error {}
 
