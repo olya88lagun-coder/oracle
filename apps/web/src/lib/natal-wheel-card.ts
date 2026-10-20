@@ -104,7 +104,7 @@ export type WheelCard = { title: string; rows: CardRow[]; link: { href: string; 
 
 const STELLIUM_MINIMUM = 3;
 
-const signOfLongitude = (longitude: number): SignId => SIGN_ORDER[Math.floor(normalizeAngle(longitude) / 30)] ?? "aries";
+export const signOfLongitude = (longitude: number): SignId => SIGN_ORDER[Math.floor(normalizeAngle(longitude) / 30)] ?? "aries";
 const bodyName = (id: ChartPoint["id"]): string => BODY_NAMES[id];
 const namesOf = (points: readonly ChartPoint[]): string => (points.length === 0 ? NOBODY : points.map((point) => bodyName(point.id)).join(", "));
 const joinNotes = (notes: readonly (string | false)[]): string | null => {
