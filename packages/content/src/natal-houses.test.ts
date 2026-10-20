@@ -47,7 +47,7 @@ describe("accepting batches", () => {
     const sunAccepted = ACCEPTED_HOUSE_BATCHES.has(HOUSE_BODY_BATCH.sun);
     expect(houseBlock("sun", 10) !== undefined).toBe(sunAccepted);
     expect(planetFunction("sun") !== undefined).toBe(ACCEPTED_HOUSE_BATCHES.has(NATAL_PLANETS.batch));
-    expect(houseBlock("pluto", 1)).toBeUndefined();
+    for (const file of NATAL_HOUSE_FILES) expect(houseBlock(file.body, 1) !== undefined, file.body).toBe(ACCEPTED_HOUSE_BATCHES.has(file.batch));
   });
 });
 
