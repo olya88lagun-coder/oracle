@@ -176,10 +176,15 @@ test("the wheel explains a body and an axis by tap and by buttons, and Escape cl
   await expect(page.locator(".natal-wheel .wheel-aspect.is-related").first()).toBeVisible();
 
   // Нажатие прямо на колесо: Луна (глиф по центру её метки)
-  const moon = await page.locator('.natal-wheel .wheel-point[data-body="moon"]').boundingBox();
-  if (!moon) throw new Error("нет метки Луны на колесе");
-  await page.touchscreen.tap(moon.x + moon.width / 2, moon.y + moon.height / 2);
-  await expect(card).toContainText("Луна в Раке");
+  // Координаты берутся заново при каждой попытке: сразу после выбора кнопкой страница могла сдвинуться
+  const moonPoint = page.locator('.natal-wheel .wheel-point[data-body="moon"]');
+  await expect(async () => {
+    await moonPoint.scrollIntoViewIfNeeded();
+    const moon = await moonPoint.boundingBox();
+    if (!moon) throw new Error("нет метки Луны на колесе");
+    await page.touchscreen.tap(moon.x + moon.width / 2, moon.y + moon.height / 2);
+    await expect(card).toContainText("Луна в Раке", { timeout: 2000 });
+  }).toPass({ timeout: 15_000 });
 
   // Ось выбирается кнопкой, Escape снимает выбор (знак и дом по колесу проверяют модульные тесты hitTest)
   await page.getByRole("button", { name: "Асцендент" }).click();
