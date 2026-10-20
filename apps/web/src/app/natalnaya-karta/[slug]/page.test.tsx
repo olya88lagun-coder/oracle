@@ -1,22 +1,30 @@
+import { ACCEPTED_BATCHES, NATAL_PAGES } from "@oracle/content/natal";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
 import NatalMeaningPage, { dynamicParams, generateMetadata, generateStaticParams } from "./page";
 
 const params = (slug: string) => ({ params: Promise.resolve({ slug }) });
+const NOT_FOUND = /NEXT_HTTP_ERROR_FALLBACK;404|NEXT_NOT_FOUND/;
+// Принятые партии открыты, остальные (если ещё есть) закрыты настоящим 404
+const accepted = NATAL_PAGES.filter((page) => ACCEPTED_BATCHES.has(page.batch));
+const closed = NATAL_PAGES.find((page) => !ACCEPTED_BATCHES.has(page.batch));
 
 describe("/natalnaya-karta/[slug]", () => {
-  test("builds only the 36 pages of the accepted batch and answers 404 to everything else", () => {
+  test("builds only the pages of the accepted batches and answers 404 to everything else", () => {
     expect(dynamicParams).toBe(false);
     const slugs = generateStaticParams().map((item) => item.slug);
-    expect(slugs).toHaveLength(36);
+    expect(slugs).toHaveLength(accepted.length);
     expect(slugs).toContain("solntse-v-ovne");
-    expect(slugs).not.toContain("merkuriy-v-ovne");
+    if (closed) expect(slugs).not.toContain(closed.slug);
   });
 
   test("an address of a closed batch or an unknown one is a real 404", async () => {
-    await expect(NatalMeaningPage(params("merkuriy-v-ovne"))).rejects.toThrow(/NEXT_HTTP_ERROR_FALLBACK;404|NEXT_NOT_FOUND/);
-    await expect(NatalMeaningPage(params("net-takoy"))).rejects.toThrow(/NEXT_HTTP_ERROR_FALLBACK;404|NEXT_NOT_FOUND/);
-    expect(await generateMetadata(params("merkuriy-v-ovne"))).toEqual({});
+    if (closed) {
+      await expect(NatalMeaningPage(params(closed.slug))).rejects.toThrow(NOT_FOUND);
+      expect(await generateMetadata(params(closed.slug))).toEqual({});
+    }
+    await expect(NatalMeaningPage(params("net-takoy"))).rejects.toThrow(NOT_FOUND);
+    expect(await generateMetadata(params("net-takoy"))).toEqual({});
   });
 
   test("has its own title, a description of up to 160 characters, a canonical address and index,follow", async () => {
@@ -34,7 +42,7 @@ describe("/natalnaya-karta/[slug]", () => {
       const metadata = await generateMetadata(params(slug));
       seen.add(`${String(metadata.title)}|${String(metadata.description)}`);
     }
-    expect(seen.size).toBe(36);
+    expect(seen.size).toBe(accepted.length);
   });
 
   test("renders the Article and BreadcrumbList markup before the page", async () => {

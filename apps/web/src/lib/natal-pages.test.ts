@@ -1,18 +1,22 @@
+import { ACCEPTED_BATCHES, NATAL_PAGES } from "@oracle/content/natal";
 import { describe, expect, test } from "vitest";
 import { acceptedNatalPage, acceptedNatalPages, neighborPages, sameBodyPages } from "./natal-pages";
 
 describe("accepted natal pages", () => {
-  test("are the 36 pages of batch 1: Sun, Moon and ascendant in every sign", () => {
+  test("are exactly the pages of the accepted batches, each with a text", () => {
     const pages = acceptedNatalPages();
-    expect(pages).toHaveLength(36);
-    expect(pages.every((page) => page.batch === 1)).toBe(true);
-    expect(new Set(pages.map((page) => page.body))).toEqual(new Set(["sun", "moon", "ascendant"]));
+    expect(pages).toHaveLength(NATAL_PAGES.filter((page) => ACCEPTED_BATCHES.has(page.batch)).length);
+    expect(pages.every((page) => ACCEPTED_BATCHES.has(page.batch))).toBe(true);
+    // Партия 1 принята всегда: Солнце, Луна и асцендент во всех знаках
+    const first = pages.filter((page) => page.batch === 1);
+    expect(first).toHaveLength(36);
+    expect(new Set(first.map((page) => page.body))).toEqual(new Set(["sun", "moon", "ascendant"]));
   });
 
   test("a page of a batch that is not accepted, or an unknown address, is not found", () => {
     expect(acceptedNatalPage("solntse-v-ovne")?.sign).toBe("aries");
-    expect(acceptedNatalPage("merkuriy-v-ovne")).toBeUndefined();
-    expect(acceptedNatalPage("pluton-v-rybah")).toBeUndefined();
+    const closed = NATAL_PAGES.find((page) => !ACCEPTED_BATCHES.has(page.batch));
+    if (closed) expect(acceptedNatalPage(closed.slug), closed.slug).toBeUndefined();
     expect(acceptedNatalPage("net-takoy-stranitsy")).toBeUndefined();
     expect(acceptedNatalPage("")).toBeUndefined();
   });

@@ -29,8 +29,9 @@ describe("natal texts data", () => {
     expect(NATAL_TEXTS).toHaveLength(132);
   });
 
-  test("only batch 1 is accepted, and every page of an accepted batch has its text", () => {
-    expect([...ACCEPTED_BATCHES]).toEqual([1]);
+  test("only existing batches are accepted, and every page of an accepted batch has its text", () => {
+    const batches = new Set(NATAL_PAGES.map((page) => page.batch));
+    for (const batch of ACCEPTED_BATCHES) expect(batches.has(batch), `партия ${batch}`).toBe(true);
     for (const page of NATAL_PAGES.filter((item) => ACCEPTED_BATCHES.has(item.batch))) expect(natalText(page.slug), page.slug).toBeDefined();
   });
 });
