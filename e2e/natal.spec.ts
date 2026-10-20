@@ -208,6 +208,25 @@ test("the offer under the result leads to a full example report on made-up data"
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
+test("the offer asks what matters most and marks the matching chapter without reordering", async ({ page }) => {
+  await fillBirth(page, { date: "1990-03-07", time: "12:00", city: "Москва" });
+  await calculate(page);
+  await expect(result(page)).toBeVisible();
+  const love = page.getByRole("button", { name: "Любовь и отношения" });
+  await love.click();
+  await expect(love).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText("Отмечено в оглавлении: глава 3 «Любовь и ценности». Порядок глав в разборе не меняется.")).toBeVisible();
+  await expect(page.locator(".natal-offer__chapter--picked")).toHaveCount(1);
+  await expect(page.locator(".natal-offer__chapter--picked")).toContainText("Любовь и ценности");
+  // Порядок глав прежний, выбор снимается вторым нажатием и никуда не уходит
+  await expect(page.locator(".natal-offer__chapters li").nth(2)).toContainText("Любовь и ценности");
+  await page.getByRole("button", { name: "Деньги и дело" }).click();
+  await expect(page.locator(".natal-offer__chapter--picked")).toContainText("Дело и деньги");
+  await page.getByRole("button", { name: "Деньги и дело" }).click();
+  await expect(page.locator(".natal-offer__chapter--picked")).toHaveCount(0);
+  expect(page.url()).not.toMatch(/love|work|topic/i);
+});
+
 test("the page answers the common questions and publishes them as FAQPage", async ({ page }) => {
   await page.goto(NATAL);
   const faq = page.getByRole("heading", { name: "Частые вопросы о натальной карте" });
