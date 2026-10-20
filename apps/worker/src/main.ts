@@ -1,9 +1,10 @@
-import { LILA_QUEUES, QUEUES, RECEIPTS_QUEUE, type ConclusionJob, type GenerateReportJob, type GuideMoveJob, type ReceiptsReminderJob } from "@oracle/core";
+import { LILA_QUEUES, QUEUES, RECEIPTS_QUEUE, type ConclusionJob, type GenerateNatalReportJob, type GenerateReportJob, type GuideMoveJob, type ReceiptsReminderJob } from "@oracle/core";
 import { createDb } from "@oracle/db";
 import { PgBoss } from "pg-boss";
 import { createWriter, limitConcurrency } from "./ai";
 import { readWorkerEnv } from "./env";
 import { runGenerate } from "./generate";
+import { runGenerateNatal } from "./generate-natal";
 import { runConclusion, runGuideMove } from "./lila";
 import { log } from "./log";
 import { runReceiptsReminder } from "./receipts";
@@ -25,6 +26,7 @@ const boss = new PgBoss({ connectionString: env.DATABASE_URL, max: env.poolMax }
 boss.on("error", (error) => log("error", "pg-boss error", { error: String(error) }));
 await boss.start();
 await boss.createQueue(QUEUES.generateReport);
+await boss.createQueue(QUEUES.generateNatalReport);
 await boss.createQueue(LILA_QUEUES.guideMove);
 await boss.createQueue(LILA_QUEUES.conclusion);
 await boss.createQueue(RECEIPTS_QUEUE);
@@ -37,6 +39,16 @@ await boss.work<GenerateReportJob>(QUEUES.generateReport, async ([job]) => {
     // pg-boss пометит задачу для повтора, но в лог контейнера без этого ничего не попадёт.
     // У ошибок Drizzle в тексте только запрос, а причина (ECONNRESET, нарушение ограничения) лежит в cause
     log("warn", "generate job failed", { purchaseId: job.data.purchaseId, error: String(error), cause: error instanceof Error ? String(error.cause) : undefined });
+    throw error;
+  }
+});
+
+await boss.work<GenerateNatalReportJob>(QUEUES.generateNatalReport, async ([job]) => {
+  if (!job) return;
+  try {
+    await runGenerateNatal(job.data, { db, log });
+  } catch (error) {
+    log("warn", "natal generate job failed", { purchaseId: job.data.purchaseId, error: String(error), cause: error instanceof Error ? String(error.cause) : undefined });
     throw error;
   }
 });
