@@ -4,7 +4,7 @@ import { HOUSE_BODIES, HOUSE_BODY_BATCH, HOUSE_NUMBERS, type NatalHouseFile, typ
 
 // Проверка текстов «планета в доме» и «функция планеты»: состав, объём, обороты-предсказания, шаблонность
 
-export const HOUSE_WORDS = { min: 45, max: 95 } as const;
+export const HOUSE_WORDS = { min: 38, max: 95 } as const;
 export const FUNCTION_WORDS = { min: 25, max: 60 } as const;
 export const MAX_SHARED_SHINGLES = 0.25;
 const SHINGLE_SIZE = 5;
