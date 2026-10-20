@@ -8,7 +8,7 @@ import { BLOG_POSTS } from "./blog";
 import { PUBLIC_PATHS } from "./seo";
 
 const PUBLIC_DIR = fileURLToPath(new URL("../../public/", import.meta.url));
-const ALLOWED_IMAGE = /^\/(?:hero|(?:arcana|lila|taro)\/\d{2}-[a-z]+(?:-[a-z]+)*)\.webp$/;
+const ALLOWED_IMAGE = /^\/(?:hero|practices\/natal|(?:arcana|lila|taro)\/\d{2}-[a-z]+(?:-[a-z]+)*)\.webp$/;
 const MANUAL_SLUGS = new Set(BLOG_POSTS.filter((post) => !ARTICLES.some((article) => article.slug === post.slug)).map((post) => post.slug));
 
 const context: ArticleCheckContext = {

@@ -9,6 +9,7 @@ export const ARTICLE_BASIS = {
   "tarot-deck": { label: "Состав и порядок колоды Райдера — Уэйта", files: ["packages/content/src/tarot-deck.ts"] },
   "tarot-practice": { label: "Правила карты дня и ограничения сервиса", files: ["apps/web/src/components/taro/TaroGuide.tsx", "apps/web/src/app/taro/karta-dnya/page.tsx"] },
   natal: { label: "Принятые тексты натальной карты «Твоего оракула»", files: ["packages/content/natal"] },
+  "natal-method": { label: "Метод и экран калькулятора натальной карты", files: ["apps/web/src/app/metodika/page.tsx", "apps/web/src/lib/natal-copy.ts", "apps/web/src/lib/natal-cities.ts", "packages/core/src/natal/aspects.ts", "packages/core/src/natal/houses.ts"] },
   "lila-cells": { label: "Тексты клеток Лилы", files: ["packages/content/lila-cells.md"] },
   "lila-rules": { label: "Правила и логика игры Лила", files: ["packages/core/src/lila.ts"] },
   "lila-guide": { label: "Как работает проводник в Лиле", files: ["packages/ai/src/lila-validate.ts", "packages/ai/src/lila-fallback.ts"] },

@@ -5,8 +5,8 @@ export type PlanTopic = {
   readonly title: string;
   // запрос, на который первый абзац статьи отвечает сразу
   readonly primaryQuery: string;
-  readonly cluster: "matrix" | "compat" | "lila" | "taro" | "general";
-  // картинки: /hero.webp, /arcana/NN-slug.webp, /lila/NN-slug.webp, /taro/NN-slug.webp
+  readonly cluster: "matrix" | "compat" | "lila" | "taro" | "natal" | "general";
+  // картинки: /hero.webp, /arcana/NN-slug.webp, /lila/NN-slug.webp, /taro/NN-slug.webp; для натальной карты — /practices/natal.webp
   readonly image: string;
   readonly imageAlt: string;
   readonly basis: readonly ArticleBasisKey[];
@@ -16,6 +16,7 @@ export type PlanTopic = {
 };
 
 const HERO_ALT = "Матрица судьбы — символическая схема по дате рождения";
+const NATAL_ALT = "Натальная карта — диск с символами Солнца, Луны и звёзд";
 
 // Очередь по убыванию пользы; спрос — Яндекс Вордстат за 30.08–28.09.2026 (см. docs/superpowers/specs/2026-09-30-seo-articles-design.md).
 // Тема получает status: "published" ровно тогда, когда выходит статья
@@ -541,6 +542,233 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     status: "draft",
   },
 
+  // Натальная карта, 20.10.2026. Сайт получил калькулятор и 132 страницы «планета в знаке» (11 тел × 12 знаков), поэтому статьи НЕ повторяют эти страницы:
+  // темы про калькулятор и метод (basis natal-method: /metodika и тексты экрана), хабы по телам и знакам, сферы жизни и сопоставления (basis natal).
+  // Спрос не замерен (Вордстат недоступен без выгрузки): до выпуска проверить строгую частотность primaryQuery. Не писать про дома, аспекты, лунные узлы и
+  // обратное движение как толкования, про транзиты и синастрию: таких текстов на сайте нет. Список — docs/seo/wordstat-2026-10-09-plan.md, «Пополнение 20.10.2026».
+  // Блок 1: калькулятор и чтение карты (17 тем) стоит перед Тиром B, остальное — в конце очереди.
+
+  // Нужен замер. Порядок чтения как в блоке «Что это значит» калькулятора: Солнце, Луна, асцендент, затем остальные тела. Толкования аспектов и домов не писать: их нет в наших текстах.
+  {
+    slug: "kak-chitat-natalnuyu-kartu",
+    title: "Как читать натальную карту: с чего начать и в каком порядке",
+    primaryQuery: "как читать натальную карту",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method", "natal"],
+    internalLinks: ["/natalnaya-karta", "/metodika", "/natalnaya-karta/solntse-v-ovne"],
+    status: "draft",
+  },
+
+  // Нужен замер. Определение через то, что показывает калькулятор: десять тел, средний лунный узел, асцендент, МС, дома, аспекты. Символический язык, не прогноз.
+  {
+    slug: "chto-takoe-natalnaya-karta",
+    title: "Что такое натальная карта и что она показывает",
+    primaryQuery: "что такое натальная карта",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method", "natal"],
+    internalLinks: ["/natalnaya-karta", "/metodika", "/natalnaya-karta/luna-v-rake"],
+    status: "draft",
+  },
+
+  // Нужен замер. Три поля формы (дата с 1 января 1900, время, город), режим без времени, расчёт в браузере. Формулы пересказывать только в объёме /metodika.
+  {
+    slug: "kak-rasschitat-natalnuyu-kartu-onlayn",
+    title: "Как рассчитать натальную карту онлайн: что нужно знать о рождении",
+    primaryQuery: "натальная карта онлайн по дате рождения",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika"],
+    status: "draft",
+  },
+
+  // Нужен замер. Режим «время неизвестно»: карта на местный полдень, без асцендента, МС и домов; аспекты Луны не считаются. Не обещать «примерный асцендент».
+  {
+    slug: "natalnaya-karta-bez-vremeni-rozhdeniya",
+    title: "Натальная карта без времени рождения: что можно узнать",
+    primaryQuery: "натальная карта без времени рождения",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method", "natal"],
+    internalLinks: ["/natalnaya-karta", "/metodika", "/natalnaya-karta/solntse-v-teltse"],
+    status: "draft",
+  },
+
+  // Нужен замер. Опора — /metodika: асцендент меняется примерно каждые два часа; сроки прохода знака у медленных тел — из текстов Сатурна, Урана, Нептуна и Плутона. Своих цифр не добавлять.
+  {
+    slug: "netochnoe-vremya-rozhdeniya-v-natalnoy-karte",
+    title: "Неточное время рождения: что в натальной карте меняется, а что нет",
+    primaryQuery: "неточное время рождения натальная карта",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method", "natal"],
+    internalLinks: ["/natalnaya-karta", "/metodika", "/natalnaya-karta/ascendent-v-ovne"],
+    status: "draft",
+  },
+
+  // Нужен замер. Подсказка калькулятора про ближайший крупный город, база GeoNames и её ошибки (/metodika); часовой пояс и долгота. Без советов, где искать документы.
+  {
+    slug: "mesto-rozhdeniya-v-natalnoy-karte",
+    title: "Место рождения в натальной карте: что делать, если вашего города нет",
+    primaryQuery: "место рождения для натальной карты",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika"],
+    status: "draft",
+  },
+
+  // Нужен замер. Сообщения калькулятора о времени, которого не существовало, и о времени, которое было дважды; ранние годы менее надёжны. Историю поясов СССР и РФ не пересказывать.
+  {
+    slug: "perevod-chasov-i-vremya-rozhdeniya",
+    title: "Перевод часов и время рождения: когда времени не было или оно было дважды",
+    primaryQuery: "перевод часов натальная карта время рождения",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika"],
+    status: "draft",
+  },
+
+  // Нужен замер. Только цифры из /metodika: библиотека astronomy-engine, сверка с JPL Horizons и Swiss Ephemeris на 14 контрольных моментах, расхождение не более 0,005°. Новых цифр не добавлять.
+  {
+    slug: "tochnost-rascheta-natalnoy-karty",
+    title: "Насколько точен расчёт натальной карты онлайн",
+    primaryQuery: "точность расчета натальной карты",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika"],
+    status: "draft",
+  },
+
+  // Нужен замер. Опора — PRIVACY_LINE калькулятора, заголовок natal-cities.ts и политика /privacy: расчёт в браузере, на сервер уходит текст поиска города. Ничего сверх этих файлов; юридических выводов не делать.
+  {
+    slug: "privatnost-natalnoy-karty",
+    title: "Безопасно ли вводить дату, время и место рождения: что остаётся в браузере",
+    primaryQuery: "безопасно ли вводить данные рождения для натальной карты",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika", "/privacy"],
+    status: "draft",
+  },
+
+  // Нужен замер. Плацидус по умолчанию, за 66-й параллелью — Порфирий (/metodika, houses.ts). Значения домов не писать: их нет в наших текстах.
+  {
+    slug: "sistema-domov-plasidus-i-porfirij",
+    title: "Система домов в натальной карте: Плацидус и Порфирий",
+    primaryQuery: "система домов плацидус",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika"],
+    status: "draft",
+  },
+
+  // Нужен замер. Соединение, секстиль, квадрат, трин, оппозиция и их углы (aspects.ts), допуск 8° для Солнца и Луны и 6° для остальных. Толкования аспектов не писать: в наших текстах их нет.
+  {
+    slug: "aspekty-v-natalnoy-karte",
+    title: "Аспекты в натальной карте: пять мажорных и как читать список",
+    primaryQuery: "аспекты в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika"],
+    status: "draft",
+  },
+
+  // Нужен замер. Узкая тема: допуск как большее из двух значений, список по возрастанию точности, запись градусов и минут. Если выходит пересечение со статьёй об аспектах — пропустить.
+  {
+    slug: "orbis-aspekta-tochnost",
+    title: "Точность аспекта в градусах и минутах: что означает «1°11′» в списке",
+    primaryQuery: "орбис аспекта в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika"],
+    status: "draft",
+  },
+
+  // Нужен замер. Колонки таблицы калькулятора; градусы внутри знака от 0 до 30 и запись вида 16°32′; «обратное движение» — только как пометка расчёта, без толкований.
+  {
+    slug: "tablitsa-polozheniy-v-natalnoy-karte",
+    title: "Как читать таблицу положений: знак, градусы, дом и обратное движение",
+    primaryQuery: "как читать таблицу планет в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika", "/natalnaya-karta/merkuriy-v-bliznetsah"],
+    status: "draft",
+  },
+
+  // Нужен замер. Уведомление калькулятора о смене знака в этот день и режим без времени. Даты вхождения Солнца в знаки не называть: их нет в материалах; точный знак — через калькулятор.
+  {
+    slug: "znak-smenilsya-v-den-rozhdeniya",
+    title: "Знак сменился в день рождения: как понять, какой знак у Солнца и Луны",
+    primaryQuery: "родился в день смены знака зодиака",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method", "natal"],
+    internalLinks: ["/natalnaya-karta", "/metodika", "/natalnaya-karta/luna-v-rake"],
+    status: "draft",
+  },
+
+  // Нужен замер. Определение и «дверь в карту» из страниц «Асцендент в …», зависимость от времени и места (/metodika). Не пересказывать страницы знаков.
+  {
+    slug: "chto-takoe-ascendent",
+    title: "Что такое асцендент и от чего он зависит",
+    primaryQuery: "что такое асцендент",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal", "natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika", "/natalnaya-karta/ascendent-v-ovne"],
+    status: "draft",
+  },
+
+  // Нужен замер. Три ключевые позиции калькулятора: центр личности, эмоциональная жизнь, способ входить в ситуации; не пересказывать страницы знаков, сопоставлять роли.
+  {
+    slug: "solntse-luna-ascendent",
+    title: "Солнце, Луна и асцендент: чем различаются три ключевые позиции",
+    primaryQuery: "солнце луна асцендент",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-ovne", "/natalnaya-karta/luna-v-rake", "/natalnaya-karta/ascendent-v-ovne"],
+    status: "draft",
+  },
+
+  // Нужен замер. Опора — «Границы трактовки» в текстах и состав карты (Луна, асцендент, планеты). Газетные гороскопы фактами вне материалов не обсуждать; без процентов и исследований.
+  {
+    slug: "znak-zodiaka-i-natalnaya-karta",
+    title: "Знак зодиака и натальная карта: почему знак Солнца — только часть картины",
+    primaryQuery: "знак зодиака или натальная карта",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal", "natal-method"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-ovne", "/natalnaya-karta/luna-v-teltse"],
+    status: "draft",
+  },
+
   // Тир B — тема опирается на тексты и код сайта, но спрос не замерен: до выпуска проверить строгую частотность (docs/seo/wordstat-2026-10-09-plan.md).
 
   // Нужен замер «таро да нет». Не придумывать карты «да»/«нет»: в наших текстах их нет.
@@ -917,6 +1145,502 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: HERO_ALT,
     basis: ["arcana", "tarot", "lila-rules"],
     internalLinks: ["/matrica-sudby", "/taro", "/lila", "/sovmestimost"],
+    status: "draft",
+  },
+
+  // Натальная карта, блоки 2 и 3: хабы по телам, поколенческие планеты, стихии, сферы жизни, сопоставления, хабы по знакам (последними).
+
+  // Нужен замер. Хаб по телу, не значение «Солнце в знаке»: функция тела (центр личности) и сопоставление стилей по знакам со ссылками на 12 страниц. Тексты страниц не пересказывать.
+  {
+    slug: "solntse-v-natalnoy-karte",
+    title: "Солнце в натальной карте: что означает и как звучит в разных знаках",
+    primaryQuery: "солнце в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-ovne", "/natalnaya-karta/solntse-v-rybah"],
+    status: "draft",
+  },
+
+  // Нужен замер. Хаб по телу, не значение «Луна в знаке»: функция тела (эмоциональная жизнь и чувство безопасности) и сопоставление стилей по знакам со ссылками на 12 страниц. Тексты страниц не пересказывать.
+  {
+    slug: "luna-v-natalnoy-karte",
+    title: "Луна в натальной карте: что означает и как звучит в разных знаках",
+    primaryQuery: "луна в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/luna-v-ovne", "/natalnaya-karta/luna-v-rybah"],
+    status: "draft",
+  },
+
+  // Нужен замер. Хаб по телу, не значение «Меркурий в знаке»: функция тела (мышление, речь, обучение) и сопоставление стилей по знакам со ссылками на 12 страниц. Тексты страниц не пересказывать.
+  {
+    slug: "merkuriy-v-natalnoy-karte",
+    title: "Меркурий в натальной карте: что означает и как звучит в разных знаках",
+    primaryQuery: "меркурий в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/merkuriy-v-ovne", "/natalnaya-karta/merkuriy-v-rybah"],
+    status: "draft",
+  },
+
+  // Нужен замер. Хаб по телу, не значение «Венера в знаке»: функция тела (любовь, привязанность, вкус, ценности) и сопоставление стилей по знакам со ссылками на 12 страниц. Тексты страниц не пересказывать.
+  {
+    slug: "venera-v-natalnoy-karte",
+    title: "Венера в натальной карте: что означает и как звучит в разных знаках",
+    primaryQuery: "венера в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/venera-v-ovne", "/natalnaya-karta/venera-v-rybah"],
+    status: "draft",
+  },
+
+  // Нужен замер. Хаб по телу, не значение «Марс в знаке»: функция тела (воля, энергия, способ добиваться своего) и сопоставление стилей по знакам со ссылками на 12 страниц. Тексты страниц не пересказывать.
+  {
+    slug: "mars-v-natalnoy-karte",
+    title: "Марс в натальной карте: что означает и как звучит в разных знаках",
+    primaryQuery: "марс в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/mars-v-ovne", "/natalnaya-karta/mars-v-rybah"],
+    status: "draft",
+  },
+
+  // Нужен замер. Хаб по телу, не значение «Юпитер в знаке»: функция тела (рост, щедрость, поиск смысла) и сопоставление стилей по знакам со ссылками на 12 страниц. Тексты страниц не пересказывать.
+  {
+    slug: "yupiter-v-natalnoy-karte",
+    title: "Юпитер в натальной карте: что означает и как звучит в разных знаках",
+    primaryQuery: "юпитер в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/yupiter-v-ovne", "/natalnaya-karta/yupiter-v-rybah"],
+    status: "draft",
+  },
+
+  // Нужен замер. Хаб по телу, не значение «Сатурн в знаке»: функция тела (структура, границы, ответственность, время; около двух с половиной лет в знаке) и сопоставление стилей по знакам со ссылками на 12 страниц. Тексты страниц не пересказывать.
+  {
+    slug: "saturn-v-natalnoy-karte",
+    title: "Сатурн в натальной карте: что означает и как звучит в разных знаках",
+    primaryQuery: "сатурн в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/saturn-v-ovne", "/natalnaya-karta/saturn-v-rybah"],
+    status: "draft",
+  },
+
+  // Нужен замер. Хаб по телу, не значение «Уран в знаке»: функция тела (перемены и независимость; около семи лет в знаке) и сопоставление стилей по знакам со ссылками на 12 страниц. Тексты страниц не пересказывать.
+  {
+    slug: "uran-v-natalnoy-karte",
+    title: "Уран в натальной карте: что означает и как звучит в разных знаках",
+    primaryQuery: "уран в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/uran-v-ovne", "/natalnaya-karta/uran-v-rybah"],
+    status: "draft",
+  },
+
+  // Нужен замер. Хаб по телу, не значение «Нептун в знаке»: функция тела (воображение, идеалы, интуиция; около четырнадцати лет в знаке) и сопоставление стилей по знакам со ссылками на 12 страниц. Тексты страниц не пересказывать.
+  {
+    slug: "neptun-v-natalnoy-karte",
+    title: "Нептун в натальной карте: что означает и как звучит в разных знаках",
+    primaryQuery: "нептун в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/neptun-v-ovne", "/natalnaya-karta/neptun-v-rybah"],
+    status: "draft",
+  },
+
+  // Нужен замер. Хаб по телу, не значение «Плутон в знаке»: функция тела (глубокая трансформация и сила; от одного до трёх десятилетий в знаке) и сопоставление стилей по знакам со ссылками на 12 страниц. Тексты страниц не пересказывать.
+  {
+    slug: "pluton-v-natalnoy-karte",
+    title: "Плутон в натальной карте: что означает и как звучит в разных знаках",
+    primaryQuery: "плутон в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/pluton-v-ovne", "/natalnaya-karta/pluton-v-rybah"],
+    status: "draft",
+  },
+
+  // Нужен замер. Сроки из текстов: Сатурн около двух с половиной лет, Уран около семи, Нептун около четырнадцати, Плутон от одного до трёх десятилетий. Конкретные знаки по годам не называть: их нет в материалах.
+  {
+    slug: "pokolencheskie-planety",
+    title: "Уран, Нептун и Плутон: почему их знак общий для людей одного возраста",
+    primaryQuery: "поколенческие планеты в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/uran-v-vodolee", "/natalnaya-karta/neptun-v-rybah", "/natalnaya-karta/pluton-v-skorpione"],
+    status: "draft",
+  },
+
+  // Нужен замер. Навигатор: что даёт каждое из 11 положений (десять тел и асцендент), как по таблице калькулятора найти страницу. Значения не копировать.
+  {
+    slug: "kak-polzovatsya-stranitsami-planet-v-znakah",
+    title: "Как найти значение своей планеты в знаке: путеводитель по страницам",
+    primaryQuery: "планета в знаке значение",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal", "natal-method"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-ovne", "/natalnaya-karta/venera-v-vesah", "/natalnaya-karta/pluton-v-skorpione"],
+    status: "draft",
+  },
+
+  // Нужен замер. Опора — фраза «знак огня/земли/воздуха/воды» в текстах; перед письмом проверить состав стихий по текстам. «Баланса стихий» на сайте нет: подсчётов не писать. Качества знаков (кардинальные и др.) не писать: в текстах они не для всех знаков.
+  {
+    slug: "stihii-znakov-v-natalnoy-karte",
+    title: "Огонь, земля, воздух, вода: стихии знаков в натальной карте",
+    primaryQuery: "стихии в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-ovne", "/natalnaya-karta/solntse-v-teltse", "/natalnaya-karta/solntse-v-bliznetsah", "/natalnaya-karta/solntse-v-rake"],
+    status: "draft",
+  },
+
+  // Нужен замер. Луна, Венера, Марс, Меркурий по разделам «Как это может проявляться». Без домов и без сравнения двух карт: синастрии на сайте нет, для пары — ссылка на /sovmestimost.
+  {
+    slug: "otnosheniya-v-natalnoy-karte",
+    title: "Отношения в натальной карте: какие положения стоит рассмотреть",
+    primaryQuery: "отношения в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/luna-v-rake", "/natalnaya-karta/venera-v-vesah", "/natalnaya-karta/mars-v-ovne", "/sovmestimost"],
+    status: "draft",
+  },
+
+  // Нужен замер. Рабочий стиль по разделам текстов; без списков «подходящих профессий», вердиктов и советов о деньгах.
+  {
+    slug: "rabota-v-natalnoy-karte",
+    title: "Работа и профессия в натальной карте: Солнце, Меркурий, Марс и Сатурн",
+    primaryQuery: "профессия по натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-ovne", "/natalnaya-karta/merkuriy-v-deve", "/natalnaya-karta/saturn-v-kozeroge"],
+    status: "draft",
+  },
+
+  // Нужен замер. Солнце, Марс, Сатурн, асцендент. Тон поддержки, без диагнозов и советов о здоровье.
+  {
+    slug: "samootsenka-i-uverennost-v-natalnoy-karte",
+    title: "Самооценка и уверенность в натальной карте: где их искать",
+    primaryQuery: "самооценка в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-vo-lve", "/natalnaya-karta/saturn-v-kozeroge", "/natalnaya-karta/mars-v-ovne"],
+    status: "draft",
+  },
+
+  // Нужен замер. Сопоставить, как три тела описывают получение и подачу знаний; не повторять хабы по Меркурию и Юпитеру.
+  {
+    slug: "myshlenie-i-uchyoba-v-natalnoy-karte",
+    title: "Мышление и учёба в натальной карте: Меркурий, Юпитер и Сатурн",
+    primaryQuery: "мышление в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/merkuriy-v-bliznetsah", "/natalnaya-karta/yupiter-v-streltse", "/natalnaya-karta/saturn-v-deve"],
+    status: "draft",
+  },
+
+  // Нужен замер. Тематическая сводка по разделам текстов; без обещаний талантов и «призвания».
+  {
+    slug: "tvorchestvo-i-voobrazhenie-v-natalnoy-karte",
+    title: "Творчество и воображение в натальной карте: Венера, Нептун и Солнце",
+    primaryQuery: "творчество в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/venera-v-rybah", "/natalnaya-karta/neptun-v-rybah", "/natalnaya-karta/solntse-vo-lve"],
+    status: "draft",
+  },
+
+  // Нужен замер. Тематическая сводка; без предсказаний «перемен»: описывать стиль отношения к переменам.
+  {
+    slug: "svoboda-i-peremeny-v-natalnoy-karte",
+    title: "Свобода и перемены в натальной карте: Уран, Марс и Юпитер",
+    primaryQuery: "потребность в свободе в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/uran-v-vodolee", "/natalnaya-karta/mars-v-ovne", "/natalnaya-karta/yupiter-v-streltse"],
+    status: "draft",
+  },
+
+  // Нужен замер. Тематическая сводка по разделам текстов; тон поддержки, без диагнозов и советов о здоровье.
+  {
+    slug: "emotsii-i-bezopasnost-v-natalnoy-karte",
+    title: "Эмоции и чувство безопасности в натальной карте: Луна, Венера и Сатурн",
+    primaryQuery: "эмоции в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/luna-v-rake", "/natalnaya-karta/venera-v-teltse", "/natalnaya-karta/saturn-v-kozeroge"],
+    status: "draft",
+  },
+
+  // Нужен замер. Опора — разделы «Подводные камни»; без запугивания и ярлыков, акцент на наблюдении за собой.
+  {
+    slug: "konflikty-i-razdrazhenie-v-natalnoy-karte",
+    title: "Конфликты и раздражение в натальной карте: Марс, Меркурий и Плутон",
+    primaryQuery: "конфликты в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/mars-v-skorpione", "/natalnaya-karta/merkuriy-v-ovne", "/natalnaya-karta/pluton-v-skorpione"],
+    status: "draft",
+  },
+
+  // Нужен замер. Сочетаний знаков по парам нет в наших текстах: дать способ сопоставления по разделам «Суть» и «Вопросы для размышления».
+  {
+    slug: "solntse-i-luna-v-raznyh-znakah",
+    title: "Солнце и Луна в разных знаках: как сопоставить две части себя",
+    primaryQuery: "солнце и луна в разных знаках",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-ovne", "/natalnaya-karta/luna-v-rake"],
+    status: "draft",
+  },
+
+  // Нужен замер. Различать по входным данным (матрица — только дата, карта — дата, время и место) и по результату. Связей между арканами и планетами не утверждать; «точность» и «древность» не сравнивать.
+  {
+    slug: "natalnaya-karta-i-matritsa-sudby",
+    title: "Натальная карта и матрица судьбы: чем различаются два способа смотреть на дату рождения",
+    primaryQuery: "натальная карта и матрица судьбы",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method", "natal", "matrix-formulas", "positions"],
+    internalLinks: ["/natalnaya-karta", "/matrica-sudby", "/blog/chto-takoe-matritsa-sudby"],
+    status: "draft",
+  },
+
+  // Нужен замер. Опора — «Вопросы для размышления» и «Границы трактовки»; упражнение называть нашим, не «классическим».
+  {
+    slug: "natalnaya-karta-dlya-samopoznaniya",
+    title: "Натальная карта для самопознания: упражнение на неделю",
+    primaryQuery: "как работать с натальной картой",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-ovne", "/natalnaya-karta/luna-v-rake", "/natalnaya-karta/ascendent-v-ovne"],
+    status: "draft",
+  },
+
+  // Нужен замер. Опора — «Границы трактовки» и /metodika: сайт не делает прогнозов и не считает транзиты. Споров о научности астрологии не вести.
+  {
+    slug: "natalnaya-karta-ne-prognoz",
+    title: "Натальная карта — не прогноз: как читать описания и где границы трактовки",
+    primaryQuery: "натальная карта предсказывает будущее",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal", "natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika", "/natalnaya-karta/solntse-v-ovne"],
+    status: "draft",
+  },
+
+  // Нужен замер. Сгруппировать по Солнцу, Луне, асценденту, Венере и Марсу своими словами: вопросы страниц не копировать.
+  {
+    slug: "voprosy-dlya-razmyshleniya-po-natalnoy-karte",
+    title: "Вопросы для размышления по натальной карте: как задать их себе",
+    primaryQuery: "вопросы по натальной карте для самопознания",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/luna-v-rake", "/natalnaya-karta/venera-v-vesah"],
+    status: "draft",
+  },
+
+  // Нужен замер; выпускать после замера спроса: двенадцать однотипных страниц могут не индексироваться. Хаб по знаку: сопоставить, как «Овен» звучит у Солнца, Луны, асцендента и других тел, а не пересказывать страницы.
+  {
+    slug: "oven-v-natalnoy-karte",
+    title: "Овен в натальной карте: как знак звучит у разных планет и у асцендента",
+    primaryQuery: "овен в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-ovne", "/natalnaya-karta/luna-v-ovne", "/natalnaya-karta/ascendent-v-ovne"],
+    status: "draft",
+  },
+
+  // Нужен замер; выпускать после замера спроса: двенадцать однотипных страниц могут не индексироваться. Хаб по знаку: сопоставить, как «Телец» звучит у Солнца, Луны, асцендента и других тел, а не пересказывать страницы.
+  {
+    slug: "telets-v-natalnoy-karte",
+    title: "Телец в натальной карте: как знак звучит у разных планет и у асцендента",
+    primaryQuery: "телец в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-teltse", "/natalnaya-karta/luna-v-teltse", "/natalnaya-karta/ascendent-v-teltse"],
+    status: "draft",
+  },
+
+  // Нужен замер; выпускать после замера спроса: двенадцать однотипных страниц могут не индексироваться. Хаб по знаку: сопоставить, как «Близнецы» звучит у Солнца, Луны, асцендента и других тел, а не пересказывать страницы.
+  {
+    slug: "bliznetsy-v-natalnoy-karte",
+    title: "Близнецы в натальной карте: как знак звучит у разных планет и у асцендента",
+    primaryQuery: "близнецы в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-bliznetsah", "/natalnaya-karta/luna-v-bliznetsah", "/natalnaya-karta/ascendent-v-bliznetsah"],
+    status: "draft",
+  },
+
+  // Нужен замер; выпускать после замера спроса: двенадцать однотипных страниц могут не индексироваться. Хаб по знаку: сопоставить, как «Рак» звучит у Солнца, Луны, асцендента и других тел, а не пересказывать страницы.
+  {
+    slug: "rak-v-natalnoy-karte",
+    title: "Рак в натальной карте: как знак звучит у разных планет и у асцендента",
+    primaryQuery: "рак в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-rake", "/natalnaya-karta/luna-v-rake", "/natalnaya-karta/ascendent-v-rake"],
+    status: "draft",
+  },
+
+  // Нужен замер; выпускать после замера спроса: двенадцать однотипных страниц могут не индексироваться. Хаб по знаку: сопоставить, как «Лев» звучит у Солнца, Луны, асцендента и других тел, а не пересказывать страницы.
+  {
+    slug: "lev-v-natalnoy-karte",
+    title: "Лев в натальной карте: как знак звучит у разных планет и у асцендента",
+    primaryQuery: "лев в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-vo-lve", "/natalnaya-karta/luna-vo-lve", "/natalnaya-karta/ascendent-vo-lve"],
+    status: "draft",
+  },
+
+  // Нужен замер; выпускать после замера спроса: двенадцать однотипных страниц могут не индексироваться. Хаб по знаку: сопоставить, как «Дева» звучит у Солнца, Луны, асцендента и других тел, а не пересказывать страницы.
+  {
+    slug: "deva-v-natalnoy-karte",
+    title: "Дева в натальной карте: как знак звучит у разных планет и у асцендента",
+    primaryQuery: "дева в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-deve", "/natalnaya-karta/luna-v-deve", "/natalnaya-karta/ascendent-v-deve"],
+    status: "draft",
+  },
+
+  // Нужен замер; выпускать после замера спроса: двенадцать однотипных страниц могут не индексироваться. Хаб по знаку: сопоставить, как «Весы» звучит у Солнца, Луны, асцендента и других тел, а не пересказывать страницы.
+  {
+    slug: "vesy-v-natalnoy-karte",
+    title: "Весы в натальной карте: как знак звучит у разных планет и у асцендента",
+    primaryQuery: "весы в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-vesah", "/natalnaya-karta/luna-v-vesah", "/natalnaya-karta/ascendent-v-vesah"],
+    status: "draft",
+  },
+
+  // Нужен замер; выпускать после замера спроса: двенадцать однотипных страниц могут не индексироваться. Хаб по знаку: сопоставить, как «Скорпион» звучит у Солнца, Луны, асцендента и других тел, а не пересказывать страницы.
+  {
+    slug: "skorpion-v-natalnoy-karte",
+    title: "Скорпион в натальной карте: как знак звучит у разных планет и у асцендента",
+    primaryQuery: "скорпион в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-skorpione", "/natalnaya-karta/luna-v-skorpione", "/natalnaya-karta/ascendent-v-skorpione"],
+    status: "draft",
+  },
+
+  // Нужен замер; выпускать после замера спроса: двенадцать однотипных страниц могут не индексироваться. Хаб по знаку: сопоставить, как «Стрелец» звучит у Солнца, Луны, асцендента и других тел, а не пересказывать страницы.
+  {
+    slug: "strelets-v-natalnoy-karte",
+    title: "Стрелец в натальной карте: как знак звучит у разных планет и у асцендента",
+    primaryQuery: "стрелец в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-streltse", "/natalnaya-karta/luna-v-streltse", "/natalnaya-karta/ascendent-v-streltse"],
+    status: "draft",
+  },
+
+  // Нужен замер; выпускать после замера спроса: двенадцать однотипных страниц могут не индексироваться. Хаб по знаку: сопоставить, как «Козерог» звучит у Солнца, Луны, асцендента и других тел, а не пересказывать страницы.
+  {
+    slug: "kozerog-v-natalnoy-karte",
+    title: "Козерог в натальной карте: как знак звучит у разных планет и у асцендента",
+    primaryQuery: "козерог в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-kozeroge", "/natalnaya-karta/luna-v-kozeroge", "/natalnaya-karta/ascendent-v-kozeroge"],
+    status: "draft",
+  },
+
+  // Нужен замер; выпускать после замера спроса: двенадцать однотипных страниц могут не индексироваться. Хаб по знаку: сопоставить, как «Водолей» звучит у Солнца, Луны, асцендента и других тел, а не пересказывать страницы.
+  {
+    slug: "vodoley-v-natalnoy-karte",
+    title: "Водолей в натальной карте: как знак звучит у разных планет и у асцендента",
+    primaryQuery: "водолей в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-vodolee", "/natalnaya-karta/luna-v-vodolee", "/natalnaya-karta/ascendent-v-vodolee"],
+    status: "draft",
+  },
+
+  // Нужен замер; выпускать после замера спроса: двенадцать однотипных страниц могут не индексироваться. Хаб по знаку: сопоставить, как «Рыбы» звучит у Солнца, Луны, асцендента и других тел, а не пересказывать страницы.
+  {
+    slug: "ryby-v-natalnoy-karte",
+    title: "Рыбы в натальной карте: как знак звучит у разных планет и у асцендента",
+    primaryQuery: "рыбы в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/solntse-v-rybah", "/natalnaya-karta/luna-v-rybah", "/natalnaya-karta/ascendent-v-rybah"],
     status: "draft",
   },
 ];

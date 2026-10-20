@@ -11,7 +11,7 @@ export type ArticleCheckContext = {
   readonly today: string;
 };
 
-export const TOOL_PATHS: readonly string[] = ["/matrica-sudby", "/sovmestimost", "/lila", "/taro", "/taro/karta-dnya"];
+export const TOOL_PATHS: readonly string[] = ["/matrica-sudby", "/sovmestimost", "/lila", "/taro", "/taro/karta-dnya", "/natalnaya-karta"];
 export const BODY_MIN = 4000;
 export const BODY_MAX = 9000;
 const SECTIONS_MIN = 3;

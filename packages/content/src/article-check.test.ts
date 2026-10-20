@@ -3,7 +3,7 @@ import { checkArticle, type ArticleCheckContext } from "./article-check";
 import { DEFAULT_BODY, sampleArticle, section } from "./article-fixture";
 
 const context: ArticleCheckContext = {
-  publicPaths: ["/", "/matrica-sudby", "/matrica-sudby/arkan-1-mag", "/sovmestimost", "/lila", "/taro", "/taro/karta-dnya", "/taro/karty/mag"],
+  publicPaths: ["/", "/matrica-sudby", "/matrica-sudby/arkan-1-mag", "/sovmestimost", "/lila", "/taro", "/taro/karta-dnya", "/taro/karty/mag", "/natalnaya-karta", "/natalnaya-karta/solntse-v-ovne"],
   arcanumName: (number) => ({ 1: "Маг", 22: "Шут" })[number],
   cellName: (number) => ({ 1: "Рождение" })[number],
   today: "2026-10-05",
@@ -53,6 +53,11 @@ describe("checkArticle", () => {
   test("accepts Tarot articles linked to the catalogue and a card", () => {
     const body = DEFAULT_BODY.replaceAll("](/matrica-sudby)", "](/taro)").replaceAll("](/matrica-sudby/arkan-1-mag)", "](/taro/karty/mag)");
     expect(errorsOf(sampleArticle({ cluster: "taro", basis: "tarot; tarot-deck" }, body))).toBe("");
+  });
+
+  test("accepts natal chart articles linked to the calculator and a meaning page", () => {
+    const body = DEFAULT_BODY.replaceAll("](/matrica-sudby)", "](/natalnaya-karta)").replaceAll("](/matrica-sudby/arkan-1-mag)", "](/natalnaya-karta/solntse-v-ovne)");
+    expect(errorsOf(sampleArticle({ cluster: "natal", basis: "natal; natal-method" }, body))).toBe("");
   });
 
   test("reports unsupported markdown instead of throwing", () => {

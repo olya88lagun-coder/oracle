@@ -18,10 +18,10 @@ export type BlogPost = {
   readingMinutes: number;
 };
 
-export type BlogTopic = "matrix" | "compat" | "lila" | "taro";
-export const BLOG_TOPIC_LABELS: Readonly<Record<BlogTopic, string>> = { matrix: "Матрица", compat: "Совместимость", lila: "Лила", taro: "Таро" };
+export type BlogTopic = "matrix" | "compat" | "lila" | "taro" | "natal";
+export const BLOG_TOPIC_LABELS: Readonly<Record<BlogTopic, string>> = { matrix: "Матрица", compat: "Совместимость", lila: "Лила", taro: "Таро", natal: "Натальная карта" };
 // Тема Markdown-статьи берётся из поля cluster; незнакомое значение попадает в «Матрицу»
-const TOPIC_BY_CLUSTER: Readonly<Record<string, BlogTopic>> = { matrix: "matrix", compat: "compat", lila: "lila", taro: "taro" };
+const TOPIC_BY_CLUSTER: Readonly<Record<string, BlogTopic>> = { matrix: "matrix", compat: "compat", lila: "lila", taro: "taro", natal: "natal" };
 
 const WORDS_PER_MINUTE = 180;
 export const readingMinutesFor = (wordCount: number): number => Math.max(1, Math.ceil(wordCount / WORDS_PER_MINUTE));
