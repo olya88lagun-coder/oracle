@@ -1,4 +1,4 @@
-import { natalText } from "@oracle/content/natal";
+import { natalPageBySlug, natalText } from "@oracle/content/natal";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
 import { acceptedNatalPage } from "@/lib/natal-pages";
@@ -82,5 +82,33 @@ describe("NatalPageView: Leo", () => {
     const markup = render("luna-vo-lve");
     expect(markup).toContain('<h1 id="meaning-title">Луна во Льве</h1>');
     expect(markup).toContain("<span>Луна во Льве</span>");
+  });
+});
+
+describe("NatalPageView: north node in Aries (batch 5, closed until accepted)", () => {
+  const page = natalPageBySlug("severnyy-uzel-v-ovne");
+  const text = natalText("severnyy-uzel-v-ovne");
+  const markup = page && text ? renderToStaticMarkup(<NatalPageView page={page} text={text} />) : "";
+
+  test("has its own title, the node glyph from the sprite and a readable name for the emblem", () => {
+    expect(markup).toContain('<h1 id="meaning-title">Северный узел в Овне</h1>');
+    expect(markup).toContain('data-variant="node" role="img" aria-label="Северный узел и знак Овна"');
+    expect(markup).toContain('<use href="#glyph-node"></use>');
+    expect(markup).toContain("<figcaption>Северный узел · Овен</figcaption>");
+    expect(markup).toContain('href="#northNode-essence"');
+  });
+
+  test("shows the axis: the north sign, the opposite south sign and a short explanation", () => {
+    expect(markup).toContain(">Ось узлов</h2>");
+    expect(markup).toContain("<dt>Северный узел</dt>");
+    expect(markup).toContain("<dt>Южный узел</dt>");
+    expect(markup).toContain("<span>Овен</span>");
+    expect(markup).toContain("<span>Весы</span>");
+    expect(markup).toContain("Южный узел всегда стоит напротив северного");
+    expect(markup).not.toContain("Та же ось с другого конца");
+  });
+
+  test("the list of other signs is named after the node", () => {
+    expect(markup).toContain("Северный узел в других знаках");
   });
 });

@@ -17,5 +17,15 @@ export function neighborPages(page: NatalPageRef): { previous: NatalPageRef | un
   return { previous: sibling(SIGN_IDS[(index + SIGN_IDS.length - 1) % SIGN_IDS.length]), next: sibling(SIGN_IDS[(index + 1) % SIGN_IDS.length]) };
 }
 
+// Ось лунных узлов: южный узел всегда в противоположном знаке. Страница «Северный узел» в этом знаке читает ту же ось с другого конца
+export const oppositeSign = (sign: SignId): SignId => SIGN_IDS[(SIGN_IDS.indexOf(sign) + SIGN_IDS.length / 2) % SIGN_IDS.length] ?? sign;
+
+export function nodeAxisFor(page: NatalPageRef, isOpen: (candidate: NatalPageRef) => boolean = (candidate) => acceptedNatalPage(candidate.slug) !== undefined): { north: SignId; south: SignId; mirror: NatalPageRef | undefined } | null {
+  if (page.body !== "northNode") return null;
+  const south = oppositeSign(page.sign);
+  const mirror = NATAL_PAGES.find((item) => item.body === "northNode" && item.sign === south);
+  return { north: page.sign, south, mirror: mirror && isOpen(mirror) ? mirror : undefined };
+}
+
 // Все знаки того же тела (только открытые страницы), в порядке зодиака
 export const sameBodyPages = (page: NatalPageRef): NatalPageRef[] => NATAL_PAGES.filter((item) => item.body === page.body && acceptedNatalPage(item.slug));

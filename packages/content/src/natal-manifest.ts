@@ -1,11 +1,11 @@
 import type { BodyId } from "@oracle/core/natal";
 import type { SignId } from "@oracle/core/natal";
 
-// Манифест страниц значений натальной карты: «планета в знаке» (10 × 12) и «асцендент в знаке» (12) — 132 страницы.
+// Манифест страниц значений натальной карты: «планета в знаке» (10 × 12), «асцендент в знаке» (12) и «северный узел в знаке» (12) — 144 страницы.
 // Тексты лежат в packages/content/natal/NNN-slug.md; здесь — только список страниц, названия и слаги.
 
-export type NatalPageKind = "planet" | "ascendant";
-export type NatalBody = BodyId | "ascendant";
+export type NatalPageKind = "planet" | "ascendant" | "node";
+export type NatalBody = BodyId | "ascendant" | "northNode";
 export type NatalPageRef = { slug: string; kind: NatalPageKind; body: NatalBody; sign: SignId; batch: number };
 
 export const SIGN_IDS: readonly SignId[] = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
@@ -38,10 +38,11 @@ export const BODY_NAMES: Record<NatalBody, { name: string; slugPart: string; bat
   uranus: { name: "Уран", slugPart: "uran", batch: 4 },
   neptune: { name: "Нептун", slugPart: "neptun", batch: 4 },
   pluto: { name: "Плутон", slugPart: "pluton", batch: 4 },
+  northNode: { name: "Северный узел", slugPart: "severnyy-uzel", batch: 5 },
 };
 
 // Порядок страниц в манифесте и номеров файлов: по партиям, внутри партии — по телам, затем по знакам
-const BODY_ORDER: readonly NatalBody[] = ["sun", "moon", "ascendant", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"];
+const BODY_ORDER: readonly NatalBody[] = ["sun", "moon", "ascendant", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "northNode"];
 
 export function natalPageSlug(body: NatalBody, sign: SignId): string {
   const signName = SIGN_NAMES[sign];
@@ -55,10 +56,10 @@ export function natalPageName(body: NatalBody, sign: SignId): string {
 }
 
 export const NATAL_PAGES: readonly NatalPageRef[] = BODY_ORDER.flatMap((body) =>
-  SIGN_IDS.map((sign) => ({ slug: natalPageSlug(body, sign), kind: (body === "ascendant" ? "ascendant" : "planet") as NatalPageKind, body, sign, batch: BODY_NAMES[body].batch })),
+  SIGN_IDS.map((sign) => ({ slug: natalPageSlug(body, sign), kind: (body === "ascendant" ? "ascendant" : body === "northNode" ? "node" : "planet") as NatalPageKind, body, sign, batch: BODY_NAMES[body].batch })),
 );
 
-// Номер файла и порядок: 1…132 в порядке манифеста
+// Номер файла и порядок: 1…144 в порядке манифеста
 export function natalPageOrder(slug: string): number {
   return NATAL_PAGES.findIndex((page) => page.slug === slug) + 1;
 }
@@ -73,5 +74,6 @@ export function natalPageFile(slug: string): string {
 
 // Партии, которые владелица приняла: пока партия не принята, её страницы закрыты (404, нет в карте сайта, в калькуляторе «скоро появится»).
 // Номер добавляется отдельным коммитом после вычитки. Партия 1 (Солнце, Луна, асцендент) принята 19 октября 2026,
-// партия 2 (Меркурий, Венера, Марс), партия 3 (Юпитер, Сатурн) и партия 4 (Уран, Нептун, Плутон) — 20 октября 2026
+// партия 2 (Меркурий, Венера, Марс), партия 3 (Юпитер, Сатурн) и партия 4 (Уран, Нептун, Плутон) — 20 октября 2026.
+// Партия 5 (северный узел в знаках, 12 страниц) написана 21 октября 2026 и ждёт вычитки: её номера здесь нет
 export const ACCEPTED_BATCHES: ReadonlySet<number> = new Set<number>([1, 2, 3, 4]);

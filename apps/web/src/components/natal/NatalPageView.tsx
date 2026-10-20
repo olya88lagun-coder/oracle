@@ -15,12 +15,14 @@ import {
   MEANING_TOC_LABEL,
   MEANING_TOC_TITLE,
   NATAL_TITLE,
+  NODE_OTHER_SIGNS_TITLE,
   SIGN_NAMES_GENITIVE,
 } from "@/lib/natal-copy";
 import { neighborPages, sameBodyPages } from "@/lib/natal-pages";
 import { NATAL_PATH, natalPagePath } from "@/lib/natal-paths";
 import { NatalCalculatorLink } from "./NatalCalculatorLink";
-import { NatalGlyph } from "./NatalGlyph";
+import { bodyGlyphId, NatalGlyph } from "./NatalGlyph";
+import { NatalNodeAxis } from "./NatalNodeAxis";
 import { NatalSprite } from "./NatalSprite";
 
 // Страница значения («Солнце в Овне», «Асцендент в Раке»). Разметка и классы — по макету natal-page.html; оформление добавляет дизайн.
@@ -34,14 +36,14 @@ function Emblem({ page }: { page: NatalPageRef }) {
   const ascendant = page.body === "ascendant";
   const body = BODY_NAMES[page.body].name;
   return (
-    <figure className="natal-emblem" data-variant={ascendant ? "asc" : page.body} role="img" aria-label={meaningEmblemLabel(body, SIGN_NAMES_GENITIVE[page.sign])}>
+    <figure className="natal-emblem" data-variant={ascendant ? "asc" : bodyGlyphId(page.body)} role="img" aria-label={meaningEmblemLabel(body, SIGN_NAMES_GENITIVE[page.sign])}>
       <div className="natal-emblem__pair">
         {ascendant ? (
           <span className="natal-emblem__axis" aria-hidden="true">
             AC
           </span>
         ) : (
-          <NatalGlyph id={page.body} />
+          <NatalGlyph id={bodyGlyphId(page.body)} />
         )}
         <span className="natal-emblem__divider" aria-hidden="true" />
         <NatalGlyph id={page.sign} />
@@ -94,6 +96,7 @@ export function NatalPageView({ page, text }: { page: NatalPageRef; text: NatalP
         <Emblem page={page} />
       </header>
       <article aria-labelledby="meaning-title">
+        <NatalNodeAxis page={page} idPrefix={page.body} />
         <div className="natal-reading-layout">
           <aside className="natal-toc" aria-label="Оглавление">
             <p className="natal-toc__title">{MEANING_TOC_TITLE}</p>
@@ -122,7 +125,7 @@ export function NatalPageView({ page, text }: { page: NatalPageRef; text: NatalP
           <NatalCalculatorLink />
         </section>
         <section className="natal-other-signs" aria-labelledby={id("other-signs")}>
-          <h2 id={id("other-signs")}>{MEANING_OTHER_SIGNS_TITLE}</h2>
+          <h2 id={id("other-signs")}>{page.kind === "node" ? NODE_OTHER_SIGNS_TITLE : MEANING_OTHER_SIGNS_TITLE}</h2>
           <div className="natal-signs-grid">
             {siblings.map((item) => {
               const current = item.slug === page.slug;
