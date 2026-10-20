@@ -58,8 +58,7 @@ describe("axis of the lunar nodes", () => {
     expect(aries && nodeAxisFor(aries, () => false)?.mirror).toBeUndefined();
   });
 
-  test("while batch 5 is closed no node page is open, so there is no link to a mirror page", () => {
-    const aries = natalPageBySlug("severnyy-uzel-v-ovne");
-    if (!ACCEPTED_BATCHES.has(5)) expect(aries && nodeAxisFor(aries)?.mirror).toBeUndefined();
+  test("with batch 5 accepted the mirror page is open for every node page", () => {
+    for (const page of NATAL_PAGES.filter((item) => item.body === "northNode")) expect(nodeAxisFor(page)?.mirror?.sign, page.slug).toBe(oppositeSign(page.sign));
   });
 });

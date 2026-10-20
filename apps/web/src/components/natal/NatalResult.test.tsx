@@ -194,16 +194,17 @@ describe("NatalAspects", () => {
 });
 
 describe("NatalResult with the shipped meaning pages", () => {
-  test("links the planets and the ascendant in the table to their pages, and the lunar node and the midheaven to none", () => {
+  test("links the planets, the lunar node and the ascendant in the table to their pages, and the midheaven to none", () => {
     const markup = renderToStaticMarkup(<NatalResult chart={withTime} birth={SAMPLE_BIRTH} />);
     const table = markup.slice(markup.indexOf("<table"), markup.indexOf("</table>"));
     const hrefs = [...table.matchAll(/class="natal-table__meaning-link" href="([^"]+)"/g)].map((match) => match[1]);
-    expect(hrefs).toHaveLength(11);
+    expect(hrefs).toHaveLength(12);
+    expect(hrefs.some((href) => href?.startsWith("/natalnaya-karta/severnyy-uzel-"))).toBe(true);
     expect(hrefs).toContain("/natalnaya-karta/solntse-v-rybah");
     expect(hrefs).toContain("/natalnaya-karta/ascendent-v-rake");
     expect(hrefs.every((href) => /^\/natalnaya-karta\/[a-z-]+$/.test(href ?? ""))).toBe(true);
     const rows = rowsOf(table);
-    expect(rows.filter((row) => !row.includes("natal-table__meaning-link"))).toHaveLength(2);
+    expect(rows.filter((row) => !row.includes("natal-table__meaning-link"))).toHaveLength(1);
   });
 });
 

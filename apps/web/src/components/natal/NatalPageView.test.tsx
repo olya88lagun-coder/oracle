@@ -85,7 +85,7 @@ describe("NatalPageView: Leo", () => {
   });
 });
 
-describe("NatalPageView: north node in Aries (batch 5, closed until accepted)", () => {
+describe("NatalPageView: north node in Aries", () => {
   const page = natalPageBySlug("severnyy-uzel-v-ovne");
   const text = natalText("severnyy-uzel-v-ovne");
   const markup = page && text ? renderToStaticMarkup(<NatalPageView page={page} text={text} />) : "";
@@ -105,7 +105,8 @@ describe("NatalPageView: north node in Aries (batch 5, closed until accepted)", 
     expect(markup).toContain("<span>Овен</span>");
     expect(markup).toContain("<span>Весы</span>");
     expect(markup).toContain("Южный узел всегда стоит напротив северного");
-    expect(markup).not.toContain("Та же ось с другого конца");
+    expect(markup).toContain('href="/natalnaya-karta/severnyy-uzel-v-vesah"');
+    expect(markup).toContain("Та же ось с другого конца: Северный узел в Весах");
   });
 
   test("the list of other signs is named after the node", () => {
