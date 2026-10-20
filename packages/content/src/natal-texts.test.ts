@@ -19,17 +19,19 @@ describe("natal texts data", () => {
     expect(checkNatalPages(NATAL_TEXTS)).toEqual([]);
   });
 
-  test("the batches written so far are complete: 1 (Sun, Moon, ascendant), 2 (Mercury, Venus, Mars) and 3 (Jupiter, Saturn)", () => {
-    const sizes: Record<number, number> = { 1: 36, 2: 36, 3: 24 };
+  test("all four batches are written: 132 pages (1: Sun, Moon, ascendant; 2: Mercury, Venus, Mars; 3: Jupiter, Saturn; 4: Uranus, Neptune, Pluto)", () => {
+    const sizes: Record<number, number> = { 1: 36, 2: 36, 3: 24, 4: 36 };
     for (const [batch, size] of Object.entries(sizes)) {
       const pages = NATAL_PAGES.filter((page) => page.batch === Number(batch));
       expect(pages, `партия ${batch}`).toHaveLength(size);
       for (const page of pages) expect(natalText(page.slug), page.slug).toBeDefined();
     }
+    expect(NATAL_TEXTS).toHaveLength(132);
   });
 
-  test("only batch 1 is accepted, and every page of an accepted batch has its text", () => {
-    expect([...ACCEPTED_BATCHES]).toEqual([1]);
+  test("only existing batches are accepted, and every page of an accepted batch has its text", () => {
+    const batches = new Set(NATAL_PAGES.map((page) => page.batch));
+    for (const batch of ACCEPTED_BATCHES) expect(batches.has(batch), `партия ${batch}`).toBe(true);
     for (const page of NATAL_PAGES.filter((item) => ACCEPTED_BATCHES.has(item.batch))) expect(natalText(page.slug), page.slug).toBeDefined();
   });
 });

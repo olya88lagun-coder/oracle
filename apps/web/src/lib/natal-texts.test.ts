@@ -1,10 +1,11 @@
+import { ACCEPTED_BATCHES, NATAL_PAGES } from "@oracle/content/natal";
 import { describe, expect, test } from "vitest";
 import { SIGN_ORDER } from "./natal-copy";
 import { NATAL_KEY_TEXTS, keyTextFor, natalKeyId } from "./natal-texts";
 
 describe("natal key texts", () => {
-  test("the shipped registry holds the accepted batch 1: Sun, Moon and ascendant in all twelve signs", () => {
-    expect(Object.keys(NATAL_KEY_TEXTS)).toHaveLength(36);
+  test("the shipped registry holds every accepted position, among them Sun, Moon and ascendant in all twelve signs", () => {
+    expect(Object.keys(NATAL_KEY_TEXTS)).toHaveLength(NATAL_PAGES.filter((page) => ACCEPTED_BATCHES.has(page.batch)).length);
     for (const sign of SIGN_ORDER) {
       for (const body of ["sun", "moon", "ascendant"] as const) {
         const text = keyTextFor(body, sign);

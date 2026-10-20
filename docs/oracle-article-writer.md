@@ -19,7 +19,7 @@
 
 Только на материалах, перечисленных в `basis` темы (ключи из `packages/content/src/article-basis.ts`; файлы указаны там же):
 
-- принятые тексты натальной карты `packages/content/natal/*.md` — только партии из `ACCEPTED_BATCHES` (ключ `natal`; сейчас партия 1: Солнце, Луна, асцендент); расчёт и метод — страница `/metodika`, не пересказывать формулы сверх неё;
+- принятые тексты натальной карты `packages/content/natal/*.md` — только партии из `ACCEPTED_BATCHES` (ключ `natal`; приняты все четыре партии, 132 страницы: Солнце, Луна, асцендент и восемь планет); расчёт и метод — страница `/metodika`, не пересказывать формулы сверх неё;
 - тексты 78 карт Таро `packages/content/tarot/*.md` (ключ `tarot`), состав колоды `packages/content/src/tarot-deck.ts` (ключ `tarot-deck`), правила карты дня (ключ `tarot-practice`); тексты арканов `packages/content/arcana/*.md`, позиций `positions.md`, совместимости `compat-arcana.md`, клеток Лилы `lila-cells.md`;
 - формулы и правила из кода: `packages/core/src/matrix.ts`, `compatibility.ts`, `lila.ts`; проводник Лилы — `packages/ai/src/lila-*.ts`.
 
