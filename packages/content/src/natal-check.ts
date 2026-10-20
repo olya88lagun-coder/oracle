@@ -16,15 +16,22 @@ const wordList = (text: string) => text.toLowerCase().replace(/[^\p{L}\p{N}\s]/g
 export const pageText = (page: NatalPageText): string => [...page.essence, ...page.manifestation, ...page.pitfalls, ...page.questions, page.limits].join("\n");
 export const pageWords = (page: NatalPageText): number => wordList(pageText(page)).length;
 
-// Доля пятисловных «шинглов» первой страницы, которые есть во второй
-export function shingleOverlap(a: string, b: string, size = SHINGLE_SIZE): number {
-  const shingles = (list: string[]) => new Set(list.slice(0, Math.max(0, list.length - size + 1)).map((_, i) => list.slice(i, i + size).join(" ")));
-  const first = shingles(wordList(a));
-  const second = shingles(wordList(b));
+const shingles = (text: string, size = SHINGLE_SIZE): Set<string> => {
+  const list = wordList(text);
+  return new Set(list.slice(0, Math.max(0, list.length - size + 1)).map((_, i) => list.slice(i, i + size).join(" ")));
+};
+
+// Доля элементов первого множества, которые есть во втором
+const shareOf = (first: ReadonlySet<string>, second: ReadonlySet<string>): number => {
   if (first.size === 0) return 0;
   let shared = 0;
   for (const item of first) if (second.has(item)) shared++;
   return shared / first.size;
+};
+
+// Доля пятисловных «шинглов» первой страницы, которые есть во второй
+export function shingleOverlap(a: string, b: string, size = SHINGLE_SIZE): number {
+  return shareOf(shingles(a, size), shingles(b, size));
 }
 
 function checkPage(page: NatalPageText): string[] {
@@ -61,13 +68,17 @@ export function checkNatalPages(pages: readonly NatalPageText[]): string[] {
     seen.add(page.slug);
     errors.push(...checkPage(page));
   }
-  // Шаблонность: любая пара страниц не должна делить больше четверти пятисловных последовательностей
+  // Шаблонность: любая пара страниц не должна делить больше четверти пятисловных последовательностей.
+  // Множества считаются один раз на страницу: пар тысячи, а пересчёт на каждой паре занимал секунды
+  const sets = pages.map((page) => shingles(pageText(page)));
   for (let i = 0; i < pages.length; i++) {
     for (let j = i + 1; j < pages.length; j++) {
       const first = pages[i];
       const second = pages[j];
-      if (!first || !second) continue;
-      const overlap = Math.max(shingleOverlap(pageText(first), pageText(second)), shingleOverlap(pageText(second), pageText(first)));
+      const firstSet = sets[i];
+      const secondSet = sets[j];
+      if (!first || !second || !firstSet || !secondSet) continue;
+      const overlap = Math.max(shareOf(firstSet, secondSet), shareOf(secondSet, firstSet));
       if (overlap > MAX_SHARED_SHINGLES) errors.push(`${first.slug} и ${second.slug}: ${(overlap * 100).toFixed(0)}% общих фраз — страницы слишком похожи`);
     }
   }
