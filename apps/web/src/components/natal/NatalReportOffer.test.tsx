@@ -36,6 +36,12 @@ describe("NatalReportOffer", () => {
     expect(markup).toContain('href="/oferta"');
   });
 
+  test("links to the example report wherever a purchase is possible, so it can be judged before buying", () => {
+    for (const kind of ["guest", "buy"] as const) expect(render({ kind })).toContain('href="/natalnaya-karta/primer"');
+    expect(render({ kind: "buy" }, { free: true })).toContain('href="/natalnaya-karta/primer"');
+    expect(render({ kind: "no_time" }, { withChart: noTime })).not.toContain("/primer");
+  });
+
   test("the owner gets a free button and no e-mail field", () => {
     const markup = render({ kind: "buy" }, { free: true });
     expect(text(markup)).toContain("Получить разбор бесплатно");

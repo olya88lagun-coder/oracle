@@ -9,6 +9,7 @@ import { checkoutParams, reachGoal, reachGoalThenNavigate } from "@/lib/analytic
 import { loginHref } from "@/lib/next-path";
 import {
   OFFER_BUY,
+  OFFER_EXAMPLE_LINK,
   OFFER_DATA_NOTE,
   OFFER_EMAIL_LABEL,
   OFFER_FREE_BUY,
@@ -127,6 +128,13 @@ export function NatalReportOffer({ state, chart, input, choice, free = false }: 
             </li>
           ))}
         </ol>
+      )}
+      {state.kind !== "no_time" && (
+        <p>
+          <Link className="text-link natal-offer__example" href={`${NATAL_PATH}/primer`}>
+            {OFFER_EXAMPLE_LINK}
+          </Link>
+        </p>
       )}
     </section>
   );
