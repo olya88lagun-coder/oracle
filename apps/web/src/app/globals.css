@@ -3503,3 +3503,38 @@ main:has(> .natal-intro) > .natal-quick {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Словарь терминов (NatalGlossary): рабочая вёрстка; вид доводит Codex */
+.natal-glossary__letters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.natal-glossary__letters a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--accent);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.natal-glossary__entry {
+  scroll-margin-top: 90px;
+}
+
+.natal-glossary__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+}
+
+.natal-glossary__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--accent);
+}

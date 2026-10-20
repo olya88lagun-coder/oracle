@@ -265,3 +265,14 @@ test("the quick pages are in the sitemap", async ({ request }) => {
   const sitemap = await (await request.get("/sitemap.xml")).text();
   for (const path of ["/natalnaya-karta/ascendent", "/natalnaya-karta/lunnyy-znak", "/natalnaya-karta/primer"]) expect(sitemap).toContain(`${path}</loc>`);
 });
+
+test("the glossary explains the terms, links to the calculators and is in the sitemap", async ({ page, request }) => {
+  await page.goto("/natalnaya-karta/slovar-terminov");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Словарь терминов натальной карты");
+  await expect(page.getByRole("heading", { level: 2, name: "Стеллиум" })).toBeVisible();
+  await expect(page.locator(".natal-glossary__entry")).not.toHaveCount(0);
+  await page.getByRole("link", { name: "Рассчитать асцендент" }).first().click();
+  await expect(page).toHaveURL(/\/natalnaya-karta\/ascendent$/);
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  expect(sitemap).toContain("/natalnaya-karta/slovar-terminov</loc>");
+});
