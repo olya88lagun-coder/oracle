@@ -66,8 +66,8 @@ describe("/natalnaya-karta page", () => {
 
   test("is in the sitemap paths together with the pages of the accepted batches, and no others", () => {
     expect(PUBLIC_PATHS).toContain("/natalnaya-karta");
-    // Кроме страниц значений в карте сайта — пример разбора и две страницы быстрых расчётов (асцендент, лунный знак)
-    const extra = ["/natalnaya-karta/primer", "/natalnaya-karta/ascendent", "/natalnaya-karta/lunnyy-znak"];
+    // Кроме страниц значений в карте сайта — пример разбора, две страницы быстрых расчётов (асцендент, лунный знак) и словарь терминов
+    const extra = ["/natalnaya-karta/primer", "/natalnaya-karta/ascendent", "/natalnaya-karta/lunnyy-znak", "/natalnaya-karta/slovar-terminov"];
     for (const path of extra) expect(PUBLIC_PATHS).toContain(path);
     const meaning = PUBLIC_PATHS.filter((path) => path.startsWith("/natalnaya-karta/") && !extra.includes(path));
     expect(meaning).toHaveLength(NATAL_PAGES.filter((page) => ACCEPTED_BATCHES.has(page.batch)).length);
