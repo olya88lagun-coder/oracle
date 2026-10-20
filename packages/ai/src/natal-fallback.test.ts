@@ -45,3 +45,35 @@ describe("fallbackNatalReport", () => {
     expect(() => fallbackNatalReport(moscow(false))).toThrow(RangeError);
   });
 });
+
+describe("fallbackNatalReport with the planet-in-house blocks", () => {
+  const blocks = { house: (body: string, house: number) => `БЛОК ${body} в доме ${house}`, planet: (body: string) => `ФУНКЦИЯ ${body}` };
+  const withBlocks = fallbackNatalReport(moscow(true), blocks as never);
+  const textOf = (id: string) => (withBlocks.find((chapter) => chapter.id === id)?.paragraphs ?? []).join("\n");
+
+  test("a planet-in-house block replaces the general description of the house", () => {
+    expect(textOf("core")).toContain("БЛОК sun в доме 10");
+    expect(textOf("core")).not.toContain(HOUSE_TEXTS[10]);
+    // Асцендент без дома: блока нет, текст не ломается
+    expect(textOf("core")).toContain("Асцендент в Раке.");
+    // Дома, о которых глава рассказывает сама (7, 2, 6, 10), описываются общими текстами
+    expect(textOf("love")).toContain(HOUSE_TEXTS[7]);
+    expect(textOf("work")).toContain(HOUSE_TEXTS[6]);
+  });
+
+  test("the aspects chapter starts with the function of each planet that takes part, once", () => {
+    const paragraphs = withBlocks.find((chapter) => chapter.id === "aspects")?.paragraphs ?? [];
+    const functions = paragraphs.filter((paragraph) => paragraph.startsWith("ФУНКЦИЯ "));
+    expect(functions.length).toBeGreaterThan(0);
+    expect(new Set(functions).size).toBe(functions.length);
+    expect(paragraphs.indexOf(functions[0] as string)).toBe(1);
+    expect(paragraphs.findIndex((paragraph) => paragraph.includes("(орбис"))).toBeGreaterThan(paragraphs.lastIndexOf(functions.at(-1) as string));
+  });
+
+  test("without accepted blocks the report is exactly as before", () => {
+    const none = { house: () => undefined, planet: () => undefined };
+    const plain = fallbackNatalReport(moscow(true));
+    expect(fallbackNatalReport(moscow(true), none)).toEqual(plain);
+    expect(JSON.stringify(plain)).toContain(HOUSE_TEXTS[10]);
+  });
+});

@@ -17,6 +17,11 @@ export function collectPositions(file) {
   return { positions: readText(file) };
 }
 
+// Функции планет для натального разбора: один файл целиком, разбор — в src/natal-houses.ts
+export function collectNatalPlanets(file) {
+  return { planets: readText(file) };
+}
+
 export function collectLila(file) {
   return { cells: readText(file) };
 }
@@ -75,5 +80,7 @@ if (import.meta.main) {
   write(join(root, "src", "generated", "tarot.json"), collectArcana(join(root, "tarot")));
   write(join(root, "src", "generated", "natal.json"), collectArcana(join(root, "natal")));
   write(join(root, "src", "generated", "natal-keys.json"), collectNatalKeys(join(root, "natal")));
+  write(join(root, "src", "generated", "natal-houses.json"), collectArcana(join(root, "natal-houses")));
+  write(join(root, "src", "generated", "natal-planets.json"), collectNatalPlanets(join(root, "natal-planets.md")));
   write(join(root, "src", "generated", "articles.json"), collectArticles(join(root, "articles")));
 }
