@@ -1,4 +1,5 @@
 import { BODY_NAMES, NATAL_SECTION_TITLES, SIGN_NAMES, type NatalPageRef, type NatalPageText } from "@oracle/content/natal";
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import {
@@ -7,7 +8,10 @@ import {
   MEANING_BREADCRUMBS_LABEL,
   MEANING_CTA_TEXT,
   MEANING_CTA_TITLE,
+  meaningCoverAlt,
   MEANING_CURRENT_PAGE,
+  MEANING_EYEBROW,
+  MEANING_HERO_LINK,
   MEANING_NEIGHBORS_TITLE,
   MEANING_NEXT,
   MEANING_OTHER_SIGNS_TITLE,
@@ -18,6 +22,7 @@ import {
   NODE_OTHER_SIGNS_TITLE,
   SIGN_NAMES_GENITIVE,
 } from "@/lib/natal-copy";
+import { natalCoverPath, NATAL_COVER_SIZE } from "@/lib/natal-covers";
 import { neighborPages, sameBodyPages } from "@/lib/natal-pages";
 import { NATAL_PATH, natalPagePath } from "@/lib/natal-paths";
 import { NatalCalculatorLink } from "./NatalCalculatorLink";
@@ -58,6 +63,7 @@ function Emblem({ page }: { page: NatalPageRef }) {
 export function NatalPageView({ page, text }: { page: NatalPageRef; text: NatalPageText }) {
   const { previous, next } = neighborPages(page);
   const siblings = sameBodyPages(page);
+  const cover = natalCoverPath(page.slug);
   const id = (key: string) => `${page.body}-${key}`;
   const paragraphs = (items: readonly string[]): ReactNode => items.map((paragraph) => <p key={paragraph}>{paragraph}</p>);
   const sections: Record<(typeof SECTION_KEYS)[number], ReactNode> = {
@@ -90,10 +96,18 @@ export function NatalPageView({ page, text }: { page: NatalPageRef; text: NatalP
       </nav>
       <header className="natal-meaning-hero">
         <div>
+          <p className="natal-meaning-hero__eyebrow">{MEANING_EYEBROW[page.kind]}</p>
           <h1 id="meaning-title">{text.name}</h1>
           <p className="natal-meaning-hero__intro">{text.keywords.join(" · ").replace(/^./, (letter) => letter.toUpperCase())}</p>
+          <NatalCalculatorLink className="natal-meaning-hero__link" label={MEANING_HERO_LINK} />
         </div>
-        <Emblem page={page} />
+        {cover ? (
+          <figure className="natal-cover">
+            <Image src={cover} width={NATAL_COVER_SIZE} height={NATAL_COVER_SIZE} alt={meaningCoverAlt(text.name)} priority unoptimized />
+          </figure>
+        ) : (
+          <Emblem page={page} />
+        )}
       </header>
       <article aria-labelledby="meaning-title">
         <NatalNodeAxis page={page} idPrefix={page.body} />

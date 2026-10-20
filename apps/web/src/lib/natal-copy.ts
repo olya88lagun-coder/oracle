@@ -299,6 +299,10 @@ export const MEANING_CTA_TITLE = "Рассчитайте свою карту";
 export const MEANING_CTA_TEXT = "Посмотрите это положение в контексте всей вашей карты.";
 export const MEANING_OTHER_SIGNS_TITLE = "Это же тело в других знаках";
 export const MEANING_NEIGHBORS_TITLE = "Соседние знаки";
+// Подпись над заголовком страницы значения и ссылка на расчёт в шапке
+export const MEANING_EYEBROW = { planet: "Планета в знаке", ascendant: "Асцендент в знаке", node: "Северный узел в знаке" } as const;
+export const MEANING_HERO_LINK = "Рассчитать свою карту";
+export const meaningCoverAlt = (name: string): string => `Иллюстрация к странице «${name}»`;
 // Страницы «Северный узел в знаке»: ось узлов и подпись блока «в других знаках»
 export const NODE_OTHER_SIGNS_TITLE = "Северный узел в других знаках";
 export const NODE_AXIS_TITLE = "Ось узлов";

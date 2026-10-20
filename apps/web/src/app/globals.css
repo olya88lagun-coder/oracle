@@ -3680,3 +3680,52 @@ main:has(> .natal-intro) > .natal-quick {
   min-height: 44px;
   color: var(--accent);
 }
+
+/* Шапка страниц значений с обложкой: перенесено из концепции Codex (outputs/natal-concept/concept.css), вид дорабатывает дизайн */
+.natal-meaning .natal-meaning-hero { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 22px 0 30px; }
+
+.natal-meaning .natal-meaning-hero__eyebrow {
+  margin: 0 0 16px;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.natal-meaning .natal-meaning-hero h1 { font-size: 52px; line-height: 1.08; text-wrap: balance; }
+.natal-meaning .natal-meaning-hero__intro { margin-top: 20px; font-size: 15px; line-height: 1.8; }
+
+.natal-meaning .natal-meaning-hero__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 14px;
+  color: var(--accent);
+  font-size: 14px;
+  text-underline-offset: 6px;
+}
+
+.natal-meaning .natal-cover {
+  justify-self: center;
+  width: min(280px, 100%);
+  margin: 0;
+  line-height: 0;
+}
+
+.natal-meaning .natal-cover img { display: block; width: 100%; height: auto; border-radius: 50%; object-fit: contain; }
+
+@media (min-width: 761px) {
+  .natal-meaning .natal-meaning-hero { grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; padding: 32px 0 52px; }
+  .natal-meaning .natal-meaning-hero__eyebrow { margin-bottom: 22px; letter-spacing: .18em; }
+  .natal-meaning .natal-meaning-hero h1 { font-size: 64px; }
+  .natal-meaning .natal-meaning-hero__intro { max-width: 440px; margin-top: 28px; font-size: 17px; }
+  .natal-meaning .natal-meaning-hero__link { margin-top: 24px; }
+  .natal-meaning .natal-cover { width: 100%; }
+}
+
+@media (min-width: 960px) {
+  .natal-meaning .natal-meaning-hero { grid-template-columns: minmax(0, 1fr) 420px; gap: 64px; }
+  .natal-meaning .natal-meaning-hero h1 { font-size: 80px; letter-spacing: -.035em; }
+}

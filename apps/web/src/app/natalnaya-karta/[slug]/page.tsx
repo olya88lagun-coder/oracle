@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NatalPageView } from "@/components/natal/NatalPageView";
 import { shortDescription } from "@/lib/arcana-paths";
-import { meaningTitle, NATAL_TITLE } from "@/lib/natal-copy";
+import { meaningCoverAlt, meaningTitle, NATAL_TITLE } from "@/lib/natal-copy";
 import { acceptedNatalPage, acceptedNatalPages } from "@/lib/natal-pages";
+import { natalCoverPath, NATAL_COVER_SIZE } from "@/lib/natal-covers";
 import { NATAL_PATH, natalPagePath } from "@/lib/natal-paths";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -22,11 +23,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const page = acceptedNatalPage((await params).slug);
   const text = page && natalText(page.slug);
   if (!page || !text) return {};
+  const cover = natalCoverPath(page.slug);
   return publicMetadata({
     title: meaningTitle(text.name),
     description: shortDescription(text.essence[0] ?? text.name),
     path: natalPagePath(page),
-    image: SITE_PREVIEW_IMAGE,
+    image: cover ? { url: cover, alt: meaningCoverAlt(text.name), width: NATAL_COVER_SIZE, height: NATAL_COVER_SIZE } : SITE_PREVIEW_IMAGE,
   });
 }
 
@@ -35,6 +37,7 @@ export default async function NatalMeaningPage({ params }: Params) {
   const text = page && natalText(page.slug);
   if (!page || !text) notFound();
   const url = `${SITE_URL}${natalPagePath(page)}`;
+  const cover = natalCoverPath(page.slug);
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -45,6 +48,7 @@ export default async function NatalMeaningPage({ params }: Params) {
         inLanguage: "ru",
         keywords: text.keywords.join(", "),
         mainEntityOfPage: url,
+        ...(cover && { image: `${SITE_URL}${cover}` }),
         about: `${BODY_NAMES[page.body].name}, ${SIGN_NAMES[page.sign].nominative}`,
       },
       {
