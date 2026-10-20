@@ -124,8 +124,8 @@ test("nothing about the birth data leaves the browser: only the city search and 
   }
 });
 
-test("a page of an accepted batch is open, and a page of a batch that is not accepted answers 404", async ({ page, request }) => {
-  expect((await request.get("/natalnaya-karta/merkuriy-v-ovne")).status()).toBe(404);
+test("a page of an accepted batch is open, and an unknown address answers 404", async ({ page, request }) => {
+  expect((await request.get("/natalnaya-karta/pluton-v-rybah")).status()).toBe(200);
   expect((await request.get("/natalnaya-karta/net-takoy-stranitsy")).status()).toBe(404);
 
   const response = await page.goto("/natalnaya-karta/solntse-v-ovne");
