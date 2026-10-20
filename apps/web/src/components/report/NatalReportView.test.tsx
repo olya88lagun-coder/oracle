@@ -36,3 +36,27 @@ describe("NatalReportView", () => {
     expect(renderToStaticMarkup(<NatalReportView chapters={CHAPTERS} date="1990-03-07" placeName={null} />)).toContain("по дате 07.03.1990</p>");
   });
 });
+
+describe("NatalReportView as a demo", () => {
+  const demo = renderToStaticMarkup(<NatalReportView demo chapters={CHAPTERS} date="1990-03-07" placeName="Москва" />);
+
+  test("is titled as an example, says the data are made up and keeps one h1", () => {
+    expect(demo.match(/<h1/g)).toHaveLength(1);
+    expect(demo).toContain("Пример разбора натальной карты");
+    expect(demo).toContain("Демонстрационные данные: 07.03.1990, Москва");
+    expect(demo).toContain("Пример не использует вашу дату");
+  });
+
+  test("leads to the calculator instead of the portrait", () => {
+    expect(demo).not.toContain('href="/portret"');
+    expect(demo).toContain('href="/natalnaya-karta"');
+    expect(demo).toContain("Рассчитать свою карту");
+  });
+
+  test("still shows the chapters, the scenario and the disclaimer", () => {
+    expect(demo).toContain("Второй абзац ядра.");
+    expect(demo).toContain("Эксперимент-текст.");
+    expect(demo).toContain(DISCLAIMER);
+  });
+});
+

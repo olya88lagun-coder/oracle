@@ -193,3 +193,17 @@ test("the wheel explains a body and an axis by tap and by buttons, and Escape cl
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test("the offer under the result leads to a full example report on made-up data", async ({ page }) => {
+  await fillBirth(page, { date: "1990-03-07", time: "12:00", city: "Москва" });
+  await calculate(page);
+  await expect(result(page)).toBeVisible();
+  await page.getByRole("link", { name: "Посмотреть пример разбора" }).click();
+  await expect(page).toHaveURL(/\/natalnaya-karta\/primer$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Пример разбора натальной карты");
+  await expect(page.getByText("Демонстрационные данные: 07.03.1990, Москва")).toBeVisible();
+  await expect(page.locator(".natal-report .report-chapter")).toHaveCount(9);
+  await expect(page.getByRole("link", { name: "Рассчитать свою карту" })).toHaveAttribute("href", "/natalnaya-karta");
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});

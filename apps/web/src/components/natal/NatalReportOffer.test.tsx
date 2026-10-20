@@ -54,6 +54,12 @@ describe("NatalReportOffer", () => {
     expect(markup).not.toContain("E-mail для чека");
   });
 
+  test("links to the example report wherever a purchase is possible, so it can be judged before buying", () => {
+    for (const kind of ["guest", "buy"] as const) expect(render({ kind })).toContain('href="/natalnaya-karta/primer"');
+    expect(render({ kind: "buy" }, { free: true })).toContain('href="/natalnaya-karta/primer"');
+    expect(render({ kind: "no_time" }, { withChart: noTime })).not.toContain("/primer");
+  });
+
   test("without the birth time there are no buttons and no chapter list, only the explanation", () => {
     const markup = render({ kind: "no_time" }, { withChart: noTime });
     expect(text(markup)).toContain(OFFER_NO_TIME);

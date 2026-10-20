@@ -2,24 +2,26 @@ import { NATAL_CHAPTER_IDS, NATAL_CHAPTER_TITLES } from "@oracle/core/natal-repo
 import type { StoredNatalChapter } from "@oracle/db";
 import Link from "next/link";
 import { DISCLAIMER } from "@/lib/legal";
-import { REPORT_PAGE_LEAD, REPORT_PAGE_TITLE } from "@/lib/natal-copy";
+import { EXAMPLE_CALCULATE, EXAMPLE_NOTE, EXAMPLE_TITLE, REPORT_PAGE_LEAD, REPORT_PAGE_TITLE } from "@/lib/natal-copy";
+import { NATAL_PATH } from "@/lib/natal-paths";
 import { formatIsoDate } from "@/lib/report-offer";
 import { Scenario } from "./ReportView";
 
 // Готовый разбор натальной карты: оглавление, девять глав, поля сценария и дисклеймер.
 // Главы идут в порядке оглавления; глава, которой почему-то нет, пропускается
-export function NatalReportView({ chapters, date, placeName }: { chapters: readonly StoredNatalChapter[]; date: string; placeName: string | null }) {
+export function NatalReportView({ chapters, date, placeName, demo = false }: { chapters: readonly StoredNatalChapter[]; date: string; placeName: string | null; demo?: boolean }) {
   const byId = new Map(chapters.map((chapter) => [chapter.id, chapter]));
   const ordered = NATAL_CHAPTER_IDS.flatMap((id) => (byId.has(id) ? [byId.get(id)!] : []));
   return (
     <article className="report natal-report stack">
       <header className="stack natal-report__head">
         <p className="eyebrow">
-          {REPORT_PAGE_TITLE} · по дате {formatIsoDate(date)}
+          {demo ? `Демонстрационные данные: ${formatIsoDate(date)}` : `${REPORT_PAGE_TITLE} · по дате ${formatIsoDate(date)}`}
           {placeName ? `, ${placeName}` : ""}
         </p>
-        <h1 className="display">{REPORT_PAGE_TITLE}</h1>
+        <h1 className="display">{demo ? EXAMPLE_TITLE : REPORT_PAGE_TITLE}</h1>
         <p className="lead">{REPORT_PAGE_LEAD}</p>
+        {demo && <p className="muted">{EXAMPLE_NOTE}</p>}
         <nav className="card report-contents" aria-labelledby="natal-report-contents">
           <h2 id="natal-report-contents">Оглавление</h2>
           <ol className="report-toc">
@@ -51,9 +53,7 @@ export function NatalReportView({ chapters, date, placeName }: { chapters: reado
       ))}
 
       <p className="muted">{DISCLAIMER}</p>
-      <p>
-        <Link href="/portret">← Мой портрет</Link>
-      </p>
+      <p>{demo ? <Link href={NATAL_PATH}>{EXAMPLE_CALCULATE}</Link> : <Link href="/portret">← Мой портрет</Link>}</p>
     </article>
   );
 }
