@@ -1,5 +1,5 @@
 import { SCENARIO_FIELDS } from "@oracle/core";
-import { ASPECT_TEXTS, HOUSE_TEXTS, NATAL_CHAPTER_INTROS } from "@oracle/content/natal";
+import { ASPECT_TEXTS, HOUSE_TEXTS, houseBlock, NATAL_CHAPTER_INTROS } from "@oracle/content/natal";
 import { computeNatalChart, NATAL_CHAPTER_IDS } from "@oracle/core/natal";
 import { describe, expect, test } from "vitest";
 import { fallbackNatalReport } from "./natal-fallback";
@@ -20,7 +20,8 @@ describe("fallbackNatalReport", () => {
     const core = chapters.find((chapter) => chapter.id === "core")?.paragraphs ?? [];
     expect(core[0]).toBe(NATAL_CHAPTER_INTROS.core);
     expect(core[1]?.startsWith("Солнце в Рыбах, 10 дом.")).toBe(true);
-    expect(core[2]).toBe(HOUSE_TEXTS[10]);
+    // Блок «Солнце в 10 доме» из принятой партии заменяет общее описание дома
+    expect(core[2]).toBe(houseBlock("sun", 10) ?? HOUSE_TEXTS[10]);
     expect(text("core")).toContain("Асцендент в Раке.");
   });
 
@@ -70,10 +71,10 @@ describe("fallbackNatalReport with the planet-in-house blocks", () => {
     expect(paragraphs.findIndex((paragraph) => paragraph.includes("(орбис"))).toBeGreaterThan(paragraphs.lastIndexOf(functions.at(-1) as string));
   });
 
-  test("without accepted blocks the report is exactly as before", () => {
+  test("without blocks the general descriptions of the houses are used, and the shipped blocks are the default", () => {
     const none = { house: () => undefined, planet: () => undefined };
-    const plain = fallbackNatalReport(moscow(true));
-    expect(fallbackNatalReport(moscow(true), none)).toEqual(plain);
+    const plain = fallbackNatalReport(moscow(true), none);
     expect(JSON.stringify(plain)).toContain(HOUSE_TEXTS[10]);
+    expect(JSON.stringify(fallbackNatalReport(moscow(true)))).toContain(houseBlock("sun", 10) ?? HOUSE_TEXTS[10]);
   });
 });
