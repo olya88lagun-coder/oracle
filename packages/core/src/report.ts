@@ -6,6 +6,8 @@ export type Product = typeof MATRIX_REPORT_PRODUCT | typeof NATAL_REPORT_PRODUCT
 // Единственное место с ценой: блок продажи, оферта и платёж читают её отсюда
 export const MATRIX_REPORT_PRICE_KOPECKS = 39_000;
 export const NATAL_REPORT_PRICE_KOPECKS = 49_000;
+// Срок возврата за натальный разбор (решение владелицы 2026-10-20): блок продажи и оферта читают его отсюда, как цену
+export const NATAL_REPORT_REFUND_DAYS = 14;
 
 // Снимок данных рождения на момент покупки натального разбора: сохраняется в покупке и стирается при удалении данных.
 // instant — момент рождения в UTC, он считается один раз при покупке, поэтому воркеру часовые пояса не нужны

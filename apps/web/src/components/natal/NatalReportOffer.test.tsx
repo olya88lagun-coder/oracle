@@ -36,6 +36,18 @@ describe("NatalReportOffer", () => {
     expect(markup).toContain('href="/oferta"');
   });
 
+  test("says plainly that it is a one-off payment without a subscription or auto-renewal", () => {
+    for (const kind of ["guest", "buy"] as const) expect(text(render({ kind }))).toContain("Разовая оплата за разбор одной карты, без подписки и автопродления.");
+  });
+
+  test("promises the refund period from the core constant, and only where a purchase is possible", () => {
+    const line = "Если разбор не подойдёт, напишите нам в течение 14 дней со дня оплаты — вернём деньги.";
+    expect(text(render({ kind: "guest" }))).toContain(line);
+    expect(text(render({ kind: "buy" }))).toContain(line);
+    expect(text(render({ kind: "buy" }, { free: true }))).not.toContain("вернём деньги");
+    expect(text(render({ kind: "no_time" }, { withChart: noTime }))).not.toContain("вернём деньги");
+  });
+
   test("the owner gets a free button and no e-mail field", () => {
     const markup = render({ kind: "buy" }, { free: true });
     expect(text(markup)).toContain("Получить разбор бесплатно");
