@@ -7,7 +7,7 @@ import { verifySession } from "@/server/auth/tokens";
 import { SESSION_COOKIE } from "@/server/http";
 
 const NOW = new Date("2026-09-24T12:00:00Z");
-const ENV: AppEnv = { APP_URL: "https://oracle.test", DATABASE_URL: "postgres://unused", SESSION_SECRET: "s".repeat(40), VK_CLIENT_ID: "555", payments: null, paidReports: false, paidLila: false, ownerVkId: null };
+const ENV: AppEnv = { APP_URL: "https://oracle.test", DATABASE_URL: "postgres://unused", SESSION_SECRET: "s".repeat(40), VK_CLIENT_ID: "555", payments: null, paidReports: false, paidLila: false, paidNatal: false, ownerVkId: null };
 const BODY = { birthDate: "1990-03-07", time: "12:05", name: "Москва", latitude: 55.7558, longitude: 37.6173, zone: "Europe/Moscow" };
 
 let db: Database;

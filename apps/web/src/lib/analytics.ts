@@ -7,7 +7,7 @@ export const YANDEX_VERIFICATION: string | null = "9512ea7a80f720a4";
 
 // План 1: вход и дата; план 2а: воронка матрицы судьбы; план 3а и 3б: Лила; план 5: совместимость; план 6: таро;
 // lila_offer_view, lila_login_click, checkout_redirect, checkout_error — аудит 4 октября: потери между предложением, входом и оплатой
-export const GOALS = ["login", "birth_date_saved", "matrix_calculated", "matrix_save_click", "matrix_share", "arcana_to_calculator", "report_offer_view", "report_offer_click", "report_paid", "report_opened", "report_pdf_download", "lila_start", "lila_finish", "lila_save", "lila_offer_click", "lila_paid", "compat_calculated", "compat_share", "compat_pdf", "compat_offer_view", "compat_offer_click", "taro_draw", "taro_share", "lila_offer_view", "lila_login_click", "checkout_redirect", "checkout_error", "natal_calculated", "natal_save_click", "natal_share", "natal_to_calculator"] as const;
+export const GOALS = ["login", "birth_date_saved", "matrix_calculated", "matrix_save_click", "matrix_share", "arcana_to_calculator", "report_offer_view", "report_offer_click", "report_paid", "report_opened", "report_pdf_download", "lila_start", "lila_finish", "lila_save", "lila_offer_click", "lila_paid", "compat_calculated", "compat_share", "compat_pdf", "compat_offer_view", "compat_offer_click", "taro_draw", "taro_share", "lila_offer_view", "lila_login_click", "checkout_redirect", "checkout_error", "natal_calculated", "natal_save_click", "natal_share", "natal_to_calculator", "natal_offer_view", "natal_offer_click", "natal_paid", "natal_report_opened"] as const;
 export type Goal = (typeof GOALS)[number];
 
 export const CONSENT_KEY = "oracle-cookie-consent";
@@ -97,7 +97,7 @@ export function reachGoalThenNavigate(goal: Goal, params: Record<string, string 
 }
 
 // Параметры платёжных целей — закрытый список: продукт и безопасный код ошибки. Ни дат, ни почты, ни намерений, ни номеров покупок
-export type CheckoutProduct = "matrix" | "compat" | "lila";
+export type CheckoutProduct = "matrix" | "compat" | "lila" | "natal";
 export const checkoutParams = (product: CheckoutProduct, error?: string): Record<string, string> => (error ? { product, error } : { product });
 
 const READY_RETRY_MS = 500;

@@ -1,7 +1,19 @@
 import { describe, expect, test } from "vitest";
 import { parseBirthDate } from "./birth-date";
 import { calculateMatrix } from "./matrix";
-import { CHAPTER_IDS, CHAPTER_TITLES, generateReportJobKey, MATRIX_REPORT_PRICE_KOPECKS, reportChapters, SCENARIO_FIELDS, SCENARIO_TITLES } from "./report";
+import {
+  CHAPTER_IDS,
+  CHAPTER_TITLES,
+  generateNatalReportJobKey,
+  generateReportJobKey,
+  MATRIX_REPORT_PRICE_KOPECKS,
+  NATAL_REPORT_PRICE_KOPECKS,
+  natalSnapshotKey,
+  QUEUES,
+  reportChapters,
+  SCENARIO_FIELDS,
+  SCENARIO_TITLES,
+} from "./report";
 
 const matrixOf = (iso: string) => {
   const date = parseBirthDate(iso, new Date("2026-09-28T00:00:00Z"));
@@ -35,5 +47,18 @@ describe("product", () => {
   test("costs 390 rubles and has one generation job per purchase", () => {
     expect(MATRIX_REPORT_PRICE_KOPECKS).toBe(39_000);
     expect(generateReportJobKey({ purchaseId: "p1" })).toBe("generate-report:p1");
+  });
+});
+
+describe("natal report product", () => {
+  test("costs 490 rubles and has its own queue and job key", () => {
+    expect(NATAL_REPORT_PRICE_KOPECKS).toBe(49_000);
+    expect(QUEUES.generateNatalReport).toBe("generate-natal-report");
+    expect(generateNatalReportJobKey({ purchaseId: "p" })).toBe("generate-natal-report:p");
+  });
+
+  test("the snapshot key rounds the coordinates to two decimals", () => {
+    expect(natalSnapshotKey({ date: "1990-03-07", time: "12:00", latitude: 55.7558, longitude: 37.6173 })).toBe("1990-03-07|12:00|55.76|37.62");
+    expect(natalSnapshotKey({ date: "1990-03-07", time: "12:00", latitude: 55.7541, longitude: 37.6149 })).toBe("1990-03-07|12:00|55.75|37.61");
   });
 });

@@ -320,3 +320,23 @@ export const SIGN_NAMES_GENITIVE: Readonly<Record<SignId, string>> = {
   aquarius: "Водолея",
   pisces: "Рыб",
 };
+
+// --- Платный разбор натальной карты: блок продажи, страница разбора ---
+export const OFFER_TITLE = "Разбор натальной карты";
+export const OFFER_LEAD =
+  "Личный разбор вашей карты в девяти главах: ядро, мышление, любовь, действие, дело и деньги, рост, глубокие слои, главные аспекты и ваш сценарий с экспериментом на 7 дней. Это материал для размышления, а не предсказание.";
+export const OFFER_TERMS = "Разовая оплата за разбор одной карты. Готов за несколько минут и хранится в «Моём портрете», пока вы не удалите свои данные.";
+export const OFFER_NO_TIME = "Для разбора нужно время рождения: оно определяет асцендент и дома. Укажите время и рассчитайте карту заново.";
+export const OFFER_FREE_NOTE = "Вы владелица сайта: разбор для вас бесплатный, оплата и чек не нужны.";
+export const OFFER_DATA_NOTE = "Для разбора на сервер передаются дата, время и место рождения: они хранятся в покупке, пока вы не удалите свои данные.";
+export const OFFER_BUY = "Купить разбор";
+export const OFFER_LOGIN_BUY = "Войти и купить разбор";
+export const OFFER_FREE_BUY = "Получить разбор бесплатно";
+export const OFFER_EMAIL_LABEL = "E-mail для чека";
+export const OFFER_SCENARIO_LABEL = "Паттерн, напряжение, ресурс, эксперимент на 7 дней";
+export const OFFER_ASPECTS_LABEL = "Самые точные связи планет вашей карты";
+export const OFFER_HOUSES_LABEL = "Дома 2, 6 и 10";
+export const REPORT_PAGE_TITLE = "Разбор натальной карты";
+export const REPORT_PAGE_LEAD = "Девять глав о вашей карте. Это материал для размышления, а не предсказание.";
+export const REPORT_WAITING_BODY = "Обычно до 5 минут. Мы собираем главы разбора по вашей карте. Можно уйти — разбор будет в «Моём портрете».";
+export const PORTRAIT_REPORT_TITLE = "Разбор натальной карты";

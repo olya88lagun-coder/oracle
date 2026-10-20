@@ -18,6 +18,8 @@ import {
 } from "@/lib/natal-save";
 import { EMPTY_FORM_VALUES, NO_FORM_ERRORS, NatalForm, type NatalFormErrors, type NatalFormValues } from "./NatalForm";
 import { NatalOutcome, type Outcome } from "./NatalOutcome";
+import { natalOfferState } from "@/lib/natal-report-offer";
+import { NatalReportOffer } from "./NatalReportOffer";
 import { SaveToPortrait } from "./SaveToPortrait";
 
 // Калькулятор натальной карты: форма, плашки и результат. Всё считается в браузере; на сервер уходит только поиск города (GET /api/cities)
@@ -38,13 +40,14 @@ function touchedFields(patch: Partial<NatalFormValues>): NatalField[] {
 }
 
 // signedIn — человек вошёл; savedProfile — что уже лежит в портрете (дата, время, место) или null
-type Props = { signedIn?: boolean; savedProfile?: SavedBirth | null };
+// offerEnabled — продаётся ли платный разбор (флаг и шлюз на сервере); ownerFree — владелица: разбор для неё бесплатный
+type Props = { signedIn?: boolean; savedProfile?: SavedBirth | null; offerEnabled?: boolean; ownerFree?: boolean };
 
 function valuesFromInput(input: NatalInput): NatalFormValues {
   return { date: input.date, time: input.time ?? "", unknownTime: input.time === null, cityText: input.city.name, city: input.city };
 }
 
-export function NatalCalculator({ signedIn = false, savedProfile = null }: Props) {
+export function NatalCalculator({ signedIn = false, savedProfile = null, offerEnabled = false, ownerFree = false }: Props) {
   const [values, setValues] = useState<NatalFormValues>(EMPTY_FORM_VALUES);
   const [saved, setSaved] = useState<SavedBirth | null>(savedProfile);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
@@ -188,6 +191,14 @@ export function NatalCalculator({ signedIn = false, savedProfile = null }: Props
     void calculate(checked.value, null);
   }
 
+  // Блок продажи платного разбора: только когда карта построена и продажа включена
+  function offerBlock(current: Outcome) {
+    if (!current.chart) return undefined;
+    const state = natalOfferState({ enabled: offerEnabled, signedIn, timeKnown: current.chart.timeKnown });
+    if (state.kind === "hidden") return undefined;
+    return <NatalReportOffer state={state} chart={current.chart} input={current.input} choice={current.choice} free={ownerFree} />;
+  }
+
   function recalculate() {
     discardOutcome();
     dateRef.current?.focus();
@@ -222,6 +233,7 @@ export function NatalCalculator({ signedIn = false, savedProfile = null }: Props
           choiceRef={choiceRef}
           onChoose={(choice) => void calculate(outcome.input, choice)}
           onRecalculate={recalculate}
+          offer={offerBlock(outcome)}
           saveAction={
             <SaveToPortrait
               state={natalSaveState({ signedIn, saved, input: outcome.input, status: saveStatus })}

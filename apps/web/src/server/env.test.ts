@@ -10,7 +10,7 @@ const VALID = {
 
 describe("readEnv", () => {
   test("accepts a complete environment, drops unrelated variables and keeps sales off", () => {
-    expect(readEnv({ ...VALID, PATH: "/usr/bin" })).toEqual({ ...VALID, payments: null, paidReports: false, paidLila: false, ownerVkId: null });
+    expect(readEnv({ ...VALID, PATH: "/usr/bin" })).toEqual({ ...VALID, payments: null, paidReports: false, paidLila: false, paidNatal: false, ownerVkId: null });
   });
 
   test("names the invalid variables without printing their values", () => {
@@ -31,6 +31,8 @@ describe("readEnv", () => {
   test("reads the Lila sales switch and rejects a wrong value by name", () => {
     expect(readEnv({ ...VALID, PAID_LILA: "on" }).paidLila).toBe(true);
     expect(() => readEnv({ ...VALID, PAID_LILA: "yes" })).toThrow(/PAID_LILA/);
+    expect(readEnv({ ...VALID, PAID_NATAL: "on" }).paidNatal).toBe(true);
+    expect(() => readEnv({ ...VALID, PAID_NATAL: "yes" })).toThrow(/PAID_NATAL/);
   });
 
   test("requires both YooKassa keys and names the missing one", () => {

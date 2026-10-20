@@ -1,4 +1,16 @@
-import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT, MATRIX_REPORT_PRICE_KOPECKS, MATRIX_REPORT_PRODUCT, type GenerateReportJob, type Product } from "@oracle/core";
+import {
+  LILA_SESSION_PRICE_KOPECKS,
+  LILA_SESSION_PRODUCT,
+  MATRIX_REPORT_PRICE_KOPECKS,
+  MATRIX_REPORT_PRODUCT,
+  NATAL_REPORT_PRICE_KOPECKS,
+  NATAL_REPORT_PRODUCT,
+  natalSnapshotKey,
+  type GenerateNatalReportJob,
+  type GenerateReportJob,
+  type NatalSnapshot,
+  type Product,
+} from "@oracle/core";
 import {
   abandonAwaitingLilaGames,
   activateLilaGameForPurchase,
@@ -24,6 +36,7 @@ import {
 import { z } from "zod";
 import { normalizeIntention } from "../lib/lila-view";
 import { reportPath } from "../lib/report-offer";
+import { parseNatalBirth } from "./natal-snapshot";
 import type { PaymentGateway } from "./payments/gateway";
 
 // isOwner — владелица сайта: платное для неё бесплатно, без шлюза, почты и чека
@@ -33,21 +46,23 @@ export type PaymentsDeps = {
   appUrl: string;
   now: () => Date;
   enqueueGenerate: (job: GenerateReportJob) => Promise<void>;
+  enqueueGenerateNatal: (job: GenerateNatalReportJob) => Promise<void>;
   // Оплата принята, чек владелица формирует вручную: напоминание уходит ей одним сообщением на окно времени
   remindReceipts?: (now: Date) => Promise<void>;
   isOwner?: (userId: string) => Promise<boolean>;
 };
-export type StartPurchaseError = "no_birth_date" | "invalid_email" | "invalid_intention" | "active_game" | "already_paid" | "not_found" | "payment_failed";
+export type StartPurchaseError = "no_birth_date" | "invalid_birth" | "invalid_email" | "invalid_intention" | "active_game" | "already_paid" | "not_found" | "payment_failed";
 export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: StartPurchaseError; purchaseId?: string };
 export type PurchaseViewStatus = "pending" | "canceled" | "generating" | "ready";
 export type LilaPurchaseView = { id: string; status: "pending" | "canceled" | "ready" | "blocked"; gameId: string | null };
-export type PurchaseView = { id: string; status: PurchaseViewStatus; birthDate: string; duplicateOf: string | null };
+export type PurchaseView = { id: string; product: Product; status: PurchaseViewStatus; birthDate: string; duplicateOf: string | null };
 
 const REUSE_WINDOW_MS = 30 * 60_000;
 const DESCRIPTION_MAX = 128;
 // Название услуги: то же видно в кабинете ЮKassa и на странице чеков владелицы
 export const PRODUCT_DESCRIPTIONS: Readonly<Record<Product, string>> = {
   matrix_report: "Разбор матрицы судьбы — «Твой оракул»",
+  natal_report: "Разбор натальной карты — «Твой оракул»",
   lila_session: "Сессия Лилы с проводником — «Твой оракул»",
 };
 const emailSchema = z.email().max(254);
@@ -79,17 +94,24 @@ async function grantFree(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<
   return { ok: true, url: purchaseReturnPath(purchase) };
 }
 
-async function purchaseFor(deps: PaymentsDeps, p: { userId: string; birthDate: string; email: string | null }): Promise<StartPurchaseOutcome> {
-  const key = { userId: p.userId, product: MATRIX_REPORT_PRODUCT, birthDate: p.birthDate } as const;
+// Цена разбора по продукту: матрица и натальная карта продаются одним потоком, различаются ценой и данными
+const reportPrice = (product: Product): number => (product === NATAL_REPORT_PRODUCT ? NATAL_REPORT_PRICE_KOPECKS : MATRIX_REPORT_PRICE_KOPECKS);
+
+// natal — снимок данных рождения натального разбора; у матрицы его нет, а дата берётся из портрета
+type ReportPurchase = { userId: string; product: Product; birthDate: string; email: string | null; natal?: NatalSnapshot };
+
+async function purchaseFor(deps: PaymentsDeps, p: ReportPurchase): Promise<StartPurchaseOutcome> {
+  const key = { userId: p.userId, product: p.product, birthDate: p.birthDate, inputKey: p.natal ? natalSnapshotKey(p.natal) : null } as const;
   const paid = await findPaidPurchase(deps.db, key);
   if (paid) return { ok: false, error: "already_paid", purchaseId: paid.id };
 
-  if (p.email === null) return grantFree(deps, await createPurchase(deps.db, { ...key, amountKopecks: 0 }));
+  const base = { userId: p.userId, product: p.product, birthDate: p.birthDate, natal: p.natal };
+  if (p.email === null) return grantFree(deps, await createPurchase(deps.db, { ...base, amountKopecks: 0 }));
 
   const open = await findOpenPurchase(deps.db, { ...key, since: new Date(deps.now().getTime() - REUSE_WINDOW_MS) });
   if (open?.confirmationUrl && open.receiptEmail === p.email) return { ok: true, url: open.confirmationUrl };
 
-  const purchase = await createPurchase(deps.db, { ...key, receiptEmail: p.email, amountKopecks: MATRIX_REPORT_PRICE_KOPECKS });
+  const purchase = await createPurchase(deps.db, { ...base, receiptEmail: p.email, amountKopecks: reportPrice(p.product) });
   return createGatewayPayment(deps, purchase, p.email);
 }
 
@@ -169,7 +191,18 @@ export async function startPurchase(deps: PaymentsDeps, p: { userId: string; ema
   if (!owner && !email) return { ok: false, error: "invalid_email" };
   const birthDate = await getBirthDate(deps.db, p.userId);
   if (!birthDate) return { ok: false, error: "no_birth_date" };
-  return purchaseFor(deps, { userId: p.userId, birthDate, email });
+  return purchaseFor(deps, { userId: p.userId, product: MATRIX_REPORT_PRODUCT, birthDate, email });
+}
+
+// Натальный разбор покупается по данным из запроса (дата, время, место): карта считается в браузере, портрет не трогается.
+// Данные проверяются строго; в ответ и в логи они не попадают
+export async function startNatalPurchase(deps: PaymentsDeps, p: { userId: string; email: unknown; birth: unknown }): Promise<StartPurchaseOutcome> {
+  const owner = await isOwner(deps, p.userId);
+  const email = owner ? null : readEmail(p.email);
+  if (!owner && !email) return { ok: false, error: "invalid_email" };
+  const parsed = parseNatalBirth(p.birth, deps.now());
+  if (!parsed) return { ok: false, error: "invalid_birth" };
+  return purchaseFor(deps, { userId: p.userId, product: NATAL_REPORT_PRODUCT, birthDate: parsed.snapshot.date, email, natal: parsed.snapshot });
 }
 
 // «Попробовать снова» после отмены: та же дата и тот же e-mail, новая покупка
@@ -179,18 +212,24 @@ export async function retryPurchase(deps: PaymentsDeps, p: { userId: string; pur
   if (!purchase || purchase.userId !== p.userId || purchase.status !== "canceled" || !purchase.birthDate || !purchase.receiptEmail) {
     return { ok: false, error: "not_found" };
   }
-  return purchaseFor(deps, { userId: p.userId, birthDate: purchase.birthDate, email: purchase.receiptEmail });
+  // Натальный разбор повторяется по сохранённому снимку: без него (данные удалены) повторять нечего
+  if (purchase.product === NATAL_REPORT_PRODUCT && !purchase.natalInput) return { ok: false, error: "not_found" };
+  return purchaseFor(deps, { userId: p.userId, product: purchase.product, birthDate: purchase.birthDate, email: purchase.receiptEmail, natal: purchase.natalInput ?? undefined });
 }
 
 async function firstPaidOf(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<PurchaseRecord | null> {
   if (!purchase.birthDate) return null;
-  return findPaidPurchase(deps.db, { userId: purchase.userId, product: purchase.product, birthDate: purchase.birthDate });
+  return findPaidPurchase(deps.db, { userId: purchase.userId, product: purchase.product, birthDate: purchase.birthDate, inputKey: purchase.inputKey });
 }
+
+// Задача генерации — в очередь своего продукта
+const enqueueReport = (deps: PaymentsDeps, purchase: PurchaseRecord): Promise<void> =>
+  purchase.product === NATAL_REPORT_PRODUCT ? deps.enqueueGenerateNatal({ purchaseId: purchase.id }) : deps.enqueueGenerate({ purchaseId: purchase.id });
 
 async function enqueueIfFirst(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<void> {
   const first = await firstPaidOf(deps, purchase);
   if (!first) return;
-  if (first.id === purchase.id) await deps.enqueueGenerate({ purchaseId: purchase.id });
+  if (first.id === purchase.id) await enqueueReport(deps, purchase);
   else console.warn("duplicate paid purchase — refund manually", { purchaseId: purchase.id });
 }
 
@@ -242,7 +281,7 @@ export async function getPurchaseView(deps: PaymentsDeps, p: { purchaseId: strin
       console.error("payment sync failed", { purchaseId: purchase.id, error: String(error) });
     }
   }
-  const view = { id: purchase.id, birthDate: purchase.birthDate!, duplicateOf: null };
+  const view = { id: purchase.id, product: purchase.product, birthDate: purchase.birthDate!, duplicateOf: null };
   if (purchase.status === "pending") return { ...view, status: "pending" };
   if (purchase.status === "canceled") return { ...view, status: "canceled" };
 
@@ -250,7 +289,7 @@ export async function getPurchaseView(deps: PaymentsDeps, p: { purchaseId: strin
   if (first && first.id !== purchase.id) return { ...view, status: "ready", duplicateOf: first.id };
   if (await getReport(deps.db, purchase.id)) return { ...view, status: "ready" };
   // Задача могла не встать в очередь в момент оплаты — ставим ещё раз, id задачи тот же
-  await deps.enqueueGenerate({ purchaseId: purchase.id });
+  await enqueueReport(deps, purchase);
   return { ...view, status: "generating" };
 }
 

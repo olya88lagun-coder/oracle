@@ -35,7 +35,7 @@ export default async function CompatibilityPage() {
   const user = await currentUser();
   const portrait = user ? await loadPortrait({ db: getDb(), now: () => new Date() }, user.id) : null;
   const profileDate = portrait?.birthDate ? toIsoDate(portrait.birthDate) : null;
-  const paid = user ? (await listPaidPurchases(getDb(), user.id)).map((purchase) => ({ birthDate: purchase.birthDate, purchaseId: purchase.id })) : [];
+  const paid = user ? (await listPaidPurchases(getDb(), user.id)).filter((purchase) => purchase.product === "matrix_report").map((purchase) => ({ birthDate: purchase.birthDate, purchaseId: purchase.id })) : [];
   return (
     <main className="compat-scene">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(appJsonLd) }} />
