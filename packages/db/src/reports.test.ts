@@ -10,6 +10,7 @@ beforeEach(async () => {
 
 const CHAPTERS: StoredChapter[] = [
   { id: "core", source: "ai", paragraphs: ["Первый абзац.", "Второй абзац."] },
+  { id: "mind", source: "fallback", paragraphs: ["Меркурий."] },
   {
     id: "scenario",
     source: "fallback",

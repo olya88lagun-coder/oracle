@@ -19,6 +19,7 @@ import {
 } from "./testing";
 
 const PRODUCT = "matrix_report" as const;
+const SNAP = { date: "1990-03-07", time: "12:00", instant: "1990-03-07T08:00:00.000Z", latitude: 55.7558, longitude: 37.6173, placeName: "Москва" };
 const DATE = "1988-11-18";
 const T0 = new Date("2026-09-28T10:00:00Z");
 
@@ -200,5 +201,35 @@ describe("receipts to send", () => {
     expect(await markReceiptSent(db, unpaid.id, new Date())).toBe(false);
     expect(await markReceiptSent(db, "not-a-uuid", new Date())).toBe(false);
     expect((await getPurchase(db, unpaid.id))?.receiptEmail).toBe("a@b.ru");
+  });
+});
+
+describe("natal report purchases", () => {
+  test("keep the birth snapshot and find the paid purchase only by the same snapshot key", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-natal" });
+    const created = await createPurchase(db, { userId, product: "natal_report", natal: SNAP, receiptEmail: "a@b.ru", amountKopecks: 49_000 });
+    expect(created).toMatchObject({ product: "natal_report", birthDate: "1990-03-07", natalInput: SNAP, inputKey: "1990-03-07|12:00|55.76|37.62" });
+    await markPurchaseSucceeded(db, created.id, T0);
+
+    const key = { userId, product: "natal_report", birthDate: "1990-03-07", inputKey: "1990-03-07|12:00|55.76|37.62" } as const;
+    expect((await findPaidPurchase(db, key))?.id).toBe(created.id);
+    expect(await findPaidPurchase(db, { ...key, inputKey: "1990-03-07|12:05|55.76|37.62" })).toBeNull();
+    expect(await findPaidPurchase(db, { userId, product: "matrix_report", birthDate: "1990-03-07" })).toBeNull();
+    expect(await findPaidPurchase(db, { userId, product: "natal_report", birthDate: "1990-03-07" })).toBeNull();
+  });
+
+  test("a matrix purchase of the same date is not found by a natal key, and the list tells the products apart", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-both" });
+    const matrix = await createPurchase(db, { userId, product: "matrix_report", birthDate: "1990-03-07", receiptEmail: "a@b.ru", amountKopecks: 39_000 });
+    const natal = await createPurchase(db, { userId, product: "natal_report", natal: SNAP, receiptEmail: "a@b.ru", amountKopecks: 49_000 });
+    await markPurchaseSucceeded(db, matrix.id, T0);
+    await markPurchaseSucceeded(db, natal.id, new Date(T0.getTime() + 1000));
+
+    expect((await findPaidPurchase(db, { userId, product: "matrix_report", birthDate: "1990-03-07" }))?.id).toBe(matrix.id);
+    const list = await listPaidPurchases(db, userId);
+    expect(list.map((item) => [item.id, item.product])).toEqual([
+      [natal.id, "natal_report"],
+      [matrix.id, "matrix_report"],
+    ]);
   });
 });

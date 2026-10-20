@@ -152,4 +152,22 @@ describe("deleteUserData", () => {
     expect(await getReport(db, theirs.id)).not.toBeNull();
     expect(await getPurchase(db, theirs.id)).toMatchObject({ birthDate: "1990-05-14", receiptEmail: "c@d.ru" });
   });
+
+  test("wipes the natal snapshot and its key too, and removes the natal report", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-6" });
+    const natal = await createPurchase(db, {
+      userId,
+      product: "natal_report",
+      natal: { date: "1990-03-07", time: "12:00", instant: "1990-03-07T08:00:00.000Z", latitude: 55.7558, longitude: 37.6173, placeName: "Москва" },
+      receiptEmail: "a@b.ru",
+      amountKopecks: 49_000,
+    });
+    await markPurchaseSucceeded(db, natal.id, new Date("2026-10-20T10:00:00Z"));
+    await saveReport(db, { purchaseId: natal.id, chapters: [] });
+
+    await deleteUserData(db, userId);
+
+    expect(await getReport(db, natal.id)).toBeNull();
+    expect(await getPurchase(db, natal.id)).toMatchObject({ natalInput: null, inputKey: null, birthDate: null, receiptEmail: null, status: "succeeded", amountKopecks: 49_000 });
+  });
 });
