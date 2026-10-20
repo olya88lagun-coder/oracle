@@ -19,10 +19,12 @@ describe("natal texts data", () => {
     expect(checkNatalPages(NATAL_TEXTS)).toEqual([]);
   });
 
-  test("the first batch is complete: Sun, Moon and the ascendant in all twelve signs", () => {
-    const first = NATAL_PAGES.filter((page) => page.batch === 1);
-    expect(first).toHaveLength(36);
-    for (const page of first) expect(natalText(page.slug), page.slug).toBeDefined();
+  test("the batches written so far are complete: 1 (Sun, Moon, ascendant) and 2 (Mercury, Venus, Mars), 36 pages each", () => {
+    for (const batch of [1, 2]) {
+      const pages = NATAL_PAGES.filter((page) => page.batch === batch);
+      expect(pages, `партия ${batch}`).toHaveLength(36);
+      for (const page of pages) expect(natalText(page.slug), page.slug).toBeDefined();
+    }
   });
 
   test("only batch 1 is accepted, and every page of an accepted batch has its text", () => {
