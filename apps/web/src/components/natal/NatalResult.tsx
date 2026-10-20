@@ -7,7 +7,8 @@ import { NatalGlyph } from "./NatalGlyph";
 import { NatalKeys } from "./NatalKeys";
 import { NatalShareButton } from "./NatalShareButton";
 import { NatalTable } from "./NatalTable";
-import { NatalWheel, type NatalBirth } from "./NatalWheel";
+import type { NatalBirth } from "./NatalWheel";
+import { NatalWheelExplorer } from "./NatalWheelExplorer";
 
 type Props = {
   chart: NatalChart;
@@ -50,7 +51,7 @@ export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate, sa
         </div>
       </div>
       <div className="natal-result__details">
-        <NatalWheel chart={chart} birth={birth} />
+        <NatalWheelExplorer chart={chart} birth={birth} keyTexts={keyTexts} />
         <NatalTable chart={chart} registry={keyTexts} />
       </div>
       <NatalAspects chart={chart} />

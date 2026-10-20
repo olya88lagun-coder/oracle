@@ -154,3 +154,37 @@ test("the key blocks under the result link to the meaning pages", async ({ page 
   await expect(page).toHaveURL(/\/natalnaya-karta\/solntse-v-rybah$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Солнце в Рыбах");
 });
+
+test("the wheel explains a body and an axis by tap and by buttons, and Escape clears the choice", async ({ page }) => {
+  await fillBirth(page, { date: "1990-03-07", time: "12:00", city: "Москва" });
+  await calculate(page);
+  await expect(result(page)).toBeVisible();
+  const card = page.getByLabel("Пояснение к колесу");
+  await expect(card).toContainText("Нажмите на планету, знак или дом");
+
+  // Кнопка под колесом: то же, что нажатие на глиф, но доступно с клавиатуры
+  const sun = page.getByRole("button", { name: "Солнце", exact: true });
+  await sun.click();
+  await expect(card).toContainText("Солнце в Рыбах · 16°32′ · 10 дом");
+  await expect(sun).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".natal-wheel .wheel-point.is-selected")).toHaveAttribute("data-body", "sun");
+  await expect(page.locator(".natal-wheel .wheel-aspect.is-related").first()).toBeVisible();
+
+  // Нажатие прямо на колесо: Луна (глиф по центру её метки)
+  const moon = await page.locator('.natal-wheel .wheel-point[data-body="moon"]').boundingBox();
+  if (!moon) throw new Error("нет метки Луны на колесе");
+  await page.touchscreen.tap(moon.x + moon.width / 2, moon.y + moon.height / 2);
+  await expect(card).toContainText("Луна в Раке");
+
+  // Ось выбирается кнопкой, Escape снимает выбор (знак и дом по колесу проверяют модульные тесты hitTest)
+  await page.getByRole("button", { name: "Асцендент" }).click();
+  await expect(card).toContainText("Асцендент в Раке");
+  await page.getByRole("button", { name: "Асцендент" }).press("Escape");
+  await expect(card).toContainText("Нажмите на планету, знак или дом");
+  await expect(page.locator(".natal-wheel .is-selected, .natal-wheel .is-related")).toHaveCount(0);
+
+  // Выбор не уходит ни в адрес, ни в хранилище, а страница остаётся без горизонтальной прокрутки
+  expect(page.url()).not.toMatch(/Солнце|sun|selection/i);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});

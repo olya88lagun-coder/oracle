@@ -3038,3 +3038,164 @@ main:has(> .natal-intro) > .natal-disclaimer { max-width: none; }
 @media print {
   .natal-meaning .natal-toc { position: static; }
 }
+
+/* Интерактивное колесо (NatalWheelExplorer): выбор, пояснение и доступные кнопки.
+   Геометрия и базовые .wheel-* принятого рисунка сохраняются. */
+.natal-wheel-explorer { min-width: 0; container: natal-explorer / inline-size; }
+.natal-wheel-explorer > .natal-wheel {
+  padding: 16px 8px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+}
+.natal-wheel-explorer .natal-wheel__caption { margin: 12px auto 0; color: var(--ink-soft); }
+.natal-wheel--interactive > svg { cursor: pointer; touch-action: pan-y pinch-zoom; }
+.natal-wheel-explorer > .natal-wheel--selected { border-color: var(--accent-line); }
+
+.natal-wheel .wheel-highlight {
+  fill: var(--lavender-glow);
+  stroke: var(--lavender);
+  stroke-width: 1.6;
+  pointer-events: none;
+}
+.natal-wheel:has(.wheel-aspect.is-related) .wheel-aspect:not(.is-related) { opacity: .16; }
+.natal-wheel .wheel-aspect.is-related { opacity: 1; stroke-width: 1.8; }
+.natal-wheel .wheel-aspect.is-related[data-aspect="square"] { stroke-width: 2.3; }
+.natal-wheel .wheel-aspect.is-related[data-aspect="opposition"] { stroke-width: 2.8; }
+.natal-wheel .wheel-aspect.is-related[data-aspect="conjunction"] { stroke-width: 2; }
+.natal-wheel:has(.wheel-point.is-selected, .wheel-point.is-related) .wheel-point:not(.is-selected, .is-related) { opacity: .72; }
+.natal-wheel .wheel-point.is-related { color: var(--ink); }
+.natal-wheel .wheel-point.is-selected { color: var(--accent-hover); filter: drop-shadow(0 0 6px var(--accent-line)); }
+.natal-wheel .wheel-point.is-selected .wheel-point__degree,
+.natal-wheel .wheel-point.is-related .wheel-point__degree { fill: var(--ink); }
+.natal-wheel .wheel-sign.is-selected { color: var(--ink); }
+.natal-wheel .wheel-house-number.is-selected,
+.natal-wheel .wheel-angle.is-selected { fill: var(--ink); font-weight: 700; }
+
+.natal-wheel-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 33rem;
+  margin-top: 16px;
+  padding: 24px 20px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+.natal-wheel-card:has(> .natal-wheel-card__hint) { min-height: 13rem; }
+.natal-wheel-card:has(.natal-wheel-card__title)::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 20px;
+  width: 48px;
+  height: 2px;
+  background: var(--accent);
+}
+.natal-wheel-card__hint {
+  align-self: center;
+  max-width: 28ch;
+  margin-block: auto;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.75;
+  text-align: center;
+}
+.natal-wheel-card__hint::before {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent) 0 2px, var(--surface) 3px);
+}
+.natal-wheel-card__title {
+  margin: 0 0 20px;
+  color: var(--accent-hover);
+  font: 400 24px/1.3 var(--font-display);
+  letter-spacing: -.015em;
+  text-wrap: balance;
+}
+.natal-wheel-card__rows { display: grid; gap: 12px; margin: 0; }
+.natal-wheel-card__row + .natal-wheel-card__row { padding-top: 12px; border-top: 1px solid var(--line); }
+.natal-wheel-card__row dt { color: var(--ink-soft); font-size: 14px; line-height: 1.5; }
+.natal-wheel-card__row dd { margin: 4px 0 0; color: var(--ink); font-size: 15px; line-height: 1.6; }
+.natal-wheel-card__note { margin: 16px 0 12px; color: var(--ink-soft); font-size: 14px; line-height: 1.65; }
+.natal-wheel-card__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  margin-top: auto;
+  padding-block: 12px 4px;
+  border-top: 1px solid var(--line);
+  color: var(--accent);
+  font-size: 14px;
+  line-height: 1.6;
+  text-underline-offset: 4px;
+}
+.natal-wheel-card__link::after {
+  content: "";
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin-right: 4px;
+  border-top: 1px solid currentColor;
+  border-right: 1px solid currentColor;
+  transform: rotate(45deg);
+}
+.natal-wheel-card__link:hover { color: var(--accent-hover); }
+.natal-wheel-card__link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+
+.natal-wheel-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  margin-top: 12px;
+  padding: 6px 6px 12px;
+}
+.natal-wheel-picker__item {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 44px;
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 1px solid var(--natal-field-line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink-soft);
+  font: 500 14px/1.5 var(--font-body);
+  cursor: pointer;
+}
+.natal-wheel-picker__item:hover { border-color: var(--accent); color: var(--ink); background: var(--surface-2); }
+.natal-wheel-picker__item[aria-pressed="true"] {
+  padding: 9px 13px;
+  border: 2px solid var(--accent);
+  background: var(--surface-3);
+  color: var(--accent-hover);
+}
+.natal-wheel-picker__item:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+@container natal-explorer (min-width: 480px) {
+  .natal-wheel-card { min-height: 26rem; padding: 28px 24px 18px; }
+  .natal-wheel-card:has(.natal-wheel-card__title)::before { left: 24px; }
+  .natal-wheel-card__row { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; }
+  .natal-wheel-card__row dd { margin-top: 0; }
+  .natal-wheel-picker { padding-bottom: 0; }
+}
+@container natal-explorer (max-width: 320px) { .natal-wheel-card { min-height: 38rem; } }
+@media (prefers-reduced-motion: no-preference) {
+  .natal-wheel .wheel-aspect,
+  .natal-wheel .wheel-point { transition: opacity var(--dur-fast) var(--ease-out); }
+  .natal-wheel-picker__item,
+  .natal-wheel-explorer > .natal-wheel { transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out); }
+}
