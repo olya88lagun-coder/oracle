@@ -68,3 +68,27 @@ describe("NatalReportOffer", () => {
     expect(markup).not.toContain("report-toc");
   });
 });
+
+describe("NatalReportOffer topic question", () => {
+  const markup = render({ kind: "guest" });
+
+  test("asks what matters most with six unpressed topic buttons, and marks nothing before a choice", () => {
+    expect(text(markup)).toContain("Что для вас сейчас важнее всего?");
+    const buttons = markup.match(/<button[^>]*natal-offer__topic"[^>]*>/g) ?? [];
+    expect(buttons).toHaveLength(6);
+    expect(buttons.every((button) => button.includes('aria-pressed="false"') && button.includes('type="button"'))).toBe(true);
+    expect(markup).not.toContain("natal-offer__chapter--picked");
+    expect(markup).not.toContain("Ваша тема");
+  });
+
+  test("is a labelled group and adds no heading, form or role=status", () => {
+    expect(markup).toContain('role="group" aria-label="Тема, которая вам сейчас ближе"');
+    expect(markup.match(/<h3/g)).toHaveLength(1);
+    expect(markup).not.toContain('role="status"');
+  });
+
+  test("shows the topics also to a signed-in person, and not without the birth time", () => {
+    expect(render({ kind: "buy" })).toContain("natal-offer__topic-buttons");
+    expect(render({ kind: "no_time" }, { withChart: noTime })).not.toContain("natal-offer__topic");
+  });
+});
