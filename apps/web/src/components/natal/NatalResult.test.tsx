@@ -193,6 +193,20 @@ describe("NatalAspects", () => {
   });
 });
 
+describe("NatalResult with the shipped meaning pages", () => {
+  test("links the planets and the ascendant in the table to their pages, and the lunar node and the midheaven to none", () => {
+    const markup = renderToStaticMarkup(<NatalResult chart={withTime} birth={SAMPLE_BIRTH} />);
+    const table = markup.slice(markup.indexOf("<table"), markup.indexOf("</table>"));
+    const hrefs = [...table.matchAll(/class="natal-table__meaning-link" href="([^"]+)"/g)].map((match) => match[1]);
+    expect(hrefs).toHaveLength(11);
+    expect(hrefs).toContain("/natalnaya-karta/solntse-v-rybah");
+    expect(hrefs).toContain("/natalnaya-karta/ascendent-v-rake");
+    expect(hrefs.every((href) => /^\/natalnaya-karta\/[a-z-]+$/.test(href ?? ""))).toBe(true);
+    const rows = rowsOf(table);
+    expect(rows.filter((row) => !row.includes("natal-table__meaning-link"))).toHaveLength(2);
+  });
+});
+
 describe("NatalResult save slot", () => {
   test("puts the save action first in the actions row, before the share and recalculate buttons", () => {
     const markup = renderToStaticMarkup(<NatalResult chart={withTime} birth={SAMPLE_BIRTH} saveAction={<span data-testid="save-slot">save</span>} />);

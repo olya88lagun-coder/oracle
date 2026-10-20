@@ -23,7 +23,7 @@ function KeyBlock(props: { idPrefix: string; body: NatalKeyBody; title: string; 
     <article className="natal-key" id={id}>
       <h4 className="natal-key__title">{props.title}</h4>
       <p>{published.summary}</p>
-      <Link className="natal-key__link" href={published.href}>
+      <Link className="natal-key__link" href={published.href} prefetch={false}>
         {READ_FULL}
       </Link>
     </article>
