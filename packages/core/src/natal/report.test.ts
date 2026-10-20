@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "vitest";
 import { computeNatalChart } from "./chart";
 import { mainAspects, NATAL_CHAPTER_IDS, NATAL_CHAPTER_TITLES, natalChapterOutline } from "./report";
@@ -45,5 +47,14 @@ describe("mainAspects", () => {
     expect(main.length).toBeLessThanOrEqual(7);
     expect(main).toEqual(chart.aspects.slice(0, 7));
     expect(mainAspects(chart, 3)).toEqual(chart.aspects.slice(0, 3));
+  });
+});
+
+describe("the light entry @oracle/core/natal-report", () => {
+  test("imports only types, so the calculator page does not pull the astronomy engine into its first load", () => {
+    const source = readFileSync(fileURLToPath(new URL("./report.ts", import.meta.url)), "utf8");
+    const imports = source.split("\n").filter((line) => line.startsWith("import "));
+    expect(imports.length).toBeGreaterThan(0);
+    for (const line of imports) expect(line, line).toMatch(/^import type /);
   });
 });
