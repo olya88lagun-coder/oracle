@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LILA_SESSION_PRICE_KOPECKS, MATRIX_REPORT_PRICE_KOPECKS } from "@oracle/core";
+import { LILA_SESSION_PRICE_KOPECKS, MATRIX_REPORT_PRICE_KOPECKS, NATAL_REPORT_PRICE_KOPECKS, NATAL_REPORT_REFUND_DAYS } from "@oracle/core";
 import { DocumentPage, type DocumentSection } from "@/components/document/DocumentPage";
 import { DISCLAIMER, formatRubles, OPERATOR } from "@/lib/legal";
 import { publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
@@ -49,6 +49,13 @@ export default function ContactsPage() {
             Разбор покупается на странице <Link href="/matrica-sudby">матрицы судьбы</Link> после входа через VK ID. Оплата — на странице ЮKassa способами,
             которые она предлагает. Разбор готов в течение нескольких минут после оплаты и хранится в «Моём портрете». Чек «Мой налог» приходит на e-mail,
             указанный при покупке. Условия, порядок оказания и возвраты — в <Link href="/oferta">оферте</Link>.
+          </p>
+          <p>
+            «Разбор натальной карты» — персональный текстовый разбор карты по дате, времени и месту рождения: девять глав о ядре карты, мышлении, любви,
+            действии, деле и деньгах, росте, глубоких слоях, главных аспектах и итоговый сценарий. Стоимость — {formatRubles(NATAL_REPORT_PRICE_KOPECKS)}.
+            Разбор покупается на странице <Link href="/natalnaya-karta">натальной карты</Link> после расчёта и входа через VK ID; нужно знать время
+            рождения. Оплата и чек — как для разбора матрицы. Деньги можно вернуть в течение {NATAL_REPORT_REFUND_DAYS} дней со дня оплаты, подробности в{" "}
+            <Link href="/oferta">оферте</Link>.
           </p>
           <p>
             «Сессия Лилы с проводником» — одна партия игры «Лила» с короткими абзацами проводника на ходах и итоговым выводом с файлом PDF. Стоимость —{" "}
