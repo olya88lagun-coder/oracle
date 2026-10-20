@@ -1,0 +1,1130 @@
+{
+  "sources": {
+    "horizons": "NASA/JPL Horizons API (https://ssd.jpl.nasa.gov/api/horizons.api), эфемериды DE441. Геоцентр (CENTER=500@399), QUANTITIES=31 (ObsEcLon): кажущаяся эклиптическая долгота тела с учётом времени пробега света и аберрации, в эклиптике и равноденствии даты. Время — юлианский день по UT.",
+    "swissEphemeris": "Swiss Ephemeris 2.10.03 (npm sweph), режим Moshier без файлов данных (SEFLG_MOSEPH): планеты, средний лунный узел (SE_MEAN_NODE), куспиды домов, асцендент и МС (houses_ex: Плацидус 'P', выше 66° с. ш. — Порфирий 'O')",
+    "retrieved": "2026-10-19",
+    "note": "Значения взяты из запросов, не придуманы и не выведены из нашего кода. Узел Swiss включает нутацию (≈ ±17″) — у нашего среднего узла (формула Мееуса, средний equinox) её нет."
+  },
+  "cases": [
+    {
+      "id": "moscow-1990-sample",
+      "label": "Москва, образец плана: 7 марта 1990, 12:00 по Москве",
+      "utc": "1990-03-07T09:00:00Z",
+      "latitude": 55.7558,
+      "longitude": 37.6173,
+      "julianDayUt": 2447957.875,
+      "bodies": {
+        "sun": {
+          "horizons": 346.5296395,
+          "swiss": 346.5296367,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 118.1177568,
+          "swiss": 118.118073,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 336.3092534,
+          "swiss": 336.3092511,
+          "retrograde": false
+        },
+        "venus": {
+          "horizons": 302.6005987,
+          "swiss": 302.6005688,
+          "retrograde": false
+        },
+        "mars": {
+          "horizons": 296.8329105,
+          "swiss": 296.8329239,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 90.9936459,
+          "swiss": 90.9935788,
+          "retrograde": false
+        },
+        "saturn": {
+          "horizons": 292.6813632,
+          "swiss": 292.6814101,
+          "retrograde": false
+        },
+        "uranus": {
+          "horizons": 278.9915139,
+          "swiss": 278.9915755,
+          "retrograde": false
+        },
+        "neptune": {
+          "horizons": 284.1357588,
+          "swiss": 284.1357973,
+          "retrograde": false
+        },
+        "pluto": {
+          "horizons": 227.7109656,
+          "swiss": 227.7110208,
+          "retrograde": true
+        }
+      },
+      "meanNode": 314.999931,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          104.1281788,
+          117.72815,
+          133.6997018,
+          155.6391922,
+          190.2718348,
+          241.7835333,
+          284.1281788,
+          297.72815,
+          313.6997018,
+          335.6391922,
+          10.2718348,
+          61.7835333
+        ],
+        "ascendant": 104.1281788,
+        "midheaven": 335.6391922
+      }
+    },
+    {
+      "id": "greenwich-j2000",
+      "label": "Гринвич, 1 января 2000, 12:00 UTC (J2000)",
+      "utc": "2000-01-01T12:00:00Z",
+      "latitude": 51.4779,
+      "longitude": 0,
+      "julianDayUt": 2451545,
+      "bodies": {
+        "sun": {
+          "horizons": 280.3689092,
+          "swiss": 280.3689197,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 223.323786,
+          "swiss": 223.3237754,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 271.8892699,
+          "swiss": 271.889275,
+          "retrograde": false
+        },
+        "venus": {
+          "horizons": 241.5657794,
+          "swiss": 241.5657983,
+          "retrograde": false
+        },
+        "mars": {
+          "horizons": 327.9632921,
+          "swiss": 327.9633133,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 25.2530685,
+          "swiss": 25.2530303,
+          "retrograde": false
+        },
+        "saturn": {
+          "horizons": 40.3956366,
+          "swiss": 40.395639,
+          "retrograde": true
+        },
+        "uranus": {
+          "horizons": 314.809168,
+          "swiss": 314.8092232,
+          "retrograde": false
+        },
+        "neptune": {
+          "horizons": 303.1930007,
+          "swiss": 303.1929812,
+          "retrograde": false
+        },
+        "pluto": {
+          "horizons": 251.4547644,
+          "swiss": 251.4547088,
+          "retrograde": false
+        }
+      },
+      "meanNode": 125.0406461,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          24.2661892,
+          61.1424013,
+          82.0208144,
+          99.6110878,
+          119.0619094,
+          147.7006568,
+          204.2661892,
+          241.1424013,
+          262.0208144,
+          279.6110878,
+          299.0619094,
+          327.7006568
+        ],
+        "ascendant": 24.2661892,
+        "midheaven": 279.6110878
+      }
+    },
+    {
+      "id": "new-york-1969",
+      "label": "Нью-Йорк, 20 июля 1969, 20:17 UTC",
+      "utc": "1969-07-20T20:17:00Z",
+      "latitude": 40.7128,
+      "longitude": -74.006,
+      "julianDayUt": 2440423.34513889,
+      "bodies": {
+        "sun": {
+          "horizons": 117.9107302,
+          "swiss": 117.9107531,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 187.8737519,
+          "swiss": 187.8738965,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 115.8428987,
+          "swiss": 115.8429224,
+          "retrograde": false
+        },
+        "venus": {
+          "horizons": 75.0374087,
+          "swiss": 75.0374322,
+          "retrograde": false
+        },
+        "mars": {
+          "horizons": 242.7732832,
+          "swiss": 242.7732491,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 180.7462243,
+          "swiss": 180.7462352,
+          "retrograde": false
+        },
+        "saturn": {
+          "horizons": 38.0979955,
+          "swiss": 38.098004,
+          "retrograde": false
+        },
+        "uranus": {
+          "horizons": 180.6900011,
+          "swiss": 180.6899535,
+          "retrograde": false
+        },
+        "neptune": {
+          "horizons": 236.0229075,
+          "swiss": 236.0229188,
+          "retrograde": true
+        },
+        "pluto": {
+          "horizons": 173.0071871,
+          "swiss": 173.0072765,
+          "retrograde": false
+        }
+      },
+      "meanNode": 353.9789591,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          241.9462506,
+          273.7683206,
+          310.9780962,
+          347.6862714,
+          18.0350187,
+          41.9579144,
+          61.9462506,
+          93.7683206,
+          130.9780962,
+          167.6862714,
+          198.0350187,
+          221.9579144
+        ],
+        "ascendant": 241.9462506,
+        "midheaven": 167.6862714
+      }
+    },
+    {
+      "id": "sydney-1985",
+      "label": "Сидней, 25 декабря 1985, 03:30 UTC (южное полушарие)",
+      "utc": "1985-12-25T03:30:00Z",
+      "latitude": -33.8688,
+      "longitude": 151.2093,
+      "julianDayUt": 2446424.64583333,
+      "bodies": {
+        "sun": {
+          "horizons": 273.2831813,
+          "swiss": 273.283173,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 69.286032,
+          "swiss": 69.2859045,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 253.3529796,
+          "swiss": 253.3529692,
+          "retrograde": false
+        },
+        "venus": {
+          "horizons": 267.1798636,
+          "swiss": 267.1798661,
+          "retrograde": false
+        },
+        "mars": {
+          "horizons": 216.3733005,
+          "swiss": 216.3733183,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 316.821655,
+          "swiss": 316.8217623,
+          "retrograde": false
+        },
+        "saturn": {
+          "horizons": 244.4267027,
+          "swiss": 244.4267046,
+          "retrograde": false
+        },
+        "uranus": {
+          "horizons": 259.0960965,
+          "swiss": 259.0961786,
+          "retrograde": false
+        },
+        "neptune": {
+          "horizons": 273.3272638,
+          "swiss": 273.3272856,
+          "retrograde": false
+        },
+        "pluto": {
+          "horizons": 216.7454348,
+          "swiss": 216.7454818,
+          "retrograde": false
+        }
+      },
+      "meanNode": 36.1838239,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          22.9693187,
+          51.2911992,
+          82.3988888,
+          115.3427753,
+          147.9072343,
+          177.538914,
+          202.9693187,
+          231.2911992,
+          262.3988888,
+          295.3427753,
+          327.9072343,
+          357.538914
+        ],
+        "ascendant": 22.9693187,
+        "midheaven": 295.3427753
+      }
+    },
+    {
+      "id": "murmansk-1990",
+      "label": "Мурманск, 7 марта 1990, 09:00 UTC (за полярным кругом, дома Порфирия)",
+      "utc": "1990-03-07T09:00:00Z",
+      "latitude": 68.9585,
+      "longitude": 33.0827,
+      "julianDayUt": 2447957.875,
+      "bodies": {
+        "sun": {
+          "horizons": 346.5296395,
+          "swiss": 346.5296367,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 118.1177568,
+          "swiss": 118.118073,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 336.3092534,
+          "swiss": 336.3092511,
+          "retrograde": false
+        },
+        "venus": {
+          "horizons": 302.6005987,
+          "swiss": 302.6005688,
+          "retrograde": false
+        },
+        "mars": {
+          "horizons": 296.8329105,
+          "swiss": 296.8329239,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 90.9936459,
+          "swiss": 90.9935788,
+          "retrograde": false
+        },
+        "saturn": {
+          "horizons": 292.6813632,
+          "swiss": 292.6814101,
+          "retrograde": false
+        },
+        "uranus": {
+          "horizons": 278.9915139,
+          "swiss": 278.9915755,
+          "retrograde": false
+        },
+        "neptune": {
+          "horizons": 284.1357588,
+          "swiss": 284.1357973,
+          "retrograde": false
+        },
+        "pluto": {
+          "horizons": 227.7109656,
+          "swiss": 227.7110208,
+          "retrograde": true
+        }
+      },
+      "meanNode": 314.999931,
+      "houses": {
+        "system": "porphyry",
+        "cusps": [
+          124.6929389,
+          133.4137774,
+          142.1346158,
+          150.8554542,
+          202.1346158,
+          253.4137774,
+          304.6929389,
+          313.4137774,
+          322.1346158,
+          330.8554542,
+          22.1346158,
+          73.4137774
+        ],
+        "ascendant": 124.6929389,
+        "midheaven": 330.8554542
+      }
+    },
+    {
+      "id": "reykjavik-1975",
+      "label": "Рейкьявик, 21 июня 1975, 12:00 UTC (64°, предел Плацидуса)",
+      "utc": "1975-06-21T12:00:00Z",
+      "latitude": 64.1466,
+      "longitude": -21.9426,
+      "julianDayUt": 2442585,
+      "bodies": {
+        "sun": {
+          "horizons": 89.5055534,
+          "swiss": 89.5055579,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 242.4839444,
+          "swiss": 242.4840592,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 75.0628295,
+          "swiss": 75.06282,
+          "retrograde": true
+        },
+        "venus": {
+          "horizons": 134.8467159,
+          "swiss": 134.8467213,
+          "retrograde": false
+        },
+        "mars": {
+          "horizons": 23.0551216,
+          "swiss": 23.0551612,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 20.2539849,
+          "swiss": 20.2540292,
+          "retrograde": false
+        },
+        "saturn": {
+          "horizons": 109.4134795,
+          "swiss": 109.4135172,
+          "retrograde": false
+        },
+        "uranus": {
+          "horizons": 208.4639478,
+          "swiss": 208.4639881,
+          "retrograde": true
+        },
+        "neptune": {
+          "horizons": 249.8974558,
+          "swiss": 249.8974392,
+          "retrograde": true
+        },
+        "pluto": {
+          "horizons": 186.4862386,
+          "swiss": 186.4864651,
+          "retrograde": false
+        }
+      },
+      "meanNode": 239.5145338,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          166.8663062,
+          184.8603595,
+          210.7761642,
+          248.836101,
+          293.3057769,
+          324.4229911,
+          346.8663062,
+          4.8603595,
+          30.7761642,
+          68.836101,
+          113.3057769,
+          144.4229911
+        ],
+        "ascendant": 166.8663062,
+        "midheaven": 68.836101
+      }
+    },
+    {
+      "id": "quito-1999",
+      "label": "Кито, 9 сентября 1999, 09:09 UTC (экватор)",
+      "utc": "1999-09-09T09:09:00Z",
+      "latitude": -0.1807,
+      "longitude": -78.4678,
+      "julianDayUt": 2451430.88125,
+      "bodies": {
+        "sun": {
+          "horizons": 166.2539242,
+          "swiss": 166.2539262,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 159.6366098,
+          "swiss": 159.6363221,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 166.9517172,
+          "swiss": 166.9517169,
+          "retrograde": false
+        },
+        "venus": {
+          "horizons": 138.840432,
+          "swiss": 138.8403728,
+          "retrograde": true
+        },
+        "mars": {
+          "horizons": 244.1649174,
+          "swiss": 244.1649601,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 34.599542,
+          "swiss": 34.5995583,
+          "retrograde": true
+        },
+        "saturn": {
+          "horizons": 47.0865264,
+          "swiss": 47.0865373,
+          "retrograde": true
+        },
+        "uranus": {
+          "horizons": 313.6077002,
+          "swiss": 313.6077519,
+          "retrograde": true
+        },
+        "neptune": {
+          "horizons": 301.9043922,
+          "swiss": 301.9043707,
+          "retrograde": true
+        },
+        "pluto": {
+          "horizons": 247.8630753,
+          "swiss": 247.8629962,
+          "retrograde": false
+        }
+      },
+      "meanNode": 131.0840565,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          134.2392666,
+          165.6026125,
+          198.178602,
+          229.2115387,
+          257.7937501,
+          285.3982992,
+          314.2392666,
+          345.6026125,
+          18.178602,
+          49.2115387,
+          77.7937501,
+          105.3982992
+        ],
+        "ascendant": 134.2392666,
+        "midheaven": 49.2115387
+      }
+    },
+    {
+      "id": "london-1900",
+      "label": "Лондон, 1 января 1900, 12:00 UTC (начало допустимых дат)",
+      "utc": "1900-01-01T12:00:00Z",
+      "latitude": 51.5074,
+      "longitude": -0.1278,
+      "julianDayUt": 2415021,
+      "bodies": {
+        "sun": {
+          "horizons": 280.6632209,
+          "swiss": 280.6632881,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 279.6163189,
+          "swiss": 279.6164082,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 259.6392831,
+          "swiss": 259.6393546,
+          "retrograde": false
+        },
+        "venus": {
+          "horizons": 306.9960853,
+          "swiss": 306.9961637,
+          "retrograde": false
+        },
+        "mars": {
+          "horizons": 284.2529683,
+          "swiss": 284.2530343,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 241.2335461,
+          "swiss": 241.2335762,
+          "retrograde": false
+        },
+        "saturn": {
+          "horizons": 267.7748827,
+          "swiss": 267.7749568,
+          "retrograde": false
+        },
+        "uranus": {
+          "horizons": 250.1667884,
+          "swiss": 250.1668294,
+          "retrograde": false
+        },
+        "neptune": {
+          "horizons": 85.2050798,
+          "swiss": 85.2051734,
+          "retrograde": true
+        },
+        "pluto": {
+          "horizons": 75.2427825,
+          "swiss": 75.2427546,
+          "retrograde": true
+        }
+      },
+      "meanNode": 259.1348538,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          24.5250716,
+          61.3041171,
+          82.1332983,
+          99.6988756,
+          119.1439732,
+          147.8178821,
+          204.5250716,
+          241.3041171,
+          262.1332983,
+          279.6988756,
+          299.1439732,
+          327.8178821
+        ],
+        "ascendant": 24.5250716,
+        "midheaven": 279.6988756
+      }
+    },
+    {
+      "id": "moscow-1905",
+      "label": "Москва, 5 мая 1905, 08:00 UTC",
+      "utc": "1905-05-05T08:00:00Z",
+      "latitude": 55.7558,
+      "longitude": 37.6173,
+      "julianDayUt": 2416970.83333333,
+      "bodies": {
+        "sun": {
+          "horizons": 44.1431512,
+          "swiss": 44.14322,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 51.664844,
+          "swiss": 51.6652337,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 27.3499078,
+          "swiss": 27.349982,
+          "retrograde": true
+        },
+        "venus": {
+          "horizons": 31.805125,
+          "swiss": 31.805147,
+          "retrograde": true
+        },
+        "mars": {
+          "horizons": 228.7858562,
+          "swiss": 228.7857929,
+          "retrograde": true
+        },
+        "jupiter": {
+          "horizons": 43.3604191,
+          "swiss": 43.3604955,
+          "retrograde": false
+        },
+        "saturn": {
+          "horizons": 331.6560006,
+          "swiss": 331.6560965,
+          "retrograde": false
+        },
+        "uranus": {
+          "horizons": 273.9512966,
+          "swiss": 273.9513487,
+          "retrograde": true
+        },
+        "neptune": {
+          "horizons": 96.0254578,
+          "swiss": 96.0255082,
+          "retrograde": false
+        },
+        "pluto": {
+          "horizons": 80.3470737,
+          "swiss": 80.3470608,
+          "retrograde": false
+        }
+      },
+      "meanNode": 155.8763641,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          133.8038923,
+          149.7122536,
+          171.1431441,
+          201.7891037,
+          243.5120614,
+          284.1883215,
+          313.8038923,
+          329.7122536,
+          351.1431441,
+          21.7891037,
+          63.5120614,
+          104.1883215
+        ],
+        "ascendant": 133.8038923,
+        "midheaven": 21.7891037
+      }
+    },
+    {
+      "id": "moscow-2024-ingress",
+      "label": "Москва, 20 марта 2024, 06:00 UTC (сразу после вхождения Солнца в Овен)",
+      "utc": "2024-03-20T06:00:00Z",
+      "latitude": 55.7558,
+      "longitude": 37.6173,
+      "julianDayUt": 2460389.75,
+      "bodies": {
+        "sun": {
+          "horizons": 0.1197511,
+          "swiss": 0.1197632,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 125.275121,
+          "swiss": 125.2753877,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 17.6159202,
+          "swiss": 17.6159375,
+          "retrograde": false
+        },
+        "venus": {
+          "horizons": 340.3207628,
+          "swiss": 340.3207743,
+          "retrograde": false
+        },
+        "mars": {
+          "horizons": 327.8673949,
+          "swiss": 327.8674116,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 44.9099055,
+          "swiss": 44.9099639,
+          "retrograde": false
+        },
+        "saturn": {
+          "horizons": 342.2397272,
+          "swiss": 342.2397805,
+          "retrograde": false
+        },
+        "uranus": {
+          "horizons": 50.2587916,
+          "swiss": 50.2588111,
+          "retrograde": false
+        },
+        "neptune": {
+          "horizons": 357.4648648,
+          "swiss": 357.4647898,
+          "retrograde": false
+        },
+        "pluto": {
+          "horizons": 301.6630429,
+          "swiss": 301.6630122,
+          "retrograde": false
+        }
+      },
+      "meanNode": 16.6805937,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          74.8175309,
+          92.0465516,
+          106.8647481,
+          123.572002,
+          147.4211848,
+          191.0926255,
+          254.8175309,
+          272.0465516,
+          286.8647481,
+          303.572002,
+          327.4211848,
+          11.0926255
+        ],
+        "ascendant": 74.8175309,
+        "midheaven": 303.572002
+      }
+    },
+    {
+      "id": "tokyo-2023",
+      "label": "Токио, 14 октября 2023, 18:00 UTC",
+      "utc": "2023-10-14T18:00:00Z",
+      "latitude": 35.6762,
+      "longitude": 139.6503,
+      "julianDayUt": 2460232.25,
+      "bodies": {
+        "sun": {
+          "horizons": 201.129388,
+          "swiss": 201.1294189,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 201.1676275,
+          "swiss": 201.1676963,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 197.1844679,
+          "swiss": 197.1844962,
+          "retrograde": false
+        },
+        "venus": {
+          "horizons": 155.0462142,
+          "swiss": 155.0462374,
+          "retrograde": false
+        },
+        "mars": {
+          "horizons": 211.7463129,
+          "swiss": 211.7463309,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 43.0327978,
+          "swiss": 43.0328089,
+          "retrograde": true
+        },
+        "saturn": {
+          "horizons": 330.8701331,
+          "swiss": 330.8701518,
+          "retrograde": true
+        },
+        "uranus": {
+          "horizons": 52.2282627,
+          "swiss": 52.2282861,
+          "retrograde": true
+        },
+        "neptune": {
+          "horizons": 355.601299,
+          "swiss": 355.6012166,
+          "retrograde": true
+        },
+        "pluto": {
+          "horizons": 297.8951664,
+          "swiss": 297.8950912,
+          "retrograde": false
+        }
+      },
+      "meanNode": 25.0196973,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          165.618248,
+          191.4259561,
+          221.3462051,
+          254.0275932,
+          286.972502,
+          317.875386,
+          345.618248,
+          11.4259561,
+          41.3462051,
+          74.0275932,
+          106.972502,
+          137.875386
+        ],
+        "ascendant": 165.618248,
+        "midheaven": 74.0275932
+      }
+    },
+    {
+      "id": "cape-town-1960",
+      "label": "Кейптаун, 29 февраля 1960, 00:00 UTC (високосный день)",
+      "utc": "1960-02-29T00:00:00Z",
+      "latitude": -33.9249,
+      "longitude": 18.4241,
+      "julianDayUt": 2436993.5,
+      "bodies": {
+        "sun": {
+          "horizons": 339.4176733,
+          "swiss": 339.4176898,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 7.3751481,
+          "swiss": 7.3756362,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 355.6566687,
+          "swiss": 355.6566847,
+          "retrograde": false
+        },
+        "venus": {
+          "horizons": 310.2078699,
+          "swiss": 310.2078938,
+          "retrograde": false
+        },
+        "mars": {
+          "horizons": 304.4422923,
+          "swiss": 304.4423055,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 269.7850362,
+          "swiss": 269.7850343,
+          "retrograde": false
+        },
+        "saturn": {
+          "horizons": 285.7731342,
+          "swiss": 285.7731419,
+          "retrograde": false
+        },
+        "uranus": {
+          "horizons": 138.1669667,
+          "swiss": 138.1669383,
+          "retrograde": true
+        },
+        "neptune": {
+          "horizons": 219.0383588,
+          "swiss": 219.0383156,
+          "retrograde": true
+        },
+        "pluto": {
+          "horizons": 154.786181,
+          "swiss": 154.7863636,
+          "retrograde": true
+        }
+      },
+      "meanNode": 175.6015049,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          281.7396766,
+          303.1093899,
+          326.8904135,
+          355.8996688,
+          31.0783502,
+          68.3327109,
+          101.7396766,
+          123.1093899,
+          146.8904135,
+          175.8996688,
+          211.0783502,
+          248.3327109
+        ],
+        "ascendant": 281.7396766,
+        "midheaven": 175.8996688
+      }
+    },
+    {
+      "id": "moscow-1980-mercury-retro",
+      "label": "Москва, 15 апреля 1980, 12:00 UTC",
+      "utc": "1980-04-15T12:00:00Z",
+      "latitude": 55.7558,
+      "longitude": 37.6173,
+      "julianDayUt": 2444345,
+      "bodies": {
+        "sun": {
+          "horizons": 25.6663185,
+          "swiss": 25.6663287,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 30.518729,
+          "swiss": 30.5185084,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 1.2033935,
+          "swiss": 1.2034005,
+          "retrograde": false
+        },
+        "venus": {
+          "horizons": 71.0614384,
+          "swiss": 71.0614515,
+          "retrograde": false
+        },
+        "mars": {
+          "horizons": 146.3633265,
+          "swiss": 146.3633328,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 150.4238977,
+          "swiss": 150.4239753,
+          "retrograde": true
+        },
+        "saturn": {
+          "horizons": 171.3193208,
+          "swiss": 171.3192653,
+          "retrograde": true
+        },
+        "uranus": {
+          "horizons": 234.6935477,
+          "swiss": 234.6936187,
+          "retrograde": true
+        },
+        "neptune": {
+          "horizons": 262.5479501,
+          "swiss": 262.5480392,
+          "retrograde": true
+        },
+        "pluto": {
+          "horizons": 200.2469164,
+          "swiss": 200.2470397,
+          "retrograde": true
+        }
+      },
+      "meanNode": 146.3087288,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          161.0050906,
+          181.0819465,
+          208.0038804,
+          243.4381052,
+          283.0043296,
+          315.7103028,
+          341.0050906,
+          1.0819465,
+          28.0038804,
+          63.4381052,
+          103.0043296,
+          135.7103028
+        ],
+        "ascendant": 161.0050906,
+        "midheaven": 63.4381052
+      }
+    },
+    {
+      "id": "singapore-2010",
+      "label": "Сингапур, 10 октября 2010, 02:00 UTC",
+      "utc": "2010-10-10T02:00:00Z",
+      "latitude": 1.3521,
+      "longitude": 103.8198,
+      "julianDayUt": 2455479.58333333,
+      "bodies": {
+        "sun": {
+          "horizons": 196.6696012,
+          "swiss": 196.6696028,
+          "retrograde": false
+        },
+        "moon": {
+          "horizons": 228.2161117,
+          "swiss": 228.2164056,
+          "retrograde": false
+        },
+        "mercury": {
+          "horizons": 191.4997873,
+          "swiss": 191.4997943,
+          "retrograde": false
+        },
+        "venus": {
+          "horizons": 223.170028,
+          "swiss": 223.1700068,
+          "retrograde": true
+        },
+        "mars": {
+          "horizons": 227.1440871,
+          "swiss": 227.1440889,
+          "retrograde": false
+        },
+        "jupiter": {
+          "horizons": 356.0120616,
+          "swiss": 356.0120496,
+          "retrograde": true
+        },
+        "saturn": {
+          "horizons": 188.8595021,
+          "swiss": 188.8594727,
+          "retrograde": false
+        },
+        "uranus": {
+          "horizons": 357.8871857,
+          "swiss": 357.8871764,
+          "retrograde": true
+        },
+        "neptune": {
+          "horizons": 326.1303358,
+          "swiss": 326.1302609,
+          "retrograde": true
+        },
+        "pluto": {
+          "horizons": 272.9636754,
+          "swiss": 272.9635799,
+          "retrograde": false
+        }
+      },
+      "meanNode": 276.6979755,
+      "houses": {
+        "system": "placidus",
+        "cusps": [
+          243.8802056,
+          271.8402052,
+          300.0478483,
+          330.3214166,
+          2.6025299,
+          34.4519674,
+          63.8802056,
+          91.8402052,
+          120.0478483,
+          150.3214166,
+          182.6025299,
+          214.4519674
+        ],
+        "ascendant": 243.8802056,
+        "midheaven": 150.3214166
+      }
+    }
+  ]
+}
