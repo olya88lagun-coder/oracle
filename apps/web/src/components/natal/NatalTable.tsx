@@ -21,7 +21,7 @@ import { NATAL_KEY_TEXTS, keyTextFor, type NatalKeyBody, type NatalKeyRegistry }
 import { NatalGlyph, bodyGlyphId } from "./NatalGlyph";
 
 // Таблица положений: десять тел, лунный узел и, если известно время, асцендент с МС. Без времени столбца «Дом», строк осей и подписи о домах нет.
-// Название тела и асцендента — ссылка на страницу значения, если она открыта; у лунного узла и МС страниц значений нет
+// Название тела и асцендента — ссылка на страницу значения, если она открыта; у МС страниц значений нет; у лунного узла страница «Северный узел в знаке» открывается после вычитки партии
 
 type Row = { key: string; name: RowName; sign: ChartPoint["sign"]; degree: number; retrograde: boolean; house: string; meaningBody: NatalKeyBody | null };
 type RowName = { glyph: string | null; axis: string | null; text: string };
@@ -34,7 +34,7 @@ function pointRow(point: ChartPoint): Row {
     degree: point.degree,
     retrograde: point.retrograde,
     house: point.house === null ? TABLE_NO_HOUSE : String(point.house),
-    meaningBody: point.id === "northNode" ? null : point.id,
+    meaningBody: point.id,
   };
 }
 

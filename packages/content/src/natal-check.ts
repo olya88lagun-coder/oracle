@@ -4,7 +4,7 @@ import { natalPageBySlug, natalPageName, natalPageOrder } from "./natal-manifest
 
 // Проверка текстов натальных страниц: объём, обороты-предсказания и главное — шаблонность (одинаковые абзацы на разных страницах)
 
-export const MIN_WORDS = { planet: 330, ascendant: 250 } as const;
+export const MIN_WORDS = { planet: 330, ascendant: 250, node: 330 } as const;
 export const MAX_SHARED_SHINGLES = 0.25;
 const SHINGLE_SIZE = 5;
 

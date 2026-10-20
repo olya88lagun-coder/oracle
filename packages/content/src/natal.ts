@@ -55,9 +55,9 @@ export function parseNatalPage(source: string, file: string): NatalPageText {
   if (!match) return fail("нет шапки между строками ---");
   const fields = new Map((match[1] ?? "").split("\n").map((line) => [line.slice(0, line.indexOf(":")).trim(), line.slice(line.indexOf(":") + 1).trim()] as const));
   const order = Number(fields.get("order"));
-  if (!Number.isInteger(order) || order < 1 || order > 132) fail("order — от 1 до 132");
+  if (!Number.isInteger(order) || order < 1 || order > 144) fail("order — от 1 до 144");
   const batch = Number(fields.get("batch"));
-  if (!Number.isInteger(batch) || batch < 1 || batch > 4) fail("batch — от 1 до 4");
+  if (!Number.isInteger(batch) || batch < 1 || batch > 5) fail("batch — от 1 до 5");
   const name = fields.get("name") ?? "";
   if (!name) fail("нет name");
   const slug = fields.get("slug") ?? "";

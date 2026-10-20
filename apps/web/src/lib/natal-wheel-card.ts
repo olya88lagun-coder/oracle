@@ -94,6 +94,8 @@ export const ANGLE_KEYWORDS: Readonly<Record<AngleId, string>> = {
 
 const STELLIUM_NOTE = "Три планеты и больше в одном знаке астрологи называют стеллиумом: тема знака в карте заметнее.";
 const MEANING_LINK_LABEL = "Значение";
+// Страница значения называется «Северный узел в Овне», а в таблице и на колесе точка — «Лунный узел (средний)»
+const NODE_PAGE_NAME = "Северный узел";
 const NO_ASPECTS = "главных аспектов нет";
 const NOBODY = "никого нет";
 
@@ -124,7 +126,7 @@ function describeBody(chart: NatalChart, id: ChartPoint["id"], registry: NatalKe
   const point = chart.points.find((item) => item.id === id);
   if (!point) return null;
   const house = chart.timeKnown && point.house !== null ? point.house : null;
-  const published = id === "northNode" ? null : keyTextFor(id, point.sign, registry);
+  const published = keyTextFor(id, point.sign, registry);
   const rows: CardRow[] = [
     { label: id === "northNode" ? "Точка" : "Планета", text: BODY_KEYWORDS[id] },
     { label: "Знак", text: `${SIGN_NAMES[point.sign]}: ${SIGN_KEYWORDS[point.sign]}` },
@@ -134,7 +136,7 @@ function describeBody(chart: NatalChart, id: ChartPoint["id"], registry: NatalKe
   return {
     title: [`${bodyName(id)} ${inSign(point.sign)}`, formatDegrees(point.degree), house === null ? "" : `${house} дом`].filter((part) => part !== "").join(" · "),
     rows,
-    link: published ? { href: published.href, label: `${MEANING_LINK_LABEL}: ${bodyName(id)} ${inSign(point.sign)}` } : null,
+    link: published ? { href: published.href, label: `${MEANING_LINK_LABEL}: ${id === "northNode" ? NODE_PAGE_NAME : bodyName(id)} ${inSign(point.sign)}` } : null,
     note: joinNotes([id !== "northNode" && chart.uncertainSigns.includes(id) && signChangeNotice(id), id === "moon" && !chart.timeKnown && NOTE_NO_MOON_ASPECTS]),
   };
 }

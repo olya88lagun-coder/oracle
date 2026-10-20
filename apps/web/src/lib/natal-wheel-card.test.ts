@@ -69,7 +69,11 @@ describe("describeSelection for a body", () => {
   test("links to the meaning page only when it is published", () => {
     expect(describeSelection(withTime, body("sun"), { "sun-pisces": { summary: "x", href: "/natalnaya-karta/solntse-v-ribah" } })?.link).toEqual({ href: "/natalnaya-karta/solntse-v-ribah", label: "Значение: Солнце в Рыбах" });
     expect(describeSelection(withTime, body("sun"), {})?.link).toBeNull();
-    expect(describeSelection(withTime, body("northNode"), { "northNode-pisces": { summary: "x", href: "/x" } })?.link).toBeNull();
+    const nodeSign = withTime.points.find((point) => point.id === "northNode")?.sign ?? "aries";
+    const nodeLink = describeSelection(withTime, body("northNode"), { [`northNode-${nodeSign}`]: { summary: "x", href: "/x" } })?.link;
+    expect(nodeLink?.href).toBe("/x");
+    expect(nodeLink?.label).toMatch(/^Значение: Северный узел (в|во) /);
+    expect(describeSelection(withTime, body("northNode"), {})?.link).toBeNull();
   });
 
   test("leaves out the house row without the birth time", () => {

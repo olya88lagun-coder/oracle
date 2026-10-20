@@ -19,14 +19,14 @@ describe("natal texts data", () => {
     expect(checkNatalPages(NATAL_TEXTS)).toEqual([]);
   });
 
-  test("all four batches are written: 132 pages (1: Sun, Moon, ascendant; 2: Mercury, Venus, Mars; 3: Jupiter, Saturn; 4: Uranus, Neptune, Pluto)", () => {
-    const sizes: Record<number, number> = { 1: 36, 2: 36, 3: 24, 4: 36 };
+  test("all five batches are written: 144 pages (1: Sun, Moon, ascendant; 2: Mercury, Venus, Mars; 3: Jupiter, Saturn; 4: Uranus, Neptune, Pluto; 5: north node)", () => {
+    const sizes: Record<number, number> = { 1: 36, 2: 36, 3: 24, 4: 36, 5: 12 };
     for (const [batch, size] of Object.entries(sizes)) {
       const pages = NATAL_PAGES.filter((page) => page.batch === Number(batch));
       expect(pages, `партия ${batch}`).toHaveLength(size);
       for (const page of pages) expect(natalText(page.slug), page.slug).toBeDefined();
     }
-    expect(NATAL_TEXTS).toHaveLength(132);
+    expect(NATAL_TEXTS).toHaveLength(144);
   });
 
   test("only existing batches are accepted, and every page of an accepted batch has its text", () => {

@@ -299,6 +299,13 @@ export const MEANING_CTA_TITLE = "Рассчитайте свою карту";
 export const MEANING_CTA_TEXT = "Посмотрите это положение в контексте всей вашей карты.";
 export const MEANING_OTHER_SIGNS_TITLE = "Это же тело в других знаках";
 export const MEANING_NEIGHBORS_TITLE = "Соседние знаки";
+// Страницы «Северный узел в знаке»: ось узлов и подпись блока «в других знаках»
+export const NODE_OTHER_SIGNS_TITLE = "Северный узел в других знаках";
+export const NODE_AXIS_TITLE = "Ось узлов";
+export const NODE_AXIS_NORTH = "Северный узел";
+export const NODE_AXIS_SOUTH = "Южный узел";
+export const NODE_AXIS_TEXT = "Южный узел всегда стоит напротив северного, в противоположном знаке. Вместе они образуют одну ось: к северному узлу тянет развиваться, на южный привычно опираться.";
+export const nodeAxisMirrorLabel = (name: string): string => `Та же ось с другого конца: ${name}`;
 export const MEANING_PREVIOUS = "Предыдущий знак";
 export const MEANING_NEXT = "Следующий знак";
 export const MEANING_CURRENT_PAGE = " — текущая страница";
