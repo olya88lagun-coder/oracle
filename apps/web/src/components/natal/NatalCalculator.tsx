@@ -5,6 +5,7 @@ import { reachGoal } from "@/lib/analytics";
 import { sessionStore, type SaveStatus } from "@/lib/matrix-save";
 import { ERROR_CITY_REQUIRED, NOTICE_AMBIGUOUS } from "@/lib/natal-copy";
 import { planCalculation } from "@/lib/natal-calc";
+import type { QuickVariant } from "@/lib/natal-quick-pages";
 import { validateAll, validateNatalInput, type NatalField, type NatalInput } from "@/lib/natal-input";
 import type { ZoneChoice } from "@/lib/natal-moment";
 import {
@@ -41,13 +42,14 @@ function touchedFields(patch: Partial<NatalFormValues>): NatalField[] {
 
 // signedIn — человек вошёл; savedProfile — что уже лежит в портрете (дата, время, место) или null
 // offerEnabled — продаётся ли платный разбор (флаг и шлюз на сервере); ownerFree — владелица: разбор для неё бесплатный
-type Props = { signedIn?: boolean; savedProfile?: SavedBirth | null; offerEnabled?: boolean; ownerFree?: boolean };
+// answer — страница быстрого расчёта («асцендент», «лунный знак»): над картой показывается ответ
+type Props = { signedIn?: boolean; savedProfile?: SavedBirth | null; offerEnabled?: boolean; ownerFree?: boolean; answer?: QuickVariant };
 
 function valuesFromInput(input: NatalInput): NatalFormValues {
   return { date: input.date, time: input.time ?? "", unknownTime: input.time === null, cityText: input.city.name, city: input.city };
 }
 
-export function NatalCalculator({ signedIn = false, savedProfile = null, offerEnabled = false, ownerFree = false }: Props) {
+export function NatalCalculator({ signedIn = false, savedProfile = null, offerEnabled = false, ownerFree = false, answer }: Props) {
   const [values, setValues] = useState<NatalFormValues>(EMPTY_FORM_VALUES);
   const [saved, setSaved] = useState<SavedBirth | null>(savedProfile);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
@@ -234,6 +236,7 @@ export function NatalCalculator({ signedIn = false, savedProfile = null, offerEn
           onChoose={(choice) => void calculate(outcome.input, choice)}
           onRecalculate={recalculate}
           offer={offerBlock(outcome)}
+          answer={answer}
           saveAction={
             <SaveToPortrait
               state={natalSaveState({ signedIn, saved, input: outcome.input, status: saveStatus })}

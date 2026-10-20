@@ -2,6 +2,7 @@ import type { NatalChart } from "@oracle/core/natal";
 import type { ReactNode, Ref } from "react";
 import type { NatalInput } from "@/lib/natal-input";
 import type { ClockKind, ZoneChoice } from "@/lib/natal-moment";
+import type { QuickVariant } from "@/lib/natal-quick-pages";
 import { NatalNotices } from "./NatalNotices";
 import { NatalResult } from "./NatalResult";
 
@@ -21,13 +22,14 @@ type Props = {
   onChoose?: (choice: ZoneChoice) => void;
   onRecalculate?: () => void;
   offer?: ReactNode; // блок продажи платного разбора для результата
+  answer?: QuickVariant; // страница быстрого расчёта: ответ над картой
   saveAction?: ReactNode; // блок «Сохранить в портрет» для результата
 };
 
 // Плашки и результат под формой — в порядке макета (плашки выше результата). Когда карта построена, обёртка — цель фокуса и прокрутки:
 // так плашки (перевод часов, полярный круг, ранние годы, смена знака, нет времени) остаются в поле зрения и читаются перед заголовком
 // результата, а группа подписана этим заголовком («Ваша натальная карта»). Пока карта ждёт выбора, обёртка просто контейнер.
-export function NatalOutcome({ outcome, titleId, outcomeRef, choiceRef, onChoose, onRecalculate, saveAction, offer }: Props) {
+export function NatalOutcome({ outcome, titleId, outcomeRef, choiceRef, onChoose, onRecalculate, saveAction, offer, answer }: Props) {
   const { chart, input } = outcome;
   // Время в подписи карты — то, по которому её посчитали (при переводе часов вперёд это исправленное время)
   const birth = { city: input.city.name, date: input.date, time: input.time === null ? null : (outcome.correctedTime ?? input.time) };
@@ -45,7 +47,7 @@ export function NatalOutcome({ outcome, titleId, outcomeRef, choiceRef, onChoose
         date={input.date}
         latitude={input.city.latitude}
       />
-      {chart && <NatalResult chart={chart} birth={birth} titleId={titleId} onRecalculate={onRecalculate} saveAction={saveAction} offer={offer} />}
+      {chart && <NatalResult chart={chart} birth={birth} titleId={titleId} onRecalculate={onRecalculate} saveAction={saveAction} offer={offer} answer={answer} />}
     </div>
   );
 }
