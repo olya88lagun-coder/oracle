@@ -3813,6 +3813,93 @@ main:has(> .natal-intro) > .natal-quick {
   color: var(--accent);
 }
 
+/* Страницы значений с обложкой: принятая концепция, адаптивная шапка и колонка чтения. */
+.natal-meaning .natal-meaning-hero { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 22px 0 30px; }
+
+.natal-meaning .natal-meaning-hero__eyebrow {
+  margin: 0 0 16px;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.natal-meaning .natal-meaning-hero h1 {
+  max-width: 10ch;
+  font-size: clamp(44px, 13.87vw, 52px);
+  line-height: 1.08;
+  overflow-wrap: normal;
+  text-wrap: balance;
+}
+.natal-meaning .natal-meaning-hero__intro { margin-top: 20px; font-size: 15px; line-height: 1.8; }
+
+.natal-meaning .natal-meaning-hero__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 14px;
+  color: var(--accent);
+  font-size: 14px;
+  text-underline-offset: 6px;
+}
+
+.natal-meaning .natal-cover {
+  justify-self: center;
+  width: min(280px, 100%);
+  margin: 0;
+  line-height: 0;
+}
+
+.natal-meaning .natal-cover img { display: block; width: 100%; height: auto; border-radius: 50%; object-fit: contain; }
+
+.natal-meaning .natal-reading-layout { padding-top: 28px; }
+.natal-meaning .natal-toc__title { color: var(--accent); letter-spacing: .06em; }
+.natal-meaning .natal-section p { max-width: 65ch; }
+
+@media (max-width: 760px) {
+  .natal-meaning .natal-signs-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .natal-meaning .natal-signs-grid__item {
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 10px;
+    overflow-wrap: normal;
+  }
+
+  .natal-meaning .natal-signs-grid__item[aria-current="page"] { padding: 11px 9px; }
+  .natal-meaning .natal-signs-grid__item[aria-current="page"]::after { display: none; }
+
+  .natal-meaning .natal-signs-grid__item .natal-glyph {
+    width: 20px;
+    height: 20px;
+    flex-basis: 20px;
+    margin-top: 2px;
+  }
+}
+
+@media (min-width: 761px) {
+  .natal-meaning .natal-meaning-hero { grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; padding: 32px 0 52px; }
+  .natal-meaning .natal-meaning-hero__eyebrow { margin-bottom: 22px; letter-spacing: .18em; }
+  .natal-meaning .natal-meaning-hero h1 { font-size: clamp(48px, 6.67vw, 64px); }
+  .natal-meaning .natal-meaning-hero__intro { max-width: 440px; margin-top: 28px; font-size: 17px; }
+  .natal-meaning .natal-meaning-hero__link { margin-top: 24px; }
+  .natal-meaning .natal-cover { width: 100%; }
+  .natal-meaning .natal-reading-layout { padding-top: 40px; }
+  .natal-meaning .natal-section p { font-size: 17px; line-height: 1.9; }
+}
+
+@media (min-width: 960px) {
+  .natal-meaning .natal-meaning-hero { grid-template-columns: minmax(0, 1fr) 420px; gap: 64px; }
+  .natal-meaning .natal-meaning-hero:has(> .natal-emblem) { grid-template-columns: minmax(0, 1fr) 280px; }
+  .natal-meaning .natal-meaning-hero h1 { font-size: clamp(60px, 5.56vw, 80px); letter-spacing: -.035em; }
+  .natal-meaning .natal-reading-layout { padding-top: 48px; }
+}
+
 /* Ссылки на быстрые расчёты и словарь под калькулятором (NatalMoreLinks): рабочая вёрстка, вид доводит Codex */
 .natal-more {
   margin-top: 56px;

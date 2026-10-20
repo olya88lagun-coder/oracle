@@ -33,10 +33,11 @@ describe("NatalPageView: Sun in Aries", () => {
     expect(count(markup, /<li>В какой|<li>Какие|<li>Что/g)).toBeGreaterThan(0);
   });
 
-  test("the emblem pairs the Sun glyph with the sign glyph and has an accessible name", () => {
-    expect(markup).toContain('data-variant="sun" role="img" aria-label="Солнце и знак Овна"');
-    expect(markup).toContain('<use href="#glyph-sun"></use>');
-    expect(markup).toContain("<figcaption>Солнце · Овен</figcaption>");
+  test("the emblem (a page without a cover, Sun in Taurus) pairs the Sun glyph with the sign glyph and has an accessible name", () => {
+    const taurus = render("solntse-v-teltse");
+    expect(taurus).toContain('data-variant="sun" role="img" aria-label="Солнце и знак Тельца"');
+    expect(taurus).toContain('<use href="#glyph-sun"></use>');
+    expect(taurus).toContain("<figcaption>Солнце · Телец</figcaption>");
   });
 
   test("invites to the calculator with a link, and lists the Sun in all twelve signs with the current one marked", () => {
@@ -111,5 +112,35 @@ describe("NatalPageView: north node in Aries", () => {
 
   test("the list of other signs is named after the node", () => {
     expect(markup).toContain("Северный узел в других знаках");
+  });
+});
+
+describe("NatalPageView: hero with the cover", () => {
+  test("a page with a cover shows the picture with its size and a name, instead of the emblem", () => {
+    const markup = render("solntse-v-rybah");
+    expect(markup).toContain('class="natal-cover"');
+    expect(markup).toMatch(/<img[^>]*alt="Иллюстрация к странице «Солнце в Рыбах»"/);
+    expect(markup).toMatch(/<img[^>]*width="640"[^>]*height="640"/);
+    expect(markup).toContain("solntse-v-rybah.webp");
+    expect(markup).not.toContain("natal-emblem");
+  });
+
+  test("a page without a cover keeps the emblem and has no picture", () => {
+    const markup = render("solntse-v-teltse");
+    expect(markup).toContain("natal-emblem");
+    expect(markup).not.toContain("natal-cover");
+    expect(markup).not.toContain("<img");
+  });
+
+  test("every page has a caption over the title and a link to the calculator in the hero, and the title has no line break", () => {
+    const sun = render("solntse-v-ovne");
+    expect(sun).toContain('<p class="natal-meaning-hero__eyebrow">Планета в знаке</p>');
+    expect(sun).toContain('class="natal-meaning-hero__link"');
+    expect(sun).toContain("Рассчитать свою карту");
+    expect(sun).toContain('<h1 id="meaning-title">Солнце в Овне</h1>');
+    expect(render("ascendent-v-rake")).toContain(">Асцендент в знаке</p>");
+    const page = natalPageBySlug("severnyy-uzel-v-ovne");
+    const text = natalText("severnyy-uzel-v-ovne");
+    expect(page && text && renderToStaticMarkup(<NatalPageView page={page} text={text} />)).toContain(">Северный узел в знаке</p>");
   });
 });

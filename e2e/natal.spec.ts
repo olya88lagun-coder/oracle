@@ -316,6 +316,26 @@ test("the quick pages are in the sitemap", async ({ request }) => {
   for (const path of ["/natalnaya-karta/ascendent", "/natalnaya-karta/lunnyy-znak", "/natalnaya-karta/primer"]) expect(sitemap).toContain(`${path}</loc>`);
 });
 
+test("a meaning page with a cover shows the loaded picture, the caption and the hero link, with no horizontal scroll", async ({ page }) => {
+  await page.goto("/natalnaya-karta/solntse-v-rybah");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Солнце в Рыбах");
+  await expect(page.getByText("Планета в знаке", { exact: true })).toBeVisible();
+  const cover = page.locator(".natal-cover img");
+  await expect(cover).toBeVisible();
+  await expect(async () => {
+    expect(await cover.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth)).toBeGreaterThan(0);
+  }).toPass();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+  await page.getByRole("link", { name: "Рассчитать свою карту" }).click();
+  await expect(page).toHaveURL(/\/natalnaya-karta$/);
+
+  // Без обложки в шапке остаётся эмблема
+  await page.goto("/natalnaya-karta/solntse-v-teltse");
+  await expect(page.locator(".natal-emblem")).toBeVisible();
+  await expect(page.locator(".natal-cover")).toHaveCount(0);
+});
+
 test("the glossary explains the terms, links to the calculators and is in the sitemap", async ({ page, request }) => {
   await page.goto("/natalnaya-karta/slovar-terminov");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Словарь терминов натальной карты");
