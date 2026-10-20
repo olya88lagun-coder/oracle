@@ -206,6 +206,7 @@ test("the offer under the result leads to a full example report on made-up data"
   await expect(page.getByRole("link", { name: "Рассчитать свою карту" })).toHaveAttribute("href", "/natalnaya-karta");
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
+});
 
 test("the offer asks what matters most and marks the matching chapter without reordering", async ({ page }) => {
   await fillBirth(page, { date: "1990-03-07", time: "12:00", city: "Москва" });
