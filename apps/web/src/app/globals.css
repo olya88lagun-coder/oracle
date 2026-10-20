@@ -3393,6 +3393,100 @@ main:has(> .natal-intro) > .natal-disclaimer { max-width: none; }
   }
 }
 
+/* «Сферы жизни» (NatalSpheres) и группы аспектов (NatalAspects): рабочая вёрстка; вид доводит Codex */
+.natal-spheres {
+  margin-top:42px;
+  padding-top:30px;
+  border-top:1px solid var(--line-strong);
+}
+
+.natal-spheres__intro {
+  margin-top:10px;
+  font-size:15px;
+  line-height:1.6;
+  color:var(--ink-soft);
+  max-width:700px;
+}
+
+.natal-spheres__items {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:20px;
+  margin-top:20px;
+}
+
+.natal-spheres__item {
+  padding:22px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+}
+
+.natal-spheres__eyebrow {
+  margin:0;
+  font-size:14px;
+  line-height:1.5;
+  color:var(--ink-faint);
+}
+
+.natal-spheres__title {
+  margin:6px 0 0;
+  font:400 22px/1.3 var(--font-display);
+}
+
+.natal-spheres__text {
+  margin:12px 0 0;
+  font-size:15px;
+  line-height:1.6;
+  color:var(--ink-soft);
+}
+
+.natal-spheres__meta {
+  margin:10px 0 0;
+  font-size:14px;
+  line-height:1.6;
+  color:var(--accent);
+}
+
+.natal-aspects-group {
+  margin-top:26px;
+}
+
+.natal-aspects-group h4 {
+  margin:0;
+  font:400 22px/1.3 var(--font-display);
+}
+
+.natal-aspects-group__lead {
+  margin:6px 0 0;
+  font-size:14px;
+  line-height:1.6;
+  color:var(--ink-soft);
+}
+
+.natal-aspects-group .natal-aspects {
+  margin-top:10px;
+}
+
+@media (max-width: 760px) {
+  .natal-spheres {
+    margin-top:32px;
+  }
+
+  .natal-spheres__items {
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+}
+
+.natal-aspects-group[data-group="tension"] .natal-aspects__mark::before {
+  border-top-color:var(--lavender);
+}
+
+.natal-aspects-group[data-group="merge"] .natal-aspects__mark::before {
+  border-top-color:var(--ink-soft);
+}
+
 /* Страницы быстрых расчётов — асцендент и лунный знак (NatalAnswer, NatalQuickGuide): рабочая вёрстка; вид доводит Codex */
 main:has(> .natal-intro) > .natal-quick {
   width: min(1120px, calc(100% - 64px));
