@@ -15,6 +15,8 @@ export const NATAL_COVER_SLUGS: ReadonlySet<string> = new Set([
   "uran-v-rybah",
   "neptun-v-rybah",
   "pluton-v-rybah",
+  "solntse-v-ovne",
+  "luna-v-ovne",
   "merkuriy-v-ovne",
   "venera-v-ovne",
   "mars-v-ovne",
