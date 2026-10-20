@@ -8,6 +8,7 @@ import {
   generateReportJobKey,
   MATRIX_REPORT_PRICE_KOPECKS,
   NATAL_REPORT_PRICE_KOPECKS,
+  NATAL_REPORT_REFUND_DAYS,
   natalSnapshotKey,
   QUEUES,
   reportChapters,
@@ -53,6 +54,7 @@ describe("product", () => {
 describe("natal report product", () => {
   test("costs 490 rubles and has its own queue and job key", () => {
     expect(NATAL_REPORT_PRICE_KOPECKS).toBe(49_000);
+    expect(NATAL_REPORT_REFUND_DAYS).toBe(14);
     expect(QUEUES.generateNatalReport).toBe("generate-natal-report");
     expect(generateNatalReportJobKey({ purchaseId: "p" })).toBe("generate-natal-report:p");
   });
