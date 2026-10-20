@@ -227,6 +227,26 @@ test("the offer asks what matters most and marks the matching chapter without re
   expect(page.url()).not.toMatch(/love|work|topic/i);
 });
 
+test("the page answers the common questions and publishes them as FAQPage", async ({ page }) => {
+  await page.goto(NATAL);
+  const faq = page.getByRole("heading", { name: "Частые вопросы о натальной карте" });
+  await expect(faq).toBeVisible();
+  const unknownTime = page.getByText("Что делать, если я не знаю время рождения?");
+  await unknownTime.click();
+  await expect(page.getByText(/асцендента, середины неба и домов в ней не будет/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "«О текстах и методике»" })).toHaveAttribute("href", "/metodika");
+  const types = await page.evaluate(() =>
+    [...document.querySelectorAll('script[type="application/ld+json"]')].flatMap((node) => {
+      const data = JSON.parse(node.textContent ?? "{}") as { "@type"?: string; mainEntity?: unknown[] };
+      return data["@type"] === "FAQPage" ? [data.mainEntity?.length ?? 0] : [];
+    }),
+  );
+  expect(types).toEqual([6]);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
 test("the result tells the life spheres by house and groups the aspects into supports, tensions and merges", async ({ page }) => {
   await fillBirth(page, { date: "1990-03-07", time: "12:00", city: "Москва" });
   await calculate(page);
