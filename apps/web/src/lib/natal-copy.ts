@@ -46,6 +46,8 @@ export const POSITIONS_TITLE = "Положения";
 export const ASPECTS_TITLE = "Аспекты";
 export const KEYS_TITLE = "Что это значит";
 export const READ_FULL = "Читать полностью";
+// Скрытое пояснение к ссылке на странице значения в таблице положений («Меркурий — значение в натальной карте»)
+export const MEANING_LINK_HINT = "значение в натальной карте";
 export const TEXT_SOON = "Подробный текст скоро появится.";
 export const ASCENDANT_NEEDS_TIME = "Асцендент: нужно время рождения";
 export const WHEEL_CAPTION_NO_TIME = "Время неизвестно";

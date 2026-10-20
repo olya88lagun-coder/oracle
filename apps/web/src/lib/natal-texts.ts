@@ -1,5 +1,5 @@
 import { NATAL_KEY_SUMMARIES } from "@oracle/content/natal-keys";
-import type { SignId } from "@oracle/core/natal";
+import type { BodyId, SignId } from "@oracle/core/natal";
 import { natalPagePath } from "./natal-paths";
 
 // Реестр опубликованных ключевых текстов («Солнце в Рыбах», «Луна в Раке», «Асцендент в Раке»), которые калькулятор показывает под результатом.
@@ -7,7 +7,7 @@ import { natalPagePath } from "./natal-paths";
 // пока партия не принята, блок остаётся «Подробный текст скоро появится». Из @oracle/core/natal здесь только тип;
 // полные тексты в браузер не попадают — только выдержки и адреса страниц.
 
-export type NatalKeyBody = "sun" | "moon" | "ascendant";
+export type NatalKeyBody = BodyId | "ascendant";
 export type NatalKeyText = { summary: string; href: string };
 export type NatalKeyRegistry = Readonly<Record<string, NatalKeyText>>;
 

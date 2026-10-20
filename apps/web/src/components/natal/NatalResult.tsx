@@ -50,7 +50,7 @@ export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate, sa
       </div>
       <div className="natal-result__details">
         <NatalWheel chart={chart} birth={birth} />
-        <NatalTable chart={chart} />
+        <NatalTable chart={chart} registry={keyTexts} />
       </div>
       <NatalAspects chart={chart} />
       <NatalKeys chart={chart} registry={keyTexts} />
