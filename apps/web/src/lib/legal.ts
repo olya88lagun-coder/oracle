@@ -1,3 +1,8 @@
+import { NATAL_REPORT_REFUND_DAYS } from "@oracle/core";
+
+// Срок возврата для всех платных услуг (решение владелицы 2026-10-20): оферта, контакты и блоки продажи читают его отсюда
+export const REFUND_DAYS = NATAL_REPORT_REFUND_DAYS;
+
 // Оператор персональных данных — самозанятая, указана так же, как в «Мой налог»
 export const OPERATOR = { name: "Лагутенкова Ольга Валентиновна", inn: "744923234850", email: "lagutenkova.olga@yandex.ru" } as const;
 

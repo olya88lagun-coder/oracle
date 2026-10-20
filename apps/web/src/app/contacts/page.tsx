@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LILA_SESSION_PRICE_KOPECKS, MATRIX_REPORT_PRICE_KOPECKS, NATAL_REPORT_PRICE_KOPECKS, NATAL_REPORT_REFUND_DAYS } from "@oracle/core";
+import { LILA_SESSION_PRICE_KOPECKS, MATRIX_REPORT_PRICE_KOPECKS, NATAL_REPORT_PRICE_KOPECKS } from "@oracle/core";
 import { DocumentPage, type DocumentSection } from "@/components/document/DocumentPage";
-import { DISCLAIMER, formatRubles, OPERATOR } from "@/lib/legal";
+import { DISCLAIMER, formatRubles, OPERATOR, REFUND_DAYS } from "@/lib/legal";
 import { publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
@@ -54,13 +54,17 @@ export default function ContactsPage() {
             «Разбор натальной карты» — персональный текстовый разбор карты по дате, времени и месту рождения: девять глав о ядре карты, мышлении, любви,
             действии, деле и деньгах, росте, глубоких слоях, главных аспектах и итоговый сценарий. Стоимость — {formatRubles(NATAL_REPORT_PRICE_KOPECKS)}.
             Разбор покупается на странице <Link href="/natalnaya-karta">натальной карты</Link> после расчёта и входа через VK ID; нужно знать время
-            рождения. Оплата и чек — как для разбора матрицы. Деньги можно вернуть в течение {NATAL_REPORT_REFUND_DAYS} дней со дня оплаты, подробности в{" "}
-            <Link href="/oferta">оферте</Link>.
+            рождения. Оплата и чек — как для разбора матрицы.
           </p>
           <p>
             «Сессия Лилы с проводником» — одна партия игры «Лила» с короткими абзацами проводника на ходах и итоговым выводом с файлом PDF. Стоимость —{" "}
             {formatRubles(LILA_SESSION_PRICE_KOPECKS)} за партию. Оплата — до начала партии, на странице <Link href="/lila/igra">игры</Link>, после входа
             через VK ID; чек и условия возврата — как для разбора, подробности в <Link href="/oferta">оферте</Link>.
+          </p>
+          <p>
+            Деньги за любую услугу можно вернуть в течение {REFUND_DAYS} дней со дня оплаты, в том числе после того, как разбор или партия показаны:
+            напишите на <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a> с e-mail, указанным при покупке. Подробности — в{" "}
+            <Link href="/oferta">оферте</Link>.
           </p>
         </>
       ),
