@@ -3,8 +3,8 @@ import { expect, test, type Page } from "@playwright/test";
 // Калькулятор натальной карты (мобильный Chrome, как остальные сценарии). Нужны dev:db и dev:web; города ищутся по настоящему /api/cities
 const NATAL = "/natalnaya-karta";
 
-async function fillBirth(page: Page, p: { date: string; time?: string; city: string; pick?: string }) {
-  await page.goto(NATAL);
+async function fillBirth(page: Page, p: { date: string; time?: string; city: string; pick?: string }, path: string = NATAL) {
+  await page.goto(path);
   const date = page.getByRole("textbox", { name: "Дата рождения" });
   // Поля, заполненные до того, как страница ожила (гидрация), сбрасываются: заполняем повторно, пока значения не удержатся
   await expect(async () => {
@@ -270,4 +270,43 @@ test("without the birth time there are no life spheres, but the aspects are stil
   await expect(result(page)).toBeVisible();
   await expect(page.locator(".natal-spheres")).toHaveCount(0);
   await expect(page.locator(".natal-aspects-group").first()).toBeVisible();
+});
+
+test("the ascendant page names the ascendant over the chart and publishes its questions", async ({ page }) => {
+  await page.goto("/natalnaya-karta/ascendent");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Асцендент по дате, времени и месту рождения");
+  await expect(page.getByRole("heading", { name: "Почему нужны и время, и место" })).toBeVisible();
+  await expect(page.locator(".natal-quick__signs-list a")).toHaveCount(12);
+  const faqs = await page.evaluate(() =>
+    [...document.querySelectorAll('script[type="application/ld+json"]')].flatMap((node) => {
+      const data = JSON.parse(node.textContent ?? "{}") as { "@type"?: string; mainEntity?: unknown[] };
+      return data["@type"] === "FAQPage" ? [data.mainEntity?.length ?? 0] : [];
+    }),
+  );
+  expect(faqs).toEqual([4]);
+  await fillBirth(page, { date: "1990-03-07", time: "12:00", city: "Москва" }, "/natalnaya-karta/ascendent");
+  await calculate(page);
+  await expect(result(page)).toBeVisible();
+  const answer = page.locator(".natal-answer");
+  await expect(answer).toContainText("Асцендент в Раке");
+  await expect(answer).toContainText("14°07′");
+  await expect(answer.getByRole("link", { name: "Значение: Асцендент в Раке" })).toHaveAttribute("href", /\/natalnaya-karta\/ascendent-v-rake$/);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
+test("the moon sign page names the Moon, warns without the time, and does not name an ascendant", async ({ page }) => {
+  await fillBirth(page, { date: "2024-03-20", city: "Москва" }, "/natalnaya-karta/lunnyy-znak");
+  await calculate(page);
+  await expect(result(page)).toBeVisible();
+  const answer = page.locator(".natal-answer");
+  await expect(answer).toContainText(/Луна (в|во) /);
+  await expect(answer.locator(".natal-answer__note")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Лунный знак по дате рождения");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+});
+
+test("the quick pages are in the sitemap", async ({ request }) => {
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  for (const path of ["/natalnaya-karta/ascendent", "/natalnaya-karta/lunnyy-znak", "/natalnaya-karta/primer"]) expect(sitemap).toContain(`${path}</loc>`);
 });

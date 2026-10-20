@@ -2,6 +2,8 @@ import type { NatalChart } from "@oracle/core/natal";
 import { useId, type ReactNode } from "react";
 import { ACTION_RECALCULATE, RESULT_TITLE, formatBirthMeta, sunMoonAscSummary } from "@/lib/natal-copy";
 import type { NatalKeyRegistry } from "@/lib/natal-texts";
+import type { QuickVariant } from "@/lib/natal-quick-pages";
+import { NatalAnswer } from "./NatalAnswer";
 import { NatalAspects } from "./NatalAspects";
 import { NatalFocus } from "./NatalFocus";
 import { NatalGlyph } from "./NatalGlyph";
@@ -18,11 +20,12 @@ type Props = {
   keyTexts?: NatalKeyRegistry; // опубликованные ключевые тексты; по умолчанию реестр из lib/natal-texts.ts
   titleId?: string; // id заголовка h2: на него ссылается обёртка результата; без параметра берётся свой уникальный
   onRecalculate?: () => void;
+  answer?: QuickVariant; // страница быстрого расчёта: ответ (асцендент или лунный знак) над картой
   offer?: ReactNode; // блок продажи «Разбор натальной карты»: ведёт NatalCalculator, под ключевыми блоками
   saveAction?: ReactNode; // «Сохранить в портрет» и его состояние: ведёт NatalCalculator, первым в ряду действий
 };
 
-export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate, saveAction, offer }: Props) {
+export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate, saveAction, offer, answer }: Props) {
   const ownId = useId();
   const headingId = titleId ?? `${ownId}-title`;
   const summary = sunMoonAscSummary(chart);
@@ -52,6 +55,7 @@ export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate, sa
           <span>{summary.ascendant}</span>
         </div>
       </div>
+      {answer && <NatalAnswer chart={chart} variant={answer} registry={keyTexts} />}
       <div className="natal-result__details">
         <NatalWheelExplorer chart={chart} birth={birth} keyTexts={keyTexts} />
         <NatalTable chart={chart} registry={keyTexts} />
