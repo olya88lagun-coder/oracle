@@ -3,6 +3,7 @@ import raw from "./generated/natal.json";
 import { parseNatalPage, type NatalPageText } from "./natal";
 
 export { NATAL_ASPECT_NAMES, NATAL_CHAPTER_INTROS } from "./natal-report-texts";
+export { ACCEPTED_HOUSE_BATCHES, houseBlock, HOUSE_BODIES, NATAL_HOUSE_FILES, NATAL_PLANETS, planetFunction } from "./natal-houses";
 export { NATAL_SECTION_TITLES, NatalFormatError, parseNatalPage, type NatalPageText } from "./natal";
 export {
   ACCEPTED_BATCHES,

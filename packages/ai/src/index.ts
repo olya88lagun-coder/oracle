@@ -10,4 +10,4 @@ export { fallbackConclusionChapter, type GeneratedConclusionChapter } from "./li
 export { generateConclusion, generateGuideText } from "./lila-generate";
 export { buildConclusionPrompt, buildGuidePrompt } from "./lila-prompt";
 export { validateConclusionChapter, validateGuideText } from "./lila-validate";
-export { fallbackNatalReport, type NatalChapter } from "./natal-fallback";
+export { fallbackNatalReport, type NatalBlocks, type NatalChapter } from "./natal-fallback";
