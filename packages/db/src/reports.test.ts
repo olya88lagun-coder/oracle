@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, test } from "vitest";
-import { createPurchase, createTestDb, getReport, purchases, saveReport, seedUser, type Database, type StoredChapter } from "./testing";
+import { createPurchase, createTestDb, getNatalReport, getReport, purchases, saveReport, seedUser, type Database, type StoredChapter, type StoredNatalChapter } from "./testing";
 
 let db: Database;
 
@@ -10,7 +10,6 @@ beforeEach(async () => {
 
 const CHAPTERS: StoredChapter[] = [
   { id: "core", source: "ai", paragraphs: ["Первый абзац.", "Второй абзац."] },
-  { id: "mind", source: "fallback", paragraphs: ["Меркурий."] },
   {
     id: "scenario",
     source: "fallback",
@@ -46,5 +45,16 @@ describe("reports", () => {
     await db.delete(purchases).where(eq(purchases.id, id));
 
     expect(await getReport(db, id)).toBeNull();
+  });
+});
+
+describe("natal reports", () => {
+  test("are stored in the same table and read back with the natal chapter ids", async () => {
+    const id = await purchaseId();
+    const chapters: StoredNatalChapter[] = [{ id: "mind", source: "fallback", paragraphs: ["Меркурий."] }];
+
+    expect(await saveReport(db, { purchaseId: id, chapters })).toEqual({ created: true });
+    expect((await getNatalReport(db, id))?.chapters).toEqual(chapters);
+    expect(await getNatalReport(db, "not-a-uuid")).toBeNull();
   });
 });

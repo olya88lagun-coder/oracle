@@ -4,6 +4,8 @@ import type { NatalInput } from "./natal-input";
 // Момент рождения для расчёта карты. Единственный модуль калькулятора со значением из @oracle/core/natal:
 // интерфейс подгружает его динамически, после нажатия «Рассчитать карту», вместе с ядром.
 
+// Нужны только дата, время и положение города: так момент можно собрать и на сервере из сохранённых данных
+type MomentInput = Pick<NatalInput, "date" | "time"> & { city: Pick<NatalInput["city"], "zone" | "latitude" | "longitude"> };
 export type ZoneChoice = "first" | "second";
 export type ClockKind = "ok" | "gap" | "ambiguous";
 export type BirthMomentResult = {
@@ -32,7 +34,7 @@ function parseTime(time: string): { hour: number; minute: number } {
 // Неизвестное время — местный полдень. Время, которого не было (gap), сдвигается на ближайшее существующее;
 // время, которое было дважды (ambiguous), берётся по выбору zoneChoice: «first» (по умолчанию) или «second».
 // Модуль не читает текущие дату и часовой пояс устройства: результат зависит только от входа и базы часовых поясов.
-export function buildBirthMoment(input: NatalInput, zoneChoice?: ZoneChoice): BirthMomentResult {
+export function buildBirthMoment(input: MomentInput, zoneChoice?: ZoneChoice): BirthMomentResult {
   const { zone, latitude, longitude } = input.city;
   const timeKnown = input.time !== null;
   const converted = localToUtc(zone, { ...parseDate(input.date), ...parseTime(input.time ?? NOON) });

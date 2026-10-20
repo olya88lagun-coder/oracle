@@ -2,6 +2,7 @@ import {
   CONCLUSION_JOB_OPTIONS,
   conclusionJobKey,
   GENERATE_JOB_OPTIONS,
+  generateNatalReportJobKey,
   generateReportJobKey,
   GUIDE_JOB_OPTIONS,
   guideMoveJobKey,
@@ -11,6 +12,7 @@ import {
   RECEIPTS_QUEUE,
   receiptsReminderJobKey,
   type ConclusionJob,
+  type GenerateNatalReportJob,
   type GenerateReportJob,
   type GuideMoveJob,
   type ReceiptsReminderJob,
@@ -43,6 +45,16 @@ export async function enqueueGenerate(job: GenerateReportJob): Promise<void> {
   } catch (error) {
     // Оплата уже зафиксирована; страница ожидания поставит задачу заново
     console.error("enqueue generate failed", { purchaseId: job.purchaseId, error: String(error) });
+  }
+}
+
+export async function enqueueGenerateNatal(job: GenerateNatalReportJob): Promise<void> {
+  try {
+    const boss = await queue();
+    await boss.send(QUEUES.generateNatalReport, job, { ...GENERATE_JOB_OPTIONS, id: jobIdFor(generateNatalReportJobKey(job)) });
+  } catch (error) {
+    // Оплата уже зафиксирована; страница ожидания поставит задачу заново
+    console.error("enqueue natal generate failed", { purchaseId: job.purchaseId, error: String(error) });
   }
 }
 
