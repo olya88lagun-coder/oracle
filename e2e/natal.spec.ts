@@ -246,3 +246,28 @@ test("the page answers the common questions and publishes them as FAQPage", asyn
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test("the result tells the life spheres by house and groups the aspects into supports, tensions and merges", async ({ page }) => {
+  await fillBirth(page, { date: "1990-03-07", time: "12:00", city: "Москва" });
+  await calculate(page);
+  await expect(result(page)).toBeVisible();
+  const spheres = page.locator(".natal-spheres");
+  await expect(spheres.getByRole("heading", { name: "Сферы жизни в вашей карте" })).toBeVisible();
+  await expect(spheres.locator(".natal-spheres__item")).toHaveCount(6);
+  const love = spheres.locator('.natal-spheres__item[data-house="7"]');
+  await expect(love).toContainText("Отношения");
+  await expect(love).toContainText("Знак на границе дома: Козерог");
+  await expect(love).toContainText("Планеты в доме: Марс, Сатурн, Нептун");
+  for (const title of ["Опоры", "Напряжения", "Слияния"]) await expect(page.locator(".natal-aspects-group").getByRole("heading", { name: title })).toBeVisible();
+  await expect(page.locator('.natal-aspects-group[data-group="support"]').getByText("Солнце — Плутон: трин, точность 1°11′")).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
+test("without the birth time there are no life spheres, but the aspects are still grouped", async ({ page }) => {
+  await fillBirth(page, { date: "2024-03-20", city: "Москва" });
+  await calculate(page);
+  await expect(result(page)).toBeVisible();
+  await expect(page.locator(".natal-spheres")).toHaveCount(0);
+  await expect(page.locator(".natal-aspects-group").first()).toBeVisible();
+});

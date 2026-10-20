@@ -7,6 +7,7 @@ import { NatalFocus } from "./NatalFocus";
 import { NatalGlyph } from "./NatalGlyph";
 import { NatalKeys } from "./NatalKeys";
 import { NatalShareButton } from "./NatalShareButton";
+import { NatalSpheres } from "./NatalSpheres";
 import { NatalTable } from "./NatalTable";
 import type { NatalBirth } from "./NatalWheel";
 import { NatalWheelExplorer } from "./NatalWheelExplorer";
@@ -56,6 +57,7 @@ export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate, sa
         <NatalTable chart={chart} registry={keyTexts} />
       </div>
       <NatalFocus chart={chart} reportShown={offer !== undefined && chart.timeKnown} />
+      <NatalSpheres chart={chart} />
       <NatalAspects chart={chart} />
       <NatalKeys chart={chart} registry={keyTexts} />
       {offer}
