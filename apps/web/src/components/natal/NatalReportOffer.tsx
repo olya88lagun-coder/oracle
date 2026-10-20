@@ -1,6 +1,6 @@
 "use client";
 
-import { NATAL_REPORT_PRICE_KOPECKS } from "@oracle/core";
+import { NATAL_REPORT_PRICE_KOPECKS, NATAL_REPORT_REFUND_DAYS } from "@oracle/core";
 import { NATAL_CHAPTER_TITLES, natalChapterOutline } from "@oracle/core/natal-report";
 import type { NatalChart } from "@oracle/core/natal";
 import Link from "next/link";
@@ -18,6 +18,7 @@ import {
   OFFER_NO_TIME,
   OFFER_TERMS,
   OFFER_TITLE,
+  offerRefundLine,
 } from "@/lib/natal-copy";
 import type { NatalInput } from "@/lib/natal-input";
 import type { ZoneChoice } from "@/lib/natal-moment";
@@ -118,6 +119,7 @@ export function NatalReportOffer({ state, chart, input, choice, free = false }: 
       )}
       {state.kind === "buy" && <BuyForm input={input} choice={choice} free={free} inputId={`${id}-email`} />}
       <p className="muted">{OFFER_TERMS}</p>
+      {state.kind !== "no_time" && !free && <p className="muted natal-offer__refund">{offerRefundLine(NATAL_REPORT_REFUND_DAYS)}</p>}
       {outline.length > 0 && state.kind !== "no_time" && (
         <div className="natal-offer__topics" role="group" aria-label={OFFER_TOPIC_GROUP_LABEL}>
           <p className="natal-offer__question">{OFFER_TOPIC_QUESTION}</p>
