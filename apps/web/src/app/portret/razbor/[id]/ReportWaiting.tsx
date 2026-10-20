@@ -5,11 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
+import { PORTRAIT_REPORT_TITLE, REPORT_WAITING_BODY } from "@/lib/natal-copy";
+import { NATAL_PATH } from "@/lib/natal-paths";
 import { purchaseErrorMessage, reportPath } from "@/lib/report-offer";
 import { ReportGoals } from "./ReportGoals";
 
 type Status = "pending" | "generating" | "canceled";
-type Props = { purchaseId: string; initial: Status; center: { number: number; image: string } };
+// center — аркан центра матрицы для картинки ожидания; у натального разбора его нет
+type Props = { purchaseId: string; initial: Status; center?: { number: number; image: string }; product?: "matrix_report" | "natal_report" };
 
 const POLL_MS = 3000;
 
@@ -22,7 +25,7 @@ const TEXT: Record<Status, { title: string; body: string }> = {
   canceled: { title: "Оплата не прошла", body: "Деньги не списаны. Можно попробовать ещё раз." },
 };
 
-function RetryButton({ purchaseId }: { purchaseId: string }) {
+function RetryButton({ purchaseId, natal = false }: { purchaseId: string; natal?: boolean }) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   async function retry() {
@@ -50,13 +53,14 @@ function RetryButton({ purchaseId }: { purchaseId: string }) {
         </p>
       )}
       <p>
-        <Link href={MATRIX_PATH}>Вернуться к матрице</Link>
+        <Link href={natal ? NATAL_PATH : MATRIX_PATH}>{natal ? "Вернуться к карте" : "Вернуться к матрице"}</Link>
       </p>
     </>
   );
 }
 
-export function ReportWaiting({ purchaseId, initial, center }: Props) {
+export function ReportWaiting({ purchaseId, initial, center, product = "matrix_report" }: Props) {
+  const natal = product === "natal_report";
   const router = useRouter();
   const [status, setStatus] = useState<Status>(initial);
 
@@ -76,23 +80,23 @@ export function ReportWaiting({ purchaseId, initial, center }: Props) {
     return () => clearInterval(timer);
   }, [purchaseId, status, router]);
 
-  const text = TEXT[status];
+  const text = natal && status === "generating" ? { ...TEXT.generating, body: REPORT_WAITING_BODY } : TEXT[status];
   return (
     <section className="card stack report-waiting">
-      <ReportGoals purchaseId={purchaseId} paid={status === "generating"} />
-      <p className="eyebrow">Разбор матрицы судьбы</p>
+      <ReportGoals purchaseId={purchaseId} paid={status === "generating"} product={product} />
+      <p className="eyebrow">{natal ? PORTRAIT_REPORT_TITLE : "Разбор матрицы судьбы"}</p>
       <h1 className="report-waiting__title">{text.title}</h1>
       <p role={status === "canceled" ? "alert" : "status"} className={status === "canceled" ? "error" : "lead"}>
         {text.body}
       </p>
-      {status === "generating" ? (
+      {status === "generating" && center ? (
         <Image className="report-waiting__art" src={center.image} alt="" width={480} height={480} sizes="(min-width: 760px) 640px, 100vw" unoptimized />
       ) : (
         <div className="report-waiting__orbit" aria-hidden="true">
-          <span>{center.number}</span>
+          <span>{center?.number ?? 9}</span>
         </div>
       )}
-      {status === "canceled" && <RetryButton purchaseId={purchaseId} />}
+      {status === "canceled" && <RetryButton purchaseId={purchaseId} natal={natal} />}
     </section>
   );
 }
