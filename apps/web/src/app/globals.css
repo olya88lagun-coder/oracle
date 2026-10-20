@@ -3199,3 +3199,70 @@ main:has(> .natal-intro) > .natal-disclaimer { max-width: none; }
   .natal-wheel-picker__item,
   .natal-wheel-explorer > .natal-wheel { transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out); }
 }
+
+/* «Главная точка карты» (NatalFocus): рабочая вёрстка; внешний вид доводит Codex */
+.natal-focus {
+  margin-top:40px;
+}
+
+.natal-focus__items {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:20px;
+  margin-top:20px;
+}
+
+.natal-focus__item {
+  padding:24px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+}
+
+.natal-focus__eyebrow {
+  margin:0;
+  font-size:14px;
+  line-height:1.5;
+  color:var(--ink-faint);
+}
+
+.natal-focus__title {
+  margin:8px 0 0;
+  font:400 24px/1.25 var(--font-display);
+}
+
+.natal-focus__meta {
+  margin:6px 0 0;
+  font-size:15px;
+  line-height:1.5;
+  color:var(--accent);
+}
+
+.natal-focus__text {
+  margin:14px 0 0;
+  font-size:16px;
+  line-height:1.65;
+  color:var(--ink-soft);
+}
+
+.natal-focus__more {
+  margin:20px 0 0;
+  font-size:15px;
+  line-height:1.6;
+  color:var(--ink-soft);
+}
+
+@media (max-width: 760px) {
+  .natal-focus {
+    margin-top:32px;
+  }
+
+  .natal-focus__items {
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+
+  .natal-focus__item {
+    padding:22px;
+  }
+}

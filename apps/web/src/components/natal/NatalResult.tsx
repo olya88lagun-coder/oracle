@@ -3,6 +3,7 @@ import { useId, type ReactNode } from "react";
 import { ACTION_RECALCULATE, RESULT_TITLE, formatBirthMeta, sunMoonAscSummary } from "@/lib/natal-copy";
 import type { NatalKeyRegistry } from "@/lib/natal-texts";
 import { NatalAspects } from "./NatalAspects";
+import { NatalFocus } from "./NatalFocus";
 import { NatalGlyph } from "./NatalGlyph";
 import { NatalKeys } from "./NatalKeys";
 import { NatalShareButton } from "./NatalShareButton";
@@ -54,6 +55,7 @@ export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate, sa
         <NatalWheelExplorer chart={chart} birth={birth} keyTexts={keyTexts} />
         <NatalTable chart={chart} registry={keyTexts} />
       </div>
+      <NatalFocus chart={chart} reportShown={offer !== undefined && chart.timeKnown} />
       <NatalAspects chart={chart} />
       <NatalKeys chart={chart} registry={keyTexts} />
       {offer}

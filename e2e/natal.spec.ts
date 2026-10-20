@@ -33,6 +33,11 @@ test("Moscow 07.03.1990 12:00 gives the sample chart on a phone screen", async (
   await expect(page.getByText("Асцендент в Раке", { exact: true }).first()).toBeVisible();
   await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   await expect(page.locator(".natal-table__caption").filter({ hasText: "Дома: Плацидус" })).toBeVisible();
+  // «Главная точка карты» берётся из данных: у образца самый тесный аспект — Солнце и Плутон, в Козероге четыре планеты
+  const focus = page.locator(".natal-focus");
+  await expect(focus.getByRole("heading", { name: "Главная точка карты" })).toBeVisible();
+  await expect(focus.getByRole("heading", { name: "Солнце — Плутон: трин" })).toBeVisible();
+  await expect(focus.getByRole("heading", { name: "Четыре планеты в Козероге" })).toBeVisible();
   // «Считаем карту…» живёт в области статуса, которая есть в разметке всегда
   await expect(page.locator(".natal-status")).toHaveAttribute("role", "status");
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
