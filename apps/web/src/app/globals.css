@@ -2786,3 +2786,226 @@ main:has(> .natal-intro) > .natal-disclaimer { max-width: none; }
     display: none;
   }
 }
+
+/* Страницы значений: принятый natal-page.html на рабочей разметке.
+   Общие natal-button и natal-disclaimer переиспользуются без изменения калькулятора. */
+.natal-meaning {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+  padding-bottom: 36px;
+  font-size: 16px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.natal-meaning :where(p:not(.sr-only), figure) { margin: 0; }
+.natal-meaning a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+.natal-meaning .natal-breadcrumbs { padding-block: 16px 6px; color: var(--ink-soft); font-size: 14px; }
+.natal-meaning .natal-breadcrumbs ol {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.natal-meaning .natal-breadcrumbs a { display: inline-flex; align-items: center; min-height: 44px; }
+.natal-meaning .natal-breadcrumbs__divider { color: var(--accent); }
+
+.natal-meaning .natal-meaning-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+  padding: 24px 0 30px;
+  border-bottom: 1px solid var(--line-strong);
+}
+.natal-meaning .natal-meaning-hero h1 {
+  max-width: 760px;
+  font-size: clamp(44px, 5.5vw, 72px);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -.035em;
+}
+.natal-meaning .natal-meaning-hero__intro {
+  max-width: 640px;
+  margin-top: 20px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.85;
+}
+.natal-meaning .natal-emblem {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  gap: 22px;
+  width: min(240px, 100%);
+  aspect-ratio: 1;
+  padding: 24px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.natal-meaning .natal-emblem::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 23px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.natal-meaning .natal-emblem__pair { display: flex; align-items: center; gap: 20px; color: var(--accent); }
+.natal-meaning .natal-emblem__pair .natal-glyph { width: 56px; height: 56px; flex: 0 0 56px; color: inherit; }
+.natal-meaning .natal-emblem__divider { width: 1px; height: 48px; flex: none; background: var(--line-strong); }
+.natal-meaning .natal-emblem__axis {
+  min-width: 56px;
+  font-size: 40px;
+  font-weight: 300;
+  letter-spacing: -.05em;
+  line-height: 1;
+  text-align: center;
+}
+.natal-meaning .natal-emblem[data-variant="asc"] .natal-emblem__axis { color: var(--lavender); }
+.natal-meaning .natal-emblem figcaption { color: var(--ink-soft); font-size: 14px; line-height: 1.7; text-align: center; }
+
+.natal-meaning .natal-reading-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 30px;
+  padding-top: 30px;
+}
+.natal-meaning .natal-toc {
+  align-self: start;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.natal-meaning .natal-toc__title { margin-bottom: 12px; color: var(--ink-soft); font-size: 14px; }
+.natal-meaning .natal-toc nav { display: grid; }
+.natal-meaning .natal-toc a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  line-height: 1.7;
+  text-decoration: none;
+}
+.natal-meaning .natal-toc a:hover { text-decoration: underline; }
+.natal-meaning .natal-sections { min-width: 0; max-width: 720px; }
+.natal-meaning .natal-section + .natal-section { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--line); }
+/* Запас под шапку 84px и видимый отступ, в том числе при переходе по URL с якорем. */
+.natal-meaning .natal-section h2 { font-size: 30px; line-height: 1.25; scroll-margin-top: 112px; }
+.natal-meaning .natal-section p { margin-top: 22px; color: var(--ink-soft); font-size: 16px; line-height: 1.95; }
+.natal-meaning .natal-section p + p { margin-top: 20px; }
+.natal-meaning .natal-questions { margin: 24px 0 0; padding-left: 22px; color: var(--ink-soft); }
+.natal-meaning .natal-questions li { padding: 0 0 16px 8px; font-size: 16px; line-height: 1.9; }
+.natal-meaning .natal-questions li::marker { color: var(--accent); }
+
+.natal-meaning .natal-page-cta {
+  padding: 24px;
+  margin-top: 36px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.natal-meaning .natal-page-cta h2 { font-size: 30px; line-height: 1.25; }
+.natal-meaning .natal-page-cta p { margin-top: 12px; color: var(--ink-soft); font-size: 14px; line-height: 1.8; }
+.natal-meaning .natal-page-cta .natal-button { width: 100%; min-width: 0; margin-top: 24px; }
+.natal-meaning .natal-other-signs,
+.natal-meaning .natal-neighbors { margin-top: 36px; }
+.natal-meaning .natal-other-signs h2,
+.natal-meaning .natal-neighbors h2 { font-size: 30px; line-height: 1.3; }
+.natal-meaning .natal-signs-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  margin-top: 22px;
+}
+.natal-meaning .natal-signs-grid__item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  min-height: 64px;
+  padding: 14px 18px;
+  border: 1px solid var(--natal-field-line);
+  border-radius: 14px;
+  background: var(--surface);
+  font-size: 14px;
+  line-height: 1.7;
+  text-decoration: none;
+}
+.natal-meaning .natal-signs-grid__item > span:not(.sr-only) { min-width: 0; }
+.natal-meaning .natal-signs-grid__item[aria-current="page"] {
+  padding: 13px 17px;
+  border: 2px solid var(--accent);
+  background: var(--surface-3);
+}
+.natal-meaning .natal-signs-grid__item[aria-current="page"]::after { content: "✓"; flex: none; margin-left: auto; color: var(--accent); }
+.natal-meaning .natal-signs-grid__item .natal-glyph { width: 24px; height: 24px; flex: 0 0 24px; color: var(--accent); }
+.natal-meaning .natal-signs-grid__item:hover { border-color: var(--accent); text-decoration: underline; }
+.natal-meaning .natal-pager { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 24px; }
+.natal-meaning .natal-pager a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-width: 0;
+  min-height: 94px;
+  padding: 20px 16px;
+  border-block: 1px solid var(--natal-field-line);
+  font-size: 16px;
+  text-decoration: none;
+}
+.natal-meaning .natal-pager a > span:not(.natal-pager__arrow) { min-width: 0; }
+.natal-meaning .natal-pager a:has(> .natal-pager__arrow:last-child) { text-align: right; }
+.natal-meaning .natal-pager a:hover { text-decoration: underline; }
+.natal-meaning .natal-pager__label { display: block; margin-bottom: 6px; color: var(--ink-soft); font-size: 14px; }
+.natal-meaning .natal-pager__arrow { flex: none; font-size: 26px; }
+.natal-meaning > .natal-disclaimer { margin-top: 40px; }
+
+@media (min-width: 761px) {
+  .natal-meaning { width: min(1120px, calc(100% - 64px)); padding-bottom: 52px; }
+  .natal-meaning .natal-breadcrumbs { padding-top: 22px; }
+  .natal-meaning .natal-breadcrumbs ol { gap: 8px 12px; }
+  .natal-meaning .natal-meaning-hero { grid-template-columns: minmax(0, 1fr) 280px; gap: 40px; padding: 28px 0 44px; }
+  .natal-meaning .natal-meaning-hero__intro { margin-top: 24px; font-size: 17px; }
+  .natal-meaning .natal-emblem { width: 280px; gap: 30px; }
+  .natal-meaning .natal-emblem__pair { gap: 24px; }
+  .natal-meaning .natal-emblem__pair .natal-glyph { width: 64px; height: 64px; flex-basis: 64px; }
+  .natal-meaning .natal-emblem__axis { min-width: 64px; font-size: 44px; }
+  .natal-meaning .natal-section h2,
+  .natal-meaning .natal-page-cta h2,
+  .natal-meaning .natal-other-signs h2,
+  .natal-meaning .natal-neighbors h2 { font-size: 34px; }
+  .natal-meaning .natal-section + .natal-section { margin-top: 42px; padding-top: 34px; }
+  .natal-meaning .natal-page-cta { display: flex; align-items: center; justify-content: space-between; gap: 30px; padding: 34px 38px; margin-top: 64px; }
+  .natal-meaning .natal-page-cta .natal-button { flex: none; width: auto; min-width: 214px; margin-top: 0; }
+  .natal-meaning .natal-other-signs,
+  .natal-meaning .natal-neighbors { margin-top: 50px; }
+  .natal-meaning .natal-signs-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 24px; }
+  .natal-meaning .natal-pager { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .natal-meaning .natal-pager a { padding-inline: 24px; }
+  /* Сохраняем направление, даже если предыдущая страница отсутствует. */
+  .natal-meaning .natal-pager a:has(> .natal-pager__arrow:last-child) { grid-column: 2; }
+}
+
+@media (min-width: 960px) {
+  .natal-meaning .natal-meaning-hero { gap: 72px; }
+  .natal-meaning .natal-reading-layout { grid-template-columns: 240px minmax(0, 720px); justify-content: space-between; gap: 64px; padding-top: 44px; }
+  .natal-meaning .natal-toc { position: sticky; top: 112px; padding: 0; border: 0; border-radius: 0; }
+}
+
+@media print {
+  .natal-meaning .natal-toc { position: static; }
+}
