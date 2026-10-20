@@ -3153,19 +3153,12 @@ main:has(> .natal-intro) > .natal-disclaimer { max-width: none; }
 
 .natal-wheel-picker {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 8px;
   min-width: 0;
   margin-top: 12px;
   padding: 6px 6px 12px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-padding-inline: 6px;
-  scrollbar-color: var(--natal-field-line) var(--bg);
-  scrollbar-width: thin;
 }
-/* Tab показывает кнопку целиком; прокрутка пальцем остаётся свободной. */
-.natal-wheel-picker:focus-within { scroll-snap-type: x mandatory; }
 .natal-wheel-picker__item {
   display: inline-flex;
   flex: 0 0 auto;
@@ -3189,14 +3182,14 @@ main:has(> .natal-intro) > .natal-disclaimer { max-width: none; }
   background: var(--surface-3);
   color: var(--accent-hover);
 }
-.natal-wheel-picker__item:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; scroll-snap-align: center; }
+.natal-wheel-picker__item:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 @container natal-explorer (min-width: 480px) {
   .natal-wheel-card { min-height: 26rem; padding: 28px 24px 18px; }
   .natal-wheel-card:has(.natal-wheel-card__title)::before { left: 24px; }
   .natal-wheel-card__row { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; }
   .natal-wheel-card__row dd { margin-top: 0; }
-  .natal-wheel-picker { flex-wrap: wrap; overflow: visible; padding-bottom: 0; }
+  .natal-wheel-picker { padding-bottom: 0; }
 }
 @container natal-explorer (max-width: 320px) { .natal-wheel-card { min-height: 38rem; } }
 @media (prefers-reduced-motion: no-preference) {
