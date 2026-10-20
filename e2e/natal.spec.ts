@@ -207,3 +207,23 @@ test("the offer under the result leads to a full example report on made-up data"
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test("the page answers the common questions and publishes them as FAQPage", async ({ page }) => {
+  await page.goto(NATAL);
+  const faq = page.getByRole("heading", { name: "Частые вопросы о натальной карте" });
+  await expect(faq).toBeVisible();
+  const unknownTime = page.getByText("Что делать, если я не знаю время рождения?");
+  await unknownTime.click();
+  await expect(page.getByText(/асцендента, середины неба и домов в ней не будет/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "«О текстах и методике»" })).toHaveAttribute("href", "/metodika");
+  const types = await page.evaluate(() =>
+    [...document.querySelectorAll('script[type="application/ld+json"]')].flatMap((node) => {
+      const data = JSON.parse(node.textContent ?? "{}") as { "@type"?: string; mainEntity?: unknown[] };
+      return data["@type"] === "FAQPage" ? [data.mainEntity?.length ?? 0] : [];
+    }),
+  );
+  expect(types).toEqual([6]);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});

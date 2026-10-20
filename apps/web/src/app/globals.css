@@ -1675,7 +1675,7 @@ main:has(> .natal-intro) {
   line-height: 1.65;
 }
 
-main:has(> .natal-intro) > :is(.natal-intro, .natal-form, .natal-outcome, .natal-disclaimer) {
+main:has(> .natal-intro) > :is(.natal-intro, .natal-form, .natal-outcome, .natal-guide, .natal-disclaimer) {
   width: min(1120px, calc(100% - 64px));
   margin-inline: auto;
 }
@@ -3304,4 +3304,31 @@ main:has(> .natal-intro) > .natal-disclaimer { max-width: none; }
   .natal-focus__item { padding: 28px; }
   .natal-focus__item::before { left: 28px; }
   .natal-focus__title { font-size: 26px; }
+}
+
+/* Частые вопросы под калькулятором (NatalGuide): рабочая вёрстка, раскрывающиеся пункты — общие с .compat-faq; вид доводит Codex */
+.natal-guide {
+  margin-top:56px;
+}
+
+.natal-guide h2 {
+  margin-bottom:20px;
+  font:400 32px/1.2 var(--font-display);
+}
+
+.natal-guide__method {
+  margin-top:18px;
+  font-size:15px;
+  line-height:1.6;
+  color:var(--ink-soft);
+}
+
+@media (max-width: 760px) {
+  .natal-guide {
+    margin-top:40px;
+  }
+
+  .natal-guide h2 {
+    font-size:26px;
+  }
 }
