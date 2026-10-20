@@ -5,3 +5,4 @@ export * from "./angles";
 export * from "./houses";
 export * from "./aspects";
 export * from "./chart";
+export * from "./report";

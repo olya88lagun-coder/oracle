@@ -16,10 +16,11 @@ type Props = {
   keyTexts?: NatalKeyRegistry; // опубликованные ключевые тексты; по умолчанию реестр из lib/natal-texts.ts
   titleId?: string; // id заголовка h2: на него ссылается обёртка результата; без параметра берётся свой уникальный
   onRecalculate?: () => void;
+  offer?: ReactNode; // блок продажи «Разбор натальной карты»: ведёт NatalCalculator, под ключевыми блоками
   saveAction?: ReactNode; // «Сохранить в портрет» и его состояние: ведёт NatalCalculator, первым в ряду действий
 };
 
-export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate, saveAction }: Props) {
+export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate, saveAction, offer }: Props) {
   const ownId = useId();
   const headingId = titleId ?? `${ownId}-title`;
   const summary = sunMoonAscSummary(chart);
@@ -55,6 +56,7 @@ export function NatalResult({ chart, birth, keyTexts, titleId, onRecalculate, sa
       </div>
       <NatalAspects chart={chart} />
       <NatalKeys chart={chart} registry={keyTexts} />
+      {offer}
       <div className="natal-actions">
         {saveAction}
         <NatalShareButton />

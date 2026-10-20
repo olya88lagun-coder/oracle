@@ -23,7 +23,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   const { id } = await params;
   const view = await getPurchaseView(purchaseViewDeps(), { purchaseId: id, userId: user.id });
-  if (!view || view.status !== "ready" || view.duplicateOf) return notFound();
+  // PDF есть только у разбора матрицы: натальный разбор в PDF не выпускается
+  if (!view || view.product !== "matrix_report" || view.status !== "ready" || view.duplicateOf) return notFound();
   const birthDate = parseBirthDate(view.birthDate, new Date());
   const report = birthDate ? await getReport(getDb(), view.id) : null;
   if (!birthDate || !report) return notFound();

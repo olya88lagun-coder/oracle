@@ -1,8 +1,9 @@
+import type { NatalSnapshot } from "@oracle/core";
 import { sql } from "drizzle-orm";
 import { boolean, check, date, doublePrecision, index, integer, jsonb, pgEnum, pgTable, primaryKey, smallint, text, time, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const authProviderEnum = pgEnum("auth_provider", ["vk"]);
-export const productEnum = pgEnum("product", ["matrix_report", "lila_session"]);
+export const productEnum = pgEnum("product", ["matrix_report", "lila_session", "natal_report"]);
 export const guideSourceEnum = pgEnum("guide_source", ["ai", "none"]);
 export const purchaseStatusEnum = pgEnum("purchase_status", ["pending", "succeeded", "canceled"]);
 
@@ -75,6 +76,9 @@ export const purchases = pgTable(
     product: productEnum("product").notNull(),
     // Снимок даты на момент покупки: смена даты в портрете разбор не трогает. Дата и e-mail стираются при удалении данных
     birthDate: date("birth_date", { mode: "string" }),
+    // Натальный разбор: снимок данных рождения и ключ «те же данные» (дата, время, координаты); у остальных продуктов пусты. Стираются при удалении данных
+    natalInput: jsonb("natal_input").$type<NatalSnapshot>(),
+    inputKey: text("input_key"),
     receiptEmail: text("receipt_email"),
     // Чек «Мой налог» отправляет владелица вручную; когда отправила, ставится время, а почта стирается
     receiptSentAt: timestamp("receipt_sent_at", { withTimezone: true }),

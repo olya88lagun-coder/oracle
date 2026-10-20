@@ -12,7 +12,7 @@ type Props = { matrix: Matrix; birthDate: string; chapters: readonly StoredChapt
 
 const HIGHLIGHTED = new Set(["turningPoint", "experiment"]);
 
-function Scenario({ chapter }: { chapter: StoredChapter }) {
+export function Scenario({ chapter }: { chapter: Pick<StoredChapter, "scenario"> }) {
   if (!chapter.scenario) return null;
   return (
     <div className="report-scenario">

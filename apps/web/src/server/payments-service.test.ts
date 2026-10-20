@@ -1,9 +1,9 @@
-import type { GenerateReportJob } from "@oracle/core";
-import { createLilaGame, createTestDb, finishLilaGame, getActiveLilaGame, getLilaGameByPurchase, getPurchase, listReceiptsToSend, saveBirthDate, saveReport, seedUser, type Database } from "@oracle/db/testing";
+import type { GenerateNatalReportJob, GenerateReportJob } from "@oracle/core";
+import { createLilaGame, createTestDb, getBirthDate, finishLilaGame, getActiveLilaGame, getLilaGameByPurchase, getPurchase, listReceiptsToSend, saveBirthDate, saveReport, seedUser, type Database } from "@oracle/db/testing";
 import { afterEach, beforeEach, describe, expect, test, vi, type Mock } from "vitest";
 import { createFakeGateway, type FakeGateway } from "./payments/fake";
 import type { GatewayPayment } from "./payments/gateway";
-import { getLilaPurchaseView, getPurchaseView, paymentDescription, purchaseReturnPath, retryPurchase, startLilaPurchase, startPurchase, syncPayment, type PaymentsDeps } from "./payments-service";
+import { getLilaPurchaseView, getPurchaseView, paymentDescription, purchaseReturnPath, retryPurchase, startLilaPurchase, startNatalPurchase, startPurchase, syncPayment, type PaymentsDeps } from "./payments-service";
 
 const APP_URL = "http://localhost:3000";
 const DATE = "1988-11-18";
@@ -13,6 +13,7 @@ let store: Map<string, GatewayPayment>;
 let gateway: FakeGateway;
 let deps: PaymentsDeps;
 let enqueue: Mock<(job: GenerateReportJob) => Promise<void>>;
+let enqueueNatal: Mock<(job: GenerateNatalReportJob) => Promise<void>>;
 let userId: string;
 let now: Date;
 
@@ -21,8 +22,9 @@ beforeEach(async () => {
   store = new Map();
   gateway = createFakeGateway({ appUrl: APP_URL, store });
   enqueue = vi.fn<(job: GenerateReportJob) => Promise<void>>().mockResolvedValue(undefined);
+  enqueueNatal = vi.fn<(job: GenerateNatalReportJob) => Promise<void>>().mockResolvedValue(undefined);
   now = new Date();
-  deps = { db, gateway, appUrl: APP_URL, now: () => now, enqueueGenerate: enqueue };
+  deps = { db, gateway, appUrl: APP_URL, now: () => now, enqueueGenerate: enqueue, enqueueGenerateNatal: enqueueNatal };
   ({ userId } = await seedUser(db, { externalId: "vk-1" }));
   await saveBirthDate(db, userId, DATE, now);
 });
@@ -414,5 +416,96 @@ describe("the owner is reminded to send the receipt", () => {
     expect(purchase?.status).toBe("succeeded");
     expect(enqueue).toHaveBeenCalledWith({ purchaseId: purchase!.id });
     expect(error).toHaveBeenCalledWith("receipts reminder failed", expect.anything());
+  });
+});
+
+describe("startNatalPurchase", () => {
+  const BIRTH = { birthDate: "1990-03-07", time: "12:00", name: "Москва", latitude: 55.7558, longitude: 37.6173, zone: "Europe/Moscow" };
+
+  async function buyNatal(birth: unknown = BIRTH, email: unknown = "a@b.ru") {
+    const outcome = await startNatalPurchase(deps, { userId, email, birth });
+    if (!outcome.ok) throw new Error(outcome.error);
+    return outcome.url;
+  }
+
+  test("creates a 490 ₽ payment with the snapshot and the natal description, without touching the portrait", async () => {
+    const url = await buyNatal();
+
+    const payment = store.get(paymentOf(url))!;
+    expect(payment.amountKopecks).toBe(49_000);
+    expect(paymentDescription("a@b.ru", "natal_report")).toBe("Разбор натальной карты — «Твой оракул», чек: a@b.ru");
+    expect(await getPurchase(db, payment.purchaseId!)).toMatchObject({
+      product: "natal_report",
+      birthDate: "1990-03-07",
+      inputKey: "1990-03-07|12:00|55.76|37.62",
+      natalInput: { time: "12:00", instant: "1990-03-07T09:00:00.000Z", placeName: "Москва" },
+      receiptEmail: "a@b.ru",
+      status: "pending",
+    });
+    expect(await getBirthDate(db, userId)).toBe(DATE);
+  });
+
+  test.each([[{ time: null }], [{ latitude: 86 }], [{ zone: "Mars/Olympus" }]])("rejects the birth data %j before any payment is made", async (patch) => {
+    expect(await startNatalPurchase(deps, { userId, email: "a@b.ru", birth: { ...BIRTH, ...patch } })).toEqual({ ok: false, error: "invalid_birth" });
+    expect(store.size).toBe(0);
+  });
+
+  test("rejects a bad e-mail", async () => {
+    expect(await startNatalPurchase(deps, { userId, email: "nope", birth: BIRTH })).toEqual({ ok: false, error: "invalid_email" });
+    expect(store.size).toBe(0);
+  });
+
+  test("reuses an open payment of the same data and starts a new one when the time differs", async () => {
+    const first = await buyNatal();
+    expect(await buyNatal()).toBe(first);
+    expect(await buyNatal({ ...BIRTH, time: "12:05" })).not.toBe(first);
+    expect(store.size).toBe(2);
+  });
+
+  test("does not sell the same data twice, but sells the matrix of the same date separately", async () => {
+    const paid = await pay(await buyNatal());
+    expect(await startNatalPurchase(deps, { userId, email: "a@b.ru", birth: BIRTH })).toEqual({ ok: false, error: "already_paid", purchaseId: paid!.id });
+    const matrix = await startPurchase(deps, { userId, email: "a@b.ru" });
+    expect(matrix.ok).toBe(true);
+  });
+
+  test("queues the natal job, not the matrix one, and only for the first payment of the same data", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    const first = await buyNatal();
+    const second = await buyNatal({ ...BIRTH }, "c@d.ru");
+    const firstPaid = await pay(first);
+    await pay(second);
+
+    expect(enqueue).not.toHaveBeenCalled();
+    expect(enqueueNatal.mock.calls).toEqual([[{ purchaseId: firstPaid!.id }]]);
+  });
+
+  test("the owner buys for 0 ₽ without e-mail and gateway", async () => {
+    deps = { ...deps, isOwner: async () => true };
+    const outcome = await startNatalPurchase(deps, { userId, email: undefined, birth: BIRTH });
+
+    expect(outcome.ok).toBe(true);
+    expect(store.size).toBe(0);
+    const purchaseId = outcome.ok ? outcome.url.split("/").pop()! : "";
+    expect(await getPurchase(db, purchaseId)).toMatchObject({ amountKopecks: 0, status: "succeeded", product: "natal_report" });
+    expect(enqueueNatal).toHaveBeenCalledWith({ purchaseId });
+  });
+
+  test("retry of a canceled purchase makes a new one with the same snapshot, and the view tells the product", async () => {
+    const canceled = await pay(await buyNatal(), "canceled");
+    const retried = await retryPurchase(deps, { userId, purchaseId: canceled!.id });
+    expect(retried.ok).toBe(true);
+    const next = [...store.values()].find((payment) => payment.purchaseId !== canceled!.id)!;
+    expect(await getPurchase(db, next.purchaseId!)).toMatchObject({ product: "natal_report", inputKey: "1990-03-07|12:00|55.76|37.62", amountKopecks: 49_000 });
+    expect(await getPurchaseView(deps, { purchaseId: next.purchaseId!, userId })).toMatchObject({ product: "natal_report", status: "pending", birthDate: "1990-03-07" });
+  });
+
+  test("a paid purchase without a report queues the natal job when the page is viewed", async () => {
+    const paid = await pay(await buyNatal());
+    enqueueNatal.mockClear();
+
+    expect(await getPurchaseView(deps, { purchaseId: paid!.id, userId })).toMatchObject({ product: "natal_report", status: "generating" });
+    expect(enqueueNatal).toHaveBeenCalledWith({ purchaseId: paid!.id });
+    expect(enqueue).not.toHaveBeenCalled();
   });
 });

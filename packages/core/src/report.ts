@@ -1,9 +1,20 @@
 import type { Matrix, MatrixPoint } from "./matrix";
 
 export const MATRIX_REPORT_PRODUCT = "matrix_report";
-export type Product = typeof MATRIX_REPORT_PRODUCT | "lila_session";
+export const NATAL_REPORT_PRODUCT = "natal_report";
+export type Product = typeof MATRIX_REPORT_PRODUCT | typeof NATAL_REPORT_PRODUCT | "lila_session";
 // Единственное место с ценой: блок продажи, оферта и платёж читают её отсюда
 export const MATRIX_REPORT_PRICE_KOPECKS = 39_000;
+export const NATAL_REPORT_PRICE_KOPECKS = 49_000;
+
+// Снимок данных рождения на момент покупки натального разбора: сохраняется в покупке и стирается при удалении данных.
+// instant — момент рождения в UTC, он считается один раз при покупке, поэтому воркеру часовые пояса не нужны
+export type NatalSnapshot = { date: string; time: string; instant: string; latitude: number; longitude: number; placeName: string };
+
+// Ключ «те же данные»: дата, время и координаты с точностью до сотой градуса. Вторая покупка с тем же ключом не продаётся
+export function natalSnapshotKey(s: Pick<NatalSnapshot, "date" | "time" | "latitude" | "longitude">): string {
+  return `${s.date}|${s.time}|${s.latitude.toFixed(2)}|${s.longitude.toFixed(2)}`;
+}
 
 // Главы платного разбора матрицы: порядок задаёт и оглавление, и порядок генерации
 export const CHAPTER_IDS = ["core", "task", "love", "money", "family", "purpose", "scenario"] as const;
@@ -49,11 +60,16 @@ export function reportChapters(matrix: Matrix): ReportChapter[] {
   return CHAPTER_IDS.map((id) => ({ id, title: CHAPTER_TITLES[id], arcana: CHAPTER_POINTS[id].map((point) => matrix[point]) }));
 }
 
-export const QUEUES = { generateReport: "generate-report" } as const;
+export const QUEUES = { generateReport: "generate-report", generateNatalReport: "generate-natal-report" } as const;
 export type GenerateReportJob = { purchaseId: string };
+export type GenerateNatalReportJob = { purchaseId: string };
 // Внутри задачи до трёх попыток модели на каждую из семи глав и сборка из блоков; повтор pg-boss — только на случай сбоя базы
 export const GENERATE_JOB_OPTIONS = { retryLimit: 2, retryDelay: 30, retryBackoff: true, expireInSeconds: 1500 } as const;
 
 export function generateReportJobKey(job: GenerateReportJob): string {
   return `generate-report:${job.purchaseId}`;
+}
+
+export function generateNatalReportJobKey(job: GenerateNatalReportJob): string {
+  return `generate-natal-report:${job.purchaseId}`;
 }

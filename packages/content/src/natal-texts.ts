@@ -2,6 +2,7 @@ import type { AspectId } from "@oracle/core/natal";
 import raw from "./generated/natal.json";
 import { parseNatalPage, type NatalPageText } from "./natal";
 
+export { NATAL_ASPECT_NAMES, NATAL_CHAPTER_INTROS } from "./natal-report-texts";
 export { NATAL_SECTION_TITLES, NatalFormatError, parseNatalPage, type NatalPageText } from "./natal";
 export {
   ACCEPTED_BATCHES,

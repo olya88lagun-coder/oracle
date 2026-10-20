@@ -7,10 +7,14 @@ import { PUBLIC_PATHS } from "@/lib/seo";
 const mocks = vi.hoisted(() => ({
   currentUser: vi.fn(),
   loadPortrait: vi.fn(),
+  salesEnabled: vi.fn(() => false),
+  isOwnerUser: vi.fn(async () => false),
 }));
 vi.mock("@/server/viewer", () => ({ currentUser: mocks.currentUser }));
 vi.mock("@/server/db", () => ({ getDb: () => ({}) }));
 vi.mock("@/server/profile-service", () => ({ loadPortrait: mocks.loadPortrait }));
+vi.mock("@/server/payments-deps", () => ({ salesEnabled: mocks.salesEnabled }));
+vi.mock("@/server/owner", () => ({ isOwnerUser: mocks.isOwnerUser }));
 
 const { default: NatalPage, metadata } = await import("./page");
 

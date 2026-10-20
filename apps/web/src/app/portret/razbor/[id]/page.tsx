@@ -1,14 +1,15 @@
 import { calculateMatrix, parseBirthDate } from "@oracle/core";
 import { arcanumByNumber } from "@oracle/content";
-import { getReport } from "@oracle/db";
+import { getNatalReport, getPurchase, getReport } from "@oracle/db";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+import { NatalReportView } from "@/components/report/NatalReportView";
 import { ReportView } from "@/components/report/ReportView";
 import { arcanumImage } from "@/lib/arcana-paths";
 import { reportPath } from "@/lib/report-offer";
 import { getDb } from "@/server/db";
 import { purchaseViewDeps } from "@/server/payments-deps";
-import { getPurchaseView } from "@/server/payments-service";
+import { getPurchaseView, type PurchaseView } from "@/server/payments-service";
 import { requireUser } from "@/server/viewer";
 import { ReportGoals } from "./ReportGoals";
 import { ReportWaiting } from "./ReportWaiting";
@@ -21,6 +22,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   const view = await getPurchaseView(purchaseViewDeps(), { purchaseId: id, userId: user.id });
   if (!view) notFound();
   if (view.duplicateOf) redirect(reportPath(view.duplicateOf));
+  if (view.product === "natal_report") return NatalReport({ view });
   const birthDate = parseBirthDate(view.birthDate, new Date());
   if (!birthDate) notFound();
   const matrix = calculateMatrix(birthDate);
@@ -39,6 +41,26 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
     <main className="page page--wide">
       <ReportGoals purchaseId={view.id} paid opened />
       <ReportView matrix={matrix} birthDate={view.birthDate} chapters={report.chapters} purchaseId={view.id} />
+    </main>
+  );
+}
+
+// Натальный разбор: ожидание без картинки аркана, готовый разбор — девять глав. Дата и место берутся из снимка в покупке
+async function NatalReport({ view }: { view: PurchaseView }) {
+  const report = view.status === "ready" ? await getNatalReport(getDb(), view.id) : null;
+  if (!report) {
+    const initial = view.status === "ready" ? "generating" : view.status;
+    return (
+      <main className="page stack">
+        <ReportWaiting purchaseId={view.id} initial={initial} product="natal_report" />
+      </main>
+    );
+  }
+  const purchase = await getPurchase(getDb(), view.id);
+  return (
+    <main className="page page--wide">
+      <ReportGoals purchaseId={view.id} paid opened product="natal_report" />
+      <NatalReportView chapters={report.chapters} date={view.birthDate} placeName={purchase?.natalInput?.placeName ?? null} />
     </main>
   );
 }

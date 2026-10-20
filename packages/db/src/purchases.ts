@@ -1,4 +1,4 @@
-import type { Product } from "@oracle/core";
+import { natalSnapshotKey, type NatalSnapshot, type Product } from "@oracle/core";
 import { and, asc, count, desc, eq, gt, gte, isNotNull, isNull, sql } from "drizzle-orm";
 import { purchases, reports, type PurchaseStatus } from "./schema";
 import type { Database } from "./types";
@@ -10,6 +10,8 @@ export type PurchaseRecord = {
   userId: string;
   product: Product;
   birthDate: string | null;
+  natalInput: NatalSnapshot | null;
+  inputKey: string | null;
   receiptEmail: string | null;
   amountKopecks: number;
   status: PurchaseStatus;
@@ -18,16 +20,19 @@ export type PurchaseRecord = {
   createdAt: Date;
   paidAt: Date | null;
 };
-export type PaidPurchase = { id: string; birthDate: string; ready: boolean; paidAt: Date };
+export type PaidPurchase = { id: string; product: Product; birthDate: string; ready: boolean; paidAt: Date };
 
 type PurchaseRow = typeof purchases.$inferSelect;
-type DateOfProduct = { userId: string; product: Product; birthDate: string };
+// inputKey — ключ «те же данные» натального разбора; у матрицы его нет, и ищется покупка без ключа
+type DateOfProduct = { userId: string; product: Product; birthDate: string; inputKey?: string | null };
 // receiptEmail пустой только у бесплатной покупки владелицы: чек за 0 ₽ не нужен
-type NewPurchase = { userId: string; product: Product; birthDate?: string | null; receiptEmail?: string | null; amountKopecks: number };
+// natal — снимок данных рождения натального разбора: из него берутся и дата, и ключ
+type NewPurchase = { userId: string; product: Product; birthDate?: string | null; natal?: NatalSnapshot | null; receiptEmail?: string | null; amountKopecks: number };
 
 const toRecord = (row: PurchaseRow): PurchaseRecord => ({ ...row, product: row.product as Product });
 
-const sameDate = (p: DateOfProduct) => and(eq(purchases.userId, p.userId), eq(purchases.product, p.product), eq(purchases.birthDate, p.birthDate));
+const sameDate = (p: DateOfProduct) =>
+  and(eq(purchases.userId, p.userId), eq(purchases.product, p.product), eq(purchases.birthDate, p.birthDate), p.inputKey ? eq(purchases.inputKey, p.inputKey) : isNull(purchases.inputKey));
 
 // Дата уже проверена parseBirthDate, e-mail — сервисом покупок: сюда приходят готовые значения
 export async function createPurchase(
@@ -36,7 +41,15 @@ export async function createPurchase(
 ): Promise<PurchaseRecord> {
   const [row] = await db
     .insert(purchases)
-    .values({ userId: p.userId, product: p.product, birthDate: p.birthDate ?? null, receiptEmail: p.receiptEmail ?? null, amountKopecks: p.amountKopecks })
+    .values({
+      userId: p.userId,
+      product: p.product,
+      birthDate: p.natal?.date ?? p.birthDate ?? null,
+      natalInput: p.natal ?? null,
+      inputKey: p.natal ? natalSnapshotKey(p.natal) : null,
+      receiptEmail: p.receiptEmail ?? null,
+      amountKopecks: p.amountKopecks,
+    })
     .returning();
   return toRecord(row!);
 }
@@ -98,12 +111,12 @@ export async function markPurchaseCanceled(db: Database, purchaseId: string): Pr
 export async function listPaidPurchases(db: Database, userId: string): Promise<PaidPurchase[]> {
   if (!isUuid(userId)) return [];
   const rows = await db
-    .select({ id: purchases.id, birthDate: purchases.birthDate, paidAt: purchases.paidAt, reportId: reports.id })
+    .select({ id: purchases.id, product: purchases.product, birthDate: purchases.birthDate, paidAt: purchases.paidAt, reportId: reports.id })
     .from(purchases)
     .leftJoin(reports, eq(reports.purchaseId, purchases.id))
     .where(and(eq(purchases.userId, userId), eq(purchases.status, "succeeded"), isNotNull(purchases.birthDate)))
     .orderBy(desc(purchases.paidAt), desc(purchases.createdAt));
-  return rows.map((row) => ({ id: row.id, birthDate: row.birthDate!, ready: row.reportId !== null, paidAt: row.paidAt! }));
+  return rows.map((row) => ({ id: row.id, product: row.product as Product, birthDate: row.birthDate!, ready: row.reportId !== null, paidAt: row.paidAt! }));
 }
 
 export type ReceiptToSend = { id: string; product: Product; amountKopecks: number; paidAt: Date | null; paymentId: string | null; email: string | null };

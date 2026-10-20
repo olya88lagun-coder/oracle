@@ -4,7 +4,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./natal": "./src/natal/index.ts"
+    "./natal": "./src/natal/index.ts",
+    "./natal-report": "./src/natal/report.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json"

@@ -12,6 +12,8 @@ const envSchema = z.object({
   PAID_REPORTS: z.enum(["on", "off"]).default("off"),
   // Платная сессия Лилы с проводником (план 3б)
   PAID_LILA: z.enum(["on", "off"]).default("off"),
+  // Платный разбор натальной карты (план 8): переключается независимо от остальных продаж
+  PAID_NATAL: z.enum(["on", "off"]).default("off"),
   DEV_LOGIN: z.string().optional(),
   // Страница /admin/receipts открывается только этому VK ID (числовой id владелицы; при dev-входе — dev-<имя>)
   OWNER_VK_ID: z.string().regex(/^[^\s:]+$/).optional(),
@@ -20,7 +22,7 @@ const envSchema = z.object({
 
 type ParsedEnv = z.infer<typeof envSchema>;
 export type PaymentsConfig = { kind: "yookassa"; shopId: string; secretKey: string } | { kind: "fake" } | null;
-export type AppEnv = Pick<ParsedEnv, "APP_URL" | "DATABASE_URL" | "SESSION_SECRET" | "VK_CLIENT_ID"> & { payments: PaymentsConfig; paidReports: boolean; paidLila: boolean; ownerVkId: string | null };
+export type AppEnv = Pick<ParsedEnv, "APP_URL" | "DATABASE_URL" | "SESSION_SECRET" | "VK_CLIENT_ID"> & { payments: PaymentsConfig; paidReports: boolean; paidLila: boolean; paidNatal: boolean; ownerVkId: string | null };
 
 // В сообщение попадают только имена переменных: значения могут быть секретами
 function fail(fields: readonly string[]): never {
@@ -48,6 +50,7 @@ export function readEnv(source: Record<string, string | undefined> = process.env
     payments: readPayments(env),
     paidReports: env.PAID_REPORTS === "on",
     paidLila: env.PAID_LILA === "on",
+    paidNatal: env.PAID_NATAL === "on",
     ownerVkId: env.OWNER_VK_ID ?? null,
   };
 }
