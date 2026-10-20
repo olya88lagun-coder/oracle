@@ -2,6 +2,7 @@ import { NATAL_REPORT_PRODUCT, toIsoDate } from "@oracle/core";
 import type { Metadata } from "next";
 import { NatalCalculator } from "@/components/natal/NatalCalculator";
 import { NatalGuide, natalFaqJsonLd } from "@/components/natal/NatalGuide";
+import { NatalMoreLinks } from "@/components/natal/NatalMoreLinks";
 import { NatalSprite } from "@/components/natal/NatalSprite";
 import { DISCLAIMER, NATAL_INTRO, NATAL_TITLE } from "@/lib/natal-copy";
 import { NATAL_PATH } from "@/lib/natal-paths";
@@ -36,6 +37,7 @@ export default async function NatalPage() {
       {/* Спрайт глифов один на страницу: колесо, таблица и сводка ссылаются на него через <use> */}
       <NatalSprite />
       <NatalCalculator signedIn={Boolean(user)} savedProfile={savedProfile} offerEnabled={salesEnabled(NATAL_REPORT_PRODUCT)} ownerFree={user ? await isOwnerUser(user.id) : false} />
+      <NatalMoreLinks />
       <NatalGuide />
       <p className="natal-disclaimer">{DISCLAIMER}</p>
     </main>
