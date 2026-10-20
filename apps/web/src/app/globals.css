@@ -2786,3 +2786,32 @@ main:has(> .natal-intro) > .natal-disclaimer { max-width: none; }
     display: none;
   }
 }
+
+/* Ссылка значения занимает всю ячейку тела; глиф остаётся над ней и пропускает нажатие. */
+.natal-table td:first-child:has(.natal-table__meaning-link) { padding: 0; }
+.natal-table .natal-table__body-name:has(> .natal-table__meaning-link) { position: relative; display: block; max-width: none; }
+.natal-table .natal-table__meaning-link {
+  display: flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px 10px 10px 22px;
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+.natal-table .natal-table__body-name:has(> .natal-table__meaning-link) > :is(.natal-glyph, .natal-summary__axis) {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  margin: 0;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.natal-table .natal-table__body-name:has(> .natal-summary__axis) > .natal-table__meaning-link { padding-inline-start: 36px; }
+.natal-table .natal-table__meaning-link:hover { color: var(--accent-hover); text-decoration-thickness: 2px; }
+.natal-table .natal-table__meaning-link:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; border-radius: 4px; }
+@media (max-width: 760px) {
+  .natal-table tr:has(.natal-table__meaning-link) .natal-table__sign-name { min-height: 44px; align-items: center; }
+  .natal-table tr:has(.natal-table__meaning-link) .natal-table__sign-name > .natal-glyph { margin-top: 0; }
+}
