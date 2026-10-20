@@ -177,6 +177,16 @@ const fixed = (value: number) => value.toFixed(3);
 const round3 = (value: number) => Math.round(value * 1000) / 1000;
 const attrNumber = (value: number) => String(Math.round(value * 100) / 100);
 
+// Сектор кольца между радиусами inner и outer: от экранного угла start против часовой стрелки на span градусов (для подсветки знака и дома)
+export function ringSector(inner: number, outer: number, start: number, span: number): string {
+  const from = at(outer, start);
+  const to = at(outer, start + span);
+  const backFrom = at(inner, start + span);
+  const backTo = at(inner, start);
+  const large = span > 180 ? 1 : 0;
+  return `M${fixed(from.x)} ${fixed(from.y)}A${outer} ${outer} 0 ${large} 0 ${fixed(to.x)} ${fixed(to.y)}L${fixed(backFrom.x)} ${fixed(backFrom.y)}A${inner} ${inner} 0 ${large} 1 ${fixed(backTo.x)} ${fixed(backTo.y)}Z`;
+}
+
 // Подпись вдоль радиуса читается слева направо: в нижней половине колеса её переворачивают на 180°
 function upright(angle: number): number {
   const normalized = normalizeAngle(angle);
@@ -247,11 +257,11 @@ export function spreadLabels(longitudes: readonly number[]): number[] {
 type Placement = { point: ChartPoint; angle: number; labelAngle: number; labelLongitude: number };
 
 // Рисуем со временем, только если есть всё нужное: асцендент, МС и дома
-function hasAngles(chart: NatalChart): boolean {
+export function hasAngles(chart: NatalChart): boolean {
   return chart.timeKnown && chart.ascendant !== null && chart.midheaven !== null && chart.houses !== null;
 }
 
-const referenceOf = (chart: NatalChart): number => (hasAngles(chart) ? (chart.ascendant?.longitude ?? 0) : 0);
+export const referenceOf = (chart: NatalChart): number => (hasAngles(chart) ? (chart.ascendant?.longitude ?? 0) : 0);
 
 function placePoints(chart: NatalChart): Placement[] {
   const reference = referenceOf(chart);
