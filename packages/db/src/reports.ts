@@ -1,4 +1,5 @@
 import type { ChapterId, ScenarioField } from "@oracle/core";
+import type { NatalChapterId } from "@oracle/core/natal";
 import { eq } from "drizzle-orm";
 import { reports } from "./schema";
 import type { Database } from "./types";
@@ -6,7 +7,7 @@ import { isUuid } from "./uuid";
 
 // Глава хранится вместе с пометкой, кто её написал: ИИ или сборка из блоков без ИИ
 export type StoredChapter = {
-  id: ChapterId;
+  id: ChapterId | NatalChapterId;
   source: "ai" | "fallback";
   paragraphs?: string[];
   scenario?: Record<ScenarioField, string>;

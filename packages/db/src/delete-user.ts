@@ -20,7 +20,7 @@ export async function deleteUserData(db: Database, userId: string): Promise<{ de
     await tx.delete(reports).where(inArray(reports.purchaseId, tx.select({ id: purchases.id }).from(purchases).where(eq(purchases.userId, userId))));
     // Партии Лилы (намерения и записи) удаляются вместе с ходами
     await tx.delete(lilaGames).where(eq(lilaGames.userId, userId));
-    await tx.update(purchases).set({ birthDate: null, receiptEmail: null }).where(eq(purchases.userId, userId));
+    await tx.update(purchases).set({ birthDate: null, natalInput: null, inputKey: null, receiptEmail: null }).where(eq(purchases.userId, userId));
     return { deleted: true };
   });
 }

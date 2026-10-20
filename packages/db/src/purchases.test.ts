@@ -143,8 +143,8 @@ describe("paid purchases", () => {
     await markPurchaseSucceeded(db, foreign.id, T0);
 
     expect(await listPaidPurchases(db, userId)).toEqual([
-      { id: newer.id, birthDate: "1990-05-14", ready: false, paidAt: T0 },
-      { id: older.id, birthDate: DATE, ready: true, paidAt: olderPaidAt },
+      { id: newer.id, product: PRODUCT, birthDate: "1990-05-14", ready: false, paidAt: T0 },
+      { id: older.id, product: PRODUCT, birthDate: DATE, ready: true, paidAt: olderPaidAt },
     ]);
   });
 });
