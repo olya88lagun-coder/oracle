@@ -3084,6 +3084,7 @@ main:has(> .natal-intro) > .natal-disclaimer { max-width: none; }
   background: var(--surface);
   overflow-wrap: anywhere;
 }
+.natal-wheel-card:has(> .natal-wheel-card__hint) { min-height: 13rem; }
 .natal-wheel-card:has(.natal-wheel-card__title)::before {
   content: "";
   position: absolute;
