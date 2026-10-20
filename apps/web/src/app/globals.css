@@ -1675,7 +1675,7 @@ main:has(> .natal-intro) {
   line-height: 1.65;
 }
 
-main:has(> .natal-intro) > :is(.natal-intro, .natal-form, .natal-outcome, .natal-guide, .natal-disclaimer) {
+main:has(> .natal-intro) > :is(.natal-intro, .natal-form, .natal-outcome, .natal-more, .natal-guide, .natal-disclaimer) {
   width: min(1120px, calc(100% - 64px));
   margin-inline: auto;
 }
@@ -3811,4 +3811,46 @@ main:has(> .natal-intro) > .natal-quick {
   align-items: center;
   min-height: 44px;
   color: var(--accent);
+}
+
+/* Ссылки на быстрые расчёты и словарь под калькулятором (NatalMoreLinks): рабочая вёрстка, вид доводит Codex */
+.natal-more {
+  margin-top: 56px;
+}
+
+.natal-more h2 {
+  margin-bottom: 20px;
+  font: 400 32px/1.2 var(--font-display);
+}
+
+.natal-more ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.natal-more__link {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  min-height: 44px;
+  padding: 20px 22px;
+  border: 1px solid var(--natal-field-line);
+  border-radius: 14px;
+  background: var(--surface);
+  text-decoration: none;
+}
+
+.natal-more__link:hover { border-color: var(--accent); }
+.natal-more__title { color: var(--accent); font-size: 18px; line-height: 1.4; }
+.natal-more__text { color: var(--ink-soft); font-size: 14px; line-height: 1.7; }
+
+@media (max-width: 760px) {
+  .natal-more { margin-top: 40px; }
+  .natal-more h2 { font-size: 26px; }
+  .natal-more ul { grid-template-columns: minmax(0, 1fr); }
 }

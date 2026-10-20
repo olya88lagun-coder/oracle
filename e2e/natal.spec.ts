@@ -326,3 +326,14 @@ test("the glossary explains the terms, links to the calculators and is in the si
   const sitemap = await (await request.get("/sitemap.xml")).text();
   expect(sitemap).toContain("/natalnaya-karta/slovar-terminov</loc>");
 });
+
+test("the main page leads to the quick pages and the glossary from under the calculator", async ({ page }) => {
+  await page.goto(NATAL);
+  const more = page.getByRole("navigation", { name: "Быстрые расчёты и словарь" });
+  await expect(more.getByRole("link")).toHaveCount(3);
+  await more.getByRole("link", { name: /Лунный знак/ }).click();
+  await expect(page).toHaveURL(/\/natalnaya-karta\/lunnyy-znak$/);
+  await page.goto(NATAL);
+  await page.getByRole("navigation", { name: "Быстрые расчёты и словарь" }).getByRole("link", { name: /Словарь терминов/ }).click();
+  await expect(page).toHaveURL(/\/natalnaya-karta\/slovar-terminov$/);
+});
