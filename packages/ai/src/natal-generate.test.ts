@@ -68,6 +68,14 @@ describe("buildNatalPrompt", () => {
     expect(scenario.system).toContain('"turningPoint"');
     expect(scenario.system).toContain("scenarioDraft");
   });
+
+  test("asks for tendencies instead of facts, forbids remarks about missing data and gendered endings after «вас»", () => {
+    const { system } = buildNatalPrompt(inputOf("love"));
+    expect(system).toContain("не пиши, что данных нет");
+    expect(system).toContain("Не утверждай факты о жизни человека");
+    expect(system).toContain("«делает вас мягким»");
+    expect(buildNatalPrompt(inputOf("scenario")).system).toContain("1–2 коротких предложения");
+  });
 });
 
 describe("validateNatalChapter", () => {
@@ -86,8 +94,23 @@ describe("validateNatalChapter", () => {
     ["markdown", `# Заголовок\n\n${prose(3)}`, "schema"],
     ["empty", "   ", "not_json"],
     ["a stop phrase", `${prose(3)}\n\nВас ждёт успех.`, "stop_words"],
+    ["a remark that the data is missing", `${prose(3)}\n\nХотя информация о положении планет в этом доме отсутствует, можно предположить многое.`, "missing_data"],
+    ["a remark that there is not enough data", `${prose(3)}\n\nДанных для вывода недостаточно, поэтому картина неполная.`, "missing_data"],
+    ["a gendered adjective after «делает вас»", `${prose(3)}\n\nЭто делает вас мягким и внимательным собеседником.`, "gendered"],
+    ["a gendered adjective after «быть»", `${prose(3)}\n\nВажно беречь силы, чтобы быть более эффективным в помощи другим.`, "gendered"],
+    ["a gendered past tense after «вы»", `${prose(3)}\n\nВозможно, вы чувствовала усталость.`, "gendered"],
   ])("rejects a chapter that is %s", (_title, raw, reason) => {
     expect(validateNatalChapter(core, raw)).toEqual({ ok: false, reason });
+  });
+
+  test("does not take things for the reader: «стать мощным инструментом», «стать основой»", () => {
+    const text = `${prose(3)}\n\nЭто может стать мощным инструментом и основой для тёплых отношений.`;
+    expect(validateNatalChapter(core, text).ok).toBe(true);
+  });
+
+  test("does not take neutral wording for gendered: nouns after «вас», the plural «вы чувствуете»", () => {
+    const text = `${prose(3)}\n\nВ вас проявляется мягкость. Вы чувствуете усталость, поэтому важно беречь силы. Это делает вас способными к близости.`;
+    expect(validateNatalChapter(core, text).ok).toBe(true);
   });
 
   test("rejects a scenario that is not JSON, lacks a field or has a question without a question mark", () => {
@@ -121,6 +144,17 @@ describe("generateNatalChapter", () => {
     expect(log.mock.calls[0]?.[0]).toBe("natal chapter attempt rejected");
     expect(log.mock.calls[0]?.[1]).toMatchObject({ chapter: "love", attempt: 1, reason: "length" });
     expect(JSON.stringify(log.mock.calls)).not.toContain("Секрет-ответ без абзацев.");
+  });
+
+  test("after a rejected answer the next attempt says what was wrong, without quoting the answer", async () => {
+    const answers = [`${prose(3)}\n\nЭто делает вас СЕКРЕТНЫМ.`, prose()];
+    const writer = fakeWriter((input) => (input.chapter === "scenario" ? SCENARIO : (answers.shift() ?? prose())));
+    const chapter = await generateNatalChapter(writer, inputOf("love"));
+    expect(chapter.source).toBe("ai");
+    expect(writer.prompts[0]?.system).not.toContain("Прошлый ответ отклонён");
+    expect(writer.prompts[1]?.system).toContain("Прошлый ответ отклонён");
+    expect(writer.prompts[1]?.system).toContain("окончания, выдающие пол читателя");
+    expect(writer.prompts[1]?.system).not.toContain("СЕКРЕТНЫМ");
   });
 
   test("an error and a timeout of the provider fall back too, with the reason in the log", async () => {

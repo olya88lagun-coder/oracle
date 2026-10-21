@@ -5,7 +5,7 @@ import { PROSE_LIMITS, SCENARIO_FIELD_MAX_CHARS } from "./prompt";
 import type { GeneratedChapter } from "./writer";
 
 export type ProseLimits = { minParagraphs: number; maxParagraphs: number; minChars: number; maxChars: number };
-export type ValidationFailure = "not_json" | "schema" | "length" | "stop_words";
+export type ValidationFailure = "not_json" | "schema" | "length" | "stop_words" | "missing_data" | "gendered";
 export type Validation = { ok: true; chapter: GeneratedChapter } | { ok: false; reason: ValidationFailure };
 
 // Модель часто пишет абзацы с настоящими переводами строки внутри строк JSON; для JSON.parse это ошибка
