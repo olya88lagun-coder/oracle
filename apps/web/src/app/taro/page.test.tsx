@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
 import { TARO_FAQ } from "@/components/taro/TaroGuide";
+import { TARO_SPREADS } from "@/lib/taro-spreads";
 import TaroPage, { metadata } from "./page";
 
 const markup = renderToStaticMarkup(<TaroPage />);
@@ -51,6 +52,23 @@ describe("/taro", () => {
   test("leads to the spreads from the first screen", () => {
     expect(markup).toContain('href="/taro/rasklady"');
     expect(text(markup)).toContain("Расклады Таро");
+  });
+
+  test("offers the five spreads under the first screen, before the catalog", () => {
+    const promo = /<section[^>]*taro-spreads-promo[\s\S]*?<\/section>/.exec(markup)?.[0] ?? "";
+    expect(text(/<h2[\s\S]*?<\/h2>/.exec(promo)![0])).toBe("Расклады Таро");
+    for (const spread of TARO_SPREADS) {
+      expect(promo).toContain(`href="/taro/rasklady/${spread.slug}"`);
+      expect(promo).toContain(`aria-label="Сделать расклад: ${spread.name}"`);
+      expect(text(promo)).toContain(spread.short);
+      expect(text(promo)).toContain(spread.teaser);
+    }
+    expect(promo.match(/<svg/g)).toHaveLength(TARO_SPREADS.length);
+    expect(promo).toContain('href="/taro/rasklady"');
+    expect(text(promo)).toContain("Все расклады Таро");
+    expect(markup.indexOf("taro-spreads-promo")).toBeGreaterThan(markup.indexOf("taro-cat-hero"));
+    expect(markup.indexOf("taro-spreads-promo")).toBeLessThan(markup.indexOf('id="znacheniya"'));
+    expect(markup.match(/<h1[\s>]/g)).toHaveLength(1);
   });
 
   test("does not promise a prediction", () => {

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { catalogCards } from "@/components/taro/catalog-cards";
 import { TaroCatalog } from "@/components/taro/TaroCatalog";
 import { TaroGuide, taroFaqJsonLd } from "@/components/taro/TaroGuide";
+import { TaroSpreadsPromo } from "@/components/taro/TaroSpreadsPromo";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { TARO_DAY_PATH, TARO_PATH, TARO_SPREADS_PATH } from "@/lib/taro-paths";
 
@@ -46,6 +47,8 @@ export default function TaroPage() {
           </div>
         </div>
       </section>
+
+      <TaroSpreadsPromo />
 
       <TaroCatalog cards={catalogCards()} />
 
