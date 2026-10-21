@@ -4,7 +4,7 @@ import { catalogCards } from "@/components/taro/catalog-cards";
 import { TaroCatalog } from "@/components/taro/TaroCatalog";
 import { TaroGuide, taroFaqJsonLd } from "@/components/taro/TaroGuide";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
-import { TARO_DAY_PATH, TARO_PATH } from "@/lib/taro-paths";
+import { TARO_DAY_PATH, TARO_PATH, TARO_SPREADS_PATH } from "@/lib/taro-paths";
 
 export const metadata: Metadata = publicMetadata({
   title: "Таро онлайн: карта дня и значения 78 карт",
@@ -34,6 +34,9 @@ export default function TaroPage() {
             <div className="taro-cat-hero__actions">
               <Link className="button button--lavender" href={TARO_DAY_PATH}>
                 Вытянуть карту дня
+              </Link>
+              <Link className="matrix-link" href={TARO_SPREADS_PATH}>
+                Расклады Таро
               </Link>
               <a className="matrix-link" href="#znacheniya">
                 Значения 78 карт

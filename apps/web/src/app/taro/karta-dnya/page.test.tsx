@@ -48,6 +48,10 @@ describe("/taro/karta-dnya", () => {
     expect(guide).toContain('href="/taro#znacheniya"');
   });
 
+  test("leads to the spreads for a deeper look", () => {
+    expect(guide).toContain('href="/taro/rasklady"');
+  });
+
   test("the FAQ is on the page and in the FAQPage markup, word for word", () => {
     expect(TARO_DAY_FAQ.length).toBeGreaterThanOrEqual(6);
     const faq = jsonLd.find((item) => item["@type"] === "FAQPage") as { mainEntity: { name: string; acceptedAnswer: { text: string } }[] };
