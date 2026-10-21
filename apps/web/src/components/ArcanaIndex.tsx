@@ -1,12 +1,17 @@
 import { ARCANA } from "@oracle/content";
 import Image from "next/image";
 import Link from "next/link";
-import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
+import { ARCANA_HUB_PATH, arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 
 export function ArcanaIndex({ current }: { current?: number }) {
   return (
     <nav className="stack" aria-labelledby="arcana-index">
       <h2 id="arcana-index">Все 22 аркана</h2>
+      <p>
+        <Link className="matrix-link" href={ARCANA_HUB_PATH}>
+          Значения всех арканов в матрице судьбы
+        </Link>
+      </p>
       <ul className="arcana-index">
         {ARCANA.map((arcanum) => (
           <li key={arcanum.number}>
