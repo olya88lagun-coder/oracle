@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { natalPageBySlug } from "@oracle/content/natal";
+import { natalPageBySlug, NATAL_PAGES } from "@oracle/content/natal";
 import { describe, expect, test } from "vitest";
 import { NATAL_COVER_SIZE, NATAL_COVER_SLUGS, natalCoverPath } from "./natal-covers";
 
@@ -25,9 +25,13 @@ describe("natal covers", () => {
     expect(readdirSync(dir).filter((name) => name.endsWith(".webp")).map((name) => name.replace(/\.webp$/, "")).sort()).toEqual([...NATAL_COVER_SLUGS].sort());
   });
 
+  test("every planet and ascendant page has a cover, north node pages have none yet", () => {
+    for (const page of NATAL_PAGES) expect(NATAL_COVER_SLUGS.has(page.slug), page.slug).toBe(page.body !== "northNode");
+  });
+
   test("the path is given only for a page that has a cover", () => {
     expect(natalCoverPath("solntse-v-rybah")).toBe("/natal/solntse-v-rybah.webp");
-    expect(natalCoverPath("solntse-v-teltse")).toBeNull();
+    expect(natalCoverPath("severnyy-uzel-v-ovne")).toBeNull();
     expect(natalCoverPath("")).toBeNull();
   });
 });

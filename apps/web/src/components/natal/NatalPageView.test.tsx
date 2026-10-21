@@ -4,11 +4,12 @@ import { describe, expect, test } from "vitest";
 import { acceptedNatalPage } from "@/lib/natal-pages";
 import { NatalPageView } from "./NatalPageView";
 
-function render(slug: string): string {
+// cover: undefined — как на сайте (из списка обложек), null — без обложки, чтобы проверять эмблему
+function render(slug: string, cover?: string | null): string {
   const page = acceptedNatalPage(slug);
   const text = natalText(slug);
   if (!page || !text) throw new Error(`нет страницы ${slug}`);
-  return renderToStaticMarkup(<NatalPageView page={page} text={text} />);
+  return renderToStaticMarkup(cover === undefined ? <NatalPageView page={page} text={text} /> : <NatalPageView page={page} text={text} cover={cover} />);
 }
 
 const count = (markup: string, pattern: RegExp): number => markup.match(pattern)?.length ?? 0;
@@ -33,11 +34,11 @@ describe("NatalPageView: Sun in Aries", () => {
     expect(count(markup, /<li>В какой|<li>Какие|<li>Что/g)).toBeGreaterThan(0);
   });
 
-  test("the emblem (a page without a cover, Sun in Taurus) pairs the Sun glyph with the sign glyph and has an accessible name", () => {
-    const taurus = render("solntse-v-teltse");
-    expect(taurus).toContain('data-variant="sun" role="img" aria-label="Солнце и знак Тельца"');
-    expect(taurus).toContain('<use href="#glyph-sun"></use>');
-    expect(taurus).toContain("<figcaption>Солнце · Телец</figcaption>");
+  test("the emblem (without a cover) pairs the Sun glyph with the sign glyph and has an accessible name", () => {
+    const aries = render("solntse-v-ovne", null);
+    expect(aries).toContain('data-variant="sun" role="img" aria-label="Солнце и знак Овна"');
+    expect(aries).toContain('<use href="#glyph-sun"></use>');
+    expect(aries).toContain("<figcaption>Солнце · Овен</figcaption>");
   });
 
   test("invites to the calculator with a link, and lists the Sun in all twelve signs with the current one marked", () => {
@@ -66,8 +67,8 @@ describe("NatalPageView: Sun in Aries", () => {
   });
 });
 
-describe("NatalPageView: ascendant in Cancer", () => {
-  const markup = render("ascendent-v-rake");
+describe("NatalPageView: ascendant in Cancer (without a cover)", () => {
+  const markup = render("ascendent-v-rake", null);
 
   test("uses the AC mark instead of a body glyph and the ascendant wording", () => {
     expect(markup).toContain('<h1 id="meaning-title">Асцендент в Раке</h1>');
@@ -126,7 +127,7 @@ describe("NatalPageView: hero with the cover", () => {
   });
 
   test("a page without a cover keeps the emblem and has no picture", () => {
-    const markup = render("solntse-v-teltse");
+    const markup = render("solntse-vo-lve", null);
     expect(markup).toContain("natal-emblem");
     expect(markup).not.toContain("natal-cover");
     expect(markup).not.toContain("<img");
