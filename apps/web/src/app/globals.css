@@ -194,6 +194,22 @@ body .stack > * + * { margin-top: 20px; }
 .arcanum-section[data-static] > summary { cursor: default; pointer-events: none; min-height: 0; }
 .arcanum-section[data-static] .arcanum-section__icon { display: none; }
 /* Ряд «Все 22 аркана»: карточки с миниатюрой. minmax(0, 1fr) — длинные имена переносятся, а не раздвигают ряд за край */
+.arcana-hub__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.arcana-hub__card { display: grid; gap: 6px; align-content: start; height: 100%; padding: 8px 8px 14px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink-soft); text-decoration: none; transition: border-color var(--dur-base) var(--ease-out); }
+.arcana-hub__card:hover, .arcana-hub__card:focus-visible { border-color: var(--accent-line); }
+.arcana-hub__card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.arcana-hub__art { position: relative; display: block; aspect-ratio: 1; overflow: hidden; border-radius: calc(var(--radius) - 4px); background: var(--surface); }
+.arcana-hub__art img { object-fit: cover; }
+.arcana-hub__head { display: flex; gap: 8px; align-items: baseline; margin-top: 4px; }
+.arcana-hub__head b { color: var(--accent); font-family: var(--font-display); font-weight: 400; font-size: 18px; }
+.arcana-hub__name { color: var(--ink); font-family: var(--font-display); font-size: 21px; line-height: 1.2; }
+.arcana-hub__keys { color: var(--accent); font-size: 14px; line-height: 1.4; }
+.arcana-hub__text { font-size: 14px; line-height: 1.5; }
+.arcana-hub__how, .arcana-hub__faq { display: grid; gap: 14px; max-width: 780px; margin-top: 20px; }
+.arcana-hub__how h2, .arcana-hub__faq h2 { margin: 0; font-size: clamp(28px, 4vw, 38px); line-height: 1.2; }
+.arcana-hub__how p { margin: 0; color: var(--ink-soft); }
+@media (min-width: 700px) { .arcana-hub__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; } }
+@media (min-width: 1100px) { .arcana-hub__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .arcana-index { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
 @media (min-width: 1200px) { .arcana-index { grid-template-columns: repeat(11, minmax(0, 1fr)); } }
 .arcana-index a { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; justify-items: center; align-content: start; height: 100%; padding: 6px 6px 10px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink-soft); text-align: center; text-decoration: none; transition: border-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out); }

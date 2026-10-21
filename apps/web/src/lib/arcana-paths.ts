@@ -2,6 +2,8 @@ import { ARCANA, type Arcanum } from "@oracle/content";
 import { shortDescription } from "./short-description";
 
 export const MATRIX_PATH = "/matrica-sudby";
+// Страница-хаб со значениями всех 22 арканов (static-сегмент выигрывает у динамического [arkan])
+export const ARCANA_HUB_PATH = `${MATRIX_PATH}/arkany`;
 const PARAM = /^arkan-([1-9]|1\d|2[0-2])-([a-z]+(?:-[a-z]+)*)$/;
 
 type ArcanumRef = { number: number; slug: string };

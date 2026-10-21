@@ -1,7 +1,7 @@
 import { ARCANA, arcanumByNumber } from "@oracle/content";
 import Image from "next/image";
 import Link from "next/link";
-import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
+import { ARCANA_HUB_PATH, arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 import { MATRIX_FORM_ID } from "./matrix-ids";
 
 // Иллюстративные примеры трёх точек: это образы из мира арканов, а не результат расчёта
@@ -50,6 +50,9 @@ export function MatrixLibrary() {
       <div className="matrix-heading">
         <h2 id="matrix-library">Мир 22 арканов</h2>
         <p>У каждого образа есть светлая и сложная стороны. Посмотрите, какой откликается вам сейчас.</p>
+        <Link className="matrix-link" href={ARCANA_HUB_PATH}>
+          Значения всех арканов
+        </Link>
       </div>
       <ul className="matrix-library">
         {ARCANA.map((arcanum) => (
