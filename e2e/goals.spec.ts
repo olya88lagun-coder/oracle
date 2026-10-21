@@ -89,12 +89,15 @@ test("the compatibility funnel has its own offer goals", async ({ page }) => {
 });
 
 test("drawing a card and starting a Lila game fire their goals", async ({ page }) => {
+  // У рубашек бесконечная анимация, Playwright ждал бы, пока они остановятся: на время выбора карты просим «меньше движения»
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/taro/karta-dnya");
   await expect(async () => {
     await page.getByRole("button", { name: "Карта 2" }).click();
     await expect(page.getByRole("heading", { level: 2, name: "Как прожить день" })).toBeVisible({ timeout: 3000 });
   }).toPass({ timeout: 25_000 });
   expect(await names(page)).toContain("taro_draw");
+  await page.emulateMedia({ reducedMotion: null });
 
   await page.goto("/lila/igra");
   await page.getByRole("textbox", { name: "Ваше намерение" }).fill("Почему мне трудно принять решение о работе?");

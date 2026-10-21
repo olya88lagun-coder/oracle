@@ -4515,3 +4515,35 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   .compat-scene__content > .compat-form *,
   main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form * { transition: none; animation: none; scroll-behavior: auto; }
 }
+
+/* Карта дня: три рубашки должны выглядеть нажимаемыми. Крупнее, тонкая рамка всегда, мягкое «дыхание» и блик с разной задержкой
+   (только при разрешённой анимации); при наведении карта поднимается и разворачивается. Вид доводит Codex.
+   На телефоне высоту не наращиваем: e2e/first-screen.spec.ts требует, чтобы все три карты были выше cookie-панели на 390×740 */
+.taro-day .taro-picks { max-width: 100%; gap: 8px; padding-inline: 8px; }
+.taro-choose .taro-pick { position: relative; overflow: hidden; border-radius: 12px; box-shadow: 0 0 0 1px var(--accent-line); }
+.taro-choose .taro-pick .taro-back { box-shadow: none; }
+.taro-choose .taro-pick:hover:not(:disabled) { --lift: -10px; --tilt: 0deg; box-shadow: 0 0 0 1px var(--accent), 0 22px 60px rgba(185, 164, 232, 0.34); scale: 1.06; }
+.taro-choose .taro-pick:active:not(:disabled) { scale: 0.97; }
+.taro-choose .taro-pick:focus-visible { scale: 1.06; }
+.taro-choose .taro-pick::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; background: linear-gradient(115deg, transparent 38%, rgba(255, 244, 220, 0.34) 50%, transparent 62%); transform: translateX(-120%); }
+.taro-choose__hint { font-size: 14px; }
+
+@media (min-width: 900px) {
+  .taro-day-hero { grid-template-columns: minmax(0, 0.8fr) minmax(420px, 1fr); }
+  .taro-choose { width: min(100%, 580px); gap: 18px; }
+  .taro-day .taro-picks { max-width: 560px; gap: 18px; }
+  .taro-choose > p:first-child { font-size: 18px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .taro-choose .taro-pick { transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base), scale var(--dur-base) var(--ease-out), box-shadow var(--dur-base); animation: taro-card-float 3.8s ease-in-out infinite, taro-card-glow 3.8s ease-in-out infinite; }
+  .taro-choose .taro-pick:nth-child(2) { animation-delay: 0.45s; }
+  .taro-choose .taro-pick:nth-child(3) { animation-delay: 0.9s; }
+  .taro-choose .taro-pick:not(:disabled)::after { animation: taro-card-shine 4.2s ease-in-out infinite; }
+  .taro-choose .taro-pick:nth-child(2)::after { animation-delay: 0.45s; }
+  .taro-choose .taro-pick:nth-child(3)::after { animation-delay: 0.9s; }
+  .taro-choose .taro-pick:hover:not(:disabled), .taro-choose .taro-pick:focus-visible { animation-play-state: paused; }
+}
+@keyframes taro-card-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -7px; } }
+@keyframes taro-card-glow { 0%, 100% { box-shadow: 0 0 0 1px var(--accent-line); } 50% { box-shadow: 0 0 0 1px var(--accent), 0 0 26px rgba(185, 164, 232, 0.32); } }
+@keyframes taro-card-shine { 0%, 55% { opacity: 0; transform: translateX(-120%); } 62% { opacity: 1; } 90%, 100% { opacity: 0; transform: translateX(120%); } }

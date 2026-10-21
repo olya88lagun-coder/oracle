@@ -1,6 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
 
 // Нужен только dev:web: страницы публичные, вход не требуется
+// У рубашек карты дня бесконечная анимация, а Playwright перед кликом ждёт, пока элемент остановится: в этом файле идём с «меньше движения».
+// Только здесь, не в общем конфиге: от этой настройки зависит поведение кубика Лилы и калькуляторов. Сценарий анимации включает обычный режим сам
+test.use({ reducedMotion: "reduce" });
+
 async function noHorizontalScroll(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 }
@@ -92,4 +96,21 @@ test("a card page has its sections, the credit and the matrix number for a major
   await expect(page.getByText("Рисунки Памелы Колман Смит, 1909 (общественное достояние)")).toBeVisible();
   await noHorizontalScroll(page);
   expect((await page.goto("/taro/karty/net-takoj-karty"))?.status()).toBe(404);
+});
+
+test("the three backs of the card of the day look pressable: they pulse and shine, and do not move when the system asks for less motion", async ({ page }) => {
+  await page.goto("/taro/karta-dnya");
+  const pick = page.getByRole("button", { name: "Карта 1" });
+  await expect(page.locator(".taro-choose__hint")).toBeVisible();
+  const animation = () => pick.evaluate((node) => getComputedStyle(node).animationName);
+  // По умолчанию e2e идёт с «меньше движения»; для проверки анимации включаем обычный режим
+  expect(await animation()).toBe("none");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  expect(await animation()).toContain("taro-card-float");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  expect(await animation()).toBe("none");
+  // Без движения карты всё равно обведены тонкой рамкой, а нажатие по-прежнему открывает карту
+  expect(await pick.evaluate((node) => getComputedStyle(node).boxShadow)).not.toBe("none");
+  await pick.click();
+  await expect(page.getByText("Ваша карта дня.")).toBeVisible();
 });
