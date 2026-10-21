@@ -99,3 +99,20 @@ test("the tiles under the first screen of /taro lead to the spreads and fit a ph
   await expect(page).toHaveURL(/\/taro\/rasklady\/tri-karty$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Расклад на три карты");
 });
+
+test("a finished spread offers one next step, and following it counts the goal without any data", async ({ page }) => {
+  await page.goto("/taro/rasklady/otnosheniya");
+  await openFirst(page, "Позиция 1: Что происходит между вами");
+  // Пока карты открыты не все, предложения нет
+  await expect(page.getByRole("heading", { level: 2, name: "Если хочется глубже" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Открыть все карты" }).click();
+  await expect(page.getByRole("heading", { level: 2, name: "Если хочется глубже" })).toBeVisible();
+  await noHorizontalScroll(page);
+  const next = page.getByRole("link", { name: "Рассчитать совместимость" });
+  await expect(next).toHaveAttribute("href", "/sovmestimost");
+  await next.click();
+  await expect(page).toHaveURL(/\/sovmestimost$/);
+  const fired = await goals(page);
+  expect(fired.filter((call) => call.goal === "taro_to_practice")).toHaveLength(1);
+  expect(fired.every((call) => !call.hasParams)).toBe(true);
+});

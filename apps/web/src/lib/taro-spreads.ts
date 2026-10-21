@@ -1,4 +1,8 @@
 import type { TarotCard } from "@oracle/content/tarot";
+import { MATRIX_PATH } from "./arcana-paths";
+import { COMPAT_PATH } from "./compat";
+import { LILA_PATH } from "./lila-paths";
+import { NATAL_PATH } from "./natal-paths";
 import { pickCardIndex } from "./taro-day";
 import { TARO_SPREADS_PATH } from "./taro-paths";
 
@@ -17,7 +21,10 @@ export type Spread = {
   readonly lead: string;
   readonly positions: readonly SpreadPosition[];
   readonly faq: readonly FaqItem[];
+  readonly next: SpreadNext;
 };
+// Куда вести из расклада: практика, с которой начинается бесплатный расчёт или игра; платные предложения лежат уже на её страницах
+export type SpreadNext = { readonly href: string; readonly title: string; readonly text: string; readonly label: string };
 export type PositionText = { readonly list: boolean; readonly lines: readonly string[] };
 
 export const TARO_SPREADS: readonly Spread[] = [
@@ -45,6 +52,7 @@ export const TARO_SPREADS: readonly Spread[] = [
           "Подойдёт открытый вопрос, на который нельзя ответить «да» или «нет»: например, «Что мне важно увидеть в этой ситуации?». Вопрос необязателен, но с ним толкование легче связать с вашей жизнью.",
       },
     ],
+    next: { href: MATRIX_PATH, title: "Матрица судьбы", text: "Рассчитайте матрицу по дате рождения и посмотрите свои ключевые арканы: расчёт бесплатный.", label: "Рассчитать матрицу судьбы" },
   },
   {
     slug: "otnosheniya",
@@ -70,6 +78,7 @@ export const TARO_SPREADS: readonly Spread[] = [
         answer: "Формулируйте вопрос про себя: «Что мне важно увидеть в этих отношениях?» или «Что я могу сделать для близости?». Вопросы вроде «вернётся ли он» ответа от карт не получат.",
       },
     ],
+    next: { href: COMPAT_PATH, title: "Совместимость", text: "Введите две даты рождения и посмотрите, где вы с партнёром похожи и где различаетесь: расчёт бесплатный.", label: "Рассчитать совместимость" },
   },
   {
     slug: "vybor",
@@ -96,6 +105,7 @@ export const TARO_SPREADS: readonly Spread[] = [
         answer: "Назовите про себя вариант А и вариант Б до того, как откроете карты, и держите их в уме при чтении. Записывать варианты не нужно.",
       },
     ],
+    next: { href: LILA_PATH, title: "Лила", text: "Игра с вашим вопросом: поле из 72 клеток, кубик, змеи и стрелы. Играть можно бесплатно.", label: "Сыграть в Лилу" },
   },
   {
     slug: "delo-i-dengi",
@@ -120,6 +130,7 @@ export const TARO_SPREADS: readonly Spread[] = [
         answer: "С открытым: «Что мне важно увидеть в этом деле?» или «С чего мне начать?». Такой вопрос лучше связывает карты с вашей реальной работой.",
       },
     ],
+    next: { href: NATAL_PATH, title: "Натальная карта", text: "Рассчитайте натальную карту по дате, времени и месту рождения: расчёт бесплатный и идёт в вашем браузере.", label: "Рассчитать натальную карту" },
   },
   {
     slug: "na-segodnya",
@@ -144,6 +155,7 @@ export const TARO_SPREADS: readonly Spread[] = [
         answer: "Сколько угодно, но полезнее не повторять один и тот же вопрос, пока не выпадет «подходящий» ответ. Лучше внимательно прочитать первый расклад.",
       },
     ],
+    next: { href: LILA_PATH, title: "Лила", text: "Игра с намерением поможет продолжить вопрос вечера: поле из 72 клеток, кубик, змеи и стрелы. Играть можно бесплатно.", label: "Сыграть в Лилу" },
   },
 ];
 

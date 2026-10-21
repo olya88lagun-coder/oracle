@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { reachGoal } from "@/lib/analytics";
-import { pickDistinctIndexes, type SpreadPosition } from "@/lib/taro-spreads";
+import { pickDistinctIndexes, type SpreadNext, type SpreadPosition } from "@/lib/taro-spreads";
 import { TaroBack } from "./TaroBack";
 import type { SpreadCardData } from "./spread-cards";
 
@@ -12,7 +12,7 @@ const MAX_QUESTION = 200;
 
 // Выбор карт расклада: по рубашке на позицию. Карты выбираются случайно без повторов при первом открытии.
 // Вопрос и карты живут только в состоянии страницы: ни в хранилище браузера, ни на сервер они не попадают
-export function SpreadPlay({ positions, cards }: { positions: readonly SpreadPosition[]; cards: readonly SpreadCardData[] }) {
+export function SpreadPlay({ positions, cards, next }: { positions: readonly SpreadPosition[]; cards: readonly SpreadCardData[]; next: SpreadNext }) {
   const [picked, setPicked] = useState<readonly number[] | null>(null);
   const [opened, setOpened] = useState<readonly boolean[]>(() => positions.map(() => false));
   const [question, setQuestion] = useState("");
@@ -144,6 +144,17 @@ export function SpreadPlay({ positions, cards }: { positions: readonly SpreadPos
             );
           })}
           {complete && <p className="muted">Расклад — повод задать себе вопрос, а не прогноз. Полное значение карты открывается по её названию в новой вкладке.</p>}
+          {complete && (
+            <aside className="taro-panel taro-spread-next" aria-labelledby="spread-next-title">
+              <h2 id="spread-next-title">Если хочется глубже</h2>
+              <p>
+                <strong>{next.title}.</strong> {next.text}
+              </p>
+              <Link className="button button--lavender" href={next.href} onClick={() => reachGoal("taro_to_practice")}>
+                {next.label}
+              </Link>
+            </aside>
+          )}
         </section>
       )}
     </section>
