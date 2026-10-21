@@ -330,10 +330,10 @@ test("a meaning page with a cover shows the loaded picture, the caption and the 
   await page.getByRole("link", { name: "Рассчитать свою карту" }).click();
   await expect(page).toHaveURL(/\/natalnaya-karta$/);
 
-  // Без обложки в шапке остаётся эмблема
+  // Обложка есть и у страницы северного узла; эмблема без обложки проверена юнит-тестами (cover={null})
   await page.goto("/natalnaya-karta/severnyy-uzel-v-ovne");
-  await expect(page.locator(".natal-emblem")).toBeVisible();
-  await expect(page.locator(".natal-cover")).toHaveCount(0);
+  await expect(page.locator(".natal-cover img")).toBeVisible();
+  await expect(page.locator(".natal-emblem")).toHaveCount(0);
 });
 
 test("the glossary explains the terms, links to the calculators and is in the sitemap", async ({ page, request }) => {

@@ -25,13 +25,15 @@ describe("natal covers", () => {
     expect(readdirSync(dir).filter((name) => name.endsWith(".webp")).map((name) => name.replace(/\.webp$/, "")).sort()).toEqual([...NATAL_COVER_SLUGS].sort());
   });
 
-  test("every planet and ascendant page has a cover, north node pages have none yet", () => {
-    for (const page of NATAL_PAGES) expect(NATAL_COVER_SLUGS.has(page.slug), page.slug).toBe(page.body !== "northNode");
+  test("every page of the manifest has a cover", () => {
+    for (const page of NATAL_PAGES) expect(NATAL_COVER_SLUGS.has(page.slug), page.slug).toBe(true);
+    expect(NATAL_COVER_SLUGS.size).toBe(NATAL_PAGES.length);
   });
 
   test("the path is given only for a page that has a cover", () => {
     expect(natalCoverPath("solntse-v-rybah")).toBe("/natal/solntse-v-rybah.webp");
-    expect(natalCoverPath("severnyy-uzel-v-ovne")).toBeNull();
+    expect(natalCoverPath("severnyy-uzel-v-ovne")).toBe("/natal/severnyy-uzel-v-ovne.webp");
+    expect(natalCoverPath("net-takoy-slug")).toBeNull();
     expect(natalCoverPath("")).toBeNull();
   });
 });
