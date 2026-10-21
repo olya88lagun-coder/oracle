@@ -27,7 +27,7 @@ describe("natal covers", () => {
 
   test("the path is given only for a page that has a cover", () => {
     expect(natalCoverPath("solntse-v-rybah")).toBe("/natal/solntse-v-rybah.webp");
-    expect(natalCoverPath("solntse-v-teltse")).toBeNull();
+    expect(natalCoverPath("solntse-v-bliznetsah")).toBeNull();
     expect(natalCoverPath("")).toBeNull();
   });
 });

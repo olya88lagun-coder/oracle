@@ -331,7 +331,7 @@ test("a meaning page with a cover shows the loaded picture, the caption and the 
   await expect(page).toHaveURL(/\/natalnaya-karta$/);
 
   // Без обложки в шапке остаётся эмблема
-  await page.goto("/natalnaya-karta/solntse-v-teltse");
+  await page.goto("/natalnaya-karta/solntse-v-bliznetsah");
   await expect(page.locator(".natal-emblem")).toBeVisible();
   await expect(page.locator(".natal-cover")).toHaveCount(0);
 });

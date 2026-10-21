@@ -33,11 +33,11 @@ describe("NatalPageView: Sun in Aries", () => {
     expect(count(markup, /<li>В какой|<li>Какие|<li>Что/g)).toBeGreaterThan(0);
   });
 
-  test("the emblem (a page without a cover, Sun in Taurus) pairs the Sun glyph with the sign glyph and has an accessible name", () => {
-    const taurus = render("solntse-v-teltse");
-    expect(taurus).toContain('data-variant="sun" role="img" aria-label="Солнце и знак Тельца"');
-    expect(taurus).toContain('<use href="#glyph-sun"></use>');
-    expect(taurus).toContain("<figcaption>Солнце · Телец</figcaption>");
+  test("the emblem (a page without a cover, Sun in Gemini) pairs the Sun glyph with the sign glyph and has an accessible name", () => {
+    const gemini = render("solntse-v-bliznetsah");
+    expect(gemini).toContain('data-variant="sun" role="img" aria-label="Солнце и знак Близнецов"');
+    expect(gemini).toContain('<use href="#glyph-sun"></use>');
+    expect(gemini).toContain("<figcaption>Солнце · Близнецы</figcaption>");
   });
 
   test("invites to the calculator with a link, and lists the Sun in all twelve signs with the current one marked", () => {
@@ -126,7 +126,7 @@ describe("NatalPageView: hero with the cover", () => {
   });
 
   test("a page without a cover keeps the emblem and has no picture", () => {
-    const markup = render("solntse-v-teltse");
+    const markup = render("solntse-v-bliznetsah");
     expect(markup).toContain("natal-emblem");
     expect(markup).not.toContain("natal-cover");
     expect(markup).not.toContain("<img");
