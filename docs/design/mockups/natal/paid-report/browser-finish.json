@@ -1,0 +1,491 @@
+[
+  {
+    "name": "ready-report",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 19003.109375,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Ядро",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Мышление и общение",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и ценности",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Дело и деньги",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Рост и испытания",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Глубокие слои",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Главные аспекты",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Ваш сценарий",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "← Мой портрет",
+        "width": 117.40625,
+        "height": 48,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 375,
+    "href": "#natal-chapter-core",
+    "top": 111.875,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 375,
+    "href": "#natal-chapter-mind",
+    "top": 111.78125,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 375,
+    "href": "#natal-chapter-love",
+    "top": 111.5,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 375,
+    "href": "#natal-chapter-action",
+    "top": 112.375,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 375,
+    "href": "#natal-chapter-work",
+    "top": 112.3125,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 375,
+    "href": "#natal-chapter-growth",
+    "top": 111.8125,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 375,
+    "href": "#natal-chapter-depth",
+    "top": 111.8125,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 375,
+    "href": "#natal-chapter-aspects",
+    "top": 112.4375,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 375,
+    "href": "#natal-chapter-scenario",
+    "top": 111.65625,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-reading",
+    "width": 343,
+    "fontSize": "17px",
+    "lineHeight": "30.6px",
+    "charactersPerLine": [
+      32,
+      38,
+      33,
+      39,
+      40,
+      23
+    ]
+  },
+  {
+    "name": "ready-report",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 12313.203125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Ядро",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Мышление и общение",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и ценности",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Дело и деньги",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Рост и испытания",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Глубокие слои",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Главные аспекты",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Ваш сценарий",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "← Мой портрет",
+        "width": 117.40625,
+        "height": 48,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-core",
+    "top": 112.390625,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-mind",
+    "top": 111.578125,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-love",
+    "top": 112.125,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-action",
+    "top": 111.84375,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-work",
+    "top": 112,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-growth",
+    "top": 111.9375,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-depth",
+    "top": 112.390625,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-aspects",
+    "top": 111.703125,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-scenario",
+    "top": 111.640625,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "ready-report-reading",
+    "width": 663.671875,
+    "fontSize": "18px",
+    "lineHeight": "32.4px",
+    "charactersPerLine": [
+      70,
+      72,
+      63
+    ]
+  },
+  {
+    "name": "ready-report-toc-focus",
+    "width": 375,
+    "focusVisible": true,
+    "active": true,
+    "outline": "solid",
+    "outlineWidth": "2px"
+  },
+  {
+    "name": "portrait-live",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 182.5625,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.745343969894046,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Открыть разбор",
+        "width": 133.09375,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "portrait-live",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 182.5625,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.745343969894046,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Открыть разбор",
+        "width": 133.09375,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "portrait-proposed-hook",
+    "width": 375,
+    "evidence": "DOM preview with proposed class; not active in source",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 276.25,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.755705031420453,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Открыть разбор",
+        "width": 148.40625,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "portrait-proposed-hook",
+    "width": 1280,
+    "evidence": "DOM preview with proposed class; not active in source",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 245.0625,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.755705031420453,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Открыть разбор",
+        "width": 148.40625,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "print",
+    "bodyBackground": "rgb(255, 255, 255)",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 7420.65625,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.941541686896628,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Ядро",
+        "width": 592,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Мышление и общение",
+        "width": 592,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и ценности",
+        "width": 592,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 592,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Дело и деньги",
+        "width": 592,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Рост и испытания",
+        "width": 592,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Глубокие слои",
+        "width": 592,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Главные аспекты",
+        "width": 592,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Ваш сценарий",
+        "width": 592,
+        "height": 48,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  }
+]

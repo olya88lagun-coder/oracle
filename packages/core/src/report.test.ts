@@ -4,6 +4,8 @@ import { calculateMatrix } from "./matrix";
 import {
   CHAPTER_IDS,
   CHAPTER_TITLES,
+  GENERATE_JOB_OPTIONS,
+  GENERATE_NATAL_JOB_OPTIONS,
   generateNatalReportJobKey,
   generateReportJobKey,
   MATRIX_REPORT_PRICE_KOPECKS,
@@ -62,5 +64,14 @@ describe("natal report product", () => {
   test("the snapshot key rounds the coordinates to two decimals", () => {
     expect(natalSnapshotKey({ date: "1990-03-07", time: "12:00", latitude: 55.7558, longitude: 37.6173 })).toBe("1990-03-07|12:00|55.76|37.62");
     expect(natalSnapshotKey({ date: "1990-03-07", time: "12:00", latitude: 55.7541, longitude: 37.6149 })).toBe("1990-03-07|12:00|55.75|37.61");
+  });
+});
+
+describe("natal report job options", () => {
+  test("give the job more time than the matrix report: nine chapters, three attempts of up to a minute each, one at a time", () => {
+    const worstCaseSeconds = 9 * 3 * 60;
+    expect(GENERATE_NATAL_JOB_OPTIONS.expireInSeconds).toBeGreaterThan(worstCaseSeconds);
+    expect(GENERATE_NATAL_JOB_OPTIONS.expireInSeconds).toBeGreaterThan(GENERATE_JOB_OPTIONS.expireInSeconds);
+    expect(GENERATE_NATAL_JOB_OPTIONS.retryLimit).toBe(GENERATE_JOB_OPTIONS.retryLimit);
   });
 });

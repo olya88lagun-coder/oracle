@@ -15,7 +15,7 @@ import type { ScenarioField } from "@oracle/core";
 import { mainAspects, natalChapterOutline, type BodyId, type ChapterPoint, type NatalChapterId, type NatalChapterOutline, type NatalChart } from "@oracle/core/natal";
 
 // Глава натального разбора, собранная без ИИ из готовых текстов: вступление, «Суть» страниц знаков и описания домов
-export type NatalChapter = { id: NatalChapterId; source: "fallback"; paragraphs?: string[]; scenario?: Record<ScenarioField, string> };
+export type NatalChapter = { id: NatalChapterId; source: "ai" | "fallback"; paragraphs?: string[]; scenario?: Record<ScenarioField, string> };
 
 // Блоки платного разбора: «планета в доме» и «функция планеты». Берутся только из принятых партий; без блока работают запасные тексты
 export type NatalBlocks = { house: (body: BodyId, house: number) => string | undefined; planet: (body: BodyId) => string | undefined };

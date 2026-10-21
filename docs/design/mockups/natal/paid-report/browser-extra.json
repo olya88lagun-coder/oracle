@@ -1,0 +1,184 @@
+[
+  {
+    "name": "example-toc-focus",
+    "width": 375,
+    "focusVisible": true,
+    "active": true,
+    "outline": "solid",
+    "outlineWidth": "2px"
+  },
+  {
+    "name": "example-toc-focus",
+    "width": 1280,
+    "focusVisible": true,
+    "active": true,
+    "outline": "solid",
+    "outlineWidth": "2px"
+  },
+  {
+    "name": "offer-cta-focus",
+    "width": 375,
+    "focusVisible": true,
+    "active": true,
+    "outline": "solid",
+    "outlineWidth": "2px"
+  },
+  {
+    "name": "offer-cta-focus",
+    "width": 1280,
+    "focusVisible": true,
+    "active": true,
+    "outline": "solid",
+    "outlineWidth": "2px"
+  },
+  {
+    "name": "offer-topic-focus",
+    "width": 375,
+    "focusVisible": true,
+    "active": true,
+    "outline": "solid",
+    "outlineWidth": "2px"
+  },
+  {
+    "name": "offer-topic-focus",
+    "width": 1280,
+    "focusVisible": true,
+    "active": true,
+    "outline": "solid",
+    "outlineWidth": "2px"
+  },
+  {
+    "name": "short-viewport-selected-offer",
+    "viewport": {
+      "width": 375,
+      "height": 740
+    },
+    "height": 1515.96875,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 7.436805626479562,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Войти и купить разбор — 490 ₽",
+        "width": 309,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 2.048606418918919,
+    "ctaTop": 255.375
+  },
+  {
+    "name": "short-viewport-selected-offer",
+    "viewport": {
+      "width": 375,
+      "height": 812
+    },
+    "height": 1515.96875,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 7.436805626479562,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Войти и купить разбор — 490 ₽",
+        "width": 309,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 1.8669565886699508,
+    "ctaTop": 255.375
+  },
+  {
+    "name": "placeholder",
+    "color": "rgb(241, 233, 223)"
+  }
+]

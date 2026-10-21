@@ -190,7 +190,7 @@ export default async function PortraitPage() {
               {reports.length > 0 ? (
                 <ul className="history-list">
                   {reports.map((report) => (
-                    <li key={report.id}>
+                    <li key={report.id} className={report.product === "natal_report" ? "portrait-report--natal" : undefined}>
                       <span className="history-status">
                         {report.ready ? <Icon name="check" /> : <Icon name="circle-play" />}
                         {report.ready ? "Готов" : "готовится"}
