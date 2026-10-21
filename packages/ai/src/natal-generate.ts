@@ -5,7 +5,7 @@ import { buildNatalChapterInputs, type NatalChapterInput } from "./natal-input";
 import type { NatalBlocks } from "./natal-fallback";
 import { buildNatalPrompt } from "./natal-prompt";
 import { validateNatalChapter } from "./natal-validate";
-import { describeAnswer } from "./validate";
+import { describeAnswer, type ValidationFailure } from "./validate";
 import type { ReportWriter } from "./writer";
 
 // Глава без ИИ: вступление и готовые тексты как есть (так же собирает запасной вариант fallbackNatalReport); у итоговой главы — черновик полей
@@ -17,9 +17,11 @@ export function fallbackNatalChapter(input: NatalChapterInput): NatalChapter {
 // До трёх попыток; не прошёл проверку, истёк таймаут или ошибка провайдера — запасная глава. В лог не идёт ничего, кроме размеров и краёв ответа
 export async function generateNatalChapter(writer: ReportWriter | null, input: NatalChapterInput, options: GenerateOptions = {}): Promise<NatalChapter> {
   if (!writer) return fallbackNatalChapter(input);
-  const prompt = buildNatalPrompt(input);
   const attempts = options.attempts ?? GENERATION_ATTEMPTS;
+  let failure: ValidationFailure | undefined;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const prompt = buildNatalPrompt(input, failure);
+    failure = undefined;
     let reason: string;
     let facts: Record<string, unknown> = {};
     try {
@@ -27,6 +29,7 @@ export async function generateNatalChapter(writer: ReportWriter | null, input: N
       const checked = validateNatalChapter(input, raw);
       if (checked.ok) return checked.chapter;
       reason = checked.reason;
+      failure = checked.reason;
       facts = describeAnswer(raw);
     } catch (error) {
       reason = error instanceof TimeoutError ? "timeout" : `error: ${String(error)}`;
