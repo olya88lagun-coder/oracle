@@ -3,6 +3,7 @@ import { SITE_URL } from "./site";
 
 export const TARO_PATH = "/taro";
 export const TARO_DAY_PATH = "/taro/karta-dnya";
+export const TARO_SPREADS_PATH = "/taro/rasklady";
 const SUFFIX = { page: "", card: "-480", thumb: "-160" } as const;
 
 export const taroCardPath = (card: Pick<TarotCardRef, "slug">): string => `${TARO_PATH}/karty/${card.slug}`;

@@ -40,11 +40,17 @@ describe("/taro", () => {
     }
   });
 
-  test("answers the search words «расклад» and «гадание» honestly: only the card of the day and the card meanings exist", () => {
+  test("answers the search words «расклад» and «гадание» honestly: free, no registration, no prediction", () => {
     const item = TARO_FAQ.find((entry) => /расклад/i.test(entry.question) && /погадать/i.test(entry.question));
     expect(item?.answer).toMatch(/бесплатно и без регистрации/);
-    expect(item?.answer).toMatch(/пока не делаем/);
-    expect(item?.answer).toMatch(/не предсказывает/);
+    expect(item?.answer).toMatch(/расклады на три карты/i);
+    expect(item?.answer).not.toMatch(/пока не делаем/);
+    expect(item?.answer).toMatch(/не предсказывают будущее/);
+  });
+
+  test("leads to the spreads from the first screen", () => {
+    expect(markup).toContain('href="/taro/rasklady"');
+    expect(text(markup)).toContain("Расклады Таро");
   });
 
   test("does not promise a prediction", () => {

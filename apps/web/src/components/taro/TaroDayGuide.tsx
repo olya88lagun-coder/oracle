@@ -2,7 +2,7 @@ import { TAROT_CARDS } from "@oracle/content/tarot";
 import Link from "next/link";
 import { SITE_URL } from "@/lib/site";
 import { rankLabel } from "@/lib/taro-catalog";
-import { TARO_AUTHOR_CREDIT, TARO_DAY_PATH, TARO_PATH, taroCardPath } from "@/lib/taro-paths";
+import { TARO_AUTHOR_CREDIT, TARO_DAY_PATH, TARO_PATH, TARO_SPREADS_PATH, taroCardPath } from "@/lib/taro-paths";
 
 export const TARO_DAY_FAQ: readonly { question: string; answer: string }[] = [
   {
@@ -26,6 +26,10 @@ export const TARO_DAY_FAQ: readonly { question: string; answer: string }[] = [
     question: "Нужна ли регистрация и сохраняется ли карта?",
     answer:
       "Регистрация не нужна. Карта запоминается только в вашем браузере, на сервер мы её не отправляем. Если очистить данные сайта или открыть страницу на другом устройстве, карту можно вытянуть заново.",
+  },
+  {
+    question: "Чем карта дня отличается от расклада?",
+    answer: "Карта дня — одна карта на сутки: образ, действие и вопрос для себя. Расклад — несколько карт, каждая в своей позиции, он помогает рассмотреть вопрос с разных сторон. Расклады Таро тоже бесплатные и без регистрации.",
   },
   {
     question: "Какая колода используется и бывают ли перевёрнутые карты?",
@@ -87,6 +91,12 @@ export function TaroDayGuide() {
             </li>
           ))}
         </ol>
+        <p>Хотите посмотреть на вопрос глубже? Одной карты может быть мало.</p>
+        <p>
+          <Link className="touch-link" href={TARO_SPREADS_PATH}>
+            Расклады Таро на три карты, отношения и выбор
+          </Link>
+        </p>
       </section>
 
       <section aria-labelledby="taro-day-arcana">
