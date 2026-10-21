@@ -76,7 +76,7 @@ export function TaroDraw({ cards, children }: { cards: readonly DrawCard[]; chil
                   </button>
                 ))}
               </div>
-              <p className="muted">Выбор карты происходит в вашем браузере.</p>
+              <p className="muted taro-choose__hint">Нажмите на карту · выбор остаётся в браузере</p>
             </div>
           )}
         </div>
