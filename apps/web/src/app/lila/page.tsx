@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Board } from "@/components/lila/Board";
 import { CellArt } from "@/components/lila/CellArt";
 import { LilaFaq, lilaFaqJsonLd } from "@/components/lila/LilaFaq";
+import { LilaTryDice } from "@/components/lila/LilaTryDice";
 import { Scene } from "@/components/Scene";
 import { DISCLAIMER, formatRubles } from "@/lib/legal";
 import { lilaCellPath, LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
@@ -50,6 +51,12 @@ export default function LilaPage() {
         </div>
         <Image className="lila-hero__art" src="/practices/lila.webp" alt="" width={1200} height={675} unoptimized priority />
       </div>
+
+      <section className="card stack" aria-labelledby="try-title">
+        <h2 id="try-title">Попробуйте первый бросок</h2>
+        <p>В игру входят с шестёркой. Бросьте кубик здесь, чтобы почувствовать начало пути: проба ничего не сохраняет.</p>
+        <LilaTryDice />
+      </section>
 
       <section className="card stack" id="how" aria-labelledby="how-title">
         <h2 id="how-title">Как играть</h2>
