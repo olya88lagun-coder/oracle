@@ -1694,6 +1694,36 @@ body .stack > .taro-day-info { display: grid; gap: 44px; margin-top: 56px; paddi
 .taro-spread-card__positions { display: grid; gap: 4px; margin: 0; padding-left: 22px; color: var(--ink-soft); font-size: 15px; }
 .taro-spread-card .button { justify-self: start; }
 .taro-spreads-more { display: flex; flex-wrap: wrap; gap: 6px 28px; margin: 0; }
+/* Таро: предложение раскладов под первым экраном: плитки с рисунком раскладки */
+.taro-spreads-promo { display: grid; gap: 22px; padding-block: 44px 12px; }
+.taro-spreads-promo__head { display: grid; gap: 10px; max-width: 46em; }
+.taro-spreads-promo__head h2 { margin: 0; font-size: clamp(30px, 4.6vw, 44px); line-height: 1.15; }
+.taro-spreads-promo__head p { margin: 0; color: var(--ink-soft); }
+.taro-spreads-promo__list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.taro-spreads-promo__list > li { min-width: 0; }
+.taro-spread-tile { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 16px; align-items: center; height: 100%; padding: 16px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: radial-gradient(circle at 50% 0%, rgba(185, 164, 232, 0.14), transparent 62%), linear-gradient(180deg, var(--surface-2), var(--surface)); color: var(--ink); text-decoration: none; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base), box-shadow var(--dur-base); }
+.taro-spread-tile:hover { border-color: var(--accent-line); box-shadow: 0 18px 50px rgba(185, 164, 232, 0.16); transform: translateY(-3px); }
+.taro-spread-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.taro-spread-tile__art { display: block; }
+.taro-glyph { display: block; width: 100%; height: auto; overflow: visible; }
+.taro-glyph rect { fill: rgba(185, 164, 232, 0.08); stroke: var(--accent); stroke-width: 1.2; }
+.taro-glyph path { fill: var(--accent); opacity: 0.75; }
+.taro-spread-tile__text { display: grid; gap: 6px; min-width: 0; }
+.taro-spread-tile strong { font-family: var(--font-display); font-size: 22px; font-weight: 400; line-height: 1.2; }
+.taro-spread-tile__teaser { color: var(--ink-soft); font-size: 14px; line-height: 1.5; }
+.taro-spread-tile__go { margin-top: 4px; color: var(--accent); font-size: 14px; white-space: nowrap; }
+@media (min-width: 640px) {
+  .taro-spreads-promo__list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .taro-spread-tile { grid-template-columns: minmax(0, 1fr); align-content: start; gap: 14px; padding: 20px 18px 22px; }
+  .taro-spread-tile__art { padding: 6px 12px 0; }
+}
+@media (min-width: 960px) {
+  .taro-spreads-promo__list { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .taro-spread-tile { padding: 20px 16px 22px; }
+  .taro-spread-tile__art { padding: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .taro-spread-tile { transition: none; } .taro-spread-tile:hover { transform: none; } }
+
 .taro-spread-info h2, .taro-spread-others h2, .taro-spread-play h2 { margin: 0 0 14px; font-size: clamp(26px, 4vw, 36px); line-height: 1.2; }
 .taro-spread-positions { display: grid; gap: 10px; max-width: 46em; margin: 0; padding-left: 22px; color: var(--ink-soft); }
 .taro-spread-positions strong { color: var(--ink); font-weight: 500; }

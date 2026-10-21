@@ -87,3 +87,15 @@ test("unknown spreads are a real 404, and the cards in the reading link to their
   await page.getByRole("button", { name: "Открыть все карты" }).click();
   await expect(page.locator(".taro-spread-panel h3 a").first()).toHaveAttribute("href", /^\/taro\/karty\/[a-z-]+$/);
 });
+
+test("the tiles under the first screen of /taro lead to the spreads and fit a phone", async ({ page }) => {
+  await page.goto("/taro");
+  const tiles = page.locator(".taro-spread-tile");
+  await expect(tiles).toHaveCount(5);
+  await expect(page.getByRole("link", { name: "Сделать расклад: Расклад на отношения" })).toHaveAttribute("href", "/taro/rasklady/otnosheniya");
+  await expect(page.getByRole("link", { name: "Все расклады Таро" })).toHaveAttribute("href", "/taro/rasklady");
+  await noHorizontalScroll(page);
+  await page.getByRole("link", { name: "Сделать расклад: Расклад на три карты" }).click();
+  await expect(page).toHaveURL(/\/taro\/rasklady\/tri-karty$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Расклад на три карты");
+});

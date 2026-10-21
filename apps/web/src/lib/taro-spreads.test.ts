@@ -36,6 +36,11 @@ describe("taro spreads", () => {
     expect(descriptions.size).toBe(TARO_SPREADS.length);
   });
 
+  test("every spread has a short name for the tiles on /taro", () => {
+    expect(TARO_SPREADS.map((spread) => spread.short)).toEqual(["Три карты", "Отношения", "Выбор из двух", "Дело и деньги", "На сегодня"]);
+    for (const spread of TARO_SPREADS) expect(spread.short.length).toBeLessThanOrEqual(24);
+  });
+
   test("builds addresses under /taro/rasklady and resolves only exact slugs", () => {
     expect(spreadPath(TARO_SPREADS[0]!)).toBe("/taro/rasklady/tri-karty");
     expect(spreadFromParam("otnosheniya")?.name).toBe("Расклад на отношения");
