@@ -1,0 +1,1541 @@
+[
+  {
+    "name": "example",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 19165.28125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Ядро",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Мышление и общение",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и ценности",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Дело и деньги",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Рост и испытания",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Глубокие слои",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Главные аспекты",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Ваш сценарий",
+        "width": 265,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Рассчитать свою карту",
+        "width": 175.84375,
+        "height": 48,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "example-anchor",
+    "width": 375,
+    "href": "#natal-chapter-core",
+    "top": 112.046875,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 375,
+    "href": "#natal-chapter-mind",
+    "top": 111.953125,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 375,
+    "href": "#natal-chapter-love",
+    "top": 111.671875,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 375,
+    "href": "#natal-chapter-action",
+    "top": 111.546875,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 375,
+    "href": "#natal-chapter-work",
+    "top": 112.484375,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 375,
+    "href": "#natal-chapter-growth",
+    "top": 111.984375,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 375,
+    "href": "#natal-chapter-depth",
+    "top": 111.984375,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 375,
+    "href": "#natal-chapter-aspects",
+    "top": 111.609375,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 375,
+    "href": "#natal-chapter-scenario",
+    "top": 111.828125,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-reading",
+    "width": 343,
+    "fontSize": "17px",
+    "lineHeight": "30.6px",
+    "charactersPerLine": [
+      32,
+      38,
+      33,
+      39,
+      40,
+      23
+    ]
+  },
+  {
+    "name": "example",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 12340.28125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Ядро",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Мышление и общение",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и ценности",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Дело и деньги",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Рост и испытания",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Глубокие слои",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Главные аспекты",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Ваш сценарий",
+        "width": 391.453125,
+        "height": 48,
+        "disabled": false
+      },
+      {
+        "text": "Рассчитать свою карту",
+        "width": 175.84375,
+        "height": 48,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "example-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-core",
+    "top": 112.46875,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-mind",
+    "top": 111.65625,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-love",
+    "top": 112.203125,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-action",
+    "top": 111.921875,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-work",
+    "top": 112.078125,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-growth",
+    "top": 112.015625,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-depth",
+    "top": 112.46875,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-aspects",
+    "top": 111.78125,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-anchor",
+    "width": 1280,
+    "href": "#natal-chapter-scenario",
+    "top": 111.71875,
+    "visibleBelowHeader": true
+  },
+  {
+    "name": "example-reading",
+    "width": 663.671875,
+    "fontSize": "18px",
+    "lineHeight": "32.4px",
+    "charactersPerLine": [
+      70,
+      72,
+      63
+    ]
+  },
+  {
+    "name": "example-toc-focus",
+    "width": 375,
+    "focusVisible": true,
+    "active": true,
+    "outline": "solid",
+    "outlineWidth": "2px"
+  },
+  {
+    "name": "offer-guest",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 1442.96875,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Войти и купить разбор — 490 ₽",
+        "width": 309,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 1.6032986111111112,
+    "ctaTop": 255.375
+  },
+  {
+    "name": "offer-guest",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 773.75,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Войти и купить разбор — 490 ₽",
+        "width": 479.046875,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 0.8597222222222223,
+    "ctaTop": 270.25
+  },
+  {
+    "name": "offer-cta-focus",
+    "width": 375,
+    "focusVisible": true,
+    "active": true,
+    "outline": "solid",
+    "outlineWidth": "2px"
+  },
+  {
+    "name": "offer-selected",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 1515.96875,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 7.436805626479562,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Войти и купить разбор — 490 ₽",
+        "width": 309,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 1.6844097222222223,
+    "ctaTop": 255.375
+  },
+  {
+    "name": "offer-selected",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 825.75,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 7.436805626479562,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Войти и купить разбор — 490 ₽",
+        "width": 479.046875,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 0.9175,
+    "ctaTop": 270.25
+  },
+  {
+    "name": "offer-topic-focus",
+    "width": 375,
+    "focusVisible": true,
+    "active": true,
+    "outline": "solid",
+    "outlineWidth": "2px"
+  },
+  {
+    "name": "offer-no-time",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 523.75,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.755705031420453,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [],
+    "offerScreens": 0.5819444444444445,
+    "ctaTop": null
+  },
+  {
+    "name": "offer-no-time",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 342.046875,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.755705031420453,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [],
+    "offerScreens": 0.38005208333333335,
+    "ctaTop": null
+  },
+  {
+    "name": "offer-signed-in",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 1660.453125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "email",
+        "width": 309,
+        "height": 52.390625,
+        "disabled": false
+      },
+      {
+        "text": "Купить разбор — 490 ₽",
+        "width": 309,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "оферту",
+        "width": 49.21875,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 1.8449479166666667,
+    "ctaTop": 346.859375
+  },
+  {
+    "name": "offer-signed-in",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 949.234375,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "email",
+        "width": 479.046875,
+        "height": 52.390625,
+        "disabled": false
+      },
+      {
+        "text": "Купить разбор — 490 ₽",
+        "width": 479.046875,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "оферту",
+        "width": 49.21875,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 1.0547048611111112,
+    "ctaTop": 361.734375
+  },
+  {
+    "name": "offer-email-error",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 1713.453125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.32073104514774,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "email",
+        "width": 309,
+        "height": 52.390625,
+        "disabled": false
+      },
+      {
+        "text": "Купить разбор — 490 ₽",
+        "width": 309,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "оферту",
+        "width": 49.21875,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 1.9038368055555555,
+    "ctaTop": 346.859375
+  },
+  {
+    "name": "offer-email-error",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 1002.234375,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.32073104514774,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "email",
+        "width": 479.046875,
+        "height": 52.390625,
+        "disabled": false
+      },
+      {
+        "text": "Купить разбор — 490 ₽",
+        "width": 479.046875,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "оферту",
+        "width": 49.21875,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 1.11359375,
+    "ctaTop": 361.734375
+  },
+  {
+    "name": "offer-error-and-selected",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 1786.453125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 7.436805626479562,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "email",
+        "width": 309,
+        "height": 52.390625,
+        "disabled": false
+      },
+      {
+        "text": "Купить разбор — 490 ₽",
+        "width": 309,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "оферту",
+        "width": 49.21875,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 1.9849479166666666,
+    "ctaTop": 346.859375
+  },
+  {
+    "name": "offer-error-and-selected",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 1054.234375,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 7.436805626479562,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "email",
+        "width": 479.046875,
+        "height": 52.390625,
+        "disabled": false
+      },
+      {
+        "text": "Купить разбор — 490 ₽",
+        "width": 479.046875,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "оферту",
+        "width": 49.21875,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 1.1713715277777779,
+    "ctaTop": 361.734375
+  },
+  {
+    "name": "waiting-pending-live",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 482.953125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 7.641019737673005,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "waiting-pending-live",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 471.078125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 7.641019737673005,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "waiting-pending-proposed-hook",
+    "width": 375,
+    "evidence": "DOM preview with proposed class; not active in source",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 469.671875,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "waiting-pending-proposed-hook",
+    "width": 1280,
+    "evidence": "DOM preview with proposed class; not active in source",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 486.46875,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "waiting-pending-reduced-motion",
+    "animation": "none"
+  },
+  {
+    "name": "waiting-canceled-live",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 536.703125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 7.641019737673005,
+    "contrastFailures": [],
+    "undersizedControls": [
+      {
+        "text": "Вернуться к карте",
+        "width": 138.921875,
+        "height": 22,
+        "disabled": false
+      }
+    ],
+    "controls": [
+      {
+        "text": "Попробовать снова",
+        "width": 301,
+        "height": 50.796875,
+        "disabled": false
+      },
+      {
+        "text": "Вернуться к карте",
+        "width": 138.921875,
+        "height": 22,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "waiting-canceled-live",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 545.828125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 7.641019737673005,
+    "contrastFailures": [],
+    "undersizedControls": [
+      {
+        "text": "Вернуться к карте",
+        "width": 138.921875,
+        "height": 22,
+        "disabled": false
+      }
+    ],
+    "controls": [
+      {
+        "text": "Попробовать снова",
+        "width": 574,
+        "height": 50.796875,
+        "disabled": false
+      },
+      {
+        "text": "Вернуться к карте",
+        "width": 138.921875,
+        "height": 22,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "waiting-canceled-proposed-hook",
+    "width": 375,
+    "evidence": "DOM preview with proposed class; not active in source",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 530.078125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.32073104514774,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Попробовать снова",
+        "width": 293,
+        "height": 52,
+        "disabled": false
+      },
+      {
+        "text": "Вернуться к карте",
+        "width": 138.921875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "waiting-canceled-proposed-hook",
+    "width": 1280,
+    "evidence": "DOM preview with proposed class; not active in source",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 568.578125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.32073104514774,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Попробовать снова",
+        "width": 542,
+        "height": 52,
+        "disabled": false
+      },
+      {
+        "text": "Вернуться к карте",
+        "width": 138.921875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "waiting-canceled-reduced-motion",
+    "animation": "none"
+  },
+  {
+    "name": "waiting-generating-live",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 467.078125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 7.641019737673005,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "waiting-generating-live",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 445.21875,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 7.641019737673005,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "waiting-generating-proposed-hook",
+    "width": 375,
+    "evidence": "DOM preview with proposed class; not active in source",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 458.453125,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "waiting-generating-proposed-hook",
+    "width": 1280,
+    "evidence": "DOM preview with proposed class; not active in source",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 464.765625,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [],
+    "offerScreens": null,
+    "ctaTop": null
+  },
+  {
+    "name": "waiting-generating-reduced-motion",
+    "animation": "none"
+  },
+  {
+    "name": "offer-owner",
+    "width": 375,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 375,
+      "height": 900
+    },
+    "height": 1494.96875,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Получить разбор бесплатно",
+        "width": 309,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 150.5,
+        "height": 53.1875,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 150.5,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 1.6610763888888889,
+    "ctaTop": 255.375
+  },
+  {
+    "name": "offer-owner",
+    "width": 1280,
+    "evidence": "live local application",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "height": 835.75,
+    "horizontalOverflow": false,
+    "minTextSize": 14,
+    "minContrast": 8.321633087251389,
+    "contrastFailures": [],
+    "undersizedControls": [],
+    "controls": [
+      {
+        "text": "Получить разбор бесплатно",
+        "width": 479.046875,
+        "height": 56,
+        "disabled": false
+      },
+      {
+        "text": "Самопознание",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Любовь и отношения",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Деньги и дело",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Энергия и действие",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Рост и трудности",
+        "width": 235.515625,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Глубинные темы",
+        "width": 235.53125,
+        "height": 44,
+        "disabled": false
+      },
+      {
+        "text": "Посмотреть пример разбора",
+        "width": 206.96875,
+        "height": 44,
+        "disabled": false
+      }
+    ],
+    "offerScreens": 0.9286111111111112,
+    "ctaTop": 270.25
+  }
+]
