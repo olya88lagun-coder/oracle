@@ -48,6 +48,17 @@ export const NATAL_COVER_SLUGS: ReadonlySet<string> = new Set([
   "neptun-v-bliznetsah",
   "pluton-v-bliznetsah",
   "ascendent-v-bliznetsah",
+  "solntse-v-rake",
+  "luna-v-rake",
+  "merkuriy-v-rake",
+  "venera-v-rake",
+  "mars-v-rake",
+  "yupiter-v-rake",
+  "saturn-v-rake",
+  "uran-v-rake",
+  "neptun-v-rake",
+  "pluton-v-rake",
+  "ascendent-v-rake",
 ]);
 
 export const natalCoverPath = (slug: string): string | null => (NATAL_COVER_SLUGS.has(slug) ? `/natal/${slug}.webp` : null);

@@ -33,11 +33,11 @@ describe("NatalPageView: Sun in Aries", () => {
     expect(count(markup, /<li>В какой|<li>Какие|<li>Что/g)).toBeGreaterThan(0);
   });
 
-  test("the emblem (a page without a cover, Sun in Cancer) pairs the Sun glyph with the sign glyph and has an accessible name", () => {
-    const cancer = render("solntse-v-rake");
-    expect(cancer).toContain('data-variant="sun" role="img" aria-label="Солнце и знак Рака"');
-    expect(cancer).toContain('<use href="#glyph-sun"></use>');
-    expect(cancer).toContain("<figcaption>Солнце · Рак</figcaption>");
+  test("the emblem (a page without a cover, Sun in Leo) pairs the Sun glyph with the sign glyph and has an accessible name", () => {
+    const leo = render("solntse-vo-lve");
+    expect(leo).toContain('data-variant="sun" role="img" aria-label="Солнце и знак Льва"');
+    expect(leo).toContain('<use href="#glyph-sun"></use>');
+    expect(leo).toContain("<figcaption>Солнце · Лев</figcaption>");
   });
 
   test("invites to the calculator with a link, and lists the Sun in all twelve signs with the current one marked", () => {
@@ -66,14 +66,14 @@ describe("NatalPageView: Sun in Aries", () => {
   });
 });
 
-describe("NatalPageView: ascendant in Cancer", () => {
-  const markup = render("ascendent-v-rake");
+describe("NatalPageView: ascendant in Leo (a page without a cover)", () => {
+  const markup = render("ascendent-vo-lve");
 
   test("uses the AC mark instead of a body glyph and the ascendant wording", () => {
-    expect(markup).toContain('<h1 id="meaning-title">Асцендент в Раке</h1>');
-    expect(markup).toContain('data-variant="asc" role="img" aria-label="Асцендент и знак Рака"');
+    expect(markup).toContain('<h1 id="meaning-title">Асцендент во Льве</h1>');
+    expect(markup).toContain('data-variant="asc" role="img" aria-label="Асцендент и знак Льва"');
     expect(markup).toContain('<span class="natal-emblem__axis" aria-hidden="true">AC</span>');
-    expect(markup).toContain("<figcaption>Асцендент · Рак</figcaption>");
+    expect(markup).toContain("<figcaption>Асцендент · Лев</figcaption>");
     expect(markup).toContain('href="#ascendant-essence"');
   });
 });
@@ -126,7 +126,7 @@ describe("NatalPageView: hero with the cover", () => {
   });
 
   test("a page without a cover keeps the emblem and has no picture", () => {
-    const markup = render("solntse-v-rake");
+    const markup = render("solntse-vo-lve");
     expect(markup).toContain("natal-emblem");
     expect(markup).not.toContain("natal-cover");
     expect(markup).not.toContain("<img");
