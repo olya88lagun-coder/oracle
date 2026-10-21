@@ -24,7 +24,7 @@ async function noHorizontalScroll(page: Page) {
 
 test("the landing lists 72 cells and links to a cell page", async ({ page }) => {
   await page.goto("/lila");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Лила — игра с вашим намерением");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Игра Лила онлайн — путь по 72 клеткам");
   await expect(page.getByRole("region", { name: "72 клетки" }).getByRole("link")).toHaveCount(72);
   await page.getByRole("link", { name: "12 · Зависть" }).click();
   await expect(page).toHaveURL("/lila/kletki/12-zavist");
