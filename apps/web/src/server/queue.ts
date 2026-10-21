@@ -2,6 +2,7 @@ import {
   CONCLUSION_JOB_OPTIONS,
   conclusionJobKey,
   GENERATE_JOB_OPTIONS,
+  GENERATE_NATAL_JOB_OPTIONS,
   generateNatalReportJobKey,
   generateReportJobKey,
   GUIDE_JOB_OPTIONS,
@@ -51,7 +52,7 @@ export async function enqueueGenerate(job: GenerateReportJob): Promise<void> {
 export async function enqueueGenerateNatal(job: GenerateNatalReportJob): Promise<void> {
   try {
     const boss = await queue();
-    await boss.send(QUEUES.generateNatalReport, job, { ...GENERATE_JOB_OPTIONS, id: jobIdFor(generateNatalReportJobKey(job)) });
+    await boss.send(QUEUES.generateNatalReport, job, { ...GENERATE_NATAL_JOB_OPTIONS, id: jobIdFor(generateNatalReportJobKey(job)) });
   } catch (error) {
     // Оплата уже зафиксирована; страница ожидания поставит задачу заново
     console.error("enqueue natal generate failed", { purchaseId: job.purchaseId, error: String(error) });

@@ -1,3 +1,4 @@
+import type { Prompt, ReportWriter } from "@oracle/ai";
 import { attachPayment, createPurchase, createTestDb, deleteUserData, getReport, markPurchaseSucceeded, seedUser, type Database } from "@oracle/db/testing";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { runGenerateNatal } from "./generate-natal";
@@ -73,5 +74,68 @@ describe("runGenerateNatal", () => {
     expect(await getReport(db, second.id)).toBeNull();
     expect(log).toHaveBeenCalledWith("warn", "duplicate paid purchase — refund manually", { purchaseId: second.id });
     expect(first.id).not.toBe(second.id);
+  });
+});
+
+describe("runGenerateNatal with the AI editor", () => {
+  const SENTENCE = "Положения этой главы могут складываться в единую картину, где одно усиливает другое, а напряжение подсказывает, на что стоит обратить внимание. ";
+  const SCENARIO = JSON.stringify({
+    pattern: "Может повторяться привычка откладывать главное.",
+    tension: "Напряжение — между желанием сделать и страхом ошибиться.",
+    resource: "Опора — спокойная настойчивость.",
+    blindSpot: "Легко не замечать собственную усталость.",
+    turningPoint: "Остановиться и спросить, чего хочется на самом деле.",
+    experiment: "Семь дней подряд записывать одно чувство за день.",
+    question: "Где я держу себя сильнее, чем нужно?",
+  });
+  const writerFor = (answer: (chapter: string) => string): ReportWriter & { prompts: Prompt[] } => {
+    const writer = {
+      name: "fake",
+      prompts: [] as Prompt[],
+      async complete(prompt: Prompt) {
+        writer.prompts.push(prompt);
+        return answer((JSON.parse(prompt.user) as { chapter: string }).chapter);
+      },
+    };
+    return writer;
+  };
+  const good = (chapter: string) => (chapter === "scenario" ? SCENARIO : Array.from({ length: 4 }, () => SENTENCE.repeat(3).trim()).join("\n\n"));
+
+  test("saves the chapters written by the model and sends it no birth data", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-ai1" });
+    const purchase = await paidPurchase(userId, "pay-ai1");
+    const writer = writerFor(good);
+    const log = vi.fn();
+
+    await runGenerateNatal({ purchaseId: purchase.id }, { db, writer, log });
+
+    const report = await getReport(db, purchase.id);
+    expect(report?.chapters).toHaveLength(9);
+    expect(report?.chapters.every((chapter) => chapter.source === "ai")).toBe(true);
+    expect(writer.prompts).toHaveLength(9);
+    for (const prompt of writer.prompts) for (const forbidden of ["1990", "12:00", "Москва", "55.75", "a@b.ru"]) expect(`${prompt.system}${prompt.user}`, forbidden).not.toContain(forbidden);
+    expect(JSON.stringify(log.mock.calls)).not.toMatch(/1990|Москва|a@b\.ru/);
+  });
+
+  test("a chapter the model keeps getting wrong is assembled from the texts, with attempts logged without the answer", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-ai2" });
+    const purchase = await paidPurchase(userId, "pay-ai2");
+    const writer = writerFor((chapter) => (chapter === "love" ? "СЕКРЕТ без абзацев" : good(chapter)));
+    const log = vi.fn();
+
+    await runGenerateNatal({ purchaseId: purchase.id }, { db, writer, log });
+
+    const report = await getReport(db, purchase.id);
+    expect(report?.chapters.find((chapter) => chapter.id === "love")?.source).toBe("fallback");
+    expect(report?.chapters.filter((chapter) => chapter.source === "ai")).toHaveLength(8);
+    expect(log.mock.calls.filter((call) => call[1] === "natal chapter attempt rejected")).toHaveLength(3);
+    expect(JSON.stringify(log.mock.calls)).not.toContain("СЕКРЕТ без абзацев");
+  });
+
+  test("without a writer the report is still assembled from the texts", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-ai3" });
+    const purchase = await paidPurchase(userId, "pay-ai3");
+    await runGenerateNatal({ purchaseId: purchase.id }, { db, writer: null, log: vi.fn() });
+    expect((await getReport(db, purchase.id))?.chapters.every((chapter) => chapter.source === "fallback")).toBe(true);
   });
 });

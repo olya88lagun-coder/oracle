@@ -46,7 +46,7 @@ await boss.work<GenerateReportJob>(QUEUES.generateReport, async ([job]) => {
 await boss.work<GenerateNatalReportJob>(QUEUES.generateNatalReport, async ([job]) => {
   if (!job) return;
   try {
-    await runGenerateNatal(job.data, { db, log });
+    await runGenerateNatal(job.data, { db, writer, log, concurrency: env.aiConcurrency });
   } catch (error) {
     log("warn", "natal generate job failed", { purchaseId: job.data.purchaseId, error: String(error), cause: error instanceof Error ? String(error.cause) : undefined });
     throw error;
