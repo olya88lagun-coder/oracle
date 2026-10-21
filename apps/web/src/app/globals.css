@@ -4203,3 +4203,203 @@ main:has(> .natal-intro) > .natal-quick {
   .natal-more h2 { font-size: 26px; }
   .natal-more ul { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Единая сцена пяти практик. Только первые экраны; тексты, формы и результат не меняются. */
+:root {
+  --practice-hero-height: 760px;
+  --practice-hero-copy: 740px;
+  --practice-hero-shade-start: rgba(10, 9, 14, 0.96);
+  --practice-hero-shade-middle: rgba(10, 9, 14, 0.86);
+  --practice-hero-shade-edge: rgba(10, 9, 14, 0.1);
+  --practice-hero-shade-mobile: rgba(10, 9, 14, 0.86);
+  --practice-hero-container: min(calc(100% - 32px), calc(var(--container) - 32px));
+}
+@media (min-width: 860px) {
+  :root { --practice-hero-container: min(calc(100% - 56px), calc(var(--container) - 56px)); }
+}
+
+/* Общая высота и единая плёнка: изображение остаётся исходным у каждой практики. */
+:is(.matrix-hero, .taro-cat-hero, .lila-hero) { position: relative; isolation: isolate; min-height: var(--practice-hero-height); border: 0; background: var(--bg); }
+:is(.matrix-hero, .taro-cat-hero, .lila-hero)::after,
+.compat-scene::before,
+main:has(> .natal-intro):not(:has(> .natal-quick))::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: var(--practice-hero-height);
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--practice-hero-shade-start) 0%, var(--practice-hero-shade-middle) 43%, var(--practice-hero-shade-edge) 75%, var(--scrim-clear) 100%), linear-gradient(0deg, var(--bg) 0%, var(--scrim-clear) 32%);
+}
+:is(.matrix-hero__art, .taro-cat-hero__art, .compat-scene__art) { position: absolute; inset: 0 0 auto; z-index: -2; height: var(--practice-hero-height); mask-image: none; -webkit-mask-image: none; }
+:is(.matrix-hero__art, .taro-cat-hero__art, .compat-scene__art) img { width: 100%; height: 100%; opacity: 1; object-fit: cover; }
+.matrix-hero__art img { object-position: 65% 50%; }
+.taro-cat-hero__art img { object-position: 65% 50%; }
+.compat-scene__art img { object-position: 76% 30%; }
+:is(.matrix-hero__inner, .taro-cat-hero__inner) { width: var(--practice-hero-container); min-height: var(--practice-hero-height); padding: 48px 0; }
+:is(.matrix-hero__copy, .taro-cat-hero__copy) { display: block; width: 100%; max-width: var(--practice-hero-copy); }
+
+/* Лила использует ту же полноширинную сцену вместо правой карточки. */
+.scene:has(> .scene__content > .lila-hero) { container-type: inline-size; }
+.scene:has(> .scene__content > .lila-hero) > .scene__content { padding-top: 0; }
+.scene__content > .lila-hero { display: block; width: 100cqw; margin-top: 0; margin-inline: calc((100% - 100cqw) / 2); }
+.lila-hero > .scene__intro { position: relative; width: min(var(--practice-hero-copy), var(--practice-hero-container)); max-width: none; margin-left: calc((100% - var(--practice-hero-container)) / 2); padding-block: 48px; }
+.lila-hero > .lila-hero__art { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; border: 0; border-radius: 0; aspect-ratio: auto; object-fit: cover; object-position: 74% 62%; }
+
+/* Две строки grid объединяют уже существующие intro и форму, без новой обёртки в TSX.
+   Псевдоэлемент задаёт общую минимальную высоту; дополнительное место остаётся под формой. */
+.compat-scene > .compat-scene__content { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: max-content minmax(0, 1fr); padding-top: 0; }
+.compat-scene__content::before { content: ""; grid-column: 1; grid-row: 1 / 3; min-height: var(--practice-hero-height); width: 0; pointer-events: none; }
+.compat-scene__content > .compat-hero-intro { grid-column: 1; grid-row: 1; padding-top: 48px; max-width: var(--practice-hero-copy); }
+.compat-scene__content > .compat-form { grid-column: 1; grid-row: 2; align-self: start; margin: 24px 0 48px; }
+.compat-scene__content > :not(.compat-hero-intro):not(.compat-form) { grid-column: 1; }
+main:has(> .natal-intro):not(:has(> .natal-quick)) { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: max-content minmax(0, 1fr); }
+main:has(> .natal-intro):not(:has(> .natal-quick))::before {
+  position: relative;
+  inset: auto;
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: 100%;
+  height: auto;
+  min-height: var(--practice-hero-height);
+  background-position: 72% 42%;
+}
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-intro { grid-column: 1; grid-row: 1; width: var(--practice-hero-container); max-width: none; padding: 48px 0 0; }
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form { grid-column: 1; grid-row: 2; align-self: start; justify-self: start; width: min(var(--practice-hero-copy), var(--practice-hero-container)); margin: 24px 0 48px calc((100% - var(--practice-hero-container)) / 2); }
+main:has(> .natal-intro):not(:has(> .natal-quick)) > :not(.natal-intro):not(.natal-form) { grid-column: 1; }
+
+/* Один масштаб заголовка. Существующие слова span и br сохраняются, но не создают золотой подзаголовок. */
+:is(.matrix-hero, .taro-cat-hero, .lila-hero, .compat-hero-intro) h1,
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-intro h1 {
+  max-width: var(--practice-hero-copy);
+  min-height: 2.16em;
+  margin: 0;
+  overflow: visible;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 76px;
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -.02em;
+  text-wrap: pretty;
+}
+:is(.matrix-hero, .taro-cat-hero) h1 span { display: inline; margin: 0; color: inherit; font: inherit; letter-spacing: inherit; }
+.compat-hero-intro h1 br { display: none; }
+:is(.compat-hero-intro, .lila-hero .scene__intro) > .eyebrow { display: none; }
+body :is(.matrix-hero .matrix-intro, .taro-cat-hero__copy, .lila-hero .scene__intro, .compat-hero-intro) > .lead,
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-intro > p {
+  max-width: 620px;
+  margin: 16px 0 0;
+  color: var(--ink-soft);
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+/* Одинаковая подача формы на фоне. Карточки и поля ниже первых экранов не затронуты. */
+.matrix-hero .matrix-form,
+.compat-scene__content > .compat-form,
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form {
+  max-width: var(--practice-hero-copy);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.matrix-hero .matrix-form { margin-top: 24px; }
+.matrix-hero .matrix-form__row { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.matrix-hero .matrix-form > .field { max-width: 400px; }
+.matrix-hero .matrix-form__row > .button { justify-self: start; }
+.compat-scene__content > .compat-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.compat-scene__content > .compat-form .compat-form__head { gap: 8px; }
+.compat-scene__content > .compat-form .compat-form__head h2 { font-size: 22px; line-height: 1.3; }
+.compat-scene__content > .compat-form .compat-form__fields { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.compat-scene__content > .compat-form .compat-form__submit { display: grid; justify-items: start; gap: 12px; }
+body .compat-scene__content > .compat-form .compat-form__submit > * { margin: 0; }
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-form__fields { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.5fr); gap: 16px; }
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-form__bottom { min-height: 0; margin-top: 20px; gap: 12px; }
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-form__privacy { margin-top: 16px; }
+/* Пустая живая область доступна диктору и не добавляет разрыв перед заметкой. */
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-status:empty { position: absolute; width: 1px; height: 1px; min-height: 0; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.matrix-hero .matrix-form label,
+.compat-scene__content > .compat-form label,
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form label { font-size: 14px; color: var(--ink); line-height: 1.5; }
+.matrix-hero .matrix-form .field,
+.compat-scene__content > .compat-form .field { gap: 8px; }
+.matrix-hero .matrix-form input,
+.compat-scene__content > .compat-form input,
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form input:not([type="checkbox"]) { min-width: 0; min-height: 52px; padding: 12px 14px; border: 1px solid var(--natal-field-line); border-radius: 12px; background: var(--input-bg); color: var(--ink); font: inherit; font-size: 16px; }
+
+/* Лавандовая пилюля на всех пяти страницах; вторая кнопка — прозрачная с рамкой. */
+.matrix-hero .matrix-form .button,
+.taro-cat-hero__actions > .button,
+.lila-hero .scene__intro > .row > .button:not(.button--ghost),
+.compat-scene__content > .compat-form .button,
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-button--calculate {
+  min-height: 56px;
+  padding: 14px 24px;
+  border: 1px solid var(--lavender);
+  border-radius: 999px;
+  background: var(--lavender);
+  color: var(--lavender-ink);
+  font: 600 16px/1.5 var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
+}
+:is(.matrix-hero .matrix-form .button, .taro-cat-hero__actions > .button, .lila-hero .scene__intro > .row > .button:not(.button--ghost), .compat-scene__content > .compat-form .button):hover:not(:disabled),
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-button--calculate:hover:not(:disabled) { background: var(--lavender-hover); border-color: var(--lavender-hover); color: var(--lavender-ink); }
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-button--calculate:disabled { background: var(--natal-disabled-bg); border-color: var(--natal-field-line); color: var(--ink-soft); opacity: 1; cursor: not-allowed; }
+.taro-cat-hero__actions > .matrix-link,
+.lila-hero .scene__intro > .row > .button--ghost { display: inline-flex; align-items: center; justify-content: center; min-height: 56px; padding: 14px 24px; border: 1px solid var(--natal-field-line); border-radius: 999px; background: none; color: var(--ink); font: 600 16px/1.5 var(--font-body); text-decoration: none; }
+body .lila-hero .scene__intro > .row,
+.taro-cat-hero__actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0 0; }
+body .lila-hero .scene__intro > .muted,
+.taro-cat-hero .taro-cat-hero__note { margin: 16px 0 0; }
+.matrix-hero .matrix-form :is(.matrix-form__note, .matrix-form__promise),
+.taro-cat-hero .taro-cat-hero__note,
+.lila-hero .scene__intro > .muted,
+.compat-scene__content > .compat-form .muted,
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(.natal-form__privacy, .natal-city__hint) { max-width: 620px; font-size: 14px; line-height: 1.5; color: var(--ink-soft); }
+:is(.matrix-hero, .taro-cat-hero, .lila-hero, .compat-hero-intro) :is(a, button, input):focus-visible,
+.compat-scene__content > .compat-form :is(a, button, input):focus-visible,
+main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, input):focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 3px; }
+
+@media (max-width: 899px) {
+  :is(.matrix-hero, .taro-cat-hero, .lila-hero) { min-height: 0; }
+  :is(.matrix-hero__inner, .taro-cat-hero__inner) { min-height: 0; padding-block: 32px 40px; }
+  .lila-hero > .scene__intro { padding-block: 32px 40px; }
+  .compat-scene__content > .compat-hero-intro,
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-intro { padding-top: 32px; }
+  .compat-scene__content::before,
+  main:has(> .natal-intro):not(:has(> .natal-quick))::before { min-height: 0; }
+  .compat-scene__content > .compat-form { margin-bottom: 40px; }
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form { margin-bottom: 40px; }
+  :is(.matrix-hero, .taro-cat-hero, .lila-hero, .compat-hero-intro) h1,
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-intro h1 { min-height: 0; font-size: clamp(36px, 10.67vw, 64px); line-height: 1.1; }
+  body :is(.matrix-hero .matrix-intro, .taro-cat-hero__copy, .lila-hero .scene__intro, .compat-hero-intro) > .lead,
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-intro > p { font-size: 17px; line-height: 1.6; }
+  :is(.matrix-hero, .taro-cat-hero, .lila-hero)::after,
+  .compat-scene::before,
+  main:has(> .natal-intro):not(:has(> .natal-quick))::after { height: 100%; max-height: 760px; background: linear-gradient(0deg, var(--bg) 0%, var(--practice-hero-shade-mobile) 52%, var(--practice-hero-shade-mobile) 100%); }
+  :is(.matrix-hero__art, .taro-cat-hero__art, .compat-scene__art) { height: 360px; }
+  .lila-hero > .lila-hero__art { height: min(100%, 360px); }
+  main:has(> .natal-intro):not(:has(> .natal-quick))::before { background-size: auto 360px; background-position: 72% 0; background-repeat: no-repeat; }
+}
+/* Шапка переключает боковой отступ на 860 px, общий .page — на 900 px. */
+@media (min-width: 860px) and (max-width: 899px) {
+  .compat-scene__content > :is(.compat-hero-intro, .compat-form) { width: min(var(--practice-hero-copy), calc(100% - 24px)); margin-inline: 12px; }
+}
+@media (max-width: 599px) {
+  .compat-scene__content > .compat-form .compat-form__fields,
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-form__fields { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .matrix-hero .matrix-form > .field { max-width: none; }
+  .matrix-hero .matrix-form__row > .button,
+  .compat-scene__content > .compat-form .compat-form__submit > .button,
+  .lila-hero .scene__intro > .row > .button,
+  .taro-cat-hero__actions > :is(.button, .matrix-link) { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.matrix-hero, .taro-cat-hero, .lila-hero, .compat-hero-intro) *,
+  .compat-scene__content > .compat-form *,
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form * { transition: none; animation: none; scroll-behavior: auto; }
+}

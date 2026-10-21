@@ -1,0 +1,82 @@
+[
+  {
+    "id": "matrix",
+    "width": 1440,
+    "overflow": false,
+    "x": 68,
+    "font": "76px",
+    "broken": []
+  },
+  {
+    "id": "matrix",
+    "width": 375,
+    "overflow": false,
+    "x": 16,
+    "font": "40.0125px",
+    "broken": []
+  },
+  {
+    "id": "compat",
+    "width": 1440,
+    "overflow": false,
+    "x": 68,
+    "font": "76px",
+    "broken": []
+  },
+  {
+    "id": "compat",
+    "width": 375,
+    "overflow": false,
+    "x": 16,
+    "font": "40.0125px",
+    "broken": []
+  },
+  {
+    "id": "lila",
+    "width": 1440,
+    "overflow": false,
+    "x": 68,
+    "font": "76px",
+    "broken": []
+  },
+  {
+    "id": "lila",
+    "width": 375,
+    "overflow": false,
+    "x": 16,
+    "font": "40.0125px",
+    "broken": []
+  },
+  {
+    "id": "taro",
+    "width": 1440,
+    "overflow": false,
+    "x": 68,
+    "font": "76px",
+    "broken": []
+  },
+  {
+    "id": "taro",
+    "width": 375,
+    "overflow": false,
+    "x": 16,
+    "font": "40.0125px",
+    "broken": []
+  },
+  {
+    "id": "natal",
+    "width": 1440,
+    "overflow": false,
+    "x": 68,
+    "font": "76px",
+    "broken": []
+  },
+  {
+    "id": "natal",
+    "width": 375,
+    "overflow": false,
+    "x": 16,
+    "font": "40.0125px",
+    "broken": []
+  }
+]
