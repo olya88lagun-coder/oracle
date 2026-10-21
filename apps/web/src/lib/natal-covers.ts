@@ -136,6 +136,18 @@ export const NATAL_COVER_SLUGS: ReadonlySet<string> = new Set([
   "neptun-v-vodolee",
   "pluton-v-vodolee",
   "ascendent-v-vodolee",
+  "severnyy-uzel-v-ovne",
+  "severnyy-uzel-v-teltse",
+  "severnyy-uzel-v-bliznetsah",
+  "severnyy-uzel-v-rake",
+  "severnyy-uzel-vo-lve",
+  "severnyy-uzel-v-deve",
+  "severnyy-uzel-v-vesah",
+  "severnyy-uzel-v-skorpione",
+  "severnyy-uzel-v-streltse",
+  "severnyy-uzel-v-kozeroge",
+  "severnyy-uzel-v-vodolee",
+  "severnyy-uzel-v-rybah",
 ]);
 
 export const natalCoverPath = (slug: string): string | null => (NATAL_COVER_SLUGS.has(slug) ? `/natal/${slug}.webp` : null);

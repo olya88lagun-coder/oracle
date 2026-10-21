@@ -87,10 +87,10 @@ describe("NatalPageView: Leo", () => {
   });
 });
 
-describe("NatalPageView: north node in Aries", () => {
+describe("NatalPageView: north node in Aries (emblem, without a cover)", () => {
   const page = natalPageBySlug("severnyy-uzel-v-ovne");
   const text = natalText("severnyy-uzel-v-ovne");
-  const markup = page && text ? renderToStaticMarkup(<NatalPageView page={page} text={text} />) : "";
+  const markup = page && text ? renderToStaticMarkup(<NatalPageView page={page} text={text} cover={null} />) : "";
 
   test("has its own title, the node glyph from the sprite and a readable name for the emblem", () => {
     expect(markup).toContain('<h1 id="meaning-title">Северный узел в Овне</h1>');
