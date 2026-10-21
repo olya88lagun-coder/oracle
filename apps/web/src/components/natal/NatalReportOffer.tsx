@@ -120,8 +120,8 @@ export function NatalReportOffer({ state, chart, input, choice, free = false }: 
         </a>
       )}
       {state.kind === "buy" && <BuyForm input={input} choice={choice} free={free} inputId={`${id}-email`} />}
-      <p className="muted">{OFFER_TERMS}</p>
-      {state.kind !== "no_time" && <p className="muted natal-offer__ai-note">{OFFER_AI_NOTE}</p>}
+      {/* Одним абзацем: в сетке карточки `.natal-offer > .muted` занимает одну область, второй такой абзац лёг бы поверх */}
+      <p className="muted">{state.kind === "no_time" ? OFFER_TERMS : `${OFFER_TERMS} ${OFFER_AI_NOTE}`}</p>
       {state.kind !== "no_time" && !free && <p className="muted natal-offer__refund">{offerRefundLine(NATAL_REPORT_REFUND_DAYS)}</p>}
       {outline.length > 0 && state.kind !== "no_time" && (
         <div className="natal-offer__topics" role="group" aria-label={OFFER_TOPIC_GROUP_LABEL}>
