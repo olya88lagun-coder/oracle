@@ -1670,6 +1670,20 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 @media (prefers-reduced-motion: no-preference) { .taro-picked--fresh img { animation: taro-reveal 500ms var(--ease-out); } }
 @keyframes taro-reveal { from { opacity: 0; transform: rotateY(90deg) scale(0.96); } to { opacity: 1; transform: none; } }
 
+/* Карта дня: текст под выбором карты (что это, как пользоваться, значения по арканам, вопросы) */
+body .stack > .taro-day-info { display: grid; gap: 44px; margin-top: 56px; padding-top: 44px; border-top: 1px solid var(--line); }
+.taro-day-info h2 { margin: 0 0 14px; font-size: clamp(26px, 4vw, 36px); line-height: 1.2; }
+.taro-day-info p { margin: 0 0 14px; max-width: 46em; color: var(--ink-soft); }
+.taro-day-info .matrix-faq h2 { margin: 0; }
+.taro-day-steps { display: grid; gap: 12px; max-width: 46em; margin: 0; padding-left: 22px; color: var(--ink-soft); }
+.taro-day-steps strong { color: var(--ink); font-weight: 500; }
+.taro-day-arcana { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin: 18px 0 8px; padding: 0; list-style: none; }
+.taro-day-arcana a { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink); text-decoration: none; }
+.taro-day-arcana a:hover { border-color: var(--accent-line); }
+.taro-day-arcana a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.taro-day-arcana span { min-width: 2.4em; color: var(--accent); font-family: var(--font-display); font-size: 14px; }
+@media (min-width: 900px) { body .stack > .taro-day-info { margin-top: 72px; } }
+
 /* Сравнение режимов Лилы: одинаковый порядок чтения на телефоне и компьютере. */
 .lila-modes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
 @media (min-width: 900px) { .lila-modes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; } }
