@@ -1,0 +1,82 @@
+{
+  "base": "1faeff5435bd8e469c1abcab1bdbdcf192e638e4",
+  "changedExistingTokens": [],
+  "newTokens": [
+    {
+      "token": "--natal-print-paper",
+      "value": "#FFFFFF"
+    },
+    {
+      "token": "--natal-print-ink",
+      "value": "#241F1A"
+    },
+    {
+      "token": "--natal-print-soft",
+      "value": "#51483F"
+    },
+    {
+      "token": "--natal-print-line",
+      "value": "#BFB4A7"
+    }
+  ],
+  "addedRules": 119,
+  "unscopedRules": [],
+  "pairs": [
+    {
+      "foreground": "--ink",
+      "background": "--surface",
+      "use": "body",
+      "ratio": 15.699631487825135,
+      "required": 4.5
+    },
+    {
+      "foreground": "--ink-soft",
+      "background": "--surface",
+      "use": "secondary text",
+      "ratio": 8.755705031420453,
+      "required": 4.5
+    },
+    {
+      "foreground": "--accent-hover",
+      "background": "--surface-3",
+      "use": "selected topic and question",
+      "ratio": 9.367583017504385,
+      "required": 4.5
+    },
+    {
+      "foreground": "--lavender-ink",
+      "background": "--lavender",
+      "use": "CTA",
+      "ratio": 8.410589057610755,
+      "required": 4.5
+    },
+    {
+      "foreground": "--danger",
+      "background": "--surface",
+      "use": "error",
+      "ratio": 8.32073104514774,
+      "required": 4.5
+    },
+    {
+      "foreground": "--natal-field-line",
+      "background": "--surface",
+      "use": "input and topic boundaries",
+      "ratio": 3.501654891656228,
+      "required": 3
+    },
+    {
+      "foreground": "--natal-print-ink",
+      "background": "--natal-print-paper",
+      "use": "print text",
+      "ratio": 16.330663894099303,
+      "required": 4.5
+    },
+    {
+      "foreground": "--natal-print-soft",
+      "background": "--natal-print-paper",
+      "use": "print secondary text",
+      "ratio": 8.941541686896628,
+      "required": 4.5
+    }
+  ]
+}
