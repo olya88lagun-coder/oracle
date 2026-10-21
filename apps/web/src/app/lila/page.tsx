@@ -62,11 +62,10 @@ export default function LilaPage() {
       {guided && <section className="card stack" aria-labelledby="modes-title">
         <h2 id="modes-title">Два способа играть</h2>
         <div className="lila-modes">
-          <div className="stack"><h3>Без проводника · бесплатно</h3><p>Поле, кубик, тексты клеток, три вопроса для повторных визитов и ваши записи. Можно начать без регистрации. Гостевая партия хранится в браузере; через VK ID её можно сохранить в портрете.</p></div>
-          <div className="stack"><h3>С проводником · {formatRubles(LILA_SESSION_PRICE_KOPECKS)}</h3><p>Одна новая партия. ИИ связывает ходы с намерением. После завершения — четыре главы: «Намерение и путь», «Что повторялось», «Что вы замечали», «Вывод и шаг на неделю», а также PDF.</p><p>Вход через VK ID и разовая оплата до начала. Намерение и записи передаются GigaChat для подготовки текста. Если ИИ недоступен, итог собирается из фактов и готовых описаний.</p><Link className="text-link" href="/lila/primer">Посмотреть пример итога и PDF</Link></div>
+          <div className="stack"><h3>Без проводника · бесплатно</h3><p>Поле, кубик, тексты клеток, три вопроса для повторных визитов и ваши записи. Можно начать без регистрации. Гостевая партия хранится в браузере; через VK ID её можно сохранить в портрете.</p><p><Link className="button button--ghost" href={LILA_GAME_PATH}>Играть бесплатно</Link></p></div>
+          <div className="stack"><h3>С проводником · {formatRubles(LILA_SESSION_PRICE_KOPECKS)}</h3><p>Одна новая партия. ИИ связывает ходы с намерением. После завершения — четыре главы: «Намерение и путь», «Что повторялось», «Что вы замечали», «Вывод и шаг на неделю», а также PDF.</p><p>Вход через VK ID и разовая оплата до начала. Намерение и записи передаются GigaChat для подготовки текста. Если ИИ недоступен, итог собирается из фактов и готовых описаний.</p><p><Link className="button button--lavender" href={LILA_GAME_PATH}>Играть с проводником · {formatRubles(LILA_SESSION_PRICE_KOPECKS)}</Link></p><p className="muted">Сначала формулируете вопрос, оплата — на следующем шаге.</p><Link className="text-link" href="/lila/primer">Посмотреть пример итога и PDF</Link></div>
         </div>
         <p className="muted">В обоих режимах одинаковые правила поля. Проводник предлагает гипотезы для размышления и не предсказывает исход вашего вопроса.</p>
-        <p><Link className="button button--ghost" href={LILA_GAME_PATH}>Выбрать режим и сформулировать вопрос</Link></p>
       </section>}
 
       <section className="stack" aria-labelledby="field">
