@@ -1,0 +1,752 @@
+{
+  "layout": [
+    {
+      "id": "matrix",
+      "width": 375,
+      "overflow": false,
+      "titleX": 16,
+      "logoX": 16,
+      "controls": [
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "Рассчитать матрицу",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "matrix",
+      "width": 768,
+      "overflow": false,
+      "titleX": 16,
+      "logoX": 16,
+      "controls": [
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "Рассчитать матрицу",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "matrix",
+      "width": 899,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "Рассчитать матрицу",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "matrix",
+      "width": 900,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "Рассчитать матрицу",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "matrix",
+      "width": 1024,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "Рассчитать матрицу",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "matrix",
+      "width": 1440,
+      "overflow": false,
+      "titleX": 68,
+      "logoX": 68,
+      "controls": [
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "Рассчитать матрицу",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "compat",
+      "width": 375,
+      "overflow": false,
+      "titleX": 16,
+      "logoX": 16,
+      "controls": [
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "Рассчитать совместимость",
+          "height": 56
+        },
+        {
+          "text": "К расчёту",
+          "height": 50.796875
+        },
+        {
+          "text": "Как считается",
+          "height": 50.796875
+        }
+      ]
+    },
+    {
+      "id": "compat",
+      "width": 768,
+      "overflow": false,
+      "titleX": 16,
+      "logoX": 16,
+      "controls": [
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "Рассчитать совместимость",
+          "height": 56
+        },
+        {
+          "text": "К расчёту",
+          "height": 50.796875
+        },
+        {
+          "text": "Как считается",
+          "height": 50.796875
+        }
+      ]
+    },
+    {
+      "id": "compat",
+      "width": 899,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "Рассчитать совместимость",
+          "height": 56
+        },
+        {
+          "text": "К расчёту",
+          "height": 50.796875
+        },
+        {
+          "text": "Как считается",
+          "height": 50.796875
+        }
+      ]
+    },
+    {
+      "id": "compat",
+      "width": 900,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "Рассчитать совместимость",
+          "height": 56
+        },
+        {
+          "text": "К расчёту",
+          "height": 50.796875
+        },
+        {
+          "text": "Как считается",
+          "height": 50.796875
+        }
+      ]
+    },
+    {
+      "id": "compat",
+      "width": 1024,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "Рассчитать совместимость",
+          "height": 56
+        },
+        {
+          "text": "К расчёту",
+          "height": 50.796875
+        },
+        {
+          "text": "Как считается",
+          "height": 50.796875
+        }
+      ]
+    },
+    {
+      "id": "compat",
+      "width": 1440,
+      "overflow": false,
+      "titleX": 68,
+      "logoX": 68,
+      "controls": [
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "",
+          "height": 52.796875
+        },
+        {
+          "text": "Рассчитать совместимость",
+          "height": 56
+        },
+        {
+          "text": "К расчёту",
+          "height": 50.796875
+        },
+        {
+          "text": "Как считается",
+          "height": 50.796875
+        }
+      ]
+    },
+    {
+      "id": "lila",
+      "width": 375,
+      "overflow": false,
+      "titleX": 16,
+      "logoX": 16,
+      "controls": [
+        {
+          "text": "Играть",
+          "height": 56
+        },
+        {
+          "text": "Как это устроено",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "lila",
+      "width": 768,
+      "overflow": false,
+      "titleX": 16,
+      "logoX": 16,
+      "controls": [
+        {
+          "text": "Играть",
+          "height": 56
+        },
+        {
+          "text": "Как это устроено",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "lila",
+      "width": 899,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "Играть",
+          "height": 56
+        },
+        {
+          "text": "Как это устроено",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "lila",
+      "width": 900,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "Играть",
+          "height": 56
+        },
+        {
+          "text": "Как это устроено",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "lila",
+      "width": 1024,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "Играть",
+          "height": 56
+        },
+        {
+          "text": "Как это устроено",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "lila",
+      "width": 1440,
+      "overflow": false,
+      "titleX": 68,
+      "logoX": 68,
+      "controls": [
+        {
+          "text": "Играть",
+          "height": 56
+        },
+        {
+          "text": "Как это устроено",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "taro",
+      "width": 375,
+      "overflow": false,
+      "titleX": 16,
+      "logoX": 16,
+      "controls": [
+        {
+          "text": "Вытянуть карту дня",
+          "height": 56
+        },
+        {
+          "text": "Значения 78 карт",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "taro",
+      "width": 768,
+      "overflow": false,
+      "titleX": 16,
+      "logoX": 16,
+      "controls": [
+        {
+          "text": "Вытянуть карту дня",
+          "height": 56
+        },
+        {
+          "text": "Значения 78 карт",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "taro",
+      "width": 899,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "Вытянуть карту дня",
+          "height": 56
+        },
+        {
+          "text": "Значения 78 карт",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "taro",
+      "width": 900,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "Вытянуть карту дня",
+          "height": 56
+        },
+        {
+          "text": "Значения 78 карт",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "taro",
+      "width": 1024,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "Вытянуть карту дня",
+          "height": 56
+        },
+        {
+          "text": "Значения 78 карт",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "taro",
+      "width": 1440,
+      "overflow": false,
+      "titleX": 68,
+      "logoX": 68,
+      "controls": [
+        {
+          "text": "Вытянуть карту дня",
+          "height": 56
+        },
+        {
+          "text": "Значения 78 карт",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "natal",
+      "width": 375,
+      "overflow": false,
+      "titleX": 16,
+      "logoX": 16,
+      "controls": [
+        {
+          "text": "date",
+          "height": 54
+        },
+        {
+          "text": "time",
+          "height": 54
+        },
+        {
+          "text": "city",
+          "height": 54
+        },
+        {
+          "text": "Рассчитать карту",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "natal",
+      "width": 768,
+      "overflow": false,
+      "titleX": 16,
+      "logoX": 16,
+      "controls": [
+        {
+          "text": "date",
+          "height": 54
+        },
+        {
+          "text": "time",
+          "height": 54
+        },
+        {
+          "text": "city",
+          "height": 54
+        },
+        {
+          "text": "Рассчитать карту",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "natal",
+      "width": 899,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "date",
+          "height": 54
+        },
+        {
+          "text": "time",
+          "height": 54
+        },
+        {
+          "text": "city",
+          "height": 54
+        },
+        {
+          "text": "Рассчитать карту",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "natal",
+      "width": 900,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "date",
+          "height": 54
+        },
+        {
+          "text": "time",
+          "height": 54
+        },
+        {
+          "text": "city",
+          "height": 54
+        },
+        {
+          "text": "Рассчитать карту",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "natal",
+      "width": 1024,
+      "overflow": false,
+      "titleX": 28,
+      "logoX": 28,
+      "controls": [
+        {
+          "text": "date",
+          "height": 54
+        },
+        {
+          "text": "time",
+          "height": 54
+        },
+        {
+          "text": "city",
+          "height": 54
+        },
+        {
+          "text": "Рассчитать карту",
+          "height": 56
+        }
+      ]
+    },
+    {
+      "id": "natal",
+      "width": 1440,
+      "overflow": false,
+      "titleX": 68,
+      "logoX": 68,
+      "controls": [
+        {
+          "text": "date",
+          "height": 54
+        },
+        {
+          "text": "time",
+          "height": 54
+        },
+        {
+          "text": "city",
+          "height": 54
+        },
+        {
+          "text": "Рассчитать карту",
+          "height": 56
+        }
+      ]
+    }
+  ],
+  "calculators": [
+    {
+      "id": "matrix",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "id": "compat",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "id": "natal",
+      "width": 1440,
+      "passed": true,
+      "cityKeyboard": true
+    },
+    {
+      "id": "matrix",
+      "width": 375,
+      "passed": true
+    },
+    {
+      "id": "compat",
+      "width": 375,
+      "passed": true
+    },
+    {
+      "id": "natal",
+      "width": 375,
+      "passed": true,
+      "cityKeyboard": true
+    }
+  ],
+  "focus": [
+    {
+      "id": "matrix",
+      "visible": true,
+      "outline": "solid",
+      "width": "2px"
+    },
+    {
+      "id": "compat",
+      "visible": true,
+      "outline": "solid",
+      "width": "2px"
+    },
+    {
+      "id": "lila",
+      "visible": true,
+      "outline": "solid",
+      "width": "2px"
+    },
+    {
+      "id": "taro",
+      "visible": true,
+      "outline": "solid",
+      "width": "2px"
+    },
+    {
+      "id": "natal",
+      "visible": true,
+      "outline": "solid",
+      "width": "2px"
+    }
+  ],
+  "lowerStyles": [
+    {
+      "id": "matrix",
+      "width": 1440,
+      "equal": true
+    },
+    {
+      "id": "matrix",
+      "width": 375,
+      "equal": true
+    },
+    {
+      "id": "compat",
+      "width": 1440,
+      "equal": true
+    },
+    {
+      "id": "compat",
+      "width": 375,
+      "equal": true
+    },
+    {
+      "id": "lila",
+      "width": 1440,
+      "equal": true
+    },
+    {
+      "id": "lila",
+      "width": 375,
+      "equal": true
+    },
+    {
+      "id": "taro",
+      "width": 1440,
+      "equal": true
+    },
+    {
+      "id": "taro",
+      "width": 375,
+      "equal": true
+    },
+    {
+      "id": "natal",
+      "width": 1440,
+      "equal": true
+    },
+    {
+      "id": "natal",
+      "width": 375,
+      "equal": true
+    }
+  ]
+}

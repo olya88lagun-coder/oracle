@@ -27,7 +27,7 @@ export default function LilaPage() {
   const images = availableCellImages();
   const guided = salesEnabled(LILA_SESSION_PRODUCT);
   return (
-    <Scene>
+    <Scene art={false}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(lilaGameJsonLd()) }} />
       <div className="lila-hero">
         <div className="scene__intro stack">
@@ -46,7 +46,7 @@ export default function LilaPage() {
           </p>
           <p className="muted">Без регистрации · партия сохраняется в вашем браузере</p>
         </div>
-        <Image className="lila-hero__art" src="/practices/lila.webp" alt="" width={960} height={505} unoptimized priority />
+        <Image className="lila-hero__art" src="/practices/lila.webp" alt="" width={1200} height={675} unoptimized priority />
       </div>
 
       <section className="card stack" id="how" aria-labelledby="how-title">
