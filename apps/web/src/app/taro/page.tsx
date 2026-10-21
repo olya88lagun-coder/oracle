@@ -7,8 +7,8 @@ import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { TARO_DAY_PATH, TARO_PATH } from "@/lib/taro-paths";
 
 export const metadata: Metadata = publicMetadata({
-  title: "Старшие арканы Таро — 22 карты, все 78 значений и карта дня",
-  description: "Старшие и младшие арканы Таро: значения всех 78 карт колоды Райдер–Уэйт, рубрики по мастям и карта дня онлайн. Без регистрации, выбор в вашем браузере.",
+  title: "Таро онлайн: карта дня и значения 78 карт",
+  description: "Карта дня онлайн и значения всех 78 карт Таро Райдера–Уэйта: образ, вопрос для себя и действие на сегодня. Бесплатно, без регистрации.",
   path: TARO_PATH,
   image: SITE_PREVIEW_IMAGE,
 });
