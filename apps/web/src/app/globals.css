@@ -532,8 +532,16 @@ a.report-toc__title:hover { color: var(--accent); }
 /* Лила: экраны по макетам Codex (docs/design/mockups/lila-*). Цвета — только переменные из :root */
 /* Вход и справочник */
 .lila-hero { display: grid; gap: 24px; align-items: center; }
-.lila-hero__art { width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius-lg); object-fit: cover; object-position: 78% 50%; aspect-ratio: 1.5; }
-@media (min-width: 900px) { .lila-hero { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 48px; } }
+/* Без силуэта «Моего портрета» (Scene art={false}): шапка не перекрывает контент, отступ сверху обычный */
+.scene--plain { margin-top: 0; }
+.scene--plain::before { display: none; }
+.scene--plain .scene__content { padding-top: 40px; }
+/* Картинка с фишкой крупнее: шире колонка и кадр уже, чтобы фишка занимала больше места */
+.lila-hero__art { width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius-lg); object-fit: cover; object-position: 74% 62%; aspect-ratio: 1.4; }
+@media (min-width: 900px) {
+  .lila-hero { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 48px; }
+  .lila-hero__art { aspect-ratio: 1.2; }
+}
 .lila-cell-grid { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (min-width: 520px) { .lila-cell-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (min-width: 760px) { .lila-cell-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
