@@ -60,10 +60,10 @@ function Emblem({ page }: { page: NatalPageRef }) {
   );
 }
 
-export function NatalPageView({ page, text }: { page: NatalPageRef; text: NatalPageText }) {
+// cover по умолчанию берётся из списка обложек; тесты передают null, чтобы проверять эмблему, не завися от того, у каких знаков уже есть картинки
+export function NatalPageView({ page, text, cover = natalCoverPath(page.slug) }: { page: NatalPageRef; text: NatalPageText; cover?: string | null }) {
   const { previous, next } = neighborPages(page);
   const siblings = sameBodyPages(page);
-  const cover = natalCoverPath(page.slug);
   const id = (key: string) => `${page.body}-${key}`;
   const paragraphs = (items: readonly string[]): ReactNode => items.map((paragraph) => <p key={paragraph}>{paragraph}</p>);
   const sections: Record<(typeof SECTION_KEYS)[number], ReactNode> = {
