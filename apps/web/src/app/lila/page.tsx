@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Board } from "@/components/lila/Board";
 import { CellArt } from "@/components/lila/CellArt";
+import { LilaFaq, lilaFaqJsonLd } from "@/components/lila/LilaFaq";
 import { Scene } from "@/components/Scene";
 import { DISCLAIMER, formatRubles } from "@/lib/legal";
 import { lilaCellPath, LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
@@ -13,8 +14,8 @@ import { availableCellImages } from "@/server/lila-images";
 import { salesEnabled } from "@/server/payments-deps";
 
 export const metadata: Metadata = publicMetadata({
-  title: "Лила онлайн — игра с намерением, поле из 72 клеток",
-  description: "Сформулируйте намерение, бросайте кубик и проходите путь по 72 клеткам Лилы: у каждой клетки — тема, вопрос и ваша запись. Бесплатно и без регистрации.",
+  title: "Игра Лила онлайн — играть бесплатно, поле из 72 клеток",
+  description: "Играйте в Лилу онлайн бесплатно и без регистрации: сформулируйте намерение, бросайте кубик и проходите 72 клетки, у каждой тема, вопрос и ваша запись.",
   path: LILA_PATH,
   absoluteTitle: true,
   image: SITE_PREVIEW_IMAGE,
@@ -29,10 +30,11 @@ export default function LilaPage() {
   return (
     <Scene art={false}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(lilaGameJsonLd()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(lilaFaqJsonLd(guided)) }} />
       <div className="lila-hero">
         <div className="scene__intro stack">
           <p className="eyebrow eyebrow--line">Практика</p>
-          <h1 className="display">Лила — игра с вашим намерением</h1>
+          <h1 className="display">Игра Лила онлайн — путь по 72 клеткам</h1>
           <p className="lead">
             Сформулируйте намерение, бросайте кубик и проходите путь по 72 клеткам: у каждой — тема, вопрос и, при желании, ваша запись. Это способ посмотреть на свой вопрос по-новому, а не предсказание.
           </p>
@@ -57,6 +59,15 @@ export default function LilaPage() {
           <li>На каждой клетке — короткий текст и вопрос для размышления. Записать мысль можно, но не обязательно.</li>
           <li>Стрелы поднимают на другую клетку, змеи возвращают к теме, которая просит внимания. Цель пути — клетка 68, попасть на неё можно только точным броском.</li>
         </ol>
+      </section>
+
+      <section className="card stack" aria-labelledby="not-title">
+        <h2 id="not-title">Чем Лила не является</h2>
+        <ul>
+          <li>Не гадание: клетки не говорят, что произойдёт, а задают вопросы для размышления.</li>
+          <li>Не чат: порядок игры задают поле и кубик, а вы сами решаете, что записать.</li>
+          <li>Не замена психолога или врача: игра помогает собрать мысли, но не лечит и не ставит оценок.</li>
+        </ul>
       </section>
 
       {guided && <section className="card stack" aria-labelledby="modes-title">
@@ -91,6 +102,8 @@ export default function LilaPage() {
           ))}
         </ul>
       </section>
+
+      <LilaFaq guided={guided} />
 
       <p className="muted">{DISCLAIMER}</p>
     </Scene>

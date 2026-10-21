@@ -741,6 +741,13 @@ a.report-toc__title:hover { color: var(--accent); }
 .matrix-library a:hover .matrix-library__art img { transform: scale(1.04); }
 .matrix-library__caption { display: flex; gap: 6px; align-items: baseline; margin-top: 8px; font-size: 14px; line-height: 1.4; }
 .matrix-library__caption b { color: var(--accent); font-family: var(--font-display); font-weight: 400; }
+.matrix-read { display: grid; gap: 30px; border-top: 1px solid var(--line); }
+.matrix-read h2 { margin: 0; font-size: clamp(32px, 5vw, 46px); line-height: 1.17; }
+.matrix-read__grid { display: grid; gap: 34px; }
+.matrix-read article { display: grid; gap: 12px; align-content: start; }
+.matrix-read h3 { margin: 0; font-family: var(--font-display); font-size: 24px; font-weight: 400; line-height: 1.3; }
+.matrix-read p, .matrix-read li { margin: 0; color: var(--ink-soft); }
+.matrix-read ol, .matrix-read ul { display: grid; gap: 8px; margin: 0; padding-left: 22px; }
 .matrix-faq { display: grid; gap: 24px; border-top: 1px solid var(--line); }
 .matrix-faq__list details { border-bottom: 1px solid var(--line); }
 .matrix-faq summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 44px; padding: 15px 0; list-style: none; cursor: pointer; font-family: var(--font-display); font-size: 19px; line-height: 1.4; }
@@ -775,6 +782,7 @@ a.report-toc__title:hover { color: var(--accent); }
   .matrix-preview h3 { font-size: 28px; }
   .matrix-method { grid-template-columns: 1fr 1fr; gap: 120px; padding-block: 72px; }
   .matrix-library { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 24px 18px; }
+  .matrix-read__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 44px 70px; }
   .matrix-faq { grid-template-columns: 1fr 1.3fr; gap: 70px; }
   .matrix-cta { grid-template-columns: 1fr auto; gap: 30px; padding-block: 38px; }
 }
