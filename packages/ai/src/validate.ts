@@ -4,6 +4,7 @@ import type { ChapterInput } from "./input";
 import { PROSE_LIMITS, SCENARIO_FIELD_MAX_CHARS } from "./prompt";
 import type { GeneratedChapter } from "./writer";
 
+export type ProseLimits = { minParagraphs: number; maxParagraphs: number; minChars: number; maxChars: number };
 export type ValidationFailure = "not_json" | "schema" | "length" | "stop_words";
 export type Validation = { ok: true; chapter: GeneratedChapter } | { ok: false; reason: ValidationFailure };
 
@@ -81,19 +82,20 @@ function proseParagraphs(raw: string): { ok: true; items: unknown[] } | { ok: fa
   return { ok: true, items };
 }
 
-function readProse(raw: string): { ok: true; paragraphs: string[] } | { ok: false; reason: ValidationFailure } {
+// limits — границы длины главы: у разбора матрицы и у натального разбора они разные
+export function readProse(raw: string, limits: ProseLimits = PROSE_LIMITS): { ok: true; paragraphs: string[] } | { ok: false; reason: ValidationFailure } {
   const found = proseParagraphs(raw);
   if (!found.ok) return found;
   const paragraphs = found.items.map(cleanText);
   if (paragraphs.some((paragraph) => paragraph === null)) return { ok: false, reason: "schema" };
   const texts = paragraphs as string[];
   const chars = texts.join("").length;
-  if (texts.length < PROSE_LIMITS.minParagraphs || texts.length > PROSE_LIMITS.maxParagraphs) return { ok: false, reason: "length" };
-  if (chars < PROSE_LIMITS.minChars || chars > PROSE_LIMITS.maxChars) return { ok: false, reason: "length" };
+  if (texts.length < limits.minParagraphs || texts.length > limits.maxParagraphs) return { ok: false, reason: "length" };
+  if (chars < limits.minChars || chars > limits.maxChars) return { ok: false, reason: "length" };
   return { ok: true, paragraphs: texts };
 }
 
-function readScenario(value: Record<string, unknown>): { ok: true; scenario: Record<ScenarioField, string> } | { ok: false; reason: ValidationFailure } {
+export function readScenario(value: Record<string, unknown>): { ok: true; scenario: Record<ScenarioField, string> } | { ok: false; reason: ValidationFailure } {
   const fields = SCENARIO_FIELDS.map((field) => [field, cleanText(value[field])] as const);
   if (fields.some(([, text]) => text === null)) return { ok: false, reason: "schema" };
   const scenario = Object.fromEntries(fields) as Record<ScenarioField, string>;

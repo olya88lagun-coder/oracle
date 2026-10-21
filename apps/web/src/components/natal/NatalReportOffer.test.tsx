@@ -22,6 +22,11 @@ describe("NatalReportOffer", () => {
     expect(text(markup)).toContain("Ваш сценарий");
   });
 
+  test("says that the text is prepared with AI from the ready descriptions, except where the offer cannot be bought", () => {
+    expect(text(render({ kind: "buy" }))).toContain("Текст готовится автоматически с помощью ИИ");
+    expect(text(render({ kind: "no_time" }, { withChart: noTime }))).not.toContain("с помощью ИИ");
+  });
+
   test("a guest is led to the login and back to the calculator", () => {
     const markup = render({ kind: "guest" });
     expect(text(markup)).toContain("Войти и купить разбор — 490 ₽");

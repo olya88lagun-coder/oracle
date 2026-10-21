@@ -11,3 +11,7 @@ export { generateConclusion, generateGuideText } from "./lila-generate";
 export { buildConclusionPrompt, buildGuidePrompt } from "./lila-prompt";
 export { validateConclusionChapter, validateGuideText } from "./lila-validate";
 export { fallbackNatalReport, type NatalBlocks, type NatalChapter } from "./natal-fallback";
+export { buildNatalChapterInputs, type NatalChapterInput } from "./natal-input";
+export { buildNatalPrompt, NATAL_PROSE_LIMITS } from "./natal-prompt";
+export { validateNatalChapter } from "./natal-validate";
+export { fallbackNatalChapter, generateNatalChapter, generateNatalReport } from "./natal-generate";
