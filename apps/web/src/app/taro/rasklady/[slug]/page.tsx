@@ -51,7 +51,7 @@ export default async function TaroSpreadPage({ params }: Params) {
             ))}
           </ol>
         </section>
-        <SpreadPlay positions={spread.positions} cards={spreadDeck(spread)} />
+        <SpreadPlay positions={spread.positions} cards={spreadDeck(spread)} next={spread.next} />
         <TaroFaqSection id="spread-faq" title={`Частые вопросы: ${spread.name.toLowerCase()}`} items={spread.faq} />
         <nav className="taro-spread-others" aria-labelledby="spread-others">
           <h2 id="spread-others">Другие расклады</h2>

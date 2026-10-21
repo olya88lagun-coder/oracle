@@ -1,5 +1,9 @@
 import { TAROT_CARDS } from "@oracle/content/tarot";
 import { describe, expect, test } from "vitest";
+import { COMPAT_PATH } from "./compat";
+import { LILA_PATH } from "./lila-paths";
+import { MATRIX_PATH } from "./arcana-paths";
+import { NATAL_PATH } from "./natal-paths";
 import { pickDistinctIndexes, positionReading, SPREADS_HUB_FAQ, spreadFromParam, spreadPath, TARO_SPREADS, type SpreadSource } from "./taro-spreads";
 
 const SOURCES: readonly SpreadSource[] = ["essence", "love", "money", "resource", "distortion", "day", "action", "question"];
@@ -39,6 +43,19 @@ describe("taro spreads", () => {
   test("every spread has a short name for the tiles on /taro", () => {
     expect(TARO_SPREADS.map((spread) => spread.short)).toEqual(["Три карты", "Отношения", "Выбор из двух", "Дело и деньги", "На сегодня"]);
     for (const spread of TARO_SPREADS) expect(spread.short.length).toBeLessThanOrEqual(24);
+  });
+
+  test("every spread leads on to one practice that starts with a free calculation, without prices", () => {
+    const practices = [MATRIX_PATH, COMPAT_PATH, LILA_PATH, NATAL_PATH];
+    for (const spread of TARO_SPREADS) {
+      expect(practices).toContain(spread.next.href);
+      expect(spread.next.title.length).toBeGreaterThan(3);
+      expect(spread.next.text.length).toBeGreaterThan(40);
+      expect(spread.next.text.length).toBeLessThanOrEqual(160);
+      expect(spread.next.label.length).toBeLessThanOrEqual(40);
+      expect(`${spread.next.title} ${spread.next.text} ${spread.next.label}`).not.toMatch(/₽|руб|оплат|куп[иь]|скидк/i);
+    }
+    expect(new Set(TARO_SPREADS.map((spread) => spread.next.href)).size).toBeGreaterThanOrEqual(3);
   });
 
   test("builds addresses under /taro/rasklady and resolves only exact slugs", () => {

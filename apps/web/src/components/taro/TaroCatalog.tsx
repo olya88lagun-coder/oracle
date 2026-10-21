@@ -4,7 +4,7 @@ import { TAROT_SUIT_LABELS } from "@oracle/content/tarot";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { TARO_AUTHOR_CREDIT } from "@/lib/taro-paths";
+import { TARO_AUTHOR_CREDIT, TARO_PATH } from "@/lib/taro-paths";
 import { countLabel, FILTER_CAPTIONS, FILTER_LABELS, FILTER_ORDER, isFilter, matchesQuery, SUIT_ORDER, type CatalogCard, type CatalogFilter } from "@/lib/taro-catalog";
 
 // Каталог всех 78 карт. Сервер отдаёт все карты сразу (ссылки видны без JS); в браузере каталог по умолчанию сужается до старших арканов
@@ -30,13 +30,16 @@ export function TaroCatalog({ cards }: { cards: readonly CatalogCard[] }) {
 
   useEffect(() => {
     if (!ready) return;
+    // Пока страница грузилась, человек мог уже нажать ссылку выше (плитку расклада): тогда адрес не трогаем
+    if (window.location.pathname !== TARO_PATH) return;
     // Запрос и масть можно сохранить в адресе: в них нет личных данных
     const url = new URL(window.location.href);
     url.searchParams.set("suit", query.trim() ? beforeSearch.current : filter);
     if (query.trim()) url.searchParams.set("q", query.trim());
     else url.searchParams.delete("q");
     try {
-      window.history.replaceState(null, "", url);
+      // Состояние истории оставляем прежним: им пользуется роутер Next.js, иначе начатый переход теряется
+      window.history.replaceState(window.history.state, "", url);
     } catch {
       // Адрес не обновится — каталог работает и так
     }
