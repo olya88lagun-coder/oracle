@@ -82,7 +82,7 @@ export function ReportWaiting({ purchaseId, initial, center, product = "matrix_r
 
   const text = natal && status === "generating" ? { ...TEXT.generating, body: REPORT_WAITING_BODY } : TEXT[status];
   return (
-    <section className="card stack report-waiting">
+    <section className={natal ? "card stack report-waiting report-waiting--natal" : "card stack report-waiting"}>
       <ReportGoals purchaseId={purchaseId} paid={status === "generating"} product={product} />
       <p className="eyebrow">{natal ? PORTRAIT_REPORT_TITLE : "Разбор матрицы судьбы"}</p>
       <h1 className="report-waiting__title">{text.title}</h1>
