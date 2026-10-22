@@ -28,7 +28,7 @@ describe("topics and related posts", () => {
   test("every post has a topic and a positive reading time; topic counts add up", () => {
     for (const post of BLOG_POSTS) {
       expect(post.readingMinutes).toBeGreaterThanOrEqual(1);
-      expect(["matrix", "compat", "lila", "taro"]).toContain(post.topic);
+      expect(["matrix", "compat", "lila", "taro", "natal"]).toContain(post.topic);
     }
     expect(blogTopics().reduce((sum, item) => sum + item.count, 0)).toBe(BLOG_POSTS.length);
   });
