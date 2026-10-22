@@ -2,10 +2,10 @@ import { NatalGlossary } from "@/components/natal/NatalGlossary";
 import { DISCLAIMER, NATAL_TITLE } from "@/lib/natal-copy";
 import { GLOSSARY_DESCRIPTION, GLOSSARY_LEAD, GLOSSARY_PATH, GLOSSARY_TITLE, glossaryJsonLd } from "@/lib/natal-glossary";
 import { NATAL_PATH } from "@/lib/natal-paths";
-import { jsonLdScript, publicMetadata } from "@/lib/seo";
+import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
-export const metadata = publicMetadata({ title: GLOSSARY_TITLE, description: GLOSSARY_DESCRIPTION, path: GLOSSARY_PATH });
+export const metadata = publicMetadata({ title: GLOSSARY_TITLE, description: GLOSSARY_DESCRIPTION, path: GLOSSARY_PATH, image: SITE_PREVIEW_IMAGE });
 
 export default function NatalGlossaryPage() {
   const breadcrumbs = {

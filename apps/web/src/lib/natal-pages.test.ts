@@ -1,6 +1,6 @@
-import { ACCEPTED_BATCHES, natalPageBySlug, NATAL_PAGES, SIGN_IDS } from "@oracle/content/natal";
+import { ACCEPTED_BATCHES, natalPageBySlug, NATAL_PAGES, natalText, SIGN_IDS } from "@oracle/content/natal";
 import { describe, expect, test } from "vitest";
-import { acceptedNatalPage, acceptedNatalPages, neighborPages, nodeAxisFor, oppositeSign, sameBodyPages } from "./natal-pages";
+import { acceptedNatalPage, acceptedNatalPages, natalDescription, neighborPages, nodeAxisFor, oppositeSign, sameBodyPages } from "./natal-pages";
 
 describe("accepted natal pages", () => {
   test("are exactly the pages of the accepted batches, each with a text", () => {
@@ -60,5 +60,30 @@ describe("axis of the lunar nodes", () => {
 
   test("with batch 5 accepted the mirror page is open for every node page", () => {
     for (const page of NATAL_PAGES.filter((item) => item.body === "northNode")) expect(nodeAxisFor(page)?.mirror?.sign, page.slug).toBe(oppositeSign(page.sign));
+  });
+});
+
+describe("natal page meta description", () => {
+  const descriptions = acceptedNatalPages().map((page) => {
+    const text = natalText(page.slug);
+    if (!text) throw new Error(`no text for ${page.slug}`);
+    return { slug: page.slug, description: natalDescription(text) };
+  });
+
+  test("is different on every page, so search results do not show twins", () => {
+    const seen = new Map<string, string>();
+    for (const { slug, description } of descriptions) {
+      expect(seen.get(description), `${slug} repeats the description of ${seen.get(description)}`).toBeUndefined();
+      seen.set(description, slug);
+    }
+  });
+
+  test("fits into 160 characters", () => {
+    for (const { slug, description } of descriptions) expect(description.length, slug).toBeLessThanOrEqual(160);
+  });
+
+  test("for the generational planets starts with the page name, since their first paragraph is the same for all signs", () => {
+    const text = natalText("uran-v-teltse");
+    expect(text && natalDescription(text).startsWith("Уран в Тельце: ")).toBe(true);
   });
 });
