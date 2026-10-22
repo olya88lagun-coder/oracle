@@ -8,6 +8,7 @@ import { ReportView } from "@/components/report/ReportView";
 import { arcanumImage } from "@/lib/arcana-paths";
 import { reportPath } from "@/lib/report-offer";
 import { getDb } from "@/server/db";
+import { natalReportChart } from "@/server/natal-report-chart";
 import { purchaseViewDeps } from "@/server/payments-deps";
 import { getPurchaseView, type PurchaseView } from "@/server/payments-service";
 import { requireUser } from "@/server/viewer";
@@ -60,7 +61,7 @@ async function NatalReport({ view }: { view: PurchaseView }) {
   return (
     <main className="page page--wide">
       <ReportGoals purchaseId={view.id} paid opened product="natal_report" />
-      <NatalReportView chapters={report.chapters} date={view.birthDate} placeName={purchase?.natalInput?.placeName ?? null} />
+      <NatalReportView chapters={report.chapters} date={view.birthDate} placeName={purchase?.natalInput?.placeName ?? null} chartData={natalReportChart(purchase?.natalInput)} />
     </main>
   );
 }

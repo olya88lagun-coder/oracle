@@ -1,3 +1,4 @@
+import { computeNatalChart } from "@oracle/core/natal";
 import type { StoredNatalChapter } from "@oracle/db";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
@@ -60,3 +61,47 @@ describe("NatalReportView as a demo", () => {
   });
 });
 
+describe("NatalReportView with the chart", () => {
+  const chart = computeNatalChart({ instant: new Date("1990-03-07T09:00:00Z"), latitude: 55.7558, longitude: 37.6173, timeKnown: true });
+  const chartData = { chart, birth: { city: "Москва", date: "1990-03-07", time: "12:00" } };
+  const chapters: StoredNatalChapter[] = [
+    { id: "core", source: "fallback", paragraphs: ["Вводный абзац ядра.", "Средний абзац ядра.", "Итоговый абзац ядра."] },
+    { id: "love", source: "fallback", paragraphs: ["Единственный абзац любви.", "Второй абзац любви."] },
+    { id: "work", source: "fallback", paragraphs: ["Про дело."] },
+    { id: "aspects", source: "fallback", paragraphs: ["Про аспекты."] },
+    { id: "scenario", source: "fallback", scenario: { pattern: "П.", tension: "Н.", resource: "Р.", blindSpot: "С.", turningPoint: "Т.", experiment: "Э.", question: "В?" } },
+  ];
+  const markup = renderToStaticMarkup(<NatalReportView chapters={chapters} date="1990-03-07" placeName="Москва" chartData={chartData} />);
+
+  test("opens with the wheel of this chart, the glyph sprite and the three main positions", () => {
+    expect(markup).toContain("natal-report__cover");
+    expect(markup).toContain("natal-sprite");
+    expect(markup).toContain("natal-wheel");
+    expect(markup).toMatch(/natal-report__big-three[^>]*>.*Солнце (в|во) [А-Яа-я]+.*Луна (в|во) [А-Яа-я]+.*Асцендент (в|во) [А-Яа-я]+/s);
+  });
+
+  test("lists the positions of each chapter, and the houses of the chapters that have only houses", () => {
+    expect(markup).toMatch(/natal-report__placement[^>]*>.*Венера (в|во) [А-Яа-я]+, \d+ дом/s);
+    expect(markup).toContain("Дома 2, 6 и 10");
+    expect(markup.match(/natal-report__placements/g)).toHaveLength(3);
+  });
+
+  test("marks the first paragraph of a chapter as the lead and the last one as the takeaway only when there are three or more", () => {
+    expect(markup).toMatch(/natal-report__lead[^>]*>Вводный абзац ядра\./);
+    expect(markup).toMatch(/natal-report__takeaway[^>]*>Итоговый абзац ядра\./);
+    expect(markup.match(/natal-report__takeaway/g)).toHaveLength(1);
+    expect(markup).toMatch(/natal-report__lead[^>]*>Единственный абзац любви\./);
+  });
+
+  test("wraps the scenario fields in natal-report__scenario and keeps one h1", () => {
+    expect(markup).toMatch(/natal-report__scenario[^>]*><div class="report-scenario"/);
+    expect(markup.match(/<h1/g)).toHaveLength(1);
+  });
+
+  test("without the chart (birth data deleted) it shows the same text, without the wheel and the positions", () => {
+    const plain = renderToStaticMarkup(<NatalReportView chapters={chapters} date="1990-03-07" placeName={null} chartData={null} />);
+    expect(plain).not.toContain("natal-report__cover");
+    expect(plain).not.toContain("natal-report__placements");
+    expect(plain).toContain("Единственный абзац любви.");
+  });
+});
