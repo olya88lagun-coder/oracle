@@ -40,4 +40,10 @@ describe("topics and related posts", () => {
     expect(related[0]?.topic).toBe("lila");
     expect(related.length).toBeLessThanOrEqual(3);
   });
+
+  test("related lists are spread round the posts: every post gets a link from at least one other post's list", () => {
+    const incoming = new Map(BLOG_POSTS.map((post) => [post.slug, 0]));
+    for (const post of BLOG_POSTS) for (const item of relatedPosts(post)) incoming.set(item.slug, (incoming.get(item.slug) ?? 0) + 1);
+    for (const [slug, count] of incoming) expect(count, slug).toBeGreaterThanOrEqual(1);
+  });
 });

@@ -9,7 +9,7 @@ import { pickDistinctIndexes, positionReading, SPREADS_HUB_FAQ, spreadFromParam,
 const SOURCES: readonly SpreadSource[] = ["essence", "love", "money", "resource", "distortion", "day", "action", "question"];
 const PROMISES = /точн(ый|ое|ого) (прогноз|ответ)|гарантир|узнаете будущее|предскажет|покажет, что будет/i;
 const allCopy = () => [
-  ...TARO_SPREADS.flatMap((spread) => [spread.name, spread.title, spread.description, spread.teaser, spread.lead, ...spread.positions.flatMap((p) => [p.title, p.hint]), ...spread.faq.flatMap((f) => [f.question, f.answer])]),
+  ...TARO_SPREADS.flatMap((spread) => [spread.name, spread.title, spread.description, spread.teaser, spread.lead, ...spread.positions.flatMap((p) => [p.title, p.hint]), ...spread.faq.flatMap((f) => [f.question, f.answer]), ...spread.guide.flatMap((block) => [block.title, ...block.paragraphs])]),
   ...SPREADS_HUB_FAQ.flatMap((f) => [f.question, f.answer]),
 ];
 
@@ -38,6 +38,24 @@ describe("taro spreads", () => {
     }
     expect(titles.size).toBe(TARO_SPREADS.length);
     expect(descriptions.size).toBe(TARO_SPREADS.length);
+  });
+
+  test("every spread has a reading guide of its own: at least two blocks with two paragraphs each and some 180 words in all", () => {
+    const wordsOf = (text: string) => text.split(/\s+/).filter(Boolean).length;
+    const seen = new Set<string>();
+    for (const spread of TARO_SPREADS) {
+      expect(spread.guide.length, spread.slug).toBeGreaterThanOrEqual(2);
+      for (const block of spread.guide) {
+        expect(block.title.length, spread.slug).toBeGreaterThan(5);
+        expect(block.paragraphs.length, `${spread.slug}: ${block.title}`).toBeGreaterThanOrEqual(2);
+        for (const paragraph of block.paragraphs) {
+          expect(seen.has(paragraph), `${spread.slug}: a paragraph repeats another spread`).toBe(false);
+          seen.add(paragraph);
+        }
+      }
+      const total = spread.guide.reduce((sum, block) => sum + block.paragraphs.reduce((inner, paragraph) => inner + wordsOf(paragraph), 0), 0);
+      expect(total, spread.slug).toBeGreaterThanOrEqual(180);
+    }
   });
 
   test("every spread has a short name for the tiles on /taro", () => {
