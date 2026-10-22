@@ -1,7 +1,7 @@
 import { computeNatalChart } from "@oracle/core/natal";
 import { natalChapterOutline } from "@oracle/core/natal-report";
 import { describe, expect, test } from "vitest";
-import { chapterLabel, natalOfferState } from "./natal-report-offer";
+import { chapterLabel, housesLabel, natalOfferState, pointLabel } from "./natal-report-offer";
 
 const chart = computeNatalChart({ instant: new Date("1990-03-07T09:00:00Z"), latitude: 55.7558, longitude: 37.6173, timeKnown: true });
 const outline = natalChapterOutline(chart);
@@ -26,5 +26,19 @@ describe("chapterLabel", () => {
     expect(label("work")).toBe("Дома 2, 6 и 10");
     expect(label("aspects")).toBe("Самые точные связи планет вашей карты");
     expect(label("scenario")).toContain("эксперимент на 7 дней");
+  });
+});
+
+describe("pointLabel and housesLabel", () => {
+  test("a planet gets its sign and house, the ascendant only its sign", () => {
+    const core = outline.find((chapter) => chapter.id === "core")!;
+    expect(pointLabel(core.points[0]!)).toMatch(/^Солнце (в|во) [А-Яа-я]+, \d+ дом$/);
+    expect(pointLabel(core.points.at(-1)!)).toMatch(/^Асцендент (в|во) [А-Яа-я]+$/);
+  });
+
+  test("houses read as one house or as a list with «и» before the last", () => {
+    expect(housesLabel([7])).toBe("7 дом");
+    expect(housesLabel([2, 6, 10])).toBe("Дома 2, 6 и 10");
+    expect(housesLabel([4, 8])).toBe("Дома 4 и 8");
   });
 });

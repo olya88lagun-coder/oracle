@@ -1,7 +1,7 @@
 import { NatalReportView } from "@/components/report/NatalReportView";
 import { NATAL_PATH } from "@/lib/natal-paths";
 import { publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
-import { DEMO_NATAL_DATE, DEMO_NATAL_PLACE, DEMO_NATAL_REPORT } from "@/server/product-demos";
+import { DEMO_NATAL_CHART_DATA, DEMO_NATAL_DATE, DEMO_NATAL_PLACE, DEMO_NATAL_REPORT } from "@/server/product-demos";
 
 export const metadata = publicMetadata({
   title: "Пример разбора натальной карты",
@@ -14,7 +14,7 @@ export default function NatalReportExamplePage() {
   return (
     <main className="workspace">
       <div className="matrix-wrap">
-        <NatalReportView demo chapters={DEMO_NATAL_REPORT} date={DEMO_NATAL_DATE} placeName={DEMO_NATAL_PLACE} />
+        <NatalReportView demo chapters={DEMO_NATAL_REPORT} date={DEMO_NATAL_DATE} placeName={DEMO_NATAL_PLACE} chartData={DEMO_NATAL_CHART_DATA} />
       </div>
     </main>
   );

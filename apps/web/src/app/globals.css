@@ -3726,6 +3726,7 @@ body .report-waiting--natal > * { min-width: 0; margin: 0; }
   .natal-report .natal-report__head { display: block; padding: 0 0 20px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; }
   .natal-report .natal-report__head::before { display: none; }
   body .natal-report .natal-report__head > * + * { margin-top: 12px; }
+  .natal-report__interlude { display: none; }
   .natal-report .display { max-width: none; font-size: 32px; }
   .natal-report .natal-report__head > .report-contents { padding: 16px 0 0; border: 0; }
   .natal-report .report-toc { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
@@ -4547,3 +4548,383 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 @keyframes taro-card-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -7px; } }
 @keyframes taro-card-glow { 0%, 100% { box-shadow: 0 0 0 1px var(--accent-line); } 50% { box-shadow: 0 0 0 1px var(--accent), 0 0 26px rgba(185, 164, 232, 0.32); } }
 @keyframes taro-card-shine { 0%, 55% { opacity: 0; transform: translateX(-120%); } 62% { opacity: 1; } 90%, 100% { opacity: 0; transform: translateX(120%); } }
+
+/* Натальный разбор: персональная обложка, навигация и длинное чтение.
+   Только экран: существующая печатная версия сохраняет свой поток. */
+@media screen {
+  .natal-report {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 1120px;
+    padding-block: 12px 40px;
+  }
+  body .natal-report.stack > * + * { margin-top: 0; }
+  .natal-report .natal-report__head { display: contents; }
+  .natal-report .natal-report__head::before { display: none; }
+  .natal-report .natal-report__head > .eyebrow {
+    max-width: 56ch;
+    margin-bottom: 18px;
+    color: var(--accent);
+    font-size: 14px;
+    line-height: 1.7;
+    letter-spacing: .065em;
+  }
+  .natal-report .natal-report__head > .display {
+    max-width: 17ch;
+    margin-bottom: 22px;
+    font-size: clamp(38px, 5vw, 66px);
+    line-height: 1.1;
+    letter-spacing: -.025em;
+    text-wrap: pretty;
+  }
+  .natal-report .natal-report__head > .lead {
+    max-width: 48ch;
+    font-size: 17px;
+    line-height: 1.8;
+  }
+  .natal-report .natal-report__head > .muted {
+    max-width: 56ch;
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .natal-report .natal-report__cover { display: grid; gap: 24px; margin-top: 28px; }
+  .natal-report__wheel { min-width: 0; }
+  .natal-report__wheel .natal-wheel {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .natal-report__wheel .natal-wheel > svg { display: block; width: 100%; height: auto; }
+  .natal-report__wheel .natal-wheel__caption {
+    max-width: 42ch;
+    margin: 12px auto 0;
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.7;
+    text-align: center;
+  }
+  .natal-report .natal-report__big-three { grid-template-columns: minmax(0, 1fr); gap: 0; margin: 0; }
+  .natal-report .natal-report__big-three-item {
+    min-width: 0;
+    min-height: 64px;
+    gap: 18px;
+    padding: 14px 0;
+    border: 0;
+    border-top: 1px solid var(--line-strong);
+    border-radius: 0;
+    background: none;
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .natal-report__big-three-item > :is(.natal-glyph, .natal-summary__axis) {
+    display: inline-grid;
+    flex: 0 0 36px;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    color: var(--accent);
+  }
+  .natal-report .report-contents {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    min-width: 0;
+    margin-top: 32px;
+    padding: 12px 0 0;
+    border: 0;
+    border-block: 1px solid var(--line-strong);
+    border-radius: 0;
+    background: var(--bg);
+    box-shadow: none;
+  }
+  .natal-report .report-contents h2 {
+    color: var(--ink-soft);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+  .natal-report .report-contents .report-toc {
+    display: flex;
+    gap: 20px;
+    max-width: 100%;
+    margin: 4px 0 0;
+    padding: 3px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) var(--bg);
+  }
+  .natal-report .report-toc li {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    border: 0;
+  }
+  .natal-report .report-toc li:last-child { border: 0; }
+  .natal-report .report-toc__number { font-size: 18px; line-height: 1; }
+  .natal-report a.report-toc__title {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px 2px;
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.55;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .natal-report a.report-toc__title:is(:hover, :focus-visible) { color: var(--accent-hover); }
+  .natal-report .natal-report__chapter {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 56px 0 0;
+    padding-top: 28px;
+    border-top: 1px solid var(--line-strong);
+    scroll-margin-top: 116px;
+  }
+  body .natal-report .natal-report__chapter > * + * { margin-top: 22px; }
+  .natal-report .natal-report__chapter > .eyebrow {
+    padding: 0;
+    border: 0;
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-size: 25px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: -.015em;
+    text-transform: none;
+  }
+  body .natal-report .natal-report__chapter > h2 {
+    max-width: 26ch;
+    margin-top: 10px;
+    color: var(--ink);
+    font-size: clamp(30px, 3.4vw, 42px);
+    line-height: 1.18;
+    letter-spacing: -.02em;
+    text-wrap: pretty;
+  }
+  .natal-report__placements {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .natal-report__placement {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    color: var(--accent-hover);
+    font-size: 14px;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+  }
+  .natal-report__placement .natal-glyph { flex: 0 0 20px; width: 20px; height: 20px; }
+  .natal-report .report-text { max-width: 66ch; color: var(--ink-soft); font-size: 17px; line-height: 1.85; }
+  .natal-report .report-text.natal-report__lead { color: var(--ink); font-size: 19px; line-height: 1.8; }
+  .natal-report .report-text.natal-report__takeaway {
+    padding: 22px 20px;
+    border-left: 2px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    background: var(--surface-2);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  .natal-report .natal-report__chapter:has(> .natal-report__interlude) { padding-top: 0; border-top: 0; }
+  .natal-report__interlude {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    object-position: center 65%;
+    border-radius: var(--radius-lg);
+  }
+  body .natal-report .natal-report__interlude + .eyebrow { margin-top: 32px; }
+  .natal-report__scenario { min-width: 0; }
+  .natal-report__scenario .report-scenario { grid-template-columns: minmax(0, 1fr); gap: 0; counter-reset: natal-step; }
+  .natal-report__scenario .report-scenario__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    min-width: 0;
+    padding: 26px 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    counter-increment: natal-step;
+  }
+  .natal-report__scenario .report-scenario__item h3 { color: var(--ink); font-size: 25px; line-height: 1.35; }
+  .natal-report__scenario .report-scenario__item h3::before {
+    content: counter(natal-step, decimal-leading-zero) / "";
+    display: inline-block;
+    min-width: 36px;
+    margin-right: 10px;
+    color: var(--accent);
+    font-size: 20px;
+  }
+  body .natal-report__scenario .report-scenario__item > p { margin: 0; color: var(--ink-soft); font-size: 16px; line-height: 1.85; }
+  .natal-report__scenario .report-scenario__item.card--accent { border-left: 0; border-color: var(--line); background: none; }
+  .natal-report__scenario .report-scenario__item.card--accent h3 { color: var(--accent-hover); }
+  .natal-report__scenario .report-scenario__item:nth-child(6) {
+    display: block;
+    margin-top: 28px;
+    padding: 26px 22px;
+    border: 1px solid var(--accent-line);
+    border-radius: var(--radius-lg);
+    background: var(--surface-3);
+  }
+  body .natal-report__scenario .report-scenario__item:nth-child(6) > p { margin-top: 18px; color: var(--ink); font-size: 17px; }
+  .natal-report__scenario .report-scenario__item--question { grid-column: auto; gap: 20px; padding-block: 40px 12px; border: 0; }
+  .natal-report__scenario .report-scenario__item--question h3 { color: var(--ink-soft); font-family: var(--font-body); font-size: 14px; font-weight: 600; line-height: 1.7; }
+  .natal-report__scenario .report-scenario__item--question h3::before { font-family: var(--font-display); }
+  body .natal-report__scenario .report-scenario__item--question > .report-question { color: var(--accent-hover); font-size: clamp(27px, 3vw, 36px); line-height: 1.5; letter-spacing: -.015em; }
+  .natal-report > .muted { max-width: 66ch; margin: 56px 0 0; padding-top: 24px; border-top: 1px solid var(--line); line-height: 1.8; }
+  .natal-report > p:last-child { max-width: none; margin: 14px 0 0; }
+  .natal-report > p:last-child a { min-height: 48px; padding-block: 8px; color: var(--accent); font-size: 15px; }
+}
+
+@media screen and (min-width: 960px) {
+  .natal-report {
+    display: grid;
+    grid-template-columns: 232px minmax(0, 1fr);
+    grid-template-rows: repeat(16, auto);
+    column-gap: 72px;
+    align-items: start;
+    padding-top: 28px;
+  }
+  .natal-report .natal-report__head > :is(.eyebrow, .display, .lead, .muted) { grid-column: 1 / -1; width: 49%; max-width: none; }
+  .natal-report .natal-report__head > .eyebrow { grid-row: 1; }
+  .natal-report .natal-report__head > .display { grid-row: 2; }
+  .natal-report .natal-report__head > .lead { grid-row: 3; }
+  .natal-report .natal-report__head > .muted { grid-row: 4; }
+  .natal-report .natal-report__cover { display: contents; }
+  .natal-report__wheel {
+    grid-column: 2;
+    grid-row: 1 / 6;
+    justify-self: end;
+    width: calc(47% + 143px);
+    max-width: 100%;
+    margin-bottom: 64px;
+  }
+  .natal-report .natal-report__big-three { grid-column: 1 / -1; grid-row: 5; width: 49%; margin-block: 30px 64px; }
+  .natal-report .natal-report__head > .report-contents {
+    grid-column: 1;
+    grid-row: 6 / -1;
+    align-self: start;
+    top: 32px;
+    max-height: calc(100svh - 64px);
+    margin: 0;
+    padding: 20px 8px 0 0;
+    overflow-y: auto;
+    border: 0;
+    border-top: 1px solid var(--accent-line);
+    background: none;
+    scrollbar-width: thin;
+  }
+  .natal-report .report-contents h2 { margin-bottom: 18px; color: var(--ink); font-family: var(--font-display); font-size: 24px; font-weight: 400; }
+  .natal-report .report-contents .report-toc { display: grid; gap: 0; margin: 0; padding: 3px; overflow: visible; }
+  .natal-report .report-toc li { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: baseline; gap: 12px; border-bottom: 1px solid var(--line); }
+  .natal-report a.report-toc__title { padding-block: 12px; white-space: normal; }
+  .natal-report .natal-report__chapter { grid-column: 2; margin: 0 0 76px; padding-top: 26px; scroll-margin-top: 32px; }
+  .natal-report .natal-report__chapter:nth-of-type(1) { grid-row: 6; }
+  .natal-report .natal-report__chapter:nth-of-type(2) { grid-row: 7; }
+  .natal-report .natal-report__chapter:nth-of-type(3) { grid-row: 8; }
+  .natal-report .natal-report__chapter:nth-of-type(4) { grid-row: 9; }
+  .natal-report .natal-report__chapter:nth-of-type(5) { grid-row: 10; }
+  .natal-report .natal-report__chapter:nth-of-type(6) { grid-row: 11; }
+  .natal-report .natal-report__chapter:nth-of-type(7) { grid-row: 12; }
+  .natal-report .natal-report__chapter:nth-of-type(8) { grid-row: 13; }
+  .natal-report .natal-report__chapter:nth-of-type(9) { grid-row: 14; margin-bottom: 0; }
+  .natal-report .report-text { font-size: 18px; }
+  .natal-report .report-text.natal-report__lead { font-size: 21px; }
+  .natal-report .report-text.natal-report__takeaway { padding: 26px 28px; font-size: 17px; }
+  .natal-report__interlude { aspect-ratio: 2 / 1; }
+  .natal-report__scenario .report-scenario__item { grid-template-columns: minmax(170px, .8fr) minmax(0, 1.7fr); gap: 26px; padding-block: 30px; }
+  .natal-report__scenario .report-scenario__item h3 { font-size: 23px; }
+  .natal-report__scenario .report-scenario__item h3::before { display: block; margin: 0 0 8px; }
+  .natal-report__scenario .report-scenario__item:nth-child(6) { padding: 32px; }
+  .natal-report__scenario .report-scenario__item:nth-child(6) h3 { font-size: 30px; }
+  .natal-report__scenario .report-scenario__item:nth-child(6) h3::before { display: inline-block; margin-right: 12px; }
+  body .natal-report__scenario .report-scenario__item:nth-child(6) > p { max-width: 60ch; font-size: 18px; }
+  .natal-report__scenario .report-scenario__item--question { display: block; padding-block: 44px 16px; }
+  .natal-report__scenario .report-scenario__item--question h3 { font-size: 14px; }
+  .natal-report__scenario .report-scenario__item--question h3::before { display: inline-block; margin: 0 10px 0 0; }
+  body .natal-report__scenario .report-scenario__item--question > p { margin-top: 20px; }
+  .natal-report > .muted { grid-column: 2; grid-row: 15; margin-top: 48px; }
+  .natal-report > p:last-child { grid-column: 2; grid-row: 16; }
+  .natal-report:not(:has(.natal-report__cover)) .natal-report__head > :is(.display, .lead, .muted) { width: 100%; max-width: 760px; }
+  .natal-report:not(:has(.natal-report__cover)) .natal-report__head > .lead { margin-bottom: 48px; }
+}
+
+/* Подсветка главы следует за чтением без скрипта и изменения разметки.
+   В браузерах без scroll timelines остаётся подсветка выбранного якоря. */
+@media screen {
+  .natal-report {
+    timeline-scope: --natal-core, --natal-mind, --natal-love, --natal-action, --natal-work, --natal-growth, --natal-depth, --natal-aspects, --natal-scenario;
+  }
+  .natal-report__chapter { view-timeline-inset: 20% 70%; }
+  #natal-chapter-core { view-timeline-name: --natal-core; }
+  #natal-chapter-mind { view-timeline-name: --natal-mind; }
+  #natal-chapter-love { view-timeline-name: --natal-love; }
+  #natal-chapter-action { view-timeline-name: --natal-action; }
+  #natal-chapter-work { view-timeline-name: --natal-work; }
+  #natal-chapter-growth { view-timeline-name: --natal-growth; }
+  #natal-chapter-depth { view-timeline-name: --natal-depth; }
+  #natal-chapter-aspects { view-timeline-name: --natal-aspects; }
+  #natal-chapter-scenario { view-timeline-name: --natal-scenario; }
+}
+@keyframes natal-report-current {
+  0%, 100% { color: var(--accent-hover); text-decoration: underline; text-decoration-color: var(--accent-line); text-underline-offset: 6px; }
+}
+@supports (animation-timeline: --natal-core) and (timeline-scope: --natal-core) {
+  @media screen {
+    .natal-report a.report-toc__title {
+      animation: natal-report-current auto linear;
+      animation-range: entry 100% exit 100%;
+    }
+    .natal-report a[href="#natal-chapter-core"] { animation-timeline: --natal-core; }
+    .natal-report a[href="#natal-chapter-mind"] { animation-timeline: --natal-mind; }
+    .natal-report a[href="#natal-chapter-love"] { animation-timeline: --natal-love; }
+    .natal-report a[href="#natal-chapter-action"] { animation-timeline: --natal-action; }
+    .natal-report a[href="#natal-chapter-work"] { animation-timeline: --natal-work; }
+    .natal-report a[href="#natal-chapter-growth"] { animation-timeline: --natal-growth; }
+    .natal-report a[href="#natal-chapter-depth"] { animation-timeline: --natal-depth; }
+    .natal-report a[href="#natal-chapter-aspects"] { animation-timeline: --natal-aspects; }
+    .natal-report a[href="#natal-chapter-scenario"] { animation-timeline: --natal-scenario; }
+  }
+}
+@supports not ((animation-timeline: --natal-core) and (timeline-scope: --natal-core)) {
+  @media screen {
+    .natal-report:has(#natal-chapter-core:target) a[href="#natal-chapter-core"],
+    .natal-report:has(#natal-chapter-mind:target) a[href="#natal-chapter-mind"],
+    .natal-report:has(#natal-chapter-love:target) a[href="#natal-chapter-love"],
+    .natal-report:has(#natal-chapter-action:target) a[href="#natal-chapter-action"],
+    .natal-report:has(#natal-chapter-work:target) a[href="#natal-chapter-work"],
+    .natal-report:has(#natal-chapter-growth:target) a[href="#natal-chapter-growth"],
+    .natal-report:has(#natal-chapter-depth:target) a[href="#natal-chapter-depth"],
+    .natal-report:has(#natal-chapter-aspects:target) a[href="#natal-chapter-aspects"],
+    .natal-report:has(#natal-chapter-scenario:target) a[href="#natal-chapter-scenario"] { color: var(--accent-hover); text-decoration: underline; }
+  }
+}

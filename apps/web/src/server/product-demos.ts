@@ -23,3 +23,5 @@ export const DEMO_NATAL_DATE = "1990-03-07";
 export const DEMO_NATAL_PLACE = "Москва";
 const DEMO_NATAL_CHART = computeNatalChart({ instant: new Date("1990-03-07T09:00:00Z"), latitude: 55.7558, longitude: 37.6173, timeKnown: true });
 export const DEMO_NATAL_REPORT: readonly StoredNatalChapter[] = fallbackNatalReport(DEMO_NATAL_CHART);
+// Колесо и положения для обложки примера
+export const DEMO_NATAL_CHART_DATA = { chart: DEMO_NATAL_CHART, birth: { city: DEMO_NATAL_PLACE, date: DEMO_NATAL_DATE, time: "12:00" } };
