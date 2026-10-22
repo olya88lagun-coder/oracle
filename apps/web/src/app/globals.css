@@ -4747,6 +4747,17 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
     font-size: 16px;
     line-height: 1.8;
   }
+  .natal-report .natal-report__chapter:has(> .natal-report__interlude) { padding-top: 0; border-top: 0; }
+  .natal-report__interlude {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    object-position: center 65%;
+    border-radius: var(--radius-lg);
+  }
+  body .natal-report .natal-report__interlude + .eyebrow { margin-top: 32px; }
   .natal-report__scenario { min-width: 0; }
   .natal-report__scenario .report-scenario { grid-template-columns: minmax(0, 1fr); gap: 0; counter-reset: natal-step; }
   .natal-report__scenario .report-scenario__item {
@@ -4848,6 +4859,7 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   .natal-report .report-text { font-size: 18px; }
   .natal-report .report-text.natal-report__lead { font-size: 21px; }
   .natal-report .report-text.natal-report__takeaway { padding: 26px 28px; font-size: 17px; }
+  .natal-report__interlude { aspect-ratio: 2 / 1; }
   .natal-report__scenario .report-scenario__item { grid-template-columns: minmax(170px, .8fr) minmax(0, 1.7fr); gap: 26px; padding-block: 30px; }
   .natal-report__scenario .report-scenario__item h3 { font-size: 23px; }
   .natal-report__scenario .report-scenario__item h3::before { display: block; margin: 0 0 8px; }

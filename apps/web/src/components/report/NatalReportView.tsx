@@ -1,6 +1,7 @@
 import { NATAL_CHAPTER_IDS, NATAL_CHAPTER_TITLES, natalChapterOutline, type NatalChapterOutline } from "@oracle/core/natal-report";
 import type { NatalChart } from "@oracle/core/natal";
 import type { StoredNatalChapter } from "@oracle/db";
+import Image from "next/image";
 import Link from "next/link";
 import { NatalGlyph, bodyGlyphId } from "@/components/natal/NatalGlyph";
 import { NatalSprite } from "@/components/natal/NatalSprite";
@@ -98,6 +99,9 @@ export function NatalReportView({ chapters, date, placeName, demo = false, chart
         const lastIndex = paragraphs.length - 1;
         return (
           <section key={chapter.id} id={`natal-chapter-${chapter.id}`} className="report-chapter natal-report__chapter stack" aria-labelledby={`natal-chapter-${chapter.id}-title`}>
+            {chapter.id === "scenario" && (
+              <Image className="natal-report__interlude" src="/images/natal/report-scenario.webp" alt="" width={1440} height={960} sizes="(min-width: 960px) 816px, calc(100vw - 32px)" unoptimized />
+            )}
             <p className="eyebrow">Глава {index + 1}</p>
             <h2 id={`natal-chapter-${chapter.id}-title`}>{NATAL_CHAPTER_TITLES[chapter.id]}</h2>
             {placements.length > 0 && (
