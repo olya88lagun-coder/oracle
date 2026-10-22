@@ -53,6 +53,11 @@ describe("/natalnaya-karta page", () => {
     expect(markup.endsWith("</p></main>")).toBe(true);
   });
 
+  test("links every open meaning page and the example in the server markup, so a crawler reaches them without a calculation", () => {
+    for (const page of NATAL_PAGES.filter((item) => ACCEPTED_BATCHES.has(item.batch))) expect(markup, page.slug).toContain(`href="/natalnaya-karta/${page.slug}"`);
+    expect(markup).toContain('href="/natalnaya-karta/primer"');
+  });
+
   test("is server-rendered as an empty form: no result yet", () => {
     expect(markup).not.toContain("natal-result");
     expect(markup).toContain("Рассчитать карту");
