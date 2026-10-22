@@ -1,5 +1,16 @@
-import { ACCEPTED_BATCHES, natalPageBySlug, NATAL_PAGES, natalText, SIGN_IDS, type NatalPageRef } from "@oracle/content/natal";
+import { ACCEPTED_BATCHES, natalPageBySlug, NATAL_PAGES, natalText, SIGN_IDS, type NatalPageRef, type NatalPageText } from "@oracle/content/natal";
 import type { SignId } from "@oracle/core/natal";
+import { shortDescription } from "./short-description";
+
+// У поколенческих планет первый абзац «Сути» один на все двенадцать знаков, и по нему получились бы одинаковые описания в выдаче
+const GENERATIONAL_BODIES: ReadonlySet<NatalPageText["body"]> = new Set(["uranus", "neptune", "pluto"]);
+
+// Описание страницы значения для выдачи и превью: первый абзац «Сути»; у поколенческих планет перед ним стоят название и ключевые слова страницы
+export function natalDescription(text: NatalPageText): string {
+  const lead = text.essence[0] ?? text.name;
+  if (!GENERATIONAL_BODIES.has(text.body)) return shortDescription(lead);
+  return shortDescription(`${text.name}: ${text.keywords.join(", ")}. ${lead}`);
+}
 
 // Страницы значений, открытые для посетителей: только принятые партии, и только те, у которых есть текст.
 // От этого списка зависят адреса страниц (generateStaticParams), карта сайта и ссылки; остальное — настоящий 404

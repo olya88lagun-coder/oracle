@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const card = ref && tarotCardText(ref.slug);
   if (!card) return {};
   return publicMetadata({
-    title: `Карта Таро ${card.name} — значение, в отношениях и в деле`,
+    title: `Карта Таро ${card.name} — значение`,
     description: shortDescription(card.essence[0] ?? card.name),
     path: taroCardPath(card),
     image: { url: taroCardImage(card), alt: `Карта Таро ${card.name}`, width: 554, height: 960 },

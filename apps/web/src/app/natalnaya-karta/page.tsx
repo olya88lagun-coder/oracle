@@ -7,7 +7,7 @@ import { NatalSprite } from "@/components/natal/NatalSprite";
 import { DISCLAIMER, NATAL_INTRO, NATAL_TITLE } from "@/lib/natal-copy";
 import { NATAL_PATH } from "@/lib/natal-paths";
 import type { SavedBirth } from "@/lib/natal-save";
-import { jsonLdScript, publicMetadata } from "@/lib/seo";
+import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { getDb } from "@/server/db";
 import { isOwnerUser } from "@/server/owner";
 import { salesEnabled } from "@/server/payments-deps";
@@ -19,6 +19,7 @@ export const metadata: Metadata = publicMetadata({
   description:
     "Рассчитайте натальную карту: в каких знаках стояли Солнце, Луна и планеты, асцендент и дома. Считается в вашем браузере, без регистрации. Символический язык самопознания, а не предсказание.",
   path: NATAL_PATH,
+  image: SITE_PREVIEW_IMAGE,
 });
 
 // Страница зависит от входа: у вошедшего форма заполняется данными из портрета, а «Сохранить в портрет» работает без перехода

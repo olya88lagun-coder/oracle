@@ -2,9 +2,8 @@ import { BODY_NAMES, natalText, SIGN_NAMES } from "@oracle/content/natal";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NatalPageView } from "@/components/natal/NatalPageView";
-import { shortDescription } from "@/lib/arcana-paths";
 import { meaningCoverAlt, meaningTitle, NATAL_TITLE } from "@/lib/natal-copy";
-import { acceptedNatalPage, acceptedNatalPages } from "@/lib/natal-pages";
+import { acceptedNatalPage, acceptedNatalPages, natalDescription } from "@/lib/natal-pages";
 import { natalCoverPath, NATAL_COVER_SIZE } from "@/lib/natal-covers";
 import { NATAL_PATH, natalPagePath } from "@/lib/natal-paths";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
@@ -26,7 +25,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const cover = natalCoverPath(page.slug);
   return publicMetadata({
     title: meaningTitle(text.name),
-    description: shortDescription(text.essence[0] ?? text.name),
+    description: natalDescription(text),
     path: natalPagePath(page),
     image: cover ? { url: cover, alt: meaningCoverAlt(text.name), width: NATAL_COVER_SIZE, height: NATAL_COVER_SIZE } : SITE_PREVIEW_IMAGE,
   });
@@ -44,7 +43,7 @@ export default async function NatalMeaningPage({ params }: Params) {
       {
         "@type": "Article",
         headline: meaningTitle(text.name),
-        description: shortDescription(text.essence[0] ?? text.name),
+        description: natalDescription(text),
         inLanguage: "ru",
         keywords: text.keywords.join(", "),
         mainEntityOfPage: url,
