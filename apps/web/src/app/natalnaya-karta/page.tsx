@@ -1,6 +1,7 @@
 import { NATAL_REPORT_PRODUCT, toIsoDate } from "@oracle/core";
 import type { Metadata } from "next";
 import { NatalCalculator } from "@/components/natal/NatalCalculator";
+import { NatalCatalog } from "@/components/natal/NatalCatalog";
 import { NatalGuide, natalFaqJsonLd } from "@/components/natal/NatalGuide";
 import { NatalMoreLinks } from "@/components/natal/NatalMoreLinks";
 import { NatalSprite } from "@/components/natal/NatalSprite";
@@ -39,6 +40,7 @@ export default async function NatalPage() {
       <NatalSprite />
       <NatalCalculator signedIn={Boolean(user)} savedProfile={savedProfile} offerEnabled={salesEnabled(NATAL_REPORT_PRODUCT)} ownerFree={user ? await isOwnerUser(user.id) : false} />
       <NatalMoreLinks />
+      <NatalCatalog />
       <NatalGuide />
       <p className="natal-disclaimer">{DISCLAIMER}</p>
     </main>

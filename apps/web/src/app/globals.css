@@ -1799,7 +1799,7 @@ main:has(> .natal-intro) {
   line-height: 1.65;
 }
 
-main:has(> .natal-intro) > :is(.natal-intro, .natal-form, .natal-outcome, .natal-more, .natal-guide, .natal-disclaimer) {
+main:has(> .natal-intro) > :is(.natal-intro, .natal-form, .natal-outcome, .natal-more, .natal-catalog, .natal-guide, .natal-disclaimer) {
   width: min(1120px, calc(100% - 64px));
   margin-inline: auto;
 }
@@ -4315,6 +4315,74 @@ main:has(> .natal-intro) > .natal-quick {
   .natal-more { margin-top: 40px; }
   .natal-more h2 { font-size: 26px; }
   .natal-more ul { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Каталог значений «планета в знаке» (NatalCatalog): рабочая вёрстка, вид доводит Codex */
+.natal-catalog { margin-top: 56px; }
+
+.natal-catalog h2 {
+  margin-bottom: 12px;
+  font: 400 32px/1.2 var(--font-display);
+}
+
+.natal-catalog__lead { max-width: 720px; margin-bottom: 8px; color: var(--ink-soft); font-size: 16px; line-height: 1.7; }
+.natal-catalog__lead a { color: var(--accent); }
+
+.natal-catalog__groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+  align-items: start;
+}
+
+.natal-catalog__group {
+  border: 1px solid var(--natal-field-line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.natal-catalog__group[open] { border-color: var(--accent); }
+
+.natal-catalog__group summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 22px;
+  color: var(--accent);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.natal-catalog__group ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 12px;
+  margin: 0;
+  padding: 0 22px 14px;
+  list-style: none;
+}
+
+.natal-catalog__link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.4;
+  text-decoration: none;
+}
+
+.natal-catalog__link:hover { color: var(--accent); text-decoration: underline; }
+
+@media (max-width: 960px) {
+  .natal-catalog__groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .natal-catalog { margin-top: 40px; }
+  .natal-catalog h2 { font-size: 26px; }
+  .natal-catalog__groups { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* Единая сцена пяти практик. Только первые экраны; тексты, формы и результат не меняются. */
