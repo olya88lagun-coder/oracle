@@ -3726,6 +3726,7 @@ body .report-waiting--natal > * { min-width: 0; margin: 0; }
   .natal-report .natal-report__head { display: block; padding: 0 0 20px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; }
   .natal-report .natal-report__head::before { display: none; }
   body .natal-report .natal-report__head > * + * { margin-top: 12px; }
+  .natal-report__interlude { display: none; }
   .natal-report .display { max-width: none; font-size: 32px; }
   .natal-report .natal-report__head > .report-contents { padding: 16px 0 0; border: 0; }
   .natal-report .report-toc { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
