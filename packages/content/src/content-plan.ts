@@ -228,19 +228,6 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     status: "published",
   },
 
-  // «матрица судьбы мужчина» 3877, «матрица судьбы женщина» 3445, «матрица судьбы мужская» 743.
-  {
-    slug: "matritsa-sudby-dlya-muzhchiny-i-zhenshchiny",
-    title: "Матрица судьбы для мужчины и для женщины: чем отличается расчёт",
-    primaryQuery: "матрица судьбы для мужчины и женщины",
-    cluster: "matrix",
-    image: "/arcana/04-imperator.webp",
-    imageAlt: "Аркан 4 «Император» — образ опоры и порядка",
-    basis: ["matrix-formulas", "positions", "arcana"],
-    internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-4-imperator", "/blog/rasshifrovka-matritsy-sudby"],
-    status: "draft",
-  },
-
   // «матрица судьбы род» 1479, «матрица судьбы линии рода» 575.
   {
     slug: "rodovoj-kvadrat-v-matritse-sudby",
