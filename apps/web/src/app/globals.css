@@ -1749,6 +1749,8 @@ body .stack > .taro-day-info { display: grid; gap: 44px; margin-top: 56px; paddi
 @media (prefers-reduced-motion: reduce) { .taro-spread-tile { transition: none; } .taro-spread-tile:hover { transform: none; } }
 
 .taro-spread-info h2, .taro-spread-others h2, .taro-spread-play h2 { margin: 0 0 14px; font-size: clamp(26px, 4vw, 36px); line-height: 1.2; }
+.taro-spread-guide h3 { margin: 22px 0 8px; font-size: 20px; line-height: 1.3; }
+.taro-spread-guide p { max-width: 720px; margin: 0 0 12px; color: var(--ink-soft); line-height: 1.7; }
 .taro-spread-positions { display: grid; gap: 10px; max-width: 46em; margin: 0; padding-left: 22px; color: var(--ink-soft); }
 .taro-spread-positions strong { color: var(--ink); font-weight: 500; }
 .taro-spread-play { display: grid; gap: 22px; }

@@ -101,9 +101,12 @@ export function articleFaqJsonLd(article: Article): Record<string, unknown> {
 export const blogTopics = (posts: readonly BlogPost[] = BLOG_POSTS): { topic: BlogTopic; label: string; count: number }[] =>
   (Object.keys(BLOG_TOPIC_LABELS) as BlogTopic[]).map((topic) => ({ topic, label: BLOG_TOPIC_LABELS[topic], count: posts.filter((post) => post.topic === topic).length })).filter((item) => item.count > 0);
 
-// Связанные материалы: сначала той же темы, затем самые новые; саму статью не предлагаем
+// Связанные материалы: сначала той же темы, затем остальные; саму статью не предлагаем.
+// Список идёт по кругу, начиная со следующей статьи: так каждая статья попадает в «Читайте дальше» нескольких других,
+// а не только первые в списке — иначе новые статьи остаются почти без внутренних ссылок, и поисковик находит их позже
 export const relatedPosts = (post: BlogPost, limit = 3): BlogPost[] => {
-  const others = BLOG_POSTS.filter((item) => item.slug !== post.slug);
+  const index = BLOG_POSTS.findIndex((item) => item.slug === post.slug);
+  const others = [...BLOG_POSTS.slice(index + 1), ...BLOG_POSTS.slice(0, Math.max(index, 0))];
   return [...others.filter((item) => item.topic === post.topic), ...others.filter((item) => item.topic !== post.topic)].slice(0, limit);
 };
 
