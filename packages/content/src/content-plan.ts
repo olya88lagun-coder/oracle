@@ -185,19 +185,6 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     status: "published",
   },
 
-  // Wordstat D02: 39 запросов со строгим оператором (РФ; сентябрь–октябрь 2026).
-  {
-    slug: "perevernutye-karty-taro",
-    title: "Перевёрнутые карты Таро: нужно ли учитывать и как читать",
-    primaryQuery: "перевернутые карты таро",
-    cluster: "taro",
-    image: "/taro/17-bashnya.webp",
-    imageAlt: "Карта Таро «Башня» из колоды Райдера — Уэйта",
-    basis: ["tarot", "tarot-deck", "tarot-practice"],
-    internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/bashnya"],
-    status: "draft",
-  },
-
   // Wordstat D10: 34 запросов со строгим оператором (РФ; сентябрь–октябрь 2026).
   {
     slug: "pridvornye-karty-taro",
