@@ -5,6 +5,7 @@ import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT, MATRIX_REPORT_PRICE_K
 import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { BLOG_PATH, BLOG_POSTS, blogPath } from "@/lib/blog";
 import { formatRubles } from "@/lib/legal";
+import { HOME_PRINCIPLES, HOME_PRINCIPLES_TITLE } from "@/lib/home-principles";
 import { FREE_MATRIX_CTA, FREE_RESULT_PROMISE, FREE_RESULT_TERMS, PRACTICES } from "@/lib/practices";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE, websiteJsonLd } from "@/lib/seo";
 import { salesEnabled } from "@/server/payments-deps";
@@ -108,6 +109,23 @@ export default function HomePage() {
               ))}
             </ul>
           )}
+        </section>
+
+        <section className="stack home-principles" aria-labelledby="home-principles">
+          <h2 id="home-principles">{HOME_PRINCIPLES_TITLE}</h2>
+          <ul className="home-principles__list">
+            {HOME_PRINCIPLES.map((item) => (
+              <li key={item.title} className="home-principles__item">
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+                {item.href && (
+                  <Link className="matrix-link" href={item.href}>
+                    {item.linkLabel}
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section className="card card--accent card--portrait stack">

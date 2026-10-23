@@ -11,6 +11,11 @@ const text = (html: string) => html.replace(/<script[\s\S]*?<\/script>/g, " ").r
 const guide = /<div class="taro-day-info"[\s\S]*/.exec(markup)?.[0] ?? "";
 
 describe("/taro/karta-dnya", () => {
+  test("has a soft bridge to the free matrix calculation, once and below the instructions", () => {
+    expect(markup.match(/>Рассчитать матрицу бесплатно<\/a>/g)).toHaveLength(1);
+    expect(markup.indexOf("От карты к своей схеме")).toBeGreaterThan(markup.indexOf("Как пользоваться картой дня"));
+  });
+
   test("title leads with the card of the day query and keeps «гадание» in the second part", () => {
     expect(metadata.title).toBe("Карта дня Таро на сегодня — гадание онлайн бесплатно");
     expect(String(metadata.title).indexOf("Карта дня Таро")).toBe(0);
@@ -37,7 +42,7 @@ describe("/taro/karta-dnya", () => {
 
   test("has readable text below the draw: what it is, how to use it, links by arcana and the FAQ", () => {
     const headings = [...guide.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/g)].map((match) => text(match[1]!));
-    expect(headings).toEqual(["Что такое карта дня Таро", "Как пользоваться картой дня", "Карты дня по старшим арканам", "Частые вопросы о карте дня"]);
+    expect(headings).toEqual(["Что такое карта дня Таро", "Как пользоваться картой дня", "От карты к своей схеме", "Карты дня по старшим арканам", "Частые вопросы о карте дня"]);
     expect(text(guide).split(" ").length).toBeGreaterThanOrEqual(400);
   });
 
