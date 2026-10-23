@@ -277,7 +277,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Карта Таро «Влюблённые» из колоды Райдера — Уэйта",
     basis: ["tarot", "tarot-deck", "tarot-practice"],
     internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/vlyublennye", "/taro/karty/kubki-dvoyka", "/blog/kak-zadat-vopros-taro"],
-    status: "draft",
+    status: "published",
   },
 
   // «таро вопрос про будущее какой задать» 171, «какие вопросы задать таро на будущее» 148, «как задавать вопрос про будущее таро» 110.
