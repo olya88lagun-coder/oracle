@@ -182,7 +182,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Карта Таро «Звезда» из колоды Райдера — Уэйта",
     basis: ["tarot", "tarot-deck"],
     internalLinks: ["/taro", "/taro/karty/zvezda", "/taro/karta-dnya"],
-    status: "draft",
+    status: "published",
   },
 
   // Wordstat D02: 39 запросов со строгим оператором (РФ; сентябрь–октябрь 2026).
