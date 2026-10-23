@@ -4,6 +4,7 @@ import Link from "next/link";
 import { DetailPager } from "@/components/detail/DetailPager";
 import { DetailToc } from "@/components/detail/DetailToc";
 import { ImageZoom } from "@/components/detail/ImageZoom";
+import { TaroMatrixBridge } from "@/components/taro/TaroMatrixBridge";
 import { arcanumPath } from "@/lib/arcana-paths";
 import { TARO_AUTHOR_CREDIT, TARO_DAY_PATH, TARO_PATH, taroCardImage, taroCardPath } from "@/lib/taro-paths";
 
@@ -95,6 +96,7 @@ export function TaroCardView({ card }: { card: TarotCard }) {
               </section>
             ))}
           </div>
+          <TaroMatrixBridge context="card" id="taro-bridge" />
         </div>
       </div>
 
