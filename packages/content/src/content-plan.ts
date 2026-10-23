@@ -211,19 +211,6 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     status: "published",
   },
 
-  // Wordstat D06: 33 запросов со строгим оператором (РФ; сентябрь–октябрь 2026).
-  {
-    slug: "rasklad-taro-na-tri-karty",
-    title: "Расклад Таро на три карты: схемы для самостоятельной практики",
-    primaryQuery: "расклад таро на три карты",
-    cluster: "taro",
-    image: "/taro/38-kubki-dvoyka.webp",
-    imageAlt: "Карта Таро «Двойка Кубков» из колоды Райдера — Уэйта",
-    basis: ["tarot", "tarot-deck", "tarot-practice"],
-    internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/kubki-dvoyka"],
-    status: "draft",
-  },
-
   // Wordstat D05: 16 запросов со строгим оператором (РФ; сентябрь–октябрь 2026).
   {
     slug: "kak-zadat-vopros-taro",
@@ -251,7 +238,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: HERO_ALT,
     basis: ["matrix-formulas", "positions"],
     internalLinks: ["/matrica-sudby", "/blog/rasshifrovka-matritsy-sudby", "/blog/zadacha-v-matritse-sudby"],
-    status: "draft",
+    status: "published",
   },
 
   // «матрица судьбы мужчина» 3877, «матрица судьбы женщина» 3445, «матрица судьбы мужская» 743.
