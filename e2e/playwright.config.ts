@@ -13,6 +13,8 @@ export default defineConfig({
   expect: { timeout: 15_000 },
   use: {
     baseURL: BASE_URL,
+    // next dev --experimental-https uses a local certificate only in the HTTPS QA environment.
+    ignoreHTTPSErrors: BASE_URL.startsWith("https://"),
     locale: "ru-RU",
     trace: "retain-on-failure",
     // Cookie-баннер закрывает низ экрана — в сценариях выбор уже сделан; сценарий баннера сбрасывает его сам

@@ -92,6 +92,16 @@ export const purchases = pgTable(
   (t) => [index("purchases_user_idx").on(t.userId, t.createdAt)],
 );
 
+// Одноразовое разрешение браузеру отправить событие покупки; не подтверждает доставку в Метрику.
+export const purchaseAnalytics = pgTable("purchase_analytics", {
+  purchaseId: uuid("purchase_id")
+    .primaryKey()
+    .references(() => purchases.id, { onDelete: "cascade" }),
+  // Отдельный случайный идентификатор: номер покупки не уходит в аналитику.
+  transactionId: uuid("transaction_id").notNull().defaultRandom().unique(),
+  claimedAt: timestamp("claimed_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const reports = pgTable("reports", {
   id: uuid("id").primaryKey().defaultRandom(),
   purchaseId: uuid("purchase_id")
