@@ -34,9 +34,16 @@ export function saveChoice(storage: StorageLike, choice: CookieChoice): void {
 }
 
 // Параметры адреса не уходят в Метрику: в них может оказаться что-то личное
+const PRIVATE_UUID_SEGMENT = /^[\da-f]{8}(-[\da-f]{4}){3}-[\da-f]{12}$/i;
 export function sanitizePath(path: string): string {
   const [pathname] = path.split(/[?#]/);
-  return pathname || "/";
+  return (pathname || "/").split("/").map((segment) => {
+    try {
+      return PRIVATE_UUID_SEGMENT.test(decodeURIComponent(segment)) ? ":id" : segment;
+    } catch {
+      return segment;
+    }
+  }).join("/");
 }
 
 // Метки рекламы нужны Метрике, чтобы связать визит с кампанией Директа: без них рекламный трафик выглядит как прямой заход.
@@ -99,45 +106,3 @@ export function reachGoalThenNavigate(goal: Goal, params: Record<string, string 
 // Параметры платёжных целей — закрытый список: продукт и безопасный код ошибки. Ни дат, ни почты, ни намерений, ни номеров покупок
 export type CheckoutProduct = "matrix" | "compat" | "lila" | "natal";
 export const checkoutParams = (product: CheckoutProduct, error?: string): Record<string, string> => (error ? { product, error } : { product });
-
-const READY_RETRY_MS = 500;
-const READY_RETRY_LIMIT = 20;
-const pendingOnce = new Set<string>();
-
-function safeStorage(): StorageLike | null {
-  try {
-    return globalThis.window?.localStorage ?? null;
-  } catch {
-    return null;
-  }
-}
-
-// Цель «один раз на покупку в этом браузере». Отметку ставим только когда счётчик принял цель: если он ещё не создан
-// (страница открылась раньше баннера и загрузки Метрики), ждём его до 10 секунд, а не теряем покупку навсегда.
-// Без согласия на cookie счётчика нет вовсе — тогда отметки нет. Цель уйдёт, только если человек согласится в течение этих 10 секунд
-// или откроет страницу снова
-export function reachGoalOnce(goal: Goal, key: string, counterId: number | null = METRIKA_ID, storage: StorageLike | null = safeStorage()): void {
-  const done = (): boolean => {
-    try {
-      return storage?.getItem(key) != null;
-    } catch {
-      return false;
-    }
-  };
-  if (counterId === null || done() || pendingOnce.has(key)) return;
-  pendingOnce.add(key);
-  const attempt = (triesLeft: number): void => {
-    if (done()) return void pendingOnce.delete(key);
-    if (reachGoal(goal, undefined, counterId)) {
-      try {
-        storage?.setItem(key, "1");
-      } catch {
-        // Хранилище недоступно (приватный режим) — цель может засчитаться повторно, это не страшно
-      }
-      return;
-    }
-    if (triesLeft > 0) setTimeout(() => attempt(triesLeft - 1), READY_RETRY_MS);
-    else pendingOnce.delete(key);
-  };
-  attempt(READY_RETRY_LIMIT);
-}

@@ -4,7 +4,7 @@ import { LILA_SESSION_PRODUCT } from "@oracle/core";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { reachGoalOnce } from "@/lib/analytics";
+import { requestPurchaseTracking } from "@/lib/purchase-analytics";
 import { LILA_GAME_PATH } from "@/lib/lila-paths";
 import { purchaseErrorMessage } from "@/lib/report-offer";
 
@@ -23,7 +23,6 @@ const TEXT: Record<Status, { title: string; body: string }> = {
 
 // Продажа — это подтверждённая оплата, а не запуск партии: считаем её и при «готово», и при «оплачено, но ждёт очереди»; один раз на покупку
 const isPaid = (status: string): boolean => status === "ready" || status === "blocked";
-const countSale = (purchaseId: string): void => reachGoalOnce("lila_paid", `oracle-lila-paid:${purchaseId}`);
 
 function RetryButton({ purchaseId }: { purchaseId: string }) {
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +63,7 @@ export function LilaPaymentWaiting({ purchaseId, initial }: Props) {
   const [status, setStatus] = useState<Status>(initial);
 
   useEffect(() => {
-    if (isPaid(initial)) countSale(purchaseId);
+    if (isPaid(initial)) requestPurchaseTracking();
     if (initial === "ready") router.replace(LILA_GAME_PATH);
   }, [initial, purchaseId, router]);
 
@@ -76,10 +75,10 @@ export function LilaPaymentWaiting({ purchaseId, initial }: Props) {
         const body = (await response.json()) as { ok?: boolean; status?: string };
         if (!body.ok) return;
         if (body.status === "ready") {
-          countSale(purchaseId);
+          requestPurchaseTracking();
           router.replace(LILA_GAME_PATH);
         } else if (body.status === "pending" || body.status === "canceled" || body.status === "blocked") {
-          if (isPaid(body.status)) countSale(purchaseId);
+          if (isPaid(body.status)) requestPurchaseTracking();
           setStatus(body.status);
         }
       } catch {

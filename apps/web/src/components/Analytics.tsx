@@ -4,16 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { COOKIE_SETTINGS_EVENT, hitUrl, LOGIN_MARK, METRIKA_ID, reachGoal, readChoice, sanitizeReferrer, saveChoice, type CookieChoice } from "@/lib/analytics";
+import { markAnalyticsReady, setAnalyticsConsent } from "@/lib/analytics-runtime";
 import { SITE_URL } from "@/lib/site";
 
-type YmWindow = Window & { ym?: ((...args: unknown[]) => void) & { a?: unknown[][]; l?: number } };
+type YmWindow = Window & { ym?: ((...args: unknown[]) => void) & { a?: unknown[][]; l?: number }; dataLayer?: unknown[] };
 
 // Счётчик работает только на боевом домене: локальная разработка и сквозные тесты статистику не портят
 const canCount = () => METRIKA_ID !== null && window.location.protocol === "https:" && window.location.origin === SITE_URL;
 
 function loadMetrika(counterId: number): void {
   const w = window as YmWindow;
-  if (w.ym) return;
+  w.dataLayer ??= [];
+  if (w.ym) {
+    w.ym(counterId, "getClientID", markAnalyticsReady);
+    return;
+  }
   // Стандартная очередь Метрики: вызовы до загрузки tag.js сохраняются и выполняются после
   const ym = ((...args: unknown[]) => {
     (ym.a ??= []).push(args);
@@ -25,7 +30,8 @@ function loadMetrika(counterId: number): void {
   script.src = "https://mc.yandex.ru/metrika/tag.js";
   document.head.appendChild(script);
   // defer: просмотры отправляем сами, с очищенным адресом
-  ym(counterId, "init", { defer: true, clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: false });
+  ym(counterId, "init", { defer: true, clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: false, ecommerce: "dataLayer" });
+  ym(counterId, "getClientID", markAnalyticsReady);
 }
 
 function sendHit(counterId: number, pathname: string): void {
@@ -59,6 +65,7 @@ export function Analytics() {
   }, []);
 
   useEffect(() => {
+    setAnalyticsConsent(choice === "all" && canCount());
     if (choice !== "all" || METRIKA_ID === null || !canCount()) return;
     loadMetrika(METRIKA_ID);
     loaded.current = true;
@@ -87,6 +94,7 @@ export function Analytics() {
 
   function decide(next: CookieChoice) {
     saveChoice(window.localStorage, next);
+    if (next === "necessary") setAnalyticsConsent(false);
     setOpen(false);
     // Загруженную Метрику не выгрузить — после отказа страница перезагружается без неё
     if (next === "necessary" && loaded.current) {

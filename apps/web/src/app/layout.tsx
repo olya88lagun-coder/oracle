@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Analytics } from "@/components/Analytics";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { PurchaseAnalytics } from "@/components/PurchaseAnalytics";
 import { YANDEX_VERIFICATION } from "@/lib/analytics";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
         <Footer />
         <Analytics />
+        <PurchaseAnalytics />
       </body>
     </html>
   );

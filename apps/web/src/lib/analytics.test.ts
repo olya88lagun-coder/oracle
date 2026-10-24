@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { adParams, checkoutParams, CONSENT_KEY, GOALS, hitUrl, reachGoal, reachGoalOnce, reachGoalThenNavigate, readChoice, sanitizePath, sanitizeReferrer, saveChoice } from "./analytics";
+import { adParams, checkoutParams, CONSENT_KEY, GOALS, hitUrl, reachGoal, reachGoalThenNavigate, readChoice, sanitizePath, sanitizeReferrer, saveChoice } from "./analytics";
 
 function memoryStorage(initial: Record<string, string> = {}) {
   const data = new Map(Object.entries(initial));
@@ -42,6 +42,27 @@ describe("cookie choice", () => {
 });
 
 describe("sanitizePath", () => {
+  test.each([
+    "/portret/razbor/bc146faf-3591-42d3-a282-48fcfa7748bc",
+    "/lila/igra/oplata/bc146faf-3591-42d3-a282-48fcfa7748bc",
+    "/portret/lila/BC146FAF-3591-42D3-A282-48FCFA7748BC",
+  ])("redacts the private UUID segment in %s", (path) => {
+    expect(sanitizePath(path)).toBe(path.slice(0, path.lastIndexOf("/") + 1) + ":id");
+  });
+
+  test("redacts encoded UUIDs and middle segments, keeping public slugs and trailing slash", () => {
+    expect(sanitizePath("/portret/razbor/%62c146faf-3591-42d3-a282-48fcfa7748bc/pdf/?email=private#x")).toBe("/portret/razbor/:id/pdf/");
+    expect(sanitizePath("/natalnaya-karta/solnce-v-ovne")).toBe("/natalnaya-karta/solnce-v-ovne");
+    expect(sanitizePath("/lila/kletki/12")).toBe("/lila/kletki/12");
+    expect(sanitizePath("/broken/%ZZ")).toBe("/broken/%ZZ");
+  });
+
+  test("redacts private IDs in hits and internal referrers while preserving safe campaign tags", () => {
+    const path = "/portret/razbor/bc146faf-3591-42d3-a282-48fcfa7748bc";
+    expect(hitUrl("https://oracle.test", path, "?utm_source=yandex&email=private")).toBe("https://oracle.test/portret/razbor/:id?utm_source=yandex");
+    expect(sanitizeReferrer(`https://oracle.test${path}?email=private`, "https://oracle.test")).toBe("https://oracle.test/portret/razbor/:id");
+  });
+
   test("drops the query and the hash", () => {
     expect(sanitizePath("/portret?from=login#date")).toBe("/portret");
     expect(sanitizePath("")).toBe("/");
@@ -117,72 +138,6 @@ describe("reachGoal", () => {
 
   test("the funnel goals of plans 1, 2a, 3a and 3b", () => {
     expect(GOALS).toEqual(["login", "birth_date_saved", "matrix_calculated", "matrix_save_click", "matrix_share", "arcana_to_calculator", "report_offer_view", "report_offer_click", "report_paid", "report_opened", "report_pdf_download", "lila_start", "lila_finish", "lila_save", "lila_offer_click", "lila_paid", "compat_calculated", "compat_share", "compat_pdf", "compat_offer_view", "compat_offer_click", "taro_draw", "taro_share", "lila_offer_view", "lila_login_click", "checkout_redirect", "checkout_error", "natal_calculated", "natal_save_click", "natal_share", "natal_to_calculator", "natal_offer_view", "natal_offer_click", "natal_paid", "natal_report_opened", "taro_spread", "taro_to_practice"]);
-  });
-});
-
-describe("reachGoalOnce", () => {
-  const memoryStorage = () => {
-    const data = new Map<string, string>();
-    return { getItem: (key: string) => data.get(key) ?? null, setItem: (key: string, value: string) => void data.set(key, value) };
-  };
-
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-  afterEach(() => {
-    vi.useRealTimers();
-    vi.unstubAllGlobals();
-  });
-
-  test("sends the goal once per key and marks it only after the counter accepted it", () => {
-    const ym = vi.fn();
-    vi.stubGlobal("window", { ym });
-    const storage = memoryStorage();
-
-    reachGoalOnce("lila_paid", "paid:1", 123, storage);
-    reachGoalOnce("lila_paid", "paid:1", 123, storage);
-
-    expect(ym).toHaveBeenCalledTimes(1);
-    expect(storage.getItem("paid:1")).toBe("1");
-  });
-
-  test("waits for a counter that is not created yet instead of losing the goal", () => {
-    vi.stubGlobal("window", {});
-    const storage = memoryStorage();
-    reachGoalOnce("report_paid", "paid:late", 123, storage);
-    expect(storage.getItem("paid:late")).toBeNull();
-
-    const ym = vi.fn();
-    vi.stubGlobal("window", { ym });
-    vi.advanceTimersByTime(1000);
-
-    expect(ym).toHaveBeenCalledWith(123, "reachGoal", "report_paid", undefined);
-    expect(storage.getItem("paid:late")).toBe("1");
-  });
-
-  test("gives up quietly and leaves no mark when there is no counter at all (cookies declined)", () => {
-    vi.stubGlobal("window", {});
-    const storage = memoryStorage();
-
-    reachGoalOnce("report_paid", "paid:declined", 123, storage);
-    vi.advanceTimersByTime(60_000);
-
-    expect(storage.getItem("paid:declined")).toBeNull();
-    // позже человек согласился на cookie — цель уходит
-    const ym = vi.fn();
-    vi.stubGlobal("window", { ym });
-    reachGoalOnce("report_paid", "paid:declined", 123, storage);
-    expect(ym).toHaveBeenCalledTimes(1);
-  });
-
-  test("does not double-send within one page when storage is unavailable", () => {
-    const ym = vi.fn();
-    vi.stubGlobal("window", { ym });
-
-    reachGoalOnce("lila_paid", "paid:nostorage", 123, null);
-    reachGoalOnce("lila_paid", "paid:nostorage", 123, null);
-
-    expect(ym).toHaveBeenCalledTimes(1);
   });
 });
 

@@ -7,7 +7,7 @@ export const BASE_URL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
 export const uniqueName = (prefix: string) => `${prefix} ${Date.now()}${Math.floor(Math.random() * 1000)}`;
 
 export async function signIn(browser: Browser, name: string): Promise<{ context: BrowserContext; page: Page }> {
-  const context = await browser.newContext();
+  const context = await browser.newContext({ ignoreHTTPSErrors: BASE_URL.startsWith("https://") });
   const page = await context.newPage();
   await page.goto(`/api/dev/login?name=${encodeURIComponent(name)}`);
   await expect(page).toHaveURL(/\/portret$/);

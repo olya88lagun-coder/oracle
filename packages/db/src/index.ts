@@ -5,6 +5,7 @@ export * from "./users";
 export * from "./profiles";
 export * from "./delete-user";
 export * from "./purchases";
+export * from "./purchase-analytics";
 export * from "./reports";
 export * from "./job-id";
 export * from "./lila";
