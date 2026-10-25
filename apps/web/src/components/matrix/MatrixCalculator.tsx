@@ -18,6 +18,7 @@ import {
   type ReactNode,
 } from "react";
 import { reachGoal } from "@/lib/analytics";
+import { prepareMatrixHandoff, takeMatrixHandoff } from "@/lib/year-arcana";
 import { COMPAT_PATH } from "@/lib/compat";
 import {
   browserStorage,
@@ -71,6 +72,7 @@ export function MatrixCalculator({
   const inputRef = useRef<HTMLInputElement>(null);
   // Защита от двойного клика: второй запрос попал бы под лимит и показал бы ложную ошибку
   const savingRef = useRef(false);
+  const yearHandoffRef = useRef<string | null | undefined>(undefined);
 
   const parsed = useMemo(
     () => (date ? parseBirthDate(date, new Date()) : null),
@@ -112,19 +114,21 @@ export function MatrixCalculator({
   useEffect(() => {
     const storage = browserStorage();
     const stored = readStoredBirthDate(storage, new Date());
-    const picked = pickBirthDate({ profile: initialProfileDate, stored });
+    if (yearHandoffRef.current === undefined) yearHandoffRef.current = takeMatrixHandoff(sessionStore(), new Date());
+    const handoff = yearHandoffRef.current;
+    const picked = handoff ? { date: handoff } : pickBirthDate({ profile: initialProfileDate, stored });
     if (picked.date) {
       setValue(picked.date);
       setDate(picked.date);
-      storeBirthDate(storage, picked.date);
+      if (!handoff) storeBirthDate(storage, picked.date);
     }
     if (
       takeSaveIntent(sessionStore()) &&
       signedIn &&
       !initialProfileDate &&
-      stored
+      picked.date
     )
-      void save(stored);
+      void save(picked.date);
   }, [initialProfileDate, signedIn, save]);
 
   function calculate(event: FormEvent<HTMLFormElement>) {
@@ -228,7 +232,13 @@ export function MatrixCalculator({
       </div>
 
       {matrix && parsed && date && (
-        <div className="matrix-wrap matrix-result-wrap stack">
+        <div className="matrix-wrap matrix-result-wrap stack" onClickCapture={(event) => {
+          // Explicit login/save/purchase intent may return through VK in this same tab.
+          // Preserve the temporary year date without persisting it in localStorage.
+          if (date !== yearHandoffRef.current || !(event.target instanceof Element)) return;
+          const href = event.target.closest("a")?.getAttribute("href");
+          if (href?.startsWith("/login?")) prepareMatrixHandoff(sessionStore(), date);
+        }}>
           <MatrixResult
             matrix={matrix}
             dateLabel={formatBirthDateRu(parsed)}
