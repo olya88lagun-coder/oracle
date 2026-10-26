@@ -16,6 +16,12 @@ describe("/taro/karta-dnya", () => {
     expect(markup.indexOf("От карты к своей схеме")).toBeGreaterThan(markup.indexOf("Как пользоваться картой дня"));
   });
 
+  test("links the free 2027 arcana once, right after the matrix bridge", () => {
+    expect(markup.match(/href="\/arkan-2027"/g)).toHaveLength(1);
+    expect(markup.indexOf('href="/arkan-2027"')).toBeGreaterThan(markup.indexOf("От карты к своей схеме"));
+    expect(markup.indexOf('href="/arkan-2027"')).toBeLessThan(markup.indexOf("Карты дня по старшим арканам"));
+  });
+
   test("title leads with the card of the day query and keeps «гадание» in the second part", () => {
     expect(metadata.title).toBe("Карта дня Таро на сегодня — гадание онлайн бесплатно");
     expect(String(metadata.title).indexOf("Карта дня Таро")).toBe(0);
@@ -42,7 +48,7 @@ describe("/taro/karta-dnya", () => {
 
   test("has readable text below the draw: what it is, how to use it, links by arcana and the FAQ", () => {
     const headings = [...guide.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/g)].map((match) => text(match[1]!));
-    expect(headings).toEqual(["Что такое карта дня Таро", "Как пользоваться картой дня", "От карты к своей схеме", "Карты дня по старшим арканам", "Частые вопросы о карте дня"]);
+    expect(headings).toEqual(["Что такое карта дня Таро", "Как пользоваться картой дня", "От карты к своей схеме", "От карты дня — к символу года", "Карты дня по старшим арканам", "Частые вопросы о карте дня"]);
     expect(text(guide).split(" ").length).toBeGreaterThanOrEqual(400);
   });
 

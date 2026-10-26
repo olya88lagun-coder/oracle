@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { YearArcanaCatalog } from "@/components/year-arcana/YearArcanaCatalog";
 import { YearCalculator } from "@/components/year-arcana/YearCalculator";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
@@ -34,6 +35,7 @@ export default function YearPage() {
       <div className="stack"><p className="eyebrow">Как пользоваться результатом</p><h2 id="year-guide-title">Не готовый сценарий.<br />Повод выбрать своё.</h2><p>Аркан года — символическая тема для размышления о календарном 2027 годе. Прочитайте значение, отметьте, что откликается в вашей жизни, и выберите посильное действие. Вернитесь к вопросу через месяц: ответ может измениться вместе с вашим опытом.</p><p>Это не прогноз событий. Даже названия «Смерть», «Башня» или «Дьявол» не означают, что с вами случится несчастье. Мы рассматриваем их как образы перемен, пересмотра опор и собственных желаний.</p></div>
       <div className="year-method stack"><h3>Открытая формула</h3><p>Центр Матрицы + свёртка (день + месяц + 11). Итог снова сворачивается сложением цифр до 1–22. День берётся целиком.</p><p>Например, 14.03.1992: центр 13; 14 + 3 + 11 = 28 → 10; 13 + 10 = 23 → <strong>5, Иерофант</strong>.</p><p>Единой формулы у разных школ нет. Мы выбрали вариант с центром и используем ту же свёртку, что в <Link href={MATRIX_PATH}>нашей Матрице судьбы</Link>. Это отдельная практика, не возрастная линия Матрицы.</p><Link className="touch-link" href="/metodika">О текстах и методике сайта</Link></div>
     </section>
+    <YearArcanaCatalog />
     <section className="year-faq" aria-labelledby="year-faq-title"><p className="eyebrow">Перед новым годом</p><h2 id="year-faq-title">Вопросы об аркане года</h2>{YEAR_FAQ.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</section>
     <p className="muted year-footnote">Практика для самопознания. Решения о здоровье, деньгах и отношениях опирайте на факты и свою ситуацию.</p>
   </main>;

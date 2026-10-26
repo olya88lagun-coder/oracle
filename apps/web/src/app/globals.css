@@ -967,6 +967,14 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 .taro-bridge p { max-width: 640px; color: var(--ink-soft); line-height: 1.7; }
 .taro-bridge .button { justify-self: start; }
 .taro-bridge__note { font-size: 14px; }
+/* Полоса «Аркан 2027» на главной (YearPromo): между практиками и «Чем отличается», на телефоне колонкой */
+.home-year { display: grid; gap: 18px; align-items: center; padding: 24px 22px; border: 1px solid var(--accent-line); border-radius: var(--radius-lg); background: var(--surface); }
+.home-year__copy { display: grid; gap: 10px; }
+.home-year h2, .home-year p { margin: 0; }
+.home-year h2 { font-size: clamp(24px, 3.6vw, 32px); line-height: 1.25; }
+.home-year__copy p:not(.eyebrow) { max-width: 640px; color: var(--ink-soft); line-height: 1.7; }
+.home-year .button { width: 100%; text-align: center; }
+@media (min-width: 760px) { .home-year { grid-template-columns: minmax(0, 1fr) auto; gap: 32px; padding: 28px 32px; } .home-year .button { width: auto; } }
 @media (prefers-reduced-motion: reduce) { .home-blog__art img { transition: none; } .home-blog__card:hover .home-blog__art img { transform: none; } }
 
 /* Блог: редакционный каталог и читательский шаблон статьи (пакет Codex «blog editorial premium») */

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT, MATRIX_REPORT_PRICE_KOPECKS } from "@oracle/core";
+import { YearPromo } from "@/components/year-arcana/YearPromo";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { BLOG_PATH, BLOG_POSTS, blogPath } from "@/lib/blog";
 import { formatRubles } from "@/lib/legal";
@@ -110,6 +111,8 @@ export default function HomePage() {
             </ul>
           )}
         </section>
+
+        <YearPromo context="home" id="home-year" />
 
         <section className="stack home-principles" aria-labelledby="home-principles">
           <h2 id="home-principles">{HOME_PRINCIPLES_TITLE}</h2>

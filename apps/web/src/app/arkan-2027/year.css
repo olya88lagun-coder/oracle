@@ -43,6 +43,27 @@
 .year-guide { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; padding: 72px 0; }
 .year-guide p { color: var(--ink-soft); }
 .year-method { border-left: 1px solid var(--line-strong); padding-left: 32px; }
+.year-catalog { padding: 24px 0 72px; }
+.year-catalog h2 { margin: 16px 0 12px; }
+.year-catalog__lead { max-width: 700px; margin: 0 0 32px; color: var(--ink-soft); line-height: 1.7; }
+.year-catalog__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.year-catalog__grid a { display: grid; grid-template-columns: 72px minmax(0, 1fr); column-gap: 14px; row-gap: 2px; align-items: center; min-height: 44px; padding: 8px 14px 8px 8px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink-soft); text-decoration: none; transition: border-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out); }
+.year-catalog__grid a:hover, .year-catalog__grid a:focus-visible { border-color: var(--accent-line); color: var(--ink); }
+.year-catalog__art { grid-column: 1; grid-row: 1 / span 3; display: block; width: 72px; height: 72px; border-radius: calc(var(--radius) - 4px); object-fit: cover; }
+.year-catalog__number, .year-catalog__name, .year-catalog__keys { grid-column: 2; }
+.year-catalog__number { font: 400 16px/1 var(--font-display); color: var(--accent); }
+.year-catalog__name { color: var(--ink); font-size: 18px; line-height: 1.25; overflow-wrap: break-word; hyphens: auto; }
+.year-catalog__keys { font-size: 14px; line-height: 1.4; }
+@media (min-width: 560px) {
+  .year-catalog__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .year-catalog__grid a { grid-template-columns: minmax(0, 1fr); justify-items: center; align-content: start; height: 100%; padding: 8px 8px 14px; text-align: center; }
+  .year-catalog__art { grid-column: auto; grid-row: auto; width: 100%; height: auto; aspect-ratio: 1; }
+  .year-catalog__number, .year-catalog__name, .year-catalog__keys { grid-column: auto; }
+  .year-catalog__name { font-size: 16px; }
+}
+@media (min-width: 900px) { .year-catalog__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; } }
+@media (min-width: 1100px) { .year-catalog__grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .year-catalog__grid a { transition: none; } }
 .year-faq { max-width: 800px; margin: 0 auto; }
 .year-faq h2 { margin: 16px 0 28px; }
 .year-footnote { max-width: 800px; margin: 36px auto 0; }
