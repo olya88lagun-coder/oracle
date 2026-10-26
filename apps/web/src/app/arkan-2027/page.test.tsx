@@ -1,10 +1,38 @@
-import { ARCANA } from "@oracle/content";
+import { ARCANA, arcanumByNumber } from "@oracle/content";
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, test } from "vitest";
 import Page, { metadata } from "./page";
 import { arcanumPath } from "@/lib/arcana-paths";
 import { PUBLIC_PATHS } from "@/lib/seo";
 import { YEAR_FAQ, YEAR_PATH } from "@/lib/year-arcana";
+
+const TITLE_SUFFIX = " — Твой оракул";
+const SERP_TITLE_LIMIT = 60;
+
+test("title and description use the wording people search for, within snippet limits", () => {
+  const title = String(metadata.title);
+  const description = String(metadata.description);
+  expect(title.startsWith("Аркан на 2027 год")).toBe(true);
+  expect(title).toContain("рассчитать");
+  expect(title).toContain("по дате рождения");
+  expect(title.length + TITLE_SUFFIX.length).toBeLessThanOrEqual(SERP_TITLE_LIMIT);
+  expect(description).toContain("Какой аркан на 2027 год");
+  expect(description).toContain("по дате рождения");
+  expect(description).toContain("Бесплатно");
+  expect(description.length).toBeGreaterThan(100);
+  expect(description.length).toBeLessThanOrEqual(160);
+});
+
+test("the FAQ answers the searched questions: how to calculate and which arcanum the year itself is", () => {
+  const questions = YEAR_FAQ.map((item) => item.question);
+  expect(questions[0]).toBe("Как рассчитать аркан на 2027 год по дате рождения?");
+  const yearQuestion = YEAR_FAQ.find((item) => item.question === "Под каким арканом будет 2027 год?");
+  expect(yearQuestion).toBeDefined();
+  expect(yearQuestion!.answer).toContain("2 + 0 + 2 + 7 = 11");
+  expect(yearQuestion!.answer).toContain(arcanumByNumber(11)!.name);
+  expect(yearQuestion!.answer).toMatch(/не предсказывают/);
+  expect(new Set(questions).size).toBe(questions.length);
+});
 
 test("indexable canonical page includes calculator, truthful offer and identical FAQ JSON-LD", () => {
   const html = renderToStaticMarkup(<Page />);
