@@ -25,6 +25,12 @@ describe("/taro", () => {
     expect(metadata.robots).toEqual({ index: true, follow: true });
   });
 
+  test("links the free 2027 arcana once, after the spreads promo and before the closing call to action", () => {
+    expect(markup.match(/href="\/arkan-2027"/g)).toHaveLength(1);
+    expect(markup.indexOf('href="/arkan-2027"')).toBeGreaterThan(markup.indexOf('id="taro-about"'));
+    expect(markup.indexOf('href="/arkan-2027"')).toBeLessThan(markup.indexOf('id="taro-cta"'));
+  });
+
   test("keeps the single «Таро и карта дня» heading that the e2e tests rely on", () => {
     expect(markup.match(/<h1[\s>]/g)).toHaveLength(1);
     expect(text(/<h1[\s\S]*?<\/h1>/.exec(markup)![0])).toBe("Таро и карта дня");
