@@ -1,6 +1,7 @@
 import { TAROT_CARDS } from "@oracle/content/tarot";
 import Link from "next/link";
 import { TaroMatrixBridge } from "@/components/taro/TaroMatrixBridge";
+import { YearPromo } from "@/components/year-arcana/YearPromo";
 import { SITE_URL } from "@/lib/site";
 import { rankLabel } from "@/lib/taro-catalog";
 import { TARO_AUTHOR_CREDIT, TARO_DAY_PATH, TARO_PATH, TARO_SPREADS_PATH, taroCardPath } from "@/lib/taro-paths";
@@ -101,6 +102,7 @@ export function TaroDayGuide() {
       </section>
 
       <TaroMatrixBridge context="day" id="taro-day-bridge" />
+      <YearPromo context="taro" id="taro-day-year" />
 
       <section aria-labelledby="taro-day-arcana">
         <h2 id="taro-day-arcana">Карты дня по старшим арканам</h2>

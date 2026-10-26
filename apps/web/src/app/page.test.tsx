@@ -22,6 +22,14 @@ describe("home page", () => {
     expect(markup).toContain('href="/metodika"');
   });
 
+  test("links the free 2027 arcana once, between the practices and the principles, without a second matrix call to action", () => {
+    expect(markup.match(/href="\/arkan-2027"/g)).toHaveLength(1);
+    expect(markup).toContain(">Узнать аркан 2027</a>");
+    expect(markup.indexOf('href="/arkan-2027"')).toBeGreaterThan(markup.indexOf('id="practices"'));
+    expect(markup.indexOf('href="/arkan-2027"')).toBeLessThan(markup.indexOf('id="home-principles"'));
+    expect(markup.match(/>Рассчитать матрицу бесплатно<\/a>/g)).toHaveLength(1);
+  });
+
   test("states the AI mark of the guide in the same words as the game", () => {
     expect(markup).toContain("Абзацы проводника пишет ИИ.");
   });

@@ -1,10 +1,12 @@
 import { toIsoDate } from "@oracle/core";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { MatrixCalculator } from "@/components/matrix/MatrixCalculator";
 import { matrixFaqJsonLd, MatrixGuide } from "@/components/matrix/MatrixGuide";
 import { MatrixCta, MatrixLibrary, MatrixPreview } from "@/components/matrix/MatrixSections";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
+import { YEAR_PATH } from "@/lib/year-arcana";
 import { listPaidPurchases } from "@oracle/db";
 import { getDb } from "@/server/db";
 import { salesEnabled } from "@/server/payments-deps";
@@ -48,7 +50,7 @@ export default async function MatrixPage() {
       <MatrixPreview />
       <section className="matrix-wrap stack" style={{ paddingBlock: 32 }} aria-labelledby="matrix-year-link">
         <h2 id="matrix-year-link">С каким вопросом войти в 2027 год?</h2>
-        <p><a className="touch-link" href="/arkan-2027">Мой аркан 2027 года — бесплатный расчёт и карточка</a></p>
+        <p><Link className="touch-link" href={YEAR_PATH}>Мой аркан 2027 года — бесплатный расчёт и карточка</Link></p>
       </section>
       <MatrixGuide />
       <MatrixLibrary />
