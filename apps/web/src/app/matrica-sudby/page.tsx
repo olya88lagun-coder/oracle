@@ -46,6 +46,10 @@ export default async function MatrixPage() {
         }
       />
       <MatrixPreview />
+      <section className="matrix-wrap stack" style={{ paddingBlock: 32 }} aria-labelledby="matrix-year-link">
+        <h2 id="matrix-year-link">С каким вопросом войти в 2027 год?</h2>
+        <p><a className="touch-link" href="/arkan-2027">Мой аркан 2027 года — бесплатный расчёт и карточка</a></p>
+      </section>
       <MatrixGuide />
       <MatrixLibrary />
       <MatrixCta />

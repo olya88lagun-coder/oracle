@@ -1,0 +1,66 @@
+.year-page { max-width: 1200px; margin: 0 auto; padding: 0 28px 80px; }
+.year-breadcrumb { display: flex; align-items: center; gap: 12px; min-height: 60px; font-size: 14px; color: var(--ink-soft); }
+.year-breadcrumb a { display: inline-flex; align-items: center; min-height: 44px; }
+.year-hero { display: grid; grid-template-columns: 1.15fr 1fr; gap: 44px; align-items: center; padding: 30px 0 64px; }
+.year-hero__copy { position: relative; z-index: 1; }
+.year-hero h1 span { display: block; color: var(--accent); }
+.year-hero .lead { font-size: 18px; }
+.year-form { display: grid; gap: 16px; max-width: 420px; margin-top: 30px; }
+.year-form p { margin: 0; }
+.year-hero__art { aspect-ratio: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--accent); background: linear-gradient(var(--scrim-clear), var(--scrim)), url('/images/matrix/matrix-stone.webp') 65% center / cover; box-shadow: inset 0 0 0 20px var(--bg), inset 0 0 0 21px var(--line); }
+.year-hero__art span { font: 300 clamp(80px, 10vw, 140px)/1 var(--font-display); }
+.year-hero__art p { color: var(--ink-soft); font-size: 16px; }
+.year-band { display: flex; justify-content: space-between; gap: 16px; border-block: 1px solid var(--line); padding: 22px 0; color: var(--ink-soft); font-size: 14px; }
+.year-result { padding-top: 72px; }
+.year-result__header { margin-bottom: 32px; }
+.year-result__header h2 { scroll-margin-top: 100px; }
+.year-result__grid { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 56px; align-items: start; }
+.year-share-card { padding: 28px; border: 1px solid var(--line-strong); text-align: center; background: var(--surface); outline: 1px solid var(--line); outline-offset: -10px; }
+.year-share-card img { display: block; width: 100%; height: auto; margin: 20px auto; }
+.year-share-card__name { font: 400 clamp(28px, 3vw, 38px)/1.15 var(--font-display); margin: 20px 0; }
+.year-share-card__question { font-size: 16px; color: var(--ink-soft); }
+.year-card-actions { margin-top: 24px; }
+.year-social a { display: inline-flex; align-items: center; min-height: 44px; }
+.year-advice { padding-left: 22px; }
+.year-advice li + li { margin-top: 24px; }
+.year-advice p { margin-top: 8px; }
+.year-card-actions .button { flex: 1 1 180px; }
+.year-status { overflow-wrap: anywhere; }
+.year-status:empty { display: none; }
+.year-reading p { margin-bottom: 0; }
+.year-reading__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; border-block: 1px solid var(--line); padding: 26px 0; }
+.year-reading__pair h3 { font-size: 22px; }
+.year-reading__pair ul { padding-left: 20px; color: var(--ink-soft); }
+.year-reading li + li { margin-top: 8px; }
+.year-page details { border-bottom: 1px solid var(--line); padding: 12px 0; }
+.year-page summary { min-height: 44px; padding-block: 10px; cursor: pointer; font-weight: 600; }
+.year-page details p { color: var(--ink-soft); }
+.year-action { padding: 24px; border-left: 2px solid var(--accent); background: var(--surface); }
+.year-calculation { font-size: 14px; }
+.year-offer { margin-top: 64px; padding: 40px; border: 1px solid var(--line-strong); background: var(--surface); }
+.year-offer > p { max-width: 700px; }
+.year-offer .button { text-align: center; }
+.year-guide { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; padding: 72px 0; }
+.year-guide p { color: var(--ink-soft); }
+.year-method { border-left: 1px solid var(--line-strong); padding-left: 32px; }
+.year-faq { max-width: 800px; margin: 0 auto; }
+.year-faq h2 { margin: 16px 0 28px; }
+.year-footnote { max-width: 800px; margin: 36px auto 0; }
+@media (max-width: 760px) {
+  .year-page { padding-inline: 16px; }
+  .year-breadcrumb { min-height: 48px; }
+  .year-hero { display: block; padding: 20px 0 32px; }
+  .year-hero h1 { font-size: clamp(44px, 10vw, 66px); }
+  .year-hero__art { display: none; }
+  .year-hero .eyebrow { font-size: 14px; letter-spacing: 0.08em; }
+  .year-form { max-width: none; }
+  .year-band { gap: 10px; padding: 18px 0; }
+  .year-band span { flex: 1; }
+  .year-result { padding-top: 40px; }
+  .year-result__grid { grid-template-columns: 1fr; gap: 32px; }
+  .year-share-card { max-width: 430px; margin-inline: auto; }
+  .year-reading__pair { gap: 16px; }
+  .year-offer { padding: 28px 20px; margin-top: 36px; }
+  .year-guide { grid-template-columns: 1fr; gap: 32px; padding: 48px 0; }
+  .year-method { padding-left: 20px; }
+}
