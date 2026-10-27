@@ -4,6 +4,7 @@ import { COMPAT_PATH } from "./compat";
 import { LILA_PATH } from "./lila-paths";
 import { MATRIX_PATH } from "./arcana-paths";
 import { NATAL_PATH } from "./natal-paths";
+import { YEAR_PATH } from "./year-arcana";
 import { pickDistinctIndexes, positionReading, SPREADS_HUB_FAQ, spreadFromParam, spreadPath, TARO_SPREADS, type SpreadSource } from "./taro-spreads";
 
 const SOURCES: readonly SpreadSource[] = ["essence", "love", "money", "resource", "distortion", "day", "action", "question"];
@@ -14,8 +15,8 @@ const allCopy = () => [
 ];
 
 describe("taro spreads", () => {
-  test("has five spreads with unique slugs and from three to five positions each", () => {
-    expect(TARO_SPREADS.map((spread) => spread.slug)).toEqual(["tri-karty", "otnosheniya", "vybor", "delo-i-dengi", "na-segodnya"]);
+  test("has six spreads with unique slugs and from three to five positions each", () => {
+    expect(TARO_SPREADS.map((spread) => spread.slug)).toEqual(["tri-karty", "otnosheniya", "vybor", "delo-i-dengi", "na-segodnya", "novyy-god"]);
     expect(new Set(TARO_SPREADS.map((spread) => spread.slug)).size).toBe(TARO_SPREADS.length);
     for (const spread of TARO_SPREADS) {
       expect(spread.positions.length).toBeGreaterThanOrEqual(3);
@@ -59,12 +60,12 @@ describe("taro spreads", () => {
   });
 
   test("every spread has a short name for the tiles on /taro", () => {
-    expect(TARO_SPREADS.map((spread) => spread.short)).toEqual(["Три карты", "Отношения", "Выбор из двух", "Дело и деньги", "На сегодня"]);
+    expect(TARO_SPREADS.map((spread) => spread.short)).toEqual(["Три карты", "Отношения", "Выбор из двух", "Дело и деньги", "На сегодня", "Новый год"]);
     for (const spread of TARO_SPREADS) expect(spread.short.length).toBeLessThanOrEqual(24);
   });
 
   test("every spread leads on to one practice that starts with a free calculation, without prices", () => {
-    const practices = [MATRIX_PATH, COMPAT_PATH, LILA_PATH, NATAL_PATH];
+    const practices = [MATRIX_PATH, COMPAT_PATH, LILA_PATH, NATAL_PATH, YEAR_PATH];
     for (const spread of TARO_SPREADS) {
       expect(practices).toContain(spread.next.href);
       expect(spread.next.title.length).toBeGreaterThan(3);
@@ -121,6 +122,21 @@ describe("taro spreads", () => {
     expect(reading?.answer).toMatch(/не обещаем/);
     const yesNo = SPREADS_HUB_FAQ.find((item) => /да или нет/i.test(item.question));
     expect(yesNo?.answer).toMatch(/не обещаем предсказаний/);
+  });
+
+  test("the New Year spread is a retrospective and an intention, not a forecast: five reflective positions that lead to the free year arcanum", () => {
+    const spread = spreadFromParam("novyy-god")!;
+    expect(spread.title).toMatch(/^Расклад Таро на Новый год/);
+    expect(spread.description).toContain("Новый год");
+    expect(spread.description).toMatch(/не прогноз/);
+    expect(spread.positions.map((position) => position.title)).toEqual(["Главная тема года", "Что оставляю", "Что беру с собой", "Первый шаг", "Вопрос на год"]);
+    expect(spread.positions.map((position) => position.source)).toEqual(["essence", "distortion", "resource", "action", "question"]);
+    expect(spread.lead).toMatch(/не говорит, каким будет год/);
+    expect(spread.faq.some((item) => /каким будет год/.test(item.question) && /^Нет\./.test(item.answer))).toBe(true);
+    expect(spread.next.href).toBe(YEAR_PATH);
+    expect(spread.next.label).toContain("аркан");
+    // сезонный расклад не привязан к году в названии и адресе: он остаётся рабочим и после 2027
+    expect(`${spread.slug} ${spread.name} ${spread.title} ${spread.short}`).not.toMatch(/20\d\d/);
   });
 
   test("no copy promises a prediction", () => {

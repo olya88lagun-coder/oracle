@@ -8,6 +8,8 @@ export const GLYPH_LAYOUTS: Readonly<Record<string, readonly (readonly [number, 
   vybor: [[48, 0], [8, 34], [8, 74], [88, 34], [88, 74]],
   "delo-i-dengi": [[8, 70], [48, 44], [88, 18]],
   "na-segodnya": [[8, 56], [48, 22], [88, 56]],
+  // Три карты итогов сверху, две карты на новый год ниже и по центру
+  "novyy-god": [[8, 8], [48, 8], [88, 8], [28, 62], [68, 62]],
 };
 
 export function SpreadGlyph({ slug }: { slug: string }) {
