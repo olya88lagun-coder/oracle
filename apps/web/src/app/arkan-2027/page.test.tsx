@@ -34,6 +34,15 @@ test("the FAQ answers the searched questions: how to calculate and which arcanum
   expect(new Set(questions).size).toBe(questions.length);
 });
 
+test("the FAQ explains what «матрица судьбы на 2027 год» is and how it differs from the year arcanum", () => {
+  const item = YEAR_FAQ.find((entry) => entry.question === "Что такое матрица судьбы на 2027 год и чем она отличается от аркана года?");
+  expect(item).toBeDefined();
+  expect(item!.answer).toContain("не меняется");
+  expect(item!.answer).toContain("центра вашей Матрицы");
+  expect(item!.answer).toMatch(/не показывает её возрастную линию/);
+  expect(item!.answer).toMatch(/бесплатно/);
+});
+
 test("indexable canonical page includes calculator, truthful offer and identical FAQ JSON-LD", () => {
   const html = renderToStaticMarkup(<Page />);
   expect(metadata.alternates?.canonical).toBe(YEAR_PATH);
