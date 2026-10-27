@@ -264,7 +264,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Карта Таро «Колесо Фортуны» из колоды Райдера — Уэйта",
     basis: ["tarot", "tarot-deck", "tarot-practice"],
     internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/koleso-fortuny", "/blog/kak-zadat-vopros-taro"],
-    status: "draft",
+    status: "published",
   },
 
   // «как задать вопрос таро про работу» 152, «как правильно задать вопрос таро про работу» 100, «какие вопросы задать таро про работу» 50.
