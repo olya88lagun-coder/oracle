@@ -238,7 +238,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Аркан 5 «Иерофант» — образ преемственности и опыта семьи",
     basis: ["positions", "arcana", "matrix-formulas"],
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-5-ierofant", "/blog/rasshifrovka-matritsy-sudby"],
-    status: "draft",
+    status: "published",
   },
 
   // «какие вопросы задать таро про отношения» 869, «…про парня» 677, «…про мужчину» 247, «…про бывшего» 230.
