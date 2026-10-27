@@ -277,7 +277,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Карта Таро «Туз Пентаклей» из колоды Райдера — Уэйта",
     basis: ["tarot", "tarot-deck", "tarot-practice"],
     internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/pentakli-tuz", "/blog/kak-zadat-vopros-taro"],
-    status: "draft",
+    status: "published",
   },
 
   // «трансформационная игра лила» 848, «лила игра самопознания» 456, «игра лила зачем» 443, «психологическая игра лила» 322.
