@@ -290,7 +290,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Клетка 36 «Ясность сознания» в игре Лила",
     basis: ["lila-rules", "lila-cells", "lila-guide"],
     internalLinks: ["/lila", "/lila/kletki/36-yasnost-soznaniya", "/blog/kak-igrat-v-lilu-onlain", "/blog/kak-sformulirovat-namerenie-dlya-lily"],
-    status: "draft",
+    status: "published",
   },
 
   // «пример игры лила» 89, «игра лила ход игры» 50, «как проходит игра лила» 19.
