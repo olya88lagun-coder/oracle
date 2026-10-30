@@ -303,7 +303,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Клетка 10 «Очищение» в игре Лила",
     basis: ["lila-rules", "lila-cells"],
     internalLinks: ["/lila", "/lila/kletki/10-ochishchenie", "/lila/kletki/23-nebesnyy-plan", "/blog/kak-igrat-v-lilu-onlain"],
-    status: "draft",
+    status: "published",
   },
 
   // Пополнение 16.10.2026, часть 2. Тир A — формулировка есть в выгрузках Вордстата за 21.08–21.09.2026 (широкое соответствие).
