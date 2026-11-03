@@ -308,19 +308,6 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
 
   // Пополнение 16.10.2026, часть 2. Тир A — формулировка есть в выгрузках Вордстата за 21.08–21.09.2026 (широкое соответствие).
 
-  // «матрица судьбы арканов» 67745, «значение арканов в матрице судьбы» 4343. Обзор-хаб со ссылками на все страницы арканов; значения не пересказывать.
-  {
-    slug: "vse-22-arkana-matritsy-sudby",
-    title: "Все 22 аркана матрицы судьбы: названия, номера и главные темы",
-    primaryQuery: "арканы матрицы судьбы",
-    cluster: "matrix",
-    image: "/hero.webp",
-    imageAlt: HERO_ALT,
-    basis: ["arcana", "matrix-formulas"],
-    internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-1-mag", "/matrica-sudby/arkan-22-shut", "/blog/rasshifrovka-matritsy-sudby"],
-    status: "draft",
-  },
-
   // «энергии в матрице судьбы» 4253, «какой аркан в матрице судьбы» 2240, «что значат арканы в матрице судьбы» 1590.
   {
     slug: "chto-takoe-arkan-i-energiya-v-matritse-sudby",
@@ -331,7 +318,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Аркан 21 «Мир» — образ завершённости",
     basis: ["arcana", "positions"],
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-21-mir", "/blog/chto-takoe-matritsa-sudby"],
-    status: "draft",
+    status: "published",
   },
 
   // «какие вопросы задать таро про себя» 139, «…можно задать таро про себя» 110, «задать вопрос картам таро про себя» 104.
