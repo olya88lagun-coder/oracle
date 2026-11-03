@@ -331,7 +331,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Карта Таро «Верховная Жрица» из колоды Райдера — Уэйта",
     basis: ["tarot", "tarot-deck", "tarot-practice"],
     internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/verkhovnaya-zhrica", "/blog/kak-zadat-vopros-taro"],
-    status: "draft",
+    status: "published",
   },
 
   // «матрица судьбы схема» 363, «квадрат матрицы судьбы» 334, «таблица» 266, «круг» 244, «картинка» 216. Порядок точек — MATRIX_POINTS в matrix.ts.
