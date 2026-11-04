@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Icon } from "@/components/Icon";
 import { OPERATOR } from "@/lib/legal";
+import { jsonLdScript } from "@/lib/seo";
 import { DocumentToc } from "./DocumentToc";
 
 // Общая рамка четырёх документов сайта. Тексты остаются в самих страницах — здесь только вёрстка, навигация и оглавление
@@ -23,14 +24,17 @@ type Props = {
   // Замечание в конце документа (дисклеймер, ссылка на согласие)
   footnote?: ReactNode;
   wide?: boolean;
+  // Разметка schema.org страницы, если она есть
+  jsonLd?: Record<string, unknown>;
 };
 
 const sectionId = (index: number) => `section-${index + 1}`;
 
-export function DocumentPage({ current, title, version, intro, sections, footnote, wide = false }: Props) {
+export function DocumentPage({ current, title, version, intro, sections, footnote, wide = false, jsonLd }: Props) {
   const items = sections.map((section, index) => ({ id: sectionId(index), title: section.title }));
   return (
     <main id="document-main" className={wide ? "document-main contacts-page" : "document-main"}>
+      {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />}
       <div className="matrix-wrap">
         <nav className="document-nav" aria-label="Контакты и документы">
           {DOCUMENTS.map((document) => (

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { LILA_SESSION_PRICE_KOPECKS, MATRIX_REPORT_PRICE_KOPECKS, NATAL_REPORT_PRICE_KOPECKS } from "@oracle/core";
 import { DocumentPage, type DocumentSection } from "@/components/document/DocumentPage";
 import { DISCLAIMER, formatRubles, OPERATOR, REFUND_DAYS } from "@/lib/legal";
-import { publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
+import { breadcrumbJsonLd, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
   title: "Контакты",
@@ -70,5 +70,5 @@ export default function ContactsPage() {
       ),
     },
   ];
-  return <DocumentPage current="/contacts" title="Контакты" sections={sections} footnote={<p className="muted">{DISCLAIMER}</p>} wide />;
+  return <DocumentPage current="/contacts" title="Контакты" sections={sections} footnote={<p className="muted">{DISCLAIMER}</p>} wide jsonLd={breadcrumbJsonLd([{ name: "Контакты", path: "/contacts" }])} />;
 }

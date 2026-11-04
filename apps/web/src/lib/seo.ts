@@ -18,6 +18,10 @@ import { SITE_NAME, SITE_URL, SOCIAL_LINKS } from "./site";
 // Личные страницы: вход, портрет и всё, что под ними. В поиск не попадают
 export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", "/lila/igra", "/admin"];
 
+// В robots.txt закрываем только служебное. Личные страницы отдают noindex, а Disallow не дал бы роботу его прочитать:
+// адрес по внешней ссылке мог бы попасть в выдачу без описания
+export const ROBOTS_DISALLOW: readonly string[] = ["/api/", "/admin"];
+
 // Практики и их справочники; следующие планы добавят свои
 export const PUBLIC_PATHS: string[] = ["/", "/arkan-2027", MATRIX_PATH, ARCANA_HUB_PATH, COMPAT_PATH, ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, TARO_SPREADS_PATH, ...TARO_SPREADS.map(spreadPath), ...TAROT_DECK.map(taroCardPath), NATAL_PATH, ...QUICK_VARIANTS.map((variant) => QUICK_PAGES[variant].path), `${NATAL_PATH}/primer`, GLOSSARY_PATH, ...acceptedNatalPages().map(natalPagePath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), "/metodika", "/matrica-sudby/primer", "/lila/primer", ...DOCUMENT_PATHS];
 
@@ -48,6 +52,18 @@ export const websiteJsonLd = (): Record<string, unknown> => ({
     { "@type": "WebSite", "@id": `${SITE_URL}/#website`, name: SITE_NAME, url: SITE_URL, inLanguage: "ru" },
     { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: SITE_NAME, url: SITE_URL, logo: `${SITE_URL}/hero.webp`, sameAs: SOCIAL_LINKS.map((link) => link.url) },
   ],
+});
+
+// Хлебные крошки: главная добавляется сама, дальше — путь до текущей страницы
+export const breadcrumbJsonLd = (trail: readonly { name: string; path: string }[]): Record<string, unknown> => ({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [{ name: SITE_NAME, path: "/" }, ...trail].map((item, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: item.name,
+    item: item.path === "/" ? SITE_URL : `${SITE_URL}${item.path}`,
+  })),
 });
 
 export const lilaGameJsonLd = (): Record<string, unknown> => ({

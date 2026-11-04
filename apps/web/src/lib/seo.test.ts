@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { jsonLdScript, lilaGameJsonLd, PRIVATE_PATHS, PUBLIC_PATHS, publicMetadata, SITE_PREVIEW_IMAGE, websiteJsonLd } from "./seo";
+import { breadcrumbJsonLd, jsonLdScript, lilaGameJsonLd, PRIVATE_PATHS, PUBLIC_PATHS, publicMetadata, SITE_PREVIEW_IMAGE, websiteJsonLd } from "./seo";
+import { SITE_NAME, SITE_URL } from "./site";
 
 describe("publicMetadata", () => {
   test("opens the page for indexing with a canonical address", () => {
@@ -85,5 +86,16 @@ describe("structured data", () => {
 
   test("the script text cannot close its own tag", () => {
     expect(jsonLdScript({ name: "</script><b>" })).not.toContain("<");
+  });
+});
+
+describe("breadcrumbJsonLd", () => {
+  test("starts from the home page and numbers the trail with absolute URLs", () => {
+    const data = breadcrumbJsonLd([{ name: "Блог", path: "/blog" }]);
+    expect(data["@type"]).toBe("BreadcrumbList");
+    expect(data.itemListElement).toEqual([
+      { "@type": "ListItem", position: 1, name: SITE_NAME, item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Блог", item: `${SITE_URL}/blog` },
+    ]);
   });
 });

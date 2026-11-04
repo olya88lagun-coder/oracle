@@ -3,13 +3,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DocumentPage, type DocumentSection } from "@/components/document/DocumentPage";
 import { DISCLAIMER, formatRubles, LEGAL_DATES, LEGAL_VERSIONS, OPERATOR, REFUND_DAYS } from "@/lib/legal";
-import { publicMetadata } from "@/lib/seo";
+import { publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = publicMetadata({
   title: "Публичная оферта",
-  description: "Условия платных услуг на сайте «Твой оракул» — разбора матрицы судьбы, разбора натальной карты и сессии Лилы с проводником: исполнитель, цена, порядок оказания, оплата, чек и возвраты.",
+  description: "Условия платных услуг «Твоего оракула»: разборы матрицы судьбы и натальной карты, Лила с проводником. Исполнитель, цена, оплата, чек и возвраты.",
   path: "/oferta",
+  image: SITE_PREVIEW_IMAGE,
 });
 
 export default function OfferPage() {

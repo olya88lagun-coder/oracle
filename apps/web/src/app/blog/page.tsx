@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { BlogCatalog, type CatalogPost } from "@/components/blog/BlogCatalog";
 import { BLOG_PATH, BLOG_POSTS, BLOG_TOPIC_LABELS, blogPath, blogTopics } from "@/lib/blog";
-import { publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
+import { breadcrumbJsonLd, jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 
 export const metadata: Metadata = publicMetadata({
   title: "Блог о Лиле и матрице судьбы — Твой оракул",
@@ -33,6 +33,7 @@ export default function BlogIndexPage() {
   }));
   return (
     <main className="blog-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbJsonLd([{ name: "Блог", path: BLOG_PATH }])) }} />
       <header className="matrix-wrap blog-head">
         <h1 className="display">Блог</h1>
         <p className="lead">Как играть в Лилу, читать матрицу судьбы и находить собственный смысл в символических практиках.</p>

@@ -16,7 +16,8 @@ test("robots.txt and sitemap.xml describe the public site", async ({ request }) 
   const robots = await (await request.get("/robots.txt")).text();
   const sitemap = await (await request.get("/sitemap.xml")).text();
 
-  expect(robots).toContain("Disallow: /portret");
+  expect(robots).toContain("Disallow: /api/");
+  expect(robots).not.toContain("Disallow: /portret");
   expect(robots).toContain("Sitemap:");
   expect(sitemap).toContain("/privacy");
   expect(sitemap).toContain("/matrica-sudby/arkan-22-shut");

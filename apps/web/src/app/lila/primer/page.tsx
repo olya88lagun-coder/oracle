@@ -2,13 +2,13 @@ import Link from "next/link";
 import { LILA_SESSION_PRICE_KOPECKS } from "@oracle/core";
 import { ConclusionView } from "@/components/lila/ConclusionView";
 import { DISCLAIMER, formatRubles } from "@/lib/legal";
-import { publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
+import { breadcrumbJsonLd, jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { DEMO_CONCLUSION, DEMO_INTENTION, DEMO_MOVES } from "@/server/product-demos";
 
 export const metadata = publicMetadata({ title: "Пример итога Лилы с проводником", description: "Демонстрационный итог Лилы: намерение, путь, повторы, записи и шаг на неделю. Четыре главы и пример PDF без регистрации.", path: "/lila/primer", image: SITE_PREVIEW_IMAGE });
 
 export default function LilaExamplePage() {
-  return <main className="workspace"><div className="matrix-wrap stack source-content">
+  return <main className="workspace"><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbJsonLd([{ name: "Лила", path: "/lila" }, { name: "Пример итога", path: "/lila/primer" }])) }} /><div className="matrix-wrap stack source-content">
     <p className="eyebrow">Вымышленная демонстрационная партия</p>
     <h1>Пример итога Лилы</h1>
     <p className="lead">Намерение: «{DEMO_INTENTION}».</p>
