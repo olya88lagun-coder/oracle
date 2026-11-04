@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DocumentPage, type DocumentSection } from "@/components/document/DocumentPage";
 import { DATA_RECIPIENTS, DATA_STORAGE, LEGAL_DATES, LEGAL_VERSIONS, OPERATOR } from "@/lib/legal";
-import { publicMetadata } from "@/lib/seo";
+import { publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = publicMetadata({
   title: "Политика обработки персональных данных",
   description: "Какие данные собирает сайт «Твой оракул», зачем, кому передаёт, где хранит и как их удалить.",
   path: "/privacy",
+  image: SITE_PREVIEW_IMAGE,
 });
 
 export default function PrivacyPage() {

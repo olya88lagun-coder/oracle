@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DocumentPage, type DocumentSection } from "@/components/document/DocumentPage";
 import { DATA_STORAGE, DISCLAIMER, LEGAL_DATES, LEGAL_VERSIONS, LOGIN_CONSENT_RECIPIENTS, OPERATOR } from "@/lib/legal";
-import { publicMetadata } from "@/lib/seo";
+import { publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = publicMetadata({
   title: "Согласие на обработку персональных данных",
   description: "Текст согласия на обработку персональных данных, которое даётся при входе на сайт «Твой оракул».",
   path: "/consent",
+  image: SITE_PREVIEW_IMAGE,
 });
 
 export default function ConsentPage() {

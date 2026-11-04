@@ -29,6 +29,12 @@ const nextConfig: NextConfig = {
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
         ],
       },
+      // Картинки из public отдавались с max-age=0 и перезапрашивались на каждом визите. Имена у них без хеша,
+      // поэтому не immutable, а сутки: замена файла дойдёт до посетителей за день
+      {
+        source: "/:all*\\.(webp|png|jpg|svg|ico)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
     ];
   },
 };
