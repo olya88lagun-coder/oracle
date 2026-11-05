@@ -44,6 +44,16 @@ jobs:
           printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
+      # Адреса из sitemap до выкладки: после неё по разнице найдём новые страницы для IndexNow.
+      # Сбой здесь релиз не останавливает — тогда о новых страницах просто не сообщим
+      - name: Snapshot sitemap before deploy
+        if: steps.config.outputs.configured == 'true'
+        shell: bash
+        run: |
+          curl -fsS "${SITE_URL%/}/sitemap.xml" | grep -o '<loc>[^<]*</loc>' | sed -e 's/<loc>//' -e 's#</loc>##' | sort -u > "$RUNNER_TEMP/sitemap-before.txt" \
+            || : > "$RUNNER_TEMP/sitemap-before.txt"
+          echo "Sitemap before deploy: $(wc -l < "$RUNNER_TEMP/sitemap-before.txt") URLs"
+
       - name: Deploy web and worker
         if: steps.config.outputs.configured == 'true'
         shell: bash
@@ -218,7 +228,7 @@ jobs:
             sleep 5
           done
 
-      # Новые и изменённые статьи сразу сообщаем Яндексу по IndexNow, не дожидаясь обхода.
+      # Новые и изменённые статьи и новые адреса sitemap сразу сообщаем Яндексу по IndexNow, не дожидаясь обхода.
       # Ключ публичный и лежит на сайте (apps/web/public/indexnow.txt); сбой уведомления релиз не отменяет
       - name: Checkout for IndexNow
         if: steps.config.outputs.configured == 'true'
@@ -226,7 +236,7 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Notify Yandex about changed articles (IndexNow)
+      - name: Notify Yandex about new pages and changed articles (IndexNow)
         if: steps.config.outputs.configured == 'true'
         shell: bash
         run: |
@@ -238,11 +248,22 @@ jobs:
           while IFS= read -r file; do
             urls+=("$site/blog/$(basename "$file" .md)")
           done < <(git diff --name-only --diff-filter=AM HEAD^1 HEAD -- 'packages/content/articles/*.md')
+          # Новая или изменённая статья меняет и каталог блога
+          [[ ${#urls[@]} -gt 0 ]] && urls+=("$site/blog")
+          # Новые страницы — адреса, которых не было в sitemap до выкладки. Пустой снимок (сайт не ответил) пропускаем,
+          # иначе разница выдала бы весь sitemap
+          before="$RUNNER_TEMP/sitemap-before.txt"
+          if [[ -s "$before" ]]; then
+            while IFS= read -r url; do
+              urls+=("$url")
+            done < <(curl -fsS "$site/sitemap.xml" | grep -o '<loc>[^<]*</loc>' | sed -e 's/<loc>//' -e 's#</loc>##' | sort -u | comm -13 "$before" -)
+          fi
           if [[ ${#urls[@]} -eq 0 ]]; then
-            echo "No changed articles — nothing to send to IndexNow."
+            echo "No new pages or changed articles — nothing to send to IndexNow."
             exit 0
           fi
-          urls+=("$site/blog" "$site/sitemap.xml")
+          urls+=("$site/sitemap.xml")
+          mapfile -t urls < <(printf '%s\n' "${urls[@]}" | sort -u)
           payload="$(jq -n --arg host "$host" --arg key "$key" --arg loc "$site/indexnow.txt" '{host: $host, key: $key, keyLocation: $loc, urlList: $ARGS.positional}' --args "${urls[@]}")"
           printf 'IndexNow: %s\n' "${urls[@]}"
           code="$(curl -s -o /tmp/indexnow.out -w '%{http_code}' -X POST https://yandex.com/indexnow -H 'Content-Type: application/json; charset=utf-8' --data "$payload" || echo 000)"
