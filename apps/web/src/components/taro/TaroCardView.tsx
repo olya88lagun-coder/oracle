@@ -105,7 +105,7 @@ export function TaroCardView({ card }: { card: TarotCard }) {
             {combos.length > 0 && (
               <section id={COMBOS_ID} className="detail-section" aria-labelledby={`${COMBOS_ID}-title`}>
                 <h2 id={`${COMBOS_ID}-title`}>{COMBOS_TITLE}</h2>
-                <p>Как {card.name} может читаться рядом с другими старшими арканами в раскладе. Это образы для размышления, а не готовые ответы.</p>
+                <p>Как {card.name} может читаться рядом с другими картами в раскладе. Это образы для размышления, а не готовые ответы.</p>
                 <ul className="taro-combos">
                   {combos.map((combo) => (
                     <li key={combo.partner.slug}>
