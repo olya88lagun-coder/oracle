@@ -1,4 +1,5 @@
 import { TAROT_DECK, tarotCardText } from "@oracle/content/tarot";
+import { tarotCombos } from "@oracle/content/tarot-combos";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { TaroCardView } from "@/components/taro/TaroCardView";
@@ -15,12 +16,20 @@ export function generateStaticParams() {
   return TAROT_DECK.map((card) => ({ card: card.slug }));
 }
 
+// «и сочетания» — только там, где они есть и заголовок с названием сайта ещё помещается в выдачу (~60 знаков)
+const TITLE_ROOM = 60 - " — Твой оракул".length;
+function cardTitle(card: { slug: string; name: string }): string {
+  const base = `Карта Таро ${card.name} — значение`;
+  const withCombos = `${base} и сочетания`;
+  return tarotCombos(card.slug).length > 0 && withCombos.length <= TITLE_ROOM ? withCombos : base;
+}
+
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const ref = taroCardFromParam((await params).card);
   const card = ref && tarotCardText(ref.slug);
   if (!card) return {};
   return publicMetadata({
-    title: `Карта Таро ${card.name} — значение`,
+    title: cardTitle(card),
     description: shortDescription(card.essence[0] ?? card.name),
     path: taroCardPath(card),
     image: { url: taroCardImage(card), alt: `Карта Таро ${card.name}`, width: 554, height: 960 },
