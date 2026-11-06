@@ -2,6 +2,9 @@ import { parseBirthDate, toIsoDate } from "@oracle/core";
 import type { IntentStorage } from "./matrix-save";
 
 export const YEAR_PATH = "/arkan-2027";
+// Страницы «N аркан на год»: адрес без года, чтобы страницы не устаревали с календарём
+export const YEAR_ARCANA_PATH = "/arkan-na-god";
+export const yearArcanumPath = (a: { number: number; slug: string }): string => `${YEAR_ARCANA_PATH}/arkan-${a.number}-${a.slug}`;
 const HANDOFF_KEY = "oracle-year-matrix-date";
 
 export function prepareMatrixHandoff(storage: IntentStorage | null, iso: string): boolean {
