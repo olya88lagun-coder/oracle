@@ -344,7 +344,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: HERO_ALT,
     basis: ["matrix-formulas", "positions"],
     internalLinks: ["/matrica-sudby", "/blog/rasshifrovka-matritsy-sudby", "/blog/zadacha-v-matritse-sudby"],
-    status: "draft",
+    status: "published",
   },
 
   // «задать вопрос таро онлайн» 558, «таро заданный вопрос онлайн» 558, «…бесплатно» 425. На сайте только карта дня: онлайн-расклад по вопросу не обещать.
