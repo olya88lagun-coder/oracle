@@ -99,3 +99,11 @@ describe("breadcrumbJsonLd", () => {
     ]);
   });
 });
+
+describe("compatibility arcana pages", () => {
+  test("all 22 pair arcana pages are public and live under /sovmestimost", () => {
+    const pages = PUBLIC_PATHS.filter((path) => path.startsWith("/sovmestimost/"));
+    expect(pages).toHaveLength(22);
+    expect(pages).toContain("/sovmestimost/arkan-15-dyavol");
+  });
+});

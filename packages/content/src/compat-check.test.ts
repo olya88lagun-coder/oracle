@@ -11,6 +11,7 @@ const union = (number: number, patch: Partial<CompatUnion> = {}): CompatUnion =>
   gives: text(20),
   attention: text(20),
   question: `${text(6)}?`,
+  more: [text(40), text(40)],
   ...patch,
 });
 const full = () => Array.from({ length: 22 }, (_, i) => union(i + 1));
@@ -27,5 +28,10 @@ describe("checkCompatUnions", () => {
     expect(checkCompatUnions([union(1, { gives: text(200) }), ...full().slice(1)], names).join("\n")).toMatch(/Что даёт/);
     expect(checkCompatUnions([union(1, { question: text(6) }), ...full().slice(1)], names).join("\n")).toMatch(/«\?»/);
     expect(checkCompatUnions([union(1, { attention: `${text(20)} Вас ждёт успех.` }), ...full().slice(1)], names).join("\n")).toMatch(/запрещённые обороты/);
+  });
+
+  test("needs two or three «Подробнее» paragraphs of a page-friendly length", () => {
+    expect(checkCompatUnions([union(1, { more: [text(40)] }), ...full().slice(1)], names).join("\n")).toMatch(/от 2 до 3 абзацев/);
+    expect(checkCompatUnions([union(1, { more: [text(40), "Коротко."] }), ...full().slice(1)], names).join("\n")).toMatch(/абзац 2/);
   });
 });

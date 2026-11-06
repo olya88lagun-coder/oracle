@@ -1,7 +1,10 @@
 import { KEY_POINTS, type Compatibility, type KeyPoint } from "@oracle/core";
+import { arcanumParam } from "./arcana-paths";
 import { SITE_URL } from "./site";
 
 export const COMPAT_PATH = "/sovmestimost";
+// Страница аркана пары: тот же номер и slug, что у аркана матрицы
+export const compatArcanumPath = (a: { number: number; slug: string }): string => `${COMPAT_PATH}/${arcanumParam(a)}`;
 // Ссылка приглашения общая: в ней нет ни дат, ни результата
 export const COMPAT_SHARE_URL = `${SITE_URL}${COMPAT_PATH}?utm_source=share&utm_medium=partner`;
 export const COMPAT_SHARE_TEXT = "Давай проверим нашу совместимость по дате рождения";

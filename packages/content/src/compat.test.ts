@@ -18,8 +18,14 @@ describe("parseCompatUnions", () => {
         gives: "Общий курс и готовность держаться его.",
         attention: "К тому, кто из вас задаёт темп.",
         question: "Куда мы на самом деле хотим двигаться вместе?",
+        more: [],
       },
     ]);
+  });
+
+  test("collects repeated «Подробнее» lines in order", () => {
+    const withMore = `${ONE}Подробнее: Первый абзац.\nПодробнее: Второй абзац.\n`;
+    expect(parseCompatUnions(withMore)[0]!.more).toEqual(["Первый абзац.", "Второй абзац."]);
   });
 
   test("sorts by number and rejects a missing field, an unknown line, a repeat and text before the first heading", () => {

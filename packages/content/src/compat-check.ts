@@ -6,6 +6,8 @@ const ESSENCE_CHARS = { min: 150, max: 500 } as const;
 const GIVES_CHARS = { min: 100, max: 400 } as const;
 const ATTENTION_CHARS = { min: 100, max: 400 } as const;
 const QUESTION_CHARS = { min: 20, max: 240 } as const;
+const MORE_CHARS = { min: 150, max: 600 } as const;
+const MORE_COUNT = { min: 2, max: 3 } as const;
 
 const inRange = (text: string, range: { min: number; max: number }) => text.length >= range.min && text.length <= range.max;
 
@@ -18,7 +20,11 @@ function checkUnion(union: CompatUnion, arcanaNames: ReadonlyMap<number, string>
   if (!inRange(union.attention, ATTENTION_CHARS)) at(`«Где стоит присмотреться» — от ${ATTENTION_CHARS.min} до ${ATTENTION_CHARS.max} знаков, сейчас ${union.attention.length}`);
   if (!union.question.endsWith("?")) at("«Вопрос для двоих» должен заканчиваться знаком «?»");
   if (!inRange(union.question, QUESTION_CHARS)) at(`«Вопрос для двоих» — от ${QUESTION_CHARS.min} до ${QUESTION_CHARS.max} знаков`);
-  const stops = findStopPhrases([union.name, union.essence, union.gives, union.attention, union.question].join("\n"));
+  if (union.more.length < MORE_COUNT.min || union.more.length > MORE_COUNT.max) at(`«Подробнее» — от ${MORE_COUNT.min} до ${MORE_COUNT.max} абзацев, сейчас ${union.more.length}`);
+  union.more.forEach((paragraph, index) => {
+    if (!inRange(paragraph, MORE_CHARS)) at(`«Подробнее», абзац ${index + 1} — от ${MORE_CHARS.min} до ${MORE_CHARS.max} знаков, сейчас ${paragraph.length}`);
+  });
+  const stops = findStopPhrases([union.name, union.essence, union.gives, union.attention, union.question, ...union.more].join("\n"));
   if (stops.length > 0) at(`запрещённые обороты — ${stops.join(", ")}`);
   return errors;
 }
