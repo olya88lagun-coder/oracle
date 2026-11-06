@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const arcanum = arcanumFromParam((await params).arkan);
   if (!arcanum) return {};
   return publicMetadata({
-    title: `Аркан ${arcanum.number} ${arcanum.name} в матрице судьбы — значение`,
+    title: `${arcanum.number} аркан ${arcanum.name} в матрице судьбы: в плюсе и в минусе`,
     description: shortDescription(arcanum.essence[0] ?? arcanum.name),
     path: arcanumPath(arcanum),
     image: { url: arcanumImage(arcanum), alt: `Аркан ${arcanum.number} «${arcanum.name}»` },
@@ -39,6 +39,8 @@ type SectionKey = "essence" | "personality" | "center" | "task" | "love" | "mone
 // Порядок разделов страницы: те же десять, что и прежде
 const SECTIONS: readonly SectionKey[] = ["essence", "personality", "center", "task", "love", "money", "resource", "distortion", "action", "question"];
 const sectionId = (key: SectionKey) => `razdel-${key}`;
+// На странице — словами из поисковых запросов («аркан в плюсе / в минусе»). Общие SECTION_TITLES не меняем: их читает ИИ-разбор
+const PAGE_SECTION_TITLES: Readonly<Record<SectionKey, string>> = { ...SECTION_TITLES, resource: "В плюсе: ресурс", distortion: "В минусе: перекос" };
 
 function SectionBody({ arcanum, sectionKey }: { arcanum: Arcanum; sectionKey: SectionKey }) {
   if (sectionKey === "resource" || sectionKey === "distortion") {
@@ -67,7 +69,7 @@ export default async function ArcanumPage({ params }: Params) {
   const previous = neighbour(arcanum.number - 1);
   const next = neighbour(arcanum.number + 1);
   const jsonLd = JSON.stringify(arcanumJsonLd(arcanum, SITE_URL)).replace(/</g, "\\u003c");
-  const toc = SECTIONS.map((key) => ({ id: sectionId(key), title: SECTION_TITLES[key] }));
+  const toc = SECTIONS.map((key) => ({ id: sectionId(key), title: PAGE_SECTION_TITLES[key] }));
 
   return (
     <main className="detail-page arcanum-page">
@@ -109,7 +111,7 @@ export default async function ArcanumPage({ params }: Params) {
           <ExpandAll selector="details.arcanum-section" />
           <div className="detail-sections">
             {SECTIONS.map((key) => (
-              <ArcanumSection key={key} id={sectionId(key)} title={SECTION_TITLES[key]} className="detail-section" defaultOpen={key === "essence"}>
+              <ArcanumSection key={key} id={sectionId(key)} title={PAGE_SECTION_TITLES[key]} className="detail-section" defaultOpen={key === "essence"}>
                 <SectionBody arcanum={arcanum} sectionKey={key} />
               </ArcanumSection>
             ))}

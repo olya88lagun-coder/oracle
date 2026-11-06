@@ -71,7 +71,7 @@ const MANUAL_POSTS: readonly BlogPost[] = [
     published: "2026-09-30",
     image: { url: "/hero.webp", alt: "Матрица судьбы — символическая схема по дате рождения" },
     topic: "matrix",
-    readingMinutes: 2,
+    readingMinutes: 5,
   },
 ];
 
