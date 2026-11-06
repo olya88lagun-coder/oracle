@@ -1,5 +1,6 @@
 import { arcanumBySlug } from "@oracle/content";
 import { TAROT_DECK, TAROT_SECTION_TITLES, TAROT_SUIT_LABELS, type TarotCard } from "@oracle/content/tarot";
+import { tarotCombos } from "@oracle/content/tarot-combos";
 import Link from "next/link";
 import { DetailPager } from "@/components/detail/DetailPager";
 import { DetailToc } from "@/components/detail/DetailToc";
@@ -18,6 +19,8 @@ const neighbour = (card: TarotCard, shift: number) => {
 type SectionKey = keyof typeof TAROT_SECTION_TITLES;
 const SECTIONS: readonly SectionKey[] = ["essence", "love", "money", "resource", "distortion", "day", "action", "question"];
 const sectionId = (key: SectionKey) => `razdel-${key}`;
+const COMBOS_ID = "sochetaniya";
+const COMBOS_TITLE = "Сочетания с другими картами";
 
 function SectionBody({ card, sectionKey }: { card: TarotCard; sectionKey: SectionKey }) {
   if (sectionKey === "resource" || sectionKey === "distortion") {
@@ -45,7 +48,11 @@ export function TaroCardView({ card }: { card: TarotCard }) {
   const previous = neighbour(card, -1);
   const next = neighbour(card, 1);
   const alt = `Карта Таро ${card.name}`;
-  const toc = SECTIONS.map((key) => ({ id: sectionId(key), title: TAROT_SECTION_TITLES[key] }));
+  const combos = tarotCombos(card.slug);
+  const toc = [
+    ...SECTIONS.map((key) => ({ id: sectionId(key), title: TAROT_SECTION_TITLES[key] })),
+    ...(combos.length > 0 ? [{ id: COMBOS_ID, title: COMBOS_TITLE }] : []),
+  ];
   return (
     <main className="detail-page taro-page">
       <nav aria-label="Навигация" className="detail-crumbs">
@@ -95,6 +102,22 @@ export function TaroCardView({ card }: { card: TarotCard }) {
                 <SectionBody card={card} sectionKey={key} />
               </section>
             ))}
+            {combos.length > 0 && (
+              <section id={COMBOS_ID} className="detail-section" aria-labelledby={`${COMBOS_ID}-title`}>
+                <h2 id={`${COMBOS_ID}-title`}>{COMBOS_TITLE}</h2>
+                <p>Как {card.name} может читаться рядом с другими старшими арканами в раскладе. Это образы для размышления, а не готовые ответы.</p>
+                <ul className="taro-combos">
+                  {combos.map((combo) => (
+                    <li key={combo.partner.slug}>
+                      <strong>
+                        {card.name} и <Link href={taroCardPath(combo.partner)}>{combo.partner.name}</Link>.
+                      </strong>{" "}
+                      {combo.text}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
           </div>
           <TaroMatrixBridge context="card" id="taro-bridge" />
         </div>

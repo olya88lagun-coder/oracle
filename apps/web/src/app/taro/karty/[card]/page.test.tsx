@@ -12,8 +12,13 @@ describe("/taro/karty/[card] metadata", () => {
     for (const card of TAROT_DECK) {
       const metadata = await generateMetadata(params(card.slug));
       const title = String(metadata.title);
-      expect(title, card.slug).toMatch(/^Карта Таро .+ — значение$/);
+      expect(title, card.slug).toMatch(/^Карта Таро .+ — значение( и сочетания)?$/);
       expect(title.length + TITLE_SUFFIX_LENGTH, card.slug).toBeLessThanOrEqual(SERP_TITLE_LIMIT);
     }
+  });
+
+  test("major arcana with combinations mention them in the title when it fits", async () => {
+    expect(String((await generateMetadata(params("smert"))).title)).toBe("Карта Таро Смерть — значение и сочетания");
+    expect(String((await generateMetadata(params("zhezly-tuz"))).title)).not.toMatch(/сочетания/);
   });
 });
