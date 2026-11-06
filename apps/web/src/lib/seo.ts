@@ -5,6 +5,7 @@ import { TAROT_DECK } from "@oracle/content/tarot";
 import { ARCANA_HUB_PATH, ARCANUM_IMAGE_SIZE, arcanumPath, MATRIX_PATH } from "./arcana-paths";
 import { BLOG_PATH, BLOG_POSTS, blogPath } from "./blog";
 import { COMPAT_PATH, compatArcanumPath } from "./compat";
+import { yearArcanumPath } from "./year-arcana";
 import { lilaCellPath, LILA_PATH } from "./lila-paths";
 import { acceptedNatalPages } from "./natal-pages";
 import { GLOSSARY_PATH } from "./natal-glossary";
@@ -23,7 +24,7 @@ export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", 
 export const ROBOTS_DISALLOW: readonly string[] = ["/api/", "/admin"];
 
 // Практики и их справочники; следующие планы добавят свои
-export const PUBLIC_PATHS: string[] = ["/", "/arkan-2027", MATRIX_PATH, ARCANA_HUB_PATH, COMPAT_PATH, ...ARCANA.map(compatArcanumPath), ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, TARO_SPREADS_PATH, ...TARO_SPREADS.map(spreadPath), ...TAROT_DECK.map(taroCardPath), NATAL_PATH, ...QUICK_VARIANTS.map((variant) => QUICK_PAGES[variant].path), `${NATAL_PATH}/primer`, GLOSSARY_PATH, ...acceptedNatalPages().map(natalPagePath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), "/metodika", "/matrica-sudby/primer", "/lila/primer", ...DOCUMENT_PATHS];
+export const PUBLIC_PATHS: string[] = ["/", "/arkan-2027", ...ARCANA.map(yearArcanumPath), MATRIX_PATH, ARCANA_HUB_PATH, COMPAT_PATH, ...ARCANA.map(compatArcanumPath), ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, TARO_SPREADS_PATH, ...TARO_SPREADS.map(spreadPath), ...TAROT_DECK.map(taroCardPath), NATAL_PATH, ...QUICK_VARIANTS.map((variant) => QUICK_PAGES[variant].path), `${NATAL_PATH}/primer`, GLOSSARY_PATH, ...acceptedNatalPages().map(natalPagePath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), "/metodika", "/matrica-sudby/primer", "/lila/primer", ...DOCUMENT_PATHS];
 
 type PreviewImage = { url: string; alt: string; width?: number; height?: number };
 

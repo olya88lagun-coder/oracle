@@ -2,9 +2,8 @@ import { ARCANA, arcanumByNumber } from "@oracle/content";
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, test } from "vitest";
 import Page, { metadata } from "./page";
-import { arcanumPath } from "@/lib/arcana-paths";
 import { PUBLIC_PATHS } from "@/lib/seo";
-import { YEAR_FAQ, YEAR_PATH } from "@/lib/year-arcana";
+import { YEAR_FAQ, YEAR_PATH, yearArcanumPath } from "@/lib/year-arcana";
 
 const TITLE_SUFFIX = " — Твой оракул";
 const SERP_TITLE_LIMIT = 60;
@@ -56,6 +55,6 @@ test("indexable canonical page includes calculator, truthful offer and identical
   const faq = schema["@graph"].find((item: { "@type": string }) => item["@type"] === "FAQPage");
   expect(html.indexOf('id="year-catalog-title"')).toBeGreaterThan(html.indexOf('id="year-guide-title"'));
   expect(html.indexOf('id="year-catalog-title"')).toBeLessThan(html.indexOf('id="year-faq-title"'));
-  expect(ARCANA.every((arcanum) => html.includes(`href="${arcanumPath(arcanum)}"`))).toBe(true);
+  expect(ARCANA.every((arcanum) => html.includes(`href="${yearArcanumPath(arcanum)}"`))).toBe(true);
   expect(faq.mainEntity).toEqual(YEAR_FAQ.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })));
 });

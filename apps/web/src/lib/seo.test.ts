@@ -107,3 +107,11 @@ describe("compatibility arcana pages", () => {
     expect(pages).toContain("/sovmestimost/arkan-15-dyavol");
   });
 });
+
+describe("year arcana pages", () => {
+  test("all 22 year arcana pages are public and live under /arkan-na-god", () => {
+    const pages = PUBLIC_PATHS.filter((path) => path.startsWith("/arkan-na-god/"));
+    expect(pages).toHaveLength(22);
+    expect(pages).toContain("/arkan-na-god/arkan-15-dyavol");
+  });
+});

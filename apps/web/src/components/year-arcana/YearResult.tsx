@@ -9,7 +9,7 @@ import { reachYearGoal } from "@/lib/year-arcana-analytics";
 import { whenAnalyticsReady } from "@/lib/analytics-runtime";
 import { arcanumImage, arcanumPath, MATRIX_PATH } from "@/lib/arcana-paths";
 import { sessionStore } from "@/lib/matrix-save";
-import { prepareMatrixHandoff } from "@/lib/year-arcana";
+import { prepareMatrixHandoff, yearArcanumPath } from "@/lib/year-arcana";
 import { yearAdvice } from "@/lib/year-arcana-advice";
 import { YearCardActions } from "./YearCardActions";
 
@@ -80,6 +80,8 @@ export function YearResult({ result, arcanum, iso, day, month }: { result: YearA
           <p>Центр + число года: {result.center} + {result.annual} = {result.center + result.annual}. После свёртки: <strong>{result.arcanum}</strong>.</p>
           <p>Свёртка: пока число больше 22, складываем его цифры. День берём целиком; 22 сохраняем.</p>
         </details>
+        {/* В новой вкладке: результат живёт только в этой вкладке, дата нигде не сохраняется */}
+        <Link className="touch-link" href={yearArcanumPath(arcanum)} target="_blank" rel="noopener">Аркан {arcanum.number} как тема года — подробнее<span className="visually-hidden"> (откроется в новой вкладке)</span></Link>
         <Link className="touch-link" href={arcanumPath(arcanum)}>Читать полное значение аркана {arcanum.number}</Link>
       </div>
     </div>

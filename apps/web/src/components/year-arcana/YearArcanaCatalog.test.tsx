@@ -1,7 +1,7 @@
 import { ARCANA } from "@oracle/content";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
-import { arcanumPath } from "@/lib/arcana-paths";
+import { yearArcanumPath } from "@/lib/year-arcana";
 import { YearArcanaCatalog } from "./YearArcanaCatalog";
 
 const markup = renderToStaticMarkup(<YearArcanaCatalog />);
@@ -13,9 +13,9 @@ describe("YearArcanaCatalog", () => {
     expect(markup.match(/<li[\s>]/g)).toHaveLength(22);
   });
 
-  test("links every arcanum page exactly once, in order, with its number, name and keywords as static text", () => {
+  test("links every year arcanum page exactly once, in order, with its number, name and keywords as static text", () => {
     const hrefs = [...markup.matchAll(/<a [^>]*href="([^"]+)"/g)].map((match) => match[1]);
-    expect(hrefs).toEqual(ARCANA.map(arcanumPath));
+    expect(hrefs).toEqual(ARCANA.map(yearArcanumPath));
     for (const arcanum of ARCANA) {
       expect(markup).toContain(arcanum.name);
       expect(markup).toContain(arcanum.keywords.join(" · "));
