@@ -11,7 +11,7 @@ import { DetailToc } from "@/components/detail/DetailToc";
 import { ExpandAll } from "@/components/detail/ExpandAll";
 import { ImageZoom } from "@/components/detail/ImageZoom";
 import { arcanumFromParam, arcanumImage, arcanumJsonLd, arcanumParam, arcanumPath, MATRIX_PATH, shortDescription } from "@/lib/arcana-paths";
-import { publicMetadata } from "@/lib/seo";
+import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
 type Params = { params: Promise<{ arkan: string }> };
@@ -27,11 +27,18 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!arcanum) return {};
   return publicMetadata({
     title: `${arcanum.number} аркан ${arcanum.name} в матрице судьбы: в плюсе и в минусе`,
-    description: shortDescription(arcanum.essence[0] ?? arcanum.name),
+    description: shortDescription(`Число ${arcanum.number} в матрице судьбы — аркан ${arcanum.name}. ${arcanum.essence[0] ?? ""}`),
     path: arcanumPath(arcanum),
     image: { url: arcanumImage(arcanum), alt: `Аркан ${arcanum.number} «${arcanum.name}»` },
   });
 }
+
+// Люди ищут «6 в матрице судьбы» без слова «аркан»: отвечаем на это прямо, тексты берём из разделов аркана
+const numberFaq = (arcanum: Arcanum) => [
+  { question: `Что значит число ${arcanum.number} в матрице судьбы?`, answer: shortDescription(`Число ${arcanum.number} в матрице судьбы — это аркан «${arcanum.name}». ${arcanum.essence[0] ?? ""}`) },
+  { question: `Что значит ${arcanum.number} в личности?`, answer: shortDescription(arcanum.personality[0] ?? "") },
+  { question: `Что значит ${arcanum.number} в центре матрицы?`, answer: shortDescription(arcanum.center[0] ?? "") },
+];
 
 const neighbour = (number: number) => arcanumByNumber(((number - 1 + ARCANA.length) % ARCANA.length) + 1);
 
@@ -69,11 +76,18 @@ export default async function ArcanumPage({ params }: Params) {
   const previous = neighbour(arcanum.number - 1);
   const next = neighbour(arcanum.number + 1);
   const jsonLd = JSON.stringify(arcanumJsonLd(arcanum, SITE_URL)).replace(/</g, "\\u003c");
+  const faq = numberFaq(arcanum);
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })),
+  };
   const toc = SECTIONS.map((key) => ({ id: sectionId(key), title: PAGE_SECTION_TITLES[key] }));
 
   return (
     <main className="detail-page arcanum-page">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd) }} />
       <nav aria-label="Навигация" className="detail-crumbs">
         <Link className="touch-link" href={MATRIX_PATH}>
           Матрица судьбы
@@ -100,6 +114,10 @@ export default async function ArcanumPage({ params }: Params) {
                 <li key={keyword}>{keyword}</li>
               ))}
             </ul>
+            <p className="detail-note">
+              Число {arcanum.number} в матрице судьбы — это аркан {arcanum.name}. Оно может стоять в личности, в центре, в задаче или на линиях
+              матрицы; ниже — значение для каждой позиции.
+            </p>
             <div className="detail-actions">
               <CalculatorLink className="button button--lavender">Рассчитать свою матрицу</CalculatorLink>
               <a className="matrix-link" href="#arcana-index">
@@ -116,6 +134,16 @@ export default async function ArcanumPage({ params }: Params) {
               </ArcanumSection>
             ))}
           </div>
+
+          <section className="stack detail-faq" aria-labelledby="arcanum-faq">
+            <h2 id="arcanum-faq">Частые вопросы о числе {arcanum.number}</h2>
+            {faq.map((item) => (
+              <div key={item.question} className="stack">
+                <h3>{item.question}</h3>
+                <p>{item.answer}</p>
+              </div>
+            ))}
+          </section>
         </div>
       </div>
 
