@@ -1,9 +1,10 @@
 import { toIsoDate } from "@oracle/core";
 import type { Metadata } from "next";
 import Image from "next/image";
+import { ArcanaIndex } from "@/components/ArcanaIndex";
 import { CompatCalculator } from "@/components/compat/CompatCalculator";
 import { compatFaqJsonLd, CompatCta, CompatGuide, CompatPreview } from "@/components/compat/CompatGuide";
-import { COMPAT_PATH } from "@/lib/compat";
+import { COMPAT_PATH, compatArcanumPath } from "@/lib/compat";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { listPaidPurchases } from "@oracle/db";
@@ -55,6 +56,7 @@ export default async function CompatibilityPage() {
         <CompatCalculator profileDate={profileDate} signedIn={Boolean(user)} paidReports={salesEnabled()} paid={paid} ownerFree={user ? await isOwnerUser(user.id) : false} />
         <CompatPreview />
         <CompatGuide />
+        <ArcanaIndex title="Все 22 аркана совместимости" hub={null} pathOf={compatArcanumPath} />
         <CompatCta />
       </div>
     </main>

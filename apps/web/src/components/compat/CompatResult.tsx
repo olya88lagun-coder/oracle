@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode, Ref } from "react";
 import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
-import { compatSummary, POINT_LABELS } from "@/lib/compat";
+import { compatArcanumPath, compatSummary, POINT_LABELS } from "@/lib/compat";
 
 type Props = { compat: Compatibility; headingRef?: Ref<HTMLHeadingElement>; actions: ReactNode };
 
@@ -59,6 +59,12 @@ export function CompatResult({ compat, headingRef, actions }: Props) {
           </p>
           <p className="lila-turn__question">
             <strong>Вопрос для двоих:</strong> {union.question}
+          </p>
+          {/* В новой вкладке: результат живёт только в этой вкладке, даты нигде не сохраняются */}
+          <p>
+            <Link className="matrix-link" href={compatArcanumPath(arcanum)} target="_blank" rel="noopener">
+              Подробнее об аркане {arcanum.number} в паре<span className="visually-hidden"> (откроется в новой вкладке)</span>
+            </Link>
           </p>
         </div>
       </div>
