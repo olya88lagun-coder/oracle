@@ -20,7 +20,7 @@ describe("tarot combos", () => {
   test("cover all 22 major arcana and pass the checks", () => {
     expect(checkTarotCombos(TAROT_COMBOS)).toEqual([]);
     expect(tarotCombos("smert").length).toBeGreaterThanOrEqual(4);
-    expect(tarotCombos("zhezly-tuz")).toEqual([]);
+    expect(tarotCombos("zhezly-dvoyka")).toEqual([]);
   });
 
   test("the check catches a self pair, a repeat, a short text and stop phrases", () => {

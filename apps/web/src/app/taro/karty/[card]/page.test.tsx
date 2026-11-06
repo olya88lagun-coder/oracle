@@ -19,6 +19,6 @@ describe("/taro/karty/[card] metadata", () => {
 
   test("major arcana with combinations mention them in the title when it fits", async () => {
     expect(String((await generateMetadata(params("smert"))).title)).toBe("Карта Таро Смерть — значение и сочетания");
-    expect(String((await generateMetadata(params("zhezly-tuz"))).title)).not.toMatch(/сочетания/);
+    expect(String((await generateMetadata(params("zhezly-dvoyka"))).title)).not.toMatch(/сочетания/);
   });
 });
