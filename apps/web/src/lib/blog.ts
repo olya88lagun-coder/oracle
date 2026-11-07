@@ -12,6 +12,8 @@ export type BlogPost = {
   metaTitle: string;
   description: string;
   published: string;
+  // День последней заметной правки; нет — совпадает с published
+  updated?: string;
   image: { url: string; alt: string };
   topic: BlogTopic;
   // Приблизительное время чтения в минутах: русские слова видимого текста / 180, не меньше 1
@@ -81,6 +83,7 @@ const articlePost = (article: Article): BlogPost => ({
   metaTitle: article.metaTitle,
   description: article.description,
   published: article.date,
+  ...(article.updated && { updated: article.updated }),
   image: { url: article.image, alt: article.imageAlt },
   topic: TOPIC_BY_CLUSTER[article.cluster] ?? "matrix",
   readingMinutes: readingMinutesFor(countWords(`${article.body} ${article.faq.map((item) => `${item.question} ${item.answer}`).join(" ")}`)),
@@ -121,7 +124,7 @@ export function blogPostJsonLd(post: BlogPost): Record<string, unknown> {
     description: post.description,
     inLanguage: "ru",
     datePublished: post.published,
-    dateModified: post.published,
+    dateModified: post.updated ?? post.published,
     mainEntityOfPage: `${SITE_URL}${blogPath(post)}`,
     image: `${SITE_URL}${post.image.url}`,
     author: { "@type": "Organization", name: "Твой оракул", url: SITE_URL },

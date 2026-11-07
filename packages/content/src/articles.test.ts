@@ -26,9 +26,16 @@ describe("parseArticle", () => {
     ["пустое основание", articleSource({ basis: "" }), /basis/],
     ["мало вопросов", articleSource({ faq: "Один? => Ответ." }), /faq/],
     ["вопрос без знака", articleSource({ faq: "А => Б. || В? => Г. || Д? => Е." }), /вопрос/],
+    ["правка раньше выхода", articleSource({ updated: "2026-10-01" }), /updated/],
+    ["несуществующая дата правки", articleSource({ updated: "2026-11-31" }), /updated/],
   ])("rejects %s", (_name, source, message) => {
     expect(() => parseArticle("prednaznachenie-v-matritse-sudby", source)).toThrow(ArticleFormatError);
     expect(() => parseArticle("prednaznachenie-v-matritse-sudby", source)).toThrow(message);
+  });
+
+  test("keeps the edit date only when it is given", () => {
+    expect(sampleArticle().updated).toBeUndefined();
+    expect(parseArticle("prednaznachenie-v-matritse-sudby", articleSource({ updated: "2026-11-07" })).updated).toBe("2026-11-07");
   });
 
   test("rejects a slug that is not latin lowercase with hyphens", () => {

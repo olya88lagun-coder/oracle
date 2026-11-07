@@ -8,6 +8,8 @@ export type Article = {
   readonly metaTitle: string;
   readonly description: string;
   readonly date: string;
+  // День заметной правки текста; нет поля — статья не менялась после выхода
+  readonly updated?: string;
   readonly image: string;
   readonly imageAlt: string;
   readonly cluster: string;
@@ -24,6 +26,11 @@ export const FAQ_MAX = 5;
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const FIELDS = ["title", "metaTitle", "description", "date", "image", "imageAlt", "cluster", "basis", "faq"] as const;
+const OPTIONAL_FIELDS = ["updated"] as const;
+const isDate = (value: string): boolean => {
+  const parsed = new Date(`${value}T00:00:00Z`);
+  return DATE.test(value) && !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+};
 
 function readFields(header: string, fail: (message: string) => never): Map<string, string> {
   const fields = new Map<string, string>();
@@ -31,7 +38,7 @@ function readFields(header: string, fail: (message: string) => never): Map<strin
     const colon = line.indexOf(":");
     if (colon < 1) fail(`строка шапки без «ключ: значение»: ${line}`);
     const key = line.slice(0, colon).trim();
-    if (!(FIELDS as readonly string[]).includes(key)) fail(`неизвестное поле шапки ${key}`);
+    if (![...FIELDS, ...OPTIONAL_FIELDS].includes(key as never)) fail(`неизвестное поле шапки ${key}`);
     if (fields.has(key)) fail(`поле ${key} повторено`);
     fields.set(key, line.slice(colon + 1).trim());
   }
@@ -63,8 +70,9 @@ export function parseArticle(name: string, raw: string): Article {
   const value = (key: (typeof FIELDS)[number]): string => fields.get(key) ?? "";
 
   const date = value("date");
-  const parsed = new Date(`${date}T00:00:00Z`);
-  if (!DATE.test(date) || Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date) fail("date — существующая дата в формате ГГГГ-ММ-ДД");
+  if (!isDate(date)) fail("date — существующая дата в формате ГГГГ-ММ-ДД");
+  const updated = fields.get("updated");
+  if (updated !== undefined && (!isDate(updated) || updated <= date)) fail("updated — существующая дата ГГГГ-ММ-ДД позже date");
   const image = value("image");
   if (!image.startsWith("/") || !image.endsWith(".webp")) fail("image — путь от корня сайта к файлу .webp");
   const keys = value("basis").split(";").map((key) => key.trim()).filter(Boolean);
@@ -77,6 +85,7 @@ export function parseArticle(name: string, raw: string): Article {
     metaTitle: value("metaTitle"),
     description: value("description"),
     date,
+    ...(updated && { updated }),
     image,
     imageAlt: value("imageAlt"),
     cluster: value("cluster"),

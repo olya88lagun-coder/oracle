@@ -22,9 +22,9 @@ const priorityOf = (path: string): number => {
   return REFERENCE_PATHS.has(path) ? 0.3 : 0.5;
 };
 
-// lastmod только там, где есть настоящая дата: у статей это день выхода. У остальных страниц даты правки у нас нет,
+// lastmod только там, где есть настоящая дата: у статей это день выхода или последней правки (поле updated). У остальных страниц даты правки у нас нет,
 // а выдуманная (например, время сборки) заставила бы поисковик пересканировать неизменившееся и со временем перестать верить файлу
-const PUBLISHED = new Map(BLOG_POSTS.map((post) => [blogPath(post), new Date(post.published)]));
+const PUBLISHED = new Map(BLOG_POSTS.map((post) => [blogPath(post), new Date(post.updated ?? post.published)]));
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return PUBLIC_PATHS.map((path) => {
