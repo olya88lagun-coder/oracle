@@ -40,6 +40,17 @@ describe("ArticleBody", () => {
     expect(html).toContain("Формулы расчёта матрицы судьбы");
   });
 
+  test("shows the compatibility screenshot only at the worked example", () => {
+    const heading = "Пример: как прочитать результат по порядку";
+    const source = SOURCE.replace("## Раздел", `## ${heading}`);
+    const example = parseArticle("matritsa-sovmestimosti-rasshifrovka", source);
+    const exampleHtml = renderToStaticMarkup(createElement(ArticleBody, { article: example }));
+    expect(exampleHtml).toMatch(/<h2>Пример: как прочитать результат по порядку<\/h2><figure[^>]*>.*compat-result-example\.webp.*<\/figure>/);
+
+    const anotherArticle = parseArticle("prednaznachenie-v-matritse-sudby", source);
+    expect(renderToStaticMarkup(createElement(ArticleBody, { article: anotherArticle }))).not.toContain("compat-result-example.webp");
+  });
+
   test("publishes the FAQ as FAQPage markup with the same questions", () => {
     const markup = articleFaqJsonLd(article);
     const entities = markup.mainEntity as { name: string; acceptedAnswer: { text: string } }[];
