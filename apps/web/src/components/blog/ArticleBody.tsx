@@ -1,4 +1,5 @@
 import { ARTICLE_BASIS, parseMarkdown, type Article, type Inline } from "@oracle/content/articles";
+import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
 
@@ -20,7 +21,22 @@ export function ArticleBody({ article }: { article: Article }) {
     <>
       {parseMarkdown(article.body).map((block, index) =>
         block.type === "h2" ? (
-          <h2 key={index}>{block.text}</h2>
+          <Fragment key={index}>
+            <h2>{block.text}</h2>
+            {article.slug === "matritsa-sovmestimosti-rasshifrovka" && block.text === "Пример: как прочитать результат по порядку" && (
+              <figure style={{ maxWidth: 384, marginInline: "auto" }}>
+                <Image
+                  src="/images/blog/compat-result-example.webp"
+                  alt="Аркан пары 21 «Мир», блок «Вы и партнёр» и совпадение по аркану 10 «Колесо Фортуны»"
+                  width={384}
+                  height={814}
+                  unoptimized
+                  style={{ display: "block", width: "100%", height: "auto" }}
+                />
+                <figcaption className="muted">Фрагменты результата для двух вымышленных дат. Ниже разбираем все три блока по порядку.</figcaption>
+              </figure>
+            )}
+          </Fragment>
         ) : block.type === "ul" ? (
           <ul key={index}>
             {block.items.map((item, itemIndex) => (
