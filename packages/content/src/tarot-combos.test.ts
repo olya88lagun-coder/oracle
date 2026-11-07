@@ -17,10 +17,11 @@ describe("parseTarotCombos", () => {
 });
 
 describe("tarot combos", () => {
-  test("cover all 22 major arcana and pass the checks", () => {
+  test("cover all 78 cards and pass the checks", () => {
     expect(checkTarotCombos(TAROT_COMBOS)).toEqual([]);
     expect(tarotCombos("smert").length).toBeGreaterThanOrEqual(4);
-    expect(tarotCombos("zhezly-dvoyka")).toEqual([]);
+    expect(tarotCombos("zhezly-dvoyka").length).toBeGreaterThanOrEqual(4);
+    expect(tarotCombos("nevedomaya")).toEqual([]);
   });
 
   test("the check catches a self pair, a repeat, a short text and stop phrases", () => {

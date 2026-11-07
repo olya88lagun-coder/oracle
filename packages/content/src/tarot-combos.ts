@@ -36,7 +36,7 @@ const TEXT = { min: 80, max: 320 } as const;
 
 export function checkTarotCombos(combos: ReadonlyMap<string, readonly TarotCombo[]>): string[] {
   const errors: string[] = [];
-  for (const card of TAROT_DECK.filter((item) => item.suit === "major")) {
+  for (const card of TAROT_DECK) {
     if (!combos.has(card.slug)) errors.push(`нет сочетаний для карты ${card.slug}`);
   }
   for (const [slug, list] of combos) {
