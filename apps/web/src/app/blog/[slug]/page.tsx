@@ -72,6 +72,11 @@ export default async function BlogPostPage({ params }: Params) {
           <p className="blog-meta">
             <span className="blog-meta__topic">{BLOG_TOPIC_LABELS[post.topic]}</span>
             <time dateTime={post.published}>{dateLabel(post.published)}</time>
+            {post.updated && (
+              <span>
+                обновлено <time dateTime={post.updated}>{dateLabel(post.updated)}</time>
+              </span>
+            )}
             <span>≈ {post.readingMinutes} мин</span>
           </p>
           <h1 className="display">{post.title}</h1>

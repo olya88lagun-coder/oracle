@@ -22,8 +22,8 @@ describe("sitemap.xml", () => {
     for (const path of ["/natalnaya-karta/slovar-terminov", "/metodika", "/privacy", "/oferta"]) expect(entry(path)?.priority, path).toBe(0.3);
   });
 
-  test("an article carries the date it was published as lastmod; pages without a reliable date carry none", () => {
-    for (const post of BLOG_POSTS) expect(entry(blogPath(post))?.lastModified, post.slug).toEqual(new Date(post.published));
+  test("an article carries its edit date, or else its publication date, as lastmod; pages without a reliable date carry none", () => {
+    for (const post of BLOG_POSTS) expect(entry(blogPath(post))?.lastModified, post.slug).toEqual(new Date(post.updated ?? post.published));
     expect(entry("/lila")?.lastModified).toBeUndefined();
     expect(entry("/")?.lastModified).toBeUndefined();
   });

@@ -1,7 +1,9 @@
 import { toIsoDate } from "@oracle/core";
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { ArcanaIndex } from "@/components/ArcanaIndex";
+import { BLOG_PATH } from "@/lib/blog";
 import { CompatCalculator } from "@/components/compat/CompatCalculator";
 import { compatFaqJsonLd, CompatCta, CompatGuide, CompatPreview } from "@/components/compat/CompatGuide";
 import { COMPAT_PATH, compatArcanumPath } from "@/lib/compat";
@@ -54,6 +56,15 @@ export default async function CompatibilityPage() {
           <p className="lead">Две даты — один общий аркан: как ваши матрицы судьбы разговаривают друг с другом. Без предсказаний — как повод для разговора.</p>
         </section>
         <CompatCalculator profileDate={profileDate} signedIn={Boolean(user)} paidReports={salesEnabled()} paid={paid} ownerFree={user ? await isOwnerUser(user.id) : false} />
+        <p className="compat-help-links">
+          <Link className="text-link" href={`${BLOG_PATH}/matritsa-sovmestimosti-rasshifrovka`}>
+            Посмотреть пример результата
+          </Link>
+          {" · "}
+          <Link className="text-link" href={`${BLOG_PATH}/kak-schitaetsya-matritsa-sovmestimosti`}>
+            Проверить формулу расчёта
+          </Link>
+        </p>
         <CompatPreview />
         <CompatGuide />
         <ArcanaIndex title="Все 22 аркана совместимости" hub={null} pathOf={compatArcanumPath} />
