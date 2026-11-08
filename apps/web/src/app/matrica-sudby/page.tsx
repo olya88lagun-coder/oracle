@@ -51,6 +51,7 @@ export default async function MatrixPage() {
       <section className="matrix-wrap stack" style={{ paddingBlock: 32 }} aria-labelledby="matrix-year-link">
         <h2 id="matrix-year-link">С каким вопросом войти в 2027 год?</h2>
         <p><Link className="touch-link" href={YEAR_PATH}>Мой аркан 2027 года — бесплатный расчёт и карточка</Link></p>
+        <p><Link className="touch-link" href="/numerologiya">Число судьбы и личный год 2027 по нумерологии</Link></p>
       </section>
       <MatrixGuide />
       <MatrixLibrary />

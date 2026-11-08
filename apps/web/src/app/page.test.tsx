@@ -22,6 +22,12 @@ describe("home page", () => {
     expect(markup).toContain('href="/metodika"');
   });
 
+  test("numerology is one of the practice cards on the home page", () => {
+    const practices = markup.slice(markup.indexOf('id="practices"'), markup.indexOf('id="home-principles"'));
+    expect(practices).toContain('href="/numerologiya"');
+    expect(practices).toContain("/practices/numerology.webp");
+  });
+
   test("links the free 2027 arcana once, between the practices and the principles, without a second matrix call to action", () => {
     expect(markup.match(/href="\/arkan-2027"/g)).toHaveLength(1);
     expect(markup).toContain(">Узнать аркан 2027</a>");

@@ -23,6 +23,7 @@ export function NumerologyPageView({ text, crumbs, siblings, footer }: { text: N
       </section>}
     </article>
     {siblings.length > 0 && <nav aria-label="Другие значения" className="numerology-siblings">
+      <p className="eyebrow">Другие значения</p>
       <ul>{siblings.map((sibling) => <li key={sibling.href}><Link href={sibling.href}>{sibling.name}</Link></li>)}</ul>
     </nav>}
     <p><Link className="button" href={footer.href}>{footer.name}</Link></p>
