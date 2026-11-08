@@ -7,6 +7,12 @@ import { NUMEROLOGY_PATH } from "./numerology";
 export const PYTHAGORAS_PATH = `${NUMEROLOGY_PATH}/kvadrat-pifagora`;
 export const squareCellPath = (cell: number): string => `${PYTHAGORAS_PATH}/${cell}`;
 export const SQUARE_LINES_PATH = `${PYTHAGORAS_PATH}/linii`;
+export const PYTHAGORAS_COMPAT_PATH = `${PYTHAGORAS_PATH}/sovmestimost`;
+
+// Совместимость открыта только с принятой партией 8: до этого нет ни адреса в карте сайта, ни ссылок
+export function acceptedPairPaths(): string[] {
+  return acceptedNumerologyPages("pair").length ? [PYTHAGORAS_COMPAT_PATH] : [];
+}
 
 // Только принятые партии: у непринятых страниц нет адреса в карте сайта и ссылок
 export function acceptedSquarePaths(): string[] {

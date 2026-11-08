@@ -1,9 +1,8 @@
 import { calculatePythagorasSquare, SQUARE_LINES, type PythagorasSquare, type SquareLineId } from "@oracle/core";
 import { DATE_ERROR } from "./matrix-save";
-import { PYTHAGORAS_PATH } from "./pythagoras";
 
 // Совместимость по квадрату Пифагора (docs/superpowers/specs/2026-11-09-pythagoras-compat-design.md)
-export const PYTHAGORAS_COMPAT_PATH = `${PYTHAGORAS_PATH}/sovmestimost`;
+export { acceptedPairPaths, PYTHAGORAS_COMPAT_PATH } from "./pythagoras";
 
 export type CellRelation = "empty" | "close" | "apart";
 export type LineLevel = "low" | "mid" | "high";
@@ -59,3 +58,4 @@ export function pairOutcome(youIso: string, partnerIso: string, today: Date): Pa
   if (!partner) return { ok: false, field: "partner", error: DATE_ERROR };
   return { ok: true, key: `${youIso}|${partnerIso}`, youIso, partnerIso, pair: compare(you, partner) };
 }
+
