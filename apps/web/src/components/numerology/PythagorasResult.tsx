@@ -7,6 +7,7 @@ import { sessionStore } from "@/lib/matrix-save";
 import { fatePath, reachNumerologyGoal } from "@/lib/numerology";
 import { SQUARE_CELL_NAMES, SQUARE_LINE_NAMES, SQUARE_LINES_PATH, squareCellPath, squareVariant } from "@/lib/pythagoras";
 import { prepareMatrixHandoff } from "@/lib/year-arcana";
+import { SquareWorking } from "./SquareWorking";
 
 // Первые абзацы принятых текстов: ячейка → якорь варианта → текст; линия → текст. Полные тексты в браузер не попадают
 export type SquareSummaries = {
@@ -20,22 +21,13 @@ const LATER = "Описание появится позже.";
 
 export function PythagorasResult({ iso, square, summaries, fatePages }: { iso: string; square: PythagorasSquare; summaries: SquareSummaries; fatePages: readonly number[] }) {
   const [year = "", month = "", day = ""] = iso.split("-");
-  const dateDigits = `${day}${month}${year}`;
-  const [first, second, third, fourth] = square.working;
-  const dayDigit = [...day].find((digit) => digit !== "0") ?? "";
   const fate = calculateFateNumber(iso, new Date())?.value;
   const cellDigits = (cell: number) => (square.counts[cell] ? String(cell).repeat(square.counts[cell]!) : "—");
   return <section className="year-result numerology-square" aria-labelledby="square-result-title">
     <div className="year-result__header stack">
       <p className="eyebrow">Ваш квадрат Пифагора</p>
       <h2 id="square-result-title" tabIndex={-1}>Квадрат Пифагора для {day}.{month}.{year}</h2>
-      <ol className="year-calculation muted numerology-square__working">
-        <li>Первое число: {[...dateDigits].join(" + ")} = {first}</li>
-        <li>Второе: сумма цифр {first} = {second}</li>
-        <li>{`Третье: ${first} − 2 × ${dayDigit} = ${first - 2 * Number(dayDigit) < 0 ? `−${third}, без минуса ${third}` : third}`}</li>
-        <li>Четвёртое: сумма цифр {third} = {fourth}</li>
-      </ol>
-      <p className="muted">В квадрат идут цифры {dateDigits} и {first}, {second}, {third}, {fourth}, нули не учитываются.</p>
+      <SquareWorking iso={iso} square={square} />
     </div>
     <table className="numerology-square__grid">
       <caption>Квадрат Пифагора: цифры по ячейкам</caption>
