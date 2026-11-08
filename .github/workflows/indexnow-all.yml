@@ -1,0 +1,41 @@
+name: indexnow-all
+
+# Ручной запуск: отправить Яндексу по IndexNow все адреса из sitemap.xml.
+# deploy.yml сообщает только о новых страницах; это нужно, когда старые страницы долго не попадают в индекс.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    env:
+      SITE_URL: ${{ vars.SITE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Send all sitemap URLs to Yandex (IndexNow)
+        shell: bash
+        run: |
+          set -euo pipefail
+          site="${SITE_URL%/}"
+          host="${site#https://}"
+          key="$(cat apps/web/public/indexnow.txt)"
+          mapfile -t urls < <(curl -fsS "$site/sitemap.xml" | grep -o '<loc>[^<]*</loc>' | sed -e 's/<loc>//' -e 's#</loc>##' | sort -u)
+          echo "Sitemap: ${#urls[@]} URLs"
+          if [[ ${#urls[@]} -eq 0 ]]; then
+            echo "::error::sitemap.xml is empty or unreachable"
+            exit 1
+          fi
+          # IndexNow принимает до 10 000 адресов за запрос
+          for ((i = 0; i < ${#urls[@]}; i += 10000)); do
+            payload="$(jq -n --arg host "$host" --arg key "$key" --arg loc "$site/indexnow.txt" '{host: $host, key: $key, keyLocation: $loc, urlList: $ARGS.positional}' --args "${urls[@]:i:10000}")"
+            code="$(curl -s -o /tmp/indexnow.out -w '%{http_code}' -X POST https://yandex.com/indexnow -H 'Content-Type: application/json; charset=utf-8' --data "$payload" || echo 000)"
+            echo "IndexNow response: $code $(head -c 300 /tmp/indexnow.out 2>/dev/null)"
+            if [[ "$code" != "200" && "$code" != "202" ]]; then
+              echo "::error::IndexNow returned $code"
+              exit 1
+            fi
+          done
