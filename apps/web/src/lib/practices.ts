@@ -2,9 +2,10 @@ import { MATRIX_PATH } from "./arcana-paths";
 import { COMPAT_PATH } from "./compat";
 import { LILA_PATH } from "./lila-paths";
 import { NATAL_PATH } from "./natal-paths";
+import { NUMEROLOGY_PATH } from "./numerology";
 import { TARO_PATH } from "./taro-paths";
 
-export type Practice = { slug: "matrix" | "lila" | "compat" | "tarot" | "natal"; title: string; summary: string; href: string | null };
+export type Practice = { slug: "matrix" | "lila" | "compat" | "tarot" | "natal" | "numerology"; title: string; summary: string; href: string | null };
 
 // Порядок — порядок запуска из спецификации (раздел 6); href есть только у открытых практик
 export const PRACTICES: readonly Practice[] = [
@@ -13,6 +14,7 @@ export const PRACTICES: readonly Practice[] = [
   { slug: "compat", title: "Совместимость", summary: "Рассчитайте общий аркан по двум датам и прочитайте вопрос для разговора вдвоём.", href: COMPAT_PATH },
   { slug: "tarot", title: "Таро", summary: "Карта дня и значения 78 карт: образ, небольшое действие и вопрос для себя.", href: TARO_PATH },
   { slug: "natal", title: "Натальная карта", summary: "Положения Солнца, Луны и планет, асцендент, дома и аспекты по дате, времени и месту рождения. Считается в вашем браузере.", href: NATAL_PATH },
+  { slug: "numerology", title: "Нумерология", summary: "Число судьбы и личный год 2027 по дате рождения: расчёт с объяснением и описание каждого числа.", href: NUMEROLOGY_PATH },
 ];
 
 // Один призыв для бесплатного входа по всему сайту и одно обещание результата

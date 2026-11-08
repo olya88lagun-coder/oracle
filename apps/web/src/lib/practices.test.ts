@@ -11,7 +11,7 @@ describe("free entry texts", () => {
 
 describe("PRACTICES", () => {
   test("lists the practices of the spec in launch order", () => {
-    expect(PRACTICES.map((practice) => practice.slug)).toEqual(["matrix", "lila", "compat", "tarot", "natal"]);
+    expect(PRACTICES.map((practice) => practice.slug)).toEqual(["matrix", "lila", "compat", "tarot", "natal", "numerology"]);
   });
 
   test("every practice has a title and a one-sentence summary", () => {
@@ -21,13 +21,14 @@ describe("PRACTICES", () => {
     }
   });
 
-  test("all five practices are open, and lead to their own pages", () => {
+  test("all six practices are open, and lead to their own pages", () => {
     expect(PRACTICES.map((practice) => [practice.slug, practice.href])).toEqual([
       ["matrix", "/matrica-sudby"],
       ["lila", "/lila"],
       ["compat", "/sovmestimost"],
       ["tarot", "/taro"],
       ["natal", "/natalnaya-karta"],
+      ["numerology", "/numerologiya"],
     ]);
   });
 });

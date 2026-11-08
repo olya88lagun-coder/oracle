@@ -85,4 +85,5 @@ if (import.meta.main) {
   write(join(root, "src", "generated", "natal-houses.json"), collectArcana(join(root, "natal-houses")));
   write(join(root, "src", "generated", "natal-planets.json"), collectNatalPlanets(join(root, "natal-planets.md")));
   write(join(root, "src", "generated", "articles.json"), collectArticles(join(root, "articles")));
+  write(join(root, "src", "generated", "numerology.json"), collectArcana(join(root, "numerology")));
 }

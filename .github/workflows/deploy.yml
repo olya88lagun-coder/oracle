@@ -122,6 +122,7 @@ jobs:
           curl -fsS "$SITE/matrica-sudby" > "$tmp/matrix.html"
           curl -fsS "$SITE/matrica-sudby/arkan-11-sila" > "$tmp/arcanum.html"
           curl -fsS "$SITE/oferta" > "$tmp/offer.html"
+          curl -fsS "$SITE/numerologiya" > "$tmp/numerology.html"
 
           assert_contains() {
             local needle="$1"
@@ -164,6 +165,8 @@ jobs:
           assert_contains 'application/ld+json' "$tmp/arcanum.html" "arcanum article markup"
           assert_contains "$SITE/matrica-sudby/arkan-22-shut" "$tmp/sitemap.xml" "sitemap arcana"
           assert_contains 'ИНН' "$tmp/offer.html" "offer names the seller"
+          assert_contains 'content="index, follow"' "$tmp/numerology.html" "numerology indexable"
+          assert_contains "$SITE/numerologiya" "$tmp/sitemap.xml" "sitemap numerology"
           assert_contains "$SITE/oferta" "$tmp/sitemap.xml" "sitemap offer"
 
           assert_status "404" "unknown arcanum is 404" "$SITE/matrica-sudby/arkan-11-mag"

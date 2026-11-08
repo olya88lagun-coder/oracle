@@ -1,0 +1,9 @@
+.fate-value { color: var(--accent); }
+.numerology-crumb { display: inline-flex; align-items: center; gap: 12px; }
+.numerology-article { max-width: 760px; padding: 24px 0 48px; }
+.numerology-article h2 { margin-top: 32px; }
+.numerology-siblings ul { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 32px; padding: 0; list-style: none; }
+.numerology-siblings a, .numerology-catalog a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none; }
+.numerology-siblings a:hover, .numerology-siblings a:focus-visible, .numerology-catalog a:hover, .numerology-catalog a:focus-visible { border-color: var(--accent-line); }
+.numerology-catalog ul { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.numerology-catalog span { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; color: var(--ink-soft); border: 1px dashed var(--line); border-radius: var(--radius); }
