@@ -1,5 +1,5 @@
 import { acceptedNumerologyPages, numerologySummary, numerologyText } from "@oracle/content/numerology";
-import { FATE_NUMBERS } from "@oracle/core";
+import { FATE_NUMBERS, MASTER_NUMBERS } from "@oracle/core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FateCalculator } from "@/components/numerology/FateCalculator";
@@ -41,7 +41,7 @@ export default function NumerologyPage() {
   };
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }} />
-    <main className="year-page">
+    <main className="year-page numerology-page numerology-landing">
       <nav aria-label="Хлебные крошки" className="year-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><span>Нумерология</span></nav>
       <FateCalculator summaries={summaries} />
       <section className="year-guide" aria-labelledby="fate-guide-title">
@@ -51,7 +51,7 @@ export default function NumerologyPage() {
       <section className="year-catalog numerology-catalog" aria-labelledby="fate-catalog-title">
         <p className="eyebrow">Все числа</p>
         <h2 id="fate-catalog-title">Значения чисел судьбы</h2>
-        <ul>{FATE_NUMBERS.map((n) => <li key={n}>{summaries[n] ? <Link href={fatePath(n)} aria-label={`Число судьбы ${n}`}>{n}</Link> : <span title="Описание появится позже">{n}</span>}</li>)}</ul>
+        <ul>{FATE_NUMBERS.map((n) => <li key={n} className={MASTER_NUMBERS.some((number) => number === n) ? "numerology-master" : undefined}>{summaries[n] ? <Link href={fatePath(n)} aria-label={`Число судьбы ${n}`}>{n}</Link> : <span title="Описание появится позже">{n}</span>}</li>)}</ul>
       </section>
       <section className="year-faq" aria-labelledby="fate-faq-title"><p className="eyebrow">Вопросы</p><h2 id="fate-faq-title">О числе судьбы</h2>{FATE_FAQ.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</section>
       <p className="muted year-footnote">Практика для самопознания. Решения о здоровье, деньгах и отношениях опирайте на факты и свою ситуацию.</p>

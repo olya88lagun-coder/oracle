@@ -45,6 +45,6 @@ export default async function PersonalYearNumberPage({ params }: Params) {
   const siblings = acceptedNumerologyPages("year").filter((page) => page.key !== n).map((page) => ({ name: page.key, href: personalYearPath(Number(page.key)) }));
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
-    <NumerologyPageView text={text} crumbs={[{ name: "Нумерология", href: NUMEROLOGY_PATH }, { name: "Личный год 2027", href: PERSONAL_YEAR_PATH }]} siblings={siblings} footer={{ name: "Рассчитать свой личный год", href: PERSONAL_YEAR_PATH }} />
+    <NumerologyPageView text={text} emblem={n} crumbs={[{ name: "Нумерология", href: NUMEROLOGY_PATH }, { name: "Личный год 2027", href: PERSONAL_YEAR_PATH }]} siblings={siblings} footer={{ name: "Рассчитать свой личный год", href: PERSONAL_YEAR_PATH }} />
   </>;
 }

@@ -44,6 +44,6 @@ export default async function FateNumberPage({ params }: Params) {
   const siblings = acceptedNumerologyPages("fate").filter((page) => page.key !== n).map((page) => ({ name: page.key, href: fatePath(Number(page.key)) }));
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
-    <NumerologyPageView text={text} crumbs={[{ name: "Нумерология", href: NUMEROLOGY_PATH }]} siblings={siblings} footer={{ name: "Рассчитать своё число судьбы", href: NUMEROLOGY_PATH }} />
+    <NumerologyPageView text={text} emblem={n} crumbs={[{ name: "Нумерология", href: NUMEROLOGY_PATH }]} siblings={siblings} footer={{ name: "Рассчитать своё число судьбы", href: NUMEROLOGY_PATH }} />
   </>;
 }

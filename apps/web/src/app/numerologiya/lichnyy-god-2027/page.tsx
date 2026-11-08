@@ -42,7 +42,7 @@ export default function PersonalYearPage() {
   };
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }} />
-    <main className="year-page">
+    <main className="year-page numerology-page numerology-landing">
       <nav aria-label="Хлебные крошки" className="year-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href={NUMEROLOGY_PATH}>Нумерология</Link><span aria-hidden="true">/</span><span>Личный год 2027</span></nav>
       <PersonalYearCalculator summaries={summaries} />
       <section className="year-guide" aria-labelledby="personal-year-guide-title">
