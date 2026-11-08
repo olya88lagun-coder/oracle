@@ -1,6 +1,6 @@
 "use client";
 
-import type { FateNumber } from "@oracle/core";
+import { MASTER_NUMBERS, type FateNumber } from "@oracle/core";
 import Link from "next/link";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { sessionStore } from "@/lib/matrix-save";
@@ -16,11 +16,12 @@ const dateDigits = (iso: string): string[] => {
 };
 
 export function FateResult({ iso, result, summary }: { iso: string; result: FateNumber; summary?: FateSummary }) {
+  const master = MASTER_NUMBERS.some((number) => number === result.value);
   return <section className="year-result" aria-labelledby="fate-result-title">
     <div className="year-result__header stack">
       <p className="eyebrow">Ваше число судьбы</p>
-      <h2 id="fate-result-title" tabIndex={-1}>Число судьбы <span className="fate-value">{result.value}</span></h2>
-      <p className="year-calculation muted">{dateDigits(iso).join(" + ")} = {result.sum}{result.steps.length > 1 && <>; {result.steps.join(" → ")}</>}</p>
+      <h2 id="fate-result-title" tabIndex={-1}>Число судьбы <span className={master ? "fate-value fate-value--master" : "fate-value"}>{result.value}</span></h2>
+      <p className="year-calculation muted"><span>{dateDigits(iso).join(" + ")} = {result.sum}{result.steps.length > 1 && ";"}</span>{result.steps.length > 1 && <>{" "}<span>{result.steps.join(" → ")}</span></>}</p>
     </div>
     <div className="stack year-reading">
       {summary

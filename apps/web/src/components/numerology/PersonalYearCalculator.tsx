@@ -26,7 +26,7 @@ export function PersonalYearCalculator({ summaries }: { summaries: Readonly<Reco
           <div className="field"><label htmlFor="personal-year-birth-date">Дата рождения</label>
             <input ref={input} id="personal-year-birth-date" className="input" type="date" min="1900-01-01" required aria-invalid={Boolean(error)} aria-describedby={error ? "personal-year-date-error personal-year-privacy" : "personal-year-privacy"} onChange={() => setOutcome(null)} />
           </div>
-          <button className="button button--lavender" type="submit">Узнать личный год</button>
+          <button className="button" type="submit">Узнать личный год</button>
           {error && <p id="personal-year-date-error" className="error" role="alert">{error}</p>}
           <p className="muted" id="personal-year-privacy">Бесплатно, без регистрации. Дата остаётся в браузере.</p>
         </form>

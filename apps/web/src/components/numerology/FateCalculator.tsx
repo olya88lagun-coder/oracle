@@ -26,7 +26,7 @@ export function FateCalculator({ summaries }: { summaries: Readonly<Record<numbe
           <div className="field"><label htmlFor="fate-birth-date">Дата рождения</label>
             <input ref={input} id="fate-birth-date" className="input" type="date" min="1900-01-01" required aria-invalid={Boolean(error)} aria-describedby={error ? "fate-date-error fate-privacy" : "fate-privacy"} onChange={() => setOutcome(null)} />
           </div>
-          <button className="button button--lavender" type="submit">Узнать число судьбы</button>
+          <button className="button" type="submit">Узнать число судьбы</button>
           {error && <p id="fate-date-error" className="error" role="alert">{error}</p>}
           <p className="muted" id="fate-privacy">Бесплатно, без регистрации. Дата остаётся в браузере.</p>
         </form>
