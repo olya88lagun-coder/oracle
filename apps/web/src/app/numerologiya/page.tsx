@@ -41,7 +41,7 @@ export default function NumerologyPage() {
   };
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }} />
-    <main className="year-page numerology-page">
+    <main className="year-page numerology-page numerology-landing">
       <nav aria-label="Хлебные крошки" className="year-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><span>Нумерология</span></nav>
       <FateCalculator summaries={summaries} />
       <section className="year-guide" aria-labelledby="fate-guide-title">

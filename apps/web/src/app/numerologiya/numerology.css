@@ -1,3 +1,24 @@
+.numerology-page.numerology-landing {
+  --numerology-scene-height: clamp(580px, 56vw, var(--practice-hero-height));
+  position: relative;
+  isolation: isolate;
+  max-width: none;
+  padding-inline: max(28px, calc((100% - 1144px) / 2));
+}
+
+.numerology-landing::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: var(--numerology-scene-height);
+  pointer-events: none;
+  background:
+    linear-gradient(0deg, var(--bg), var(--scrim-clear) 32%),
+    linear-gradient(90deg, var(--practice-hero-shade-start), var(--practice-hero-shade-middle) 43%, var(--practice-hero-shade-edge) 75%, var(--scrim-clear)),
+    url('/images/numerology/numerology-hero.webp') 68% 52% / cover;
+}
+
 .numerology-page .year-breadcrumb {
   flex-wrap: wrap;
   column-gap: 12px;
@@ -19,7 +40,8 @@
 .numerology-page .year-hero {
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   gap: clamp(24px, 5vw, 72px);
-  padding-block: 24px 56px;
+  min-height: calc(var(--numerology-scene-height) - 60px);
+  padding-block: 24px 40px;
 }
 
 .numerology-page .year-hero .eyebrow {
@@ -39,23 +61,29 @@
 }
 
 .numerology-page .year-hero__art {
-  width: min(100%, 450px);
-  justify-self: center;
-  background:
-    radial-gradient(ellipse at center, var(--scrim) 4%, var(--scrim-clear) 62%),
-    url('/images/numerology/numerology-hero.webp') 65% center / cover;
-  box-shadow: inset 0 0 0 8px var(--bg), inset 0 0 0 9px var(--accent-line);
-  color: var(--ink);
+  align-self: end;
+  justify-self: end;
+  aspect-ratio: auto;
+  margin-inline-end: clamp(0px, 3vw, 44px);
+  padding: 10px 0 0 24px;
+  border: 0;
+  border-top: 1px solid var(--accent-line);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  align-items: flex-end;
+  text-align: right;
 }
 
 .numerology-page .year-hero__art span {
-  font-size: clamp(76px, 8vw, 116px);
+  font-size: clamp(30px, 4vw, 52px);
   line-height: 1;
 }
 
 .numerology-page .year-hero__art p {
-  margin: 8px 0 0;
-  color: var(--ink);
+  margin: 4px 0 0;
+  color: var(--ink-soft);
+  font-size: 14px;
   line-height: 1.45;
 }
 
@@ -327,7 +355,19 @@
 }
 
 @media (max-width: 760px) {
+  .numerology-page.numerology-landing {
+    --numerology-scene-height: 540px;
+    padding-inline: 16px;
+  }
+
+  .numerology-landing::before {
+    background:
+      linear-gradient(0deg, var(--bg), var(--practice-hero-shade-mobile) 46%),
+      url('/images/numerology/numerology-hero.webp') 70% center / cover;
+  }
+
   .numerology-page .year-hero {
+    min-height: 0;
     padding-block: 14px 32px;
   }
 
