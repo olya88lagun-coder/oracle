@@ -1,6 +1,6 @@
-import { expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { DATE_ERROR } from "./matrix-save";
-import { FATE_FAQ, fateOutcome, fatePath, NUMEROLOGY_PATH } from "./numerology";
+import { FATE_FAQ, fateOutcome, fatePath, NUMEROLOGY_PATH, PERSONAL_YEAR_FAQ, PERSONAL_YEAR_PATH, personalYearOutcome, personalYearPath } from "./numerology";
 
 const TODAY = new Date("2026-11-08");
 
@@ -27,4 +27,22 @@ test("FAQ explains the formula with the 14.03.1992 example and has unique questi
   expect(FATE_FAQ.length).toBeGreaterThanOrEqual(4);
   expect(FATE_FAQ.length).toBeLessThanOrEqual(6);
   for (const item of FATE_FAQ) expect(item.answer.toLowerCase()).not.toContain("карм");
+});
+
+describe("personal year 2027", () => {
+  test("addresses", () => {
+    expect(PERSONAL_YEAR_PATH).toBe("/numerologiya/lichnyy-god-2027");
+    expect(personalYearPath(1)).toBe("/numerologiya/lichnyy-god-2027/1");
+  });
+  test("outcome for a valid and a wrong date", () => {
+    expect(personalYearOutcome("1992-03-14", TODAY)).toEqual({ ok: true, iso: "1992-03-14", result: { year: 2027, sum: 19, value: 1 } });
+    expect(personalYearOutcome("", TODAY)).toEqual({ ok: false, error: DATE_ERROR });
+  });
+  test("FAQ separates personal year from the arcanum of 2027", () => {
+    const item = PERSONAL_YEAR_FAQ.find((q) => q.question === "Чем личный год отличается от аркана 2027 года?");
+    expect(item?.answer).toContain("девятилетн");
+    expect(new Set(PERSONAL_YEAR_FAQ.map((q) => q.question)).size).toBe(PERSONAL_YEAR_FAQ.length);
+    expect(PERSONAL_YEAR_FAQ.length).toBeGreaterThanOrEqual(4);
+    expect(PERSONAL_YEAR_FAQ.length).toBeLessThanOrEqual(6);
+  });
 });

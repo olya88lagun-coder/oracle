@@ -1,5 +1,5 @@
 import { acceptedNumerologyPages } from "@oracle/content/numerology";
-import { calculateFateNumber, type FateNumber } from "@oracle/core";
+import { calculateFateNumber, calculatePersonalYear, type FateNumber, type PersonalYear } from "@oracle/core";
 import { reachGoal, type Goal } from "./analytics";
 import { isAnalyticsReady } from "./analytics-runtime";
 import { DATE_ERROR } from "./matrix-save";
@@ -20,6 +20,20 @@ export function fateOutcome(iso: string, today: Date): FateOutcome {
   return result ? { ok: true, iso, result } : { ok: false, error: DATE_ERROR };
 }
 
+export const PERSONAL_YEAR_PATH = `${NUMEROLOGY_PATH}/lichnyy-god-2027`;
+export const personalYearPath = (n: number): string => `${PERSONAL_YEAR_PATH}/${n}`;
+
+export function acceptedPersonalYearPaths(): string[] {
+  return acceptedNumerologyPages("year").map((page) => personalYearPath(Number(page.key)));
+}
+
+export type PersonalYearOutcome = { ok: true; iso: string; result: PersonalYear } | { ok: false; error: string };
+
+export function personalYearOutcome(iso: string, today: Date): PersonalYearOutcome {
+  const result = calculatePersonalYear(iso, today);
+  return result ? { ok: true, iso, result } : { ok: false, error: DATE_ERROR };
+}
+
 type NumerologyGoal = Extract<Goal, `numerology_${string}` | `personal_year_${string}`>;
 
 // Как у аркана года: клики до согласия и готовности счётчика не досылаем
@@ -34,4 +48,12 @@ export const FATE_FAQ = [
   { question: "Чем число судьбы отличается от матрицы судьбы?", answer: "Число судьбы — одно число из суммы цифр даты. Матрица судьбы строится по той же дате, но даёт целую схему из арканов: личность, центр, задачу и другие позиции. Это разные практики, их можно читать вместе." },
   { question: "Это предсказание?", answer: "Нет. Число судьбы — символическая практика для самопознания. Оно не определяет события, здоровье, доход или отношения, а предлагает тему и вопрос для размышления." },
   { question: "Куда попадает дата рождения?", answer: "Расчёт выполняется в браузере. Дата не включается в адрес страницы и в события Метрики. Только при переходе к Матрице она временно сохраняется в текущей вкладке, чтобы не вводить её повторно." },
+] as const;
+
+export const PERSONAL_YEAR_FAQ = [
+  { question: "Как рассчитать личный год 2027 по дате рождения?", answer: "Сложите цифры дня и месяца рождения и цифры 2027 года: 2 + 0 + 2 + 7. Сумму сворачивайте сложением цифр до числа от 1 до 9. Например, 14 марта: 1 + 4 + 0 + 3 + 2 + 0 + 2 + 7 = 19, затем 1 + 9 = 10 и 1 + 0 = 1 — личный год 1." },
+  { question: "Чем личный год отличается от аркана 2027 года?", answer: "Это разные практики. Аркан года считается от центра вашей матрицы судьбы и описывает образ календарного года через 22 аркана. Личный год — нумерологическое число от 1 до 9, оно показывает место 2027 года в вашем девятилетнем цикле. Их можно читать вместе." },
+  { question: "Почему год рождения не участвует в расчёте?", answer: "Личный год описывает, какой по счёту год девятилетнего цикла начинается для вас в 2027 году. Для этого нужны день и месяц рождения и сам 2027 год. Поэтому у людей с одинаковой датой рождения, но разными годами, личный год совпадает." },
+  { question: "Когда начинается личный год — 1 января или в день рождения?", answer: "Мы считаем личный год по календарю: с 1 января по 31 декабря 2027 года. В некоторых школах его отсчитывают от дня рождения; это другой вариант методики." },
+  { question: "Это прогноз на 2027 год?", answer: "Нет. Личный год — символическая тема для размышления. Он не определяет события, доход, здоровье или отношения, а подсказывает, на чём можно сосредоточиться." },
 ] as const;
