@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FateCalculator } from "@/components/numerology/FateCalculator";
 import type { FateSummary } from "@/components/numerology/FateResult";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
-import { FATE_FAQ, fatePath, NUMEROLOGY_PATH } from "@/lib/numerology";
+import { CLOCK_PATH, FATE_FAQ, fatePath, NUMEROLOGY_PATH, PERSONAL_YEAR_PATH } from "@/lib/numerology";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import "../arkan-2027/year.css";
@@ -46,7 +46,7 @@ export default function NumerologyPage() {
       <FateCalculator summaries={summaries} />
       <section className="year-guide" aria-labelledby="fate-guide-title">
         <div className="stack"><p className="eyebrow">Как читать результат</p><h2 id="fate-guide-title">Не приговор.<br />Тема для размышления.</h2><p>Число судьбы — символ, к которому можно примерять свой опыт. Прочитайте описание, отметьте, что откликается, и вернитесь к вопросу через время: ответ может измениться вместе с вами.</p><p>Это не прогноз событий. Число не определяет здоровье, доход или отношения.</p></div>
-        <div className="year-method stack"><h3>Открытая формула</h3><p>Складываем все цифры полной даты рождения и сворачиваем сумму, пока не получится 1–9. Если на любом шаге вышло 11, 22 или 33, останавливаемся.</p><p>Например, 14.03.1992: 1 + 4 + 0 + 3 + 1 + 9 + 9 + 2 = 29; 2 + 9 = <strong>11</strong>.</p><p>По той же дате можно рассчитать <Link href={MATRIX_PATH}>матрицу судьбы</Link> — это другая практика, они дополняют друг друга.</p><Link className="touch-link" href="/metodika">О текстах и методике сайта</Link></div>
+        <div className="year-method stack"><h3>Открытая формула</h3><p>Складываем все цифры полной даты рождения и сворачиваем сумму, пока не получится 1–9. Если на любом шаге вышло 11, 22 или 33, останавливаемся.</p><p>Например, 14.03.1992: 1 + 4 + 0 + 3 + 1 + 9 + 9 + 2 = 29; 2 + 9 = <strong>11</strong>.</p><p>По той же дате можно рассчитать <Link href={MATRIX_PATH}>матрицу судьбы</Link> — это другая практика, они дополняют друг друга.</p><Link className="touch-link" href={PERSONAL_YEAR_PATH}>Личный год 2027</Link><Link className="touch-link" href={CLOCK_PATH}>Одинаковое и зеркальное время на часах</Link><Link className="touch-link" href="/metodika">О текстах и методике сайта</Link></div>
       </section>
       <section className="year-catalog numerology-catalog" aria-labelledby="fate-catalog-title">
         <p className="eyebrow">Все числа</p>

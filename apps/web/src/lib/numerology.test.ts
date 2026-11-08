@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { DATE_ERROR } from "./matrix-save";
-import { FATE_FAQ, fateOutcome, fatePath, NUMEROLOGY_PATH, PERSONAL_YEAR_FAQ, PERSONAL_YEAR_PATH, personalYearOutcome, personalYearPath } from "./numerology";
+import { acceptedClockPaths, CLOCK_FAQ, CLOCK_PATH, clockPath, FATE_FAQ, fateOutcome, fatePath, NUMEROLOGY_PATH, PERSONAL_YEAR_FAQ, PERSONAL_YEAR_PATH, personalYearOutcome, personalYearPath, relatedClocks } from "./numerology";
 
 const TODAY = new Date("2026-11-08");
 
@@ -44,5 +44,33 @@ describe("personal year 2027", () => {
     expect(new Set(PERSONAL_YEAR_FAQ.map((q) => q.question)).size).toBe(PERSONAL_YEAR_FAQ.length);
     expect(PERSONAL_YEAR_FAQ.length).toBeGreaterThanOrEqual(4);
     expect(PERSONAL_YEAR_FAQ.length).toBeLessThanOrEqual(6);
+  });
+});
+
+describe("clock times", () => {
+  test("addresses use hh-mm", () => {
+    expect(CLOCK_PATH).toBe("/numerologiya/chasy");
+    expect(clockPath("11-11")).toBe("/numerologiya/chasy/11-11");
+  });
+  test("accepted clock paths are a subset of the 37 times", () => {
+    expect(acceptedClockPaths().length).toBeLessThanOrEqual(37);
+    for (const path of acceptedClockPaths()) expect(path).toMatch(/^\/numerologiya\/chasy\/\d{2}-\d{2}$/);
+  });
+  test("related times: 2–3 accepted neighbours of the same group, never itself", () => {
+    const related = relatedClocks("12-12");
+    expect(related.length).toBeGreaterThanOrEqual(2);
+    expect(related.length).toBeLessThanOrEqual(3);
+    expect(related.map((t) => t.slug)).not.toContain("12-12");
+    for (const t of related) {
+      expect(["repeat", "both"]).toContain(t.kind);
+      expect(acceptedClockPaths()).toContain(clockPath(t.slug));
+    }
+    for (const t of relatedClocks("12-21")) expect(["mirror", "both"]).toContain(t.kind);
+    expect(relatedClocks("99-99")).toEqual([]);
+  });
+  test("FAQ of the hub: unique questions, explains both kinds", () => {
+    expect(new Set(CLOCK_FAQ.map((q) => q.question)).size).toBe(CLOCK_FAQ.length);
+    expect(CLOCK_FAQ.length).toBeGreaterThanOrEqual(4);
+    expect(CLOCK_FAQ.map((q) => q.answer).join(" ")).toContain("зеркальн");
   });
 });
