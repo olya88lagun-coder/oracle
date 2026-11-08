@@ -54,8 +54,8 @@ export function PythagorasCompatResult({ outcome, texts }: { outcome: Extract<Pa
         const item = byCell.get(cell)!;
         return <td key={cell} className={`numerology-pair__tile numerology-pair__tile--${item.relation}`}>
           <span className="numerology-square__name">{cell} · {SQUARE_CELL_NAMES[cell]}</span>
-          <span className="numerology-pair__digits numerology-pair__you">Вы: {digits(cell, item.you)}</span>
-          <span className="numerology-pair__digits numerology-pair__partner">Партнёр: {digits(cell, item.partner)}</span>
+          <span className="numerology-pair__digits numerology-pair__you"><span className="numerology-pair__who">Вы: </span>{digits(cell, item.you)}</span>
+          <span className="numerology-pair__digits numerology-pair__partner"><span className="numerology-pair__who">Партнёр: </span>{digits(cell, item.partner)}</span>
           <span className="numerology-pair__relation">{RELATION_LABELS[item.relation]}</span>
         </td>;
       })}</tr>)}</tbody>
