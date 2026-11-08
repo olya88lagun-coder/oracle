@@ -16,6 +16,9 @@ export const NUMEROLOGY_PAGES: readonly NumerologyPageRef[] = [
 
 // Партии, которые владелица приняла: пока партия не принята, её страницы закрыты (404, нет в карте сайта, нет ссылок).
 // Номер добавляется отдельным коммитом после вычитки.
-export const NUMEROLOGY_ACCEPTED_BATCHES: ReadonlySet<number> = new Set<number>([]);
+export const NUMEROLOGY_ACCEPTED_BATCHES: ReadonlySet<number> = new Set<number>([
+  1, // числа судьбы — приняты 08.11.2026
+  2, // личный год 2027 — приняты 08.11.2026
+]);
 
 export const numerologyFile = (page: Pick<NumerologyPageRef, "kind" | "key">): string => `${page.kind}-${page.key}.md`;
