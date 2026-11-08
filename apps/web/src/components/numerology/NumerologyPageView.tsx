@@ -4,7 +4,7 @@ import Link from "next/link";
 type Crumb = { name: string; href: string };
 
 // Страница значения: число судьбы, личный год или время на часах. Разделы — по порядку из текста
-export function NumerologyPageView({ text, crumbs, siblings, footer, emblem }: { text: NumerologyText; emblem?: string; crumbs: readonly Crumb[]; siblings: readonly Crumb[]; footer: Crumb }) {
+export function NumerologyPageView({ text, crumbs, siblings, footer, emblem, anchors }: { text: NumerologyText; emblem?: string; anchors?: Readonly<Record<string, string>>; crumbs: readonly Crumb[]; siblings: readonly Crumb[]; footer: Crumb }) {
   return <main className="year-page numerology-page">
     <nav aria-label="Хлебные крошки" className="year-breadcrumb">
       <Link href="/">Главная</Link>
@@ -15,7 +15,7 @@ export function NumerologyPageView({ text, crumbs, siblings, footer, emblem }: {
         {emblem && <p className="numerology-emblem" aria-hidden="true">{emblem}</p>}
         <h1 className="display">{text.title}</h1>
       </header>
-      {text.sections.map((section) => <section key={section.title} className={section.title === "Вопрос для себя" ? "stack numerology-question" : "stack"}>
+      {text.sections.map((section) => <section key={section.title} id={anchors?.[section.title]} className={section.title === "Вопрос для себя" ? "stack numerology-question" : "stack"}>
         <h2>{section.title}</h2>
         {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         {section.items.length > 0 && <ul className="year-advice">{section.items.map((item) => <li key={item}>{item}</li>)}</ul>}
