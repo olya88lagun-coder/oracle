@@ -25,3 +25,12 @@ test("one h1, the form, JSON-LD and no links to closed pages", () => {
   expect(graph[1]?.mainEntity?.map((q) => q.name)).toEqual(SQUARE_FAQ.map((q) => q.question));
   expect(html).toContain('href="/numerologiya"');
 });
+
+test("the square is public and linked from the numerology hub", async () => {
+  const { PUBLIC_PATHS } = await import("@/lib/seo");
+  const { default: NumerologyPage } = await import("@/app/numerologiya/page");
+  const { acceptedSquarePaths } = await import("@/lib/pythagoras");
+  expect(PUBLIC_PATHS).toContain(PYTHAGORAS_PATH);
+  for (const path of acceptedSquarePaths()) expect(PUBLIC_PATHS).toContain(path);
+  expect(renderToStaticMarkup(<NumerologyPage />)).toContain(`href="${PYTHAGORAS_PATH}"`);
+});

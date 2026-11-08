@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NumerologyPageView } from "@/components/numerology/NumerologyPageView";
 import { NUMEROLOGY_PATH } from "@/lib/numerology";
-import { PYTHAGORAS_PATH, SQUARE_CELL_NAMES, SQUARE_LINE_NAMES, squareVariant } from "@/lib/pythagoras";
+import { PYTHAGORAS_PATH, SQUARE_LINE_NAMES, squareVariant } from "@/lib/pythagoras";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import "../../../arkan-2027/year.css";
@@ -21,7 +21,7 @@ export function generateStaticParams() {
 
 const acceptedText = (cell: string) => (acceptedNumerologyPages("square").some((page) => page.key === cell) ? numerologyText("square", cell) : undefined);
 const pathOf = (key: string) => `${PYTHAGORAS_PATH}/${key}`;
-const labelOf = (key: string) => (key === "linii" ? "Линии" : `${key} · ${SQUARE_CELL_NAMES[Number(key)]}`);
+const labelOf = (key: string) => (key === "linii" ? "Линии" : key);
 
 // Заголовок раздела → якорь: варианты ячейки (#pusto, #4 … #44444) или линии (#celeustremlennost …)
 function anchorsOf(key: string): Record<string, string> {

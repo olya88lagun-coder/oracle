@@ -56,7 +56,11 @@ export default function PythagorasPage() {
       ] },
     ],
   };
-  const tile = (key: string, label: string, href: string) => <li key={key}>{accepted.has(key) ? <Link href={href}>{label}</Link> : <span title="Описание появится позже">{label}</span>}</li>;
+  // Крупная цифра «монеты» и под ней название мелко: длинное название крупным шрифтом не помещается на 375 px
+  const tile = (key: string, label: string, name: string, href: string) => {
+    const content = <>{label}<small className="numerology-square-tile__name">{name}</small></>;
+    return <li key={key}>{accepted.has(key) ? <Link href={href}>{content}</Link> : <span title="Описание появится позже">{content}</span>}</li>;
+  };
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }} />
     <main className="year-page numerology-page">
@@ -69,7 +73,7 @@ export default function PythagorasPage() {
       <section className="year-catalog numerology-catalog" aria-labelledby="square-catalog-title">
         <p className="eyebrow">Все ячейки</p>
         <h2 id="square-catalog-title">Значения ячеек и линий</h2>
-        <ul>{[1, 2, 3, 4, 5, 6, 7, 8, 9].map((cell) => tile(String(cell), `${cell} · ${SQUARE_CELL_NAMES[cell]}`, squareCellPath(cell)))}{tile("linii", "Линии квадрата", SQUARE_LINES_PATH)}</ul>
+        <ul>{[1, 2, 3, 4, 5, 6, 7, 8, 9].map((cell) => tile(String(cell), String(cell), SQUARE_CELL_NAMES[cell] ?? "", squareCellPath(cell)))}{tile("linii", "3×3", "Линии", SQUARE_LINES_PATH)}</ul>
       </section>
       <section className="year-faq" aria-labelledby="square-faq-title"><p className="eyebrow">Вопросы</p><h2 id="square-faq-title">О квадрате Пифагора</h2>{SQUARE_FAQ.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</section>
       <p className="muted year-footnote">Практика для самопознания. Решения о здоровье, деньгах и отношениях опирайте на факты и свою ситуацию.</p>
