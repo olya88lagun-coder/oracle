@@ -7,13 +7,14 @@ import { LILA_PATH } from "@/lib/lila-paths";
 import { GLOSSARY_PATH } from "@/lib/natal-glossary";
 import { NATAL_PATH } from "@/lib/natal-paths";
 import { CLOCK_PATH, NUMEROLOGY_PATH, PERSONAL_YEAR_PATH } from "@/lib/numerology";
+import { PYTHAGORAS_PATH } from "@/lib/pythagoras";
 import { PUBLIC_PATHS } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { TARO_DAY_PATH, TARO_PATH } from "@/lib/taro-paths";
 
 // Приоритет — подсказка, а не команда (Google его не учитывает, Яндекс учитывает как намёк), но разведём виды страниц:
 // входы в практики выше, справочные и юридические страницы ниже, остальные (значения арканов, карт, клеток, знаков) — посередине
-const PRACTICE_PATHS: ReadonlySet<string> = new Set(["/arkan-2027", NUMEROLOGY_PATH, PERSONAL_YEAR_PATH, CLOCK_PATH, MATRIX_PATH, COMPAT_PATH, LILA_PATH, TARO_PATH, TARO_DAY_PATH, NATAL_PATH]);
+const PRACTICE_PATHS: ReadonlySet<string> = new Set(["/arkan-2027", NUMEROLOGY_PATH, PERSONAL_YEAR_PATH, CLOCK_PATH, PYTHAGORAS_PATH, MATRIX_PATH, COMPAT_PATH, LILA_PATH, TARO_PATH, TARO_DAY_PATH, NATAL_PATH]);
 const REFERENCE_PATHS: ReadonlySet<string> = new Set([GLOSSARY_PATH, "/metodika", `${MATRIX_PATH}/primer`, `${LILA_PATH}/primer`, `${NATAL_PATH}/primer`, ...DOCUMENT_PATHS]);
 
 const priorityOf = (path: string): number => {

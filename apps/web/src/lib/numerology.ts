@@ -55,7 +55,7 @@ export function relatedClocks(slug: string): readonly ClockTime[] {
     .sort((a, b) => at(a) - at(b));
 }
 
-type NumerologyGoal = Extract<Goal, `numerology_${string}` | `personal_year_${string}`>;
+type NumerologyGoal = Extract<Goal, `numerology_${string}` | `personal_year_${string}` | `pythagoras_${string}`>;
 
 // Как у аркана года: клики до согласия и готовности счётчика не досылаем
 export function reachNumerologyGoal(goal: NumerologyGoal): boolean {

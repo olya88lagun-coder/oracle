@@ -13,6 +13,7 @@ import {
   numerologySummary,
   numerologyText,
   parseNumerologyPage,
+  squareSectionTitles,
 } from "./numerology-texts";
 
 const filler = (n: number) => Array.from({ length: n }, (_, i) => `Абзац ${i + 1} о символике числа и о том, как его можно читать спокойно и без спешки, примеряя к своей жизни.`).join("\n\n");
@@ -86,10 +87,11 @@ ${filler(12)}
 `;
 
 describe("numerology manifest", () => {
-  test("12 fate, 9 year and 37 clock pages in batches 12/9/15/15/7", () => {
-    expect(NUMEROLOGY_PAGES).toHaveLength(58);
-    const sizes = [1, 2, 3, 4, 5].map((batch) => NUMEROLOGY_PAGES.filter((page) => page.batch === batch).length);
-    expect(sizes).toEqual([12, 9, 15, 15, 7]);
+  test("12 fate, 9 year, 37 clock and 10 square pages in batches 12/9/15/15/7/5/5", () => {
+    expect(NUMEROLOGY_PAGES).toHaveLength(68);
+    const sizes = [1, 2, 3, 4, 5, 6, 7].map((batch) => NUMEROLOGY_PAGES.filter((page) => page.batch === batch).length);
+    expect(sizes).toEqual([12, 9, 15, 15, 7, 5, 5]);
+    expect(NUMEROLOGY_PAGES.filter((page) => page.kind === "square").map((page) => `${page.key}:${page.batch}`)).toEqual(["1:6", "2:6", "3:6", "4:6", "5:6", "6:7", "7:7", "8:7", "9:7", "linii:7"]);
     expect(numerologyFile({ kind: "clock", key: "11-11" })).toBe("clock-11-11.md");
   });
 });
@@ -175,5 +177,51 @@ describe("numerology texts on disk", () => {
       if (!NUMEROLOGY_ACCEPTED_BATCHES.has(page.batch)) expect(numerologyText(page.kind, page.key)).toBeUndefined();
     }
     for (const page of acceptedNumerologyPages("fate")) expect(numerologyText("fate", page.key)).toBeDefined();
+  });
+});
+
+describe("Pythagoras square pages", () => {
+  const square = (key: string, titles: readonly string[], paragraphs: number) => `---
+kind: square
+key: ${key}
+title: Ячейка ${key} в квадрате Пифагора — значение
+description: Что значит ячейка ${key} в квадрате Пифагора: пустая ячейка и каждый вариант по числу цифр. Символическое прочтение без прогнозов.
+batch: ${key === "linii" ? 7 : 6}
+---
+
+${titles.map((title) => title === "Частые вопросы" ? `## ${title}
+
+**Первый вопрос?**
+
+Ответ.
+
+**Второй вопрос?**
+
+Ответ.` : `## ${title}
+
+${filler(paragraphs)}`).join("\n\n")}
+`;
+
+  test("cell titles depend on the digit, lines have their own", () => {
+    expect(squareSectionTitles("4")).toEqual(["Что значит ячейка", "Пустая ячейка", "4", "44", "444", "4444", "44444 и больше", "Вопрос для себя", "Частые вопросы"]);
+    expect(squareSectionTitles("linii")).toEqual(["Что такое линии", "Целеустремлённость", "Семья", "Привычки и стабильность", "Самооценка", "Быт и работа", "Талант", "Духовность", "Темперамент", "Частые вопросы"]);
+  });
+
+  test("a cell page parses with its own digit and is rejected with another digit", () => {
+    const text = parseNumerologyPage(square("4", squareSectionTitles("4"), 6), "square-4.md");
+    expect(text.sections.map((s) => s.title)).toEqual(squareSectionTitles("4").slice(0, -1));
+    expect(text.faq).toHaveLength(2);
+    expect(() => parseNumerologyPage(square("4", squareSectionTitles("1"), 6), "square-4.md")).toThrow(NumerologyFormatError);
+  });
+
+  test("cells need 4500 characters, lines 5000", () => {
+    expect(() => parseNumerologyPage(square("4", squareSectionTitles("4"), 3), "square-4.md")).toThrow(/4500/);
+    expect(() => parseNumerologyPage(square("linii", squareSectionTitles("linii"), 3), "square-linii.md")).toThrow(/5000/);
+    expect(parseNumerologyPage(square("linii", squareSectionTitles("linii"), 6), "square-linii.md").key).toBe("linii");
+  });
+
+  test("square pages stay closed until batches 6 and 7 are accepted", () => {
+    if (!NUMEROLOGY_ACCEPTED_BATCHES.has(6)) expect(acceptedNumerologyPages("square").filter((page) => page.batch === 6)).toEqual([]);
+    if (!NUMEROLOGY_ACCEPTED_BATCHES.has(7)) expect(acceptedNumerologyPages("square").filter((page) => page.batch === 7)).toEqual([]);
   });
 });

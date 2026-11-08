@@ -1,15 +1,35 @@
+import { SQUARE_LINES, type SquareLineId } from "@oracle/core";
 import type { NumerologyKind } from "./numerology-manifest";
 
 // Формат файла packages/content/numerology/<kind>-<key>.md: шапка (kind, key, title, description, batch) и разделы «## » в заданном порядке.
 // Абзацы разделяются пустой строкой; строки «- » — пункты списка; в «Частых вопросах» вопрос — строка «**Вопрос?**», ответ — абзацы под ней.
 
-export const NUMEROLOGY_SECTION_TITLES: Readonly<Record<NumerologyKind, readonly string[]>> = {
+export const NUMEROLOGY_SECTION_TITLES: Readonly<Record<Exclude<NumerologyKind, "square">, readonly string[]>> = {
   fate: ["Суть", "Сильные стороны", "Сложности", "Отношения", "Дело", "Вопрос для себя"],
   year: ["Тема года", "На что опереться", "Где осторожнее", "Вопрос для себя", "Три совета"],
   clock: ["Коротко", "Из каких чисел", "Вопрос для себя", "Частые вопросы"],
 };
 
-export const NUMEROLOGY_MIN_BODY: Readonly<Record<NumerologyKind, number>> = { fate: 4000, year: 4000, clock: 2500 };
+export const NUMEROLOGY_MIN_BODY: Readonly<Record<NumerologyKind, number>> = { fate: 4000, year: 4000, clock: 2500, square: 4500 };
+const SQUARE_LINES_MIN_BODY = 5000;
+
+// Названия линий квадрата Пифагора на сайте (спека 2026-11-08-pythagoras-square-design.md)
+export const SQUARE_LINE_TITLES: Readonly<Record<SquareLineId, string>> = {
+  celeustremlennost: "Целеустремлённость",
+  semya: "Семья",
+  privychki: "Привычки и стабильность",
+  samoocenka: "Самооценка",
+  byt: "Быт и работа",
+  talant: "Талант",
+  duhovnost: "Духовность",
+  temperament: "Темперамент",
+};
+
+// Разделы страницы квадрата: у ячейки d — варианты «d» … «ddddd и больше», у страницы линий — по линии
+export function squareSectionTitles(key: string): readonly string[] {
+  if (key === "linii") return ["Что такое линии", ...SQUARE_LINES.map((line) => SQUARE_LINE_TITLES[line.id]), FAQ_TITLE];
+  return ["Что значит ячейка", "Пустая ячейка", key, key.repeat(2), key.repeat(3), key.repeat(4), `${key.repeat(5)} и больше`, "Вопрос для себя", FAQ_TITLE];
+}
 const FAQ_TITLE = "Частые вопросы";
 const ADVICE_TITLE = "Три совета";
 
@@ -26,8 +46,8 @@ export type NumerologyText = {
 
 export class NumerologyFormatError extends Error {}
 
-const KINDS: readonly NumerologyKind[] = ["fate", "year", "clock"];
-const KEY = /^(\d{1,2}|\d{2}-\d{2})$/;
+const KINDS: readonly NumerologyKind[] = ["fate", "year", "clock", "square"];
+const KEY = /^(\d{1,2}|\d{2}-\d{2}|linii)$/;
 
 const blocks = (text: string): string[] =>
   text
@@ -70,7 +90,7 @@ export function parseNumerologyPage(source: string, file: string): NumerologyTex
   if (!match) return fail("нет шапки между строками ---");
   const fields = new Map((match[1] ?? "").split("\n").map((line) => [line.slice(0, line.indexOf(":")).trim(), line.slice(line.indexOf(":") + 1).trim()] as const));
   const kind = fields.get("kind") as NumerologyKind;
-  if (!KINDS.includes(kind)) fail("kind — fate, year или clock");
+  if (!KINDS.includes(kind)) fail("kind — fate, year, clock или square");
   const key = fields.get("key") ?? "";
   if (!KEY.test(key)) fail("key — число или время «чч-мм»");
   const title = fields.get("title") ?? "";
@@ -84,10 +104,11 @@ export function parseNumerologyPage(source: string, file: string): NumerologyTex
   const [before, ...chunks] = body.split(/^## /m);
   if (before?.trim()) fail("текст до первого раздела");
   const titles = chunks.map((chunk) => chunk.slice(0, chunk.indexOf("\n") === -1 ? undefined : chunk.indexOf("\n")).trim());
-  const expected = NUMEROLOGY_SECTION_TITLES[kind];
+  const expected = kind === "square" ? squareSectionTitles(key) : NUMEROLOGY_SECTION_TITLES[kind];
   if (titles.join("|") !== expected.join("|")) fail(`разделы по порядку: ${expected.join(", ")}`);
   const length = body.replace(/\s+/g, " ").trim().length;
-  if (length < NUMEROLOGY_MIN_BODY[kind]) fail(`текст — не меньше ${NUMEROLOGY_MIN_BODY[kind]} знаков, сейчас ${length}`);
+  const minBody = kind === "square" && key === "linii" ? SQUARE_LINES_MIN_BODY : NUMEROLOGY_MIN_BODY[kind];
+  if (length < minBody) fail(`текст — не меньше ${minBody} знаков, сейчас ${length}`);
 
   const sections: NumerologySection[] = [];
   let faq: { question: string; answer: string }[] = [];

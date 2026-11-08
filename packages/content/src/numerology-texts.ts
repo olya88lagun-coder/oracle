@@ -2,7 +2,7 @@ import raw from "./generated/numerology.json";
 import { NUMEROLOGY_ACCEPTED_BATCHES, NUMEROLOGY_PAGES, type NumerologyKind, type NumerologyPageRef } from "./numerology-manifest";
 import { parseNumerologyPage, type NumerologyText } from "./numerology";
 
-export { NUMEROLOGY_MIN_BODY, NUMEROLOGY_SECTION_TITLES, NumerologyFormatError, parseNumerologyPage, type NumerologySection, type NumerologyText } from "./numerology";
+export { NUMEROLOGY_MIN_BODY, NUMEROLOGY_SECTION_TITLES, NumerologyFormatError, parseNumerologyPage, SQUARE_LINE_TITLES, squareSectionTitles, type NumerologySection, type NumerologyText } from "./numerology";
 export { NUMEROLOGY_ACCEPTED_BATCHES, NUMEROLOGY_PAGES, numerologyFile, type NumerologyKind, type NumerologyPageRef } from "./numerology-manifest";
 
 // Собранные тексты: pnpm content:build → src/generated/numerology.json

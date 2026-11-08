@@ -63,3 +63,42 @@ export const CLOCK_TIMES: readonly ClockTime[] = (() => {
 export function clockBySlug(slug: string): ClockTime | undefined {
   return CLOCK_TIMES.find((time) => time.slug === slug);
 }
+
+// Квадрат Пифагора (психоматрица) по Александрову, одна формула для всех лет рождения
+// (docs/superpowers/specs/2026-11-08-pythagoras-square-design.md). Раскладка: первый столбец — 1, 2, 3.
+export type SquareLineId = "celeustremlennost" | "semya" | "privychki" | "samoocenka" | "byt" | "talant" | "duhovnost" | "temperament";
+
+export const SQUARE_LINES: readonly { readonly id: SquareLineId; readonly cells: readonly [number, number, number] }[] = [
+  { id: "celeustremlennost", cells: [1, 4, 7] },
+  { id: "semya", cells: [2, 5, 8] },
+  { id: "privychki", cells: [3, 6, 9] },
+  { id: "samoocenka", cells: [1, 2, 3] },
+  { id: "byt", cells: [4, 5, 6] },
+  { id: "talant", cells: [7, 8, 9] },
+  { id: "duhovnost", cells: [1, 5, 9] },
+  { id: "temperament", cells: [3, 5, 7] },
+];
+
+export type PythagorasSquare = {
+  readonly working: readonly [number, number, number, number];
+  readonly counts: readonly number[]; // индекс — цифра 1–9, counts[0] не используется
+  readonly lines: readonly { readonly id: SquareLineId; readonly count: number }[];
+};
+
+export function calculatePythagorasSquare(iso: string, today: Date): PythagorasSquare | null {
+  const date = parseBirthDate(iso, today);
+  if (!date) return null;
+  const dateDigits = `${pad(date.day)}${pad(date.month)}${date.year}`;
+  const first = digitSum(Number(dateDigits));
+  const second = digitSum(first);
+  const dayDigit = Number([...pad(date.day)].find((digit) => digit !== "0"));
+  const third = Math.abs(first - 2 * dayDigit); // отрицательное — без минуса
+  const fourth = digitSum(third);
+  const counts = Array.from({ length: 10 }, () => 0);
+  for (const digit of `${dateDigits}${first}${second}${third}${fourth}`) if (digit !== "0") counts[Number(digit)]! += 1;
+  return {
+    working: [first, second, third, fourth],
+    counts,
+    lines: SQUARE_LINES.map((line) => ({ id: line.id, count: line.cells.reduce((sum, cell) => sum + counts[cell]!, 0) })),
+  };
+}
