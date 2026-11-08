@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { calculateFateNumber, calculatePersonalYear, CLOCK_TIMES, clockBySlug, FATE_NUMBERS } from "./numerology";
+import { calculateFateNumber, calculatePersonalYear, calculatePythagorasSquare, CLOCK_TIMES, clockBySlug, FATE_NUMBERS, SQUARE_LINES } from "./numerology";
 
 const TODAY = new Date("2026-11-08");
 
@@ -69,5 +69,36 @@ describe("clock times", () => {
 
   test.each(["1111", "11:11", "11-1", "24-24"])("no clock time for %s", (slug) => {
     expect(clockBySlug(slug)).toBeUndefined();
+  });
+});
+
+describe("Pythagoras square (Aleksandrov, one formula for all years)", () => {
+  test("14.05.1987: working numbers, counts and lines", () => {
+    const square = calculatePythagorasSquare("1987-05-14", TODAY);
+    expect(square?.working).toEqual([35, 8, 33, 6]);
+    expect(square?.counts.slice(1)).toEqual([2, 0, 3, 1, 2, 1, 1, 2, 1]);
+    expect(square?.lines.find((l) => l.id === "celeustremlennost")?.count).toBe(4);
+    expect(square?.lines.find((l) => l.id === "temperament")?.count).toBe(6);
+  });
+  test("a day with a leading zero doubles its non-zero digit", () => {
+    expect(calculatePythagorasSquare("1990-03-07", TODAY)?.working).toEqual([29, 11, 15, 6]);
+  });
+  test("a negative third number is taken without the minus", () => {
+    expect(calculatePythagorasSquare("2000-01-09", TODAY)?.working).toEqual([12, 3, 6, 6]);
+  });
+  test("many ones", () => {
+    const square = calculatePythagorasSquare("1911-11-11", TODAY);
+    expect(square?.working).toEqual([16, 7, 14, 5]);
+    expect(square?.counts[1]).toBe(9);
+  });
+  test.each(["", "2027-01-01", "1991-02-29"])("no square for %s", (iso) => {
+    expect(calculatePythagorasSquare(iso, TODAY)).toBeNull();
+  });
+  test("8 lines: rows and columns cover every cell twice, 5 also sits on both diagonals", () => {
+    expect(SQUARE_LINES).toHaveLength(8);
+    expect(new Set(SQUARE_LINES.map((l) => l.id)).size).toBe(8);
+    const straight = SQUARE_LINES.slice(0, 6).flatMap((l) => l.cells);
+    for (let cell = 1; cell <= 9; cell++) expect(straight.filter((c) => c === cell)).toHaveLength(2);
+    expect(SQUARE_LINES.slice(6).every((l) => l.cells.includes(5))).toBe(true);
   });
 });
