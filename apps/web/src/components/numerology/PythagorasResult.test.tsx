@@ -46,3 +46,9 @@ test("fate number link only to an accepted page; matrix link is plain", () => {
   expect(html).toContain('href="/numerologiya/chislo-sudby/8"');
   expect(html).toContain('href="/matrica-sudby"');
 });
+
+test("a negative third number is shown honestly: the minus, then the number without it", () => {
+  const html = renderToStaticMarkup(<PythagorasResult iso="2000-01-09" square={square("2000-01-09")} summaries={EMPTY} fatePages={[]} />);
+  expect(html).toContain("12 − 2 × 9 = −6, без минуса 6");
+  expect(html).not.toContain("12 − 2 × 9 = 6");
+});
