@@ -20,6 +20,7 @@ export const NUMEROLOGY_ACCEPTED_BATCHES: ReadonlySet<number> = new Set<number>(
   1, // числа судьбы — приняты 08.11.2026
   2, // личный год 2027 — приняты 08.11.2026
   3, // время на часах 00:00–09:09 — приняты 08.11.2026
+  4, // время на часах 10:01–19:19 — приняты 08.11.2026
 ]);
 
 export const numerologyFile = (page: Pick<NumerologyPageRef, "kind" | "key">): string => `${page.kind}-${page.key}.md`;
