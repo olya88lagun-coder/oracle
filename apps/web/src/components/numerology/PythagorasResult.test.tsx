@@ -52,3 +52,11 @@ test("a negative third number is shown honestly: the minus, then the number with
   expect(html).toContain("12 − 2 × 9 = −6, без минуса 6");
   expect(html).not.toContain("12 − 2 × 9 = 6");
 });
+
+test("the compatibility link appears only when the page is open", () => {
+  const closed = renderToStaticMarkup(<PythagorasResult iso="1987-05-14" square={square("1987-05-14")} summaries={EMPTY} fatePages={[]} />);
+  expect(closed).not.toContain("Сравнить с квадратом партнёра");
+  const open = renderToStaticMarkup(<PythagorasResult iso="1987-05-14" square={square("1987-05-14")} summaries={EMPTY} fatePages={[]} pairHref="/numerologiya/kvadrat-pifagora/sovmestimost" />);
+  expect(open).toContain('href="/numerologiya/kvadrat-pifagora/sovmestimost"');
+  expect(open).toContain("Сравнить с квадратом партнёра");
+});

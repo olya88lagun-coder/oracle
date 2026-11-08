@@ -3,10 +3,11 @@ import { SQUARE_LINES } from "@oracle/core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PythagorasCalculator } from "@/components/numerology/PythagorasCalculator";
+import { SquarePairLink } from "@/components/numerology/SquarePairLink";
 import type { SquareSummaries } from "@/components/numerology/PythagorasResult";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { NUMEROLOGY_PATH } from "@/lib/numerology";
-import { PYTHAGORAS_PATH, SQUARE_CELL_NAMES, SQUARE_FAQ, SQUARE_LINE_NAMES, SQUARE_LINES_PATH, squareCellPath, squareVariant } from "@/lib/pythagoras";
+import { acceptedPairPaths, PYTHAGORAS_PATH, SQUARE_CELL_NAMES, SQUARE_FAQ, SQUARE_LINE_NAMES, SQUARE_LINES_PATH, squareCellPath, squareVariant } from "@/lib/pythagoras";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import "../../arkan-2027/year.css";
@@ -65,10 +66,10 @@ export default function PythagorasPage() {
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }} />
     <main className="year-page numerology-page">
       <nav aria-label="Хлебные крошки" className="year-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href={NUMEROLOGY_PATH}>Нумерология</Link><span aria-hidden="true">/</span><span>Квадрат Пифагора</span></nav>
-      <PythagorasCalculator summaries={acceptedSummaries()} fatePages={fatePages} />
+      <PythagorasCalculator summaries={acceptedSummaries()} fatePages={fatePages} pairHref={acceptedPairPaths()[0]} />
       <section className="year-guide" aria-labelledby="square-guide-title">
         <div className="stack"><p className="eyebrow">Как читать результат</p><h2 id="square-guide-title">Не оценка.<br />Карта сильных сторон.</h2><p>Чем больше одинаковых цифр в ячейке, тем ярче её тема; пустая ячейка — не недостаток, а качество, которое проявляется иначе. Линии показывают, как темы складываются вместе.</p><p>Это символическая практика, а не психологический тест и не прогноз.</p></div>
-        <div className="year-method stack"><h3>Открытая формула</h3><p>Пример — 14.05.1987: 1 + 4 + 0 + 5 + 1 + 9 + 8 + 7 = <strong>35</strong>; 3 + 5 = <strong>8</strong>; 35 − 2 × 1 = <strong>33</strong>; 3 + 3 = <strong>6</strong>. В квадрат идут цифры 14051987 и 35, 8, 33, 6, нули не учитываются.</p><p>Считаем всех по одной формуле Александрова, без «+19» для рождённых после 2000 года. По той же дате можно рассчитать <Link href={MATRIX_PATH}>матрицу судьбы</Link>.</p><Link className="touch-link" href={NUMEROLOGY_PATH}>Число судьбы по дате рождения</Link></div>
+        <div className="year-method stack"><h3>Открытая формула</h3><p>Пример — 14.05.1987: 1 + 4 + 0 + 5 + 1 + 9 + 8 + 7 = <strong>35</strong>; 3 + 5 = <strong>8</strong>; 35 − 2 × 1 = <strong>33</strong>; 3 + 3 = <strong>6</strong>. В квадрат идут цифры 14051987 и 35, 8, 33, 6, нули не учитываются.</p><p>Считаем всех по одной формуле Александрова, без «+19» для рождённых после 2000 года. По той же дате можно рассчитать <Link href={MATRIX_PATH}>матрицу судьбы</Link>.</p><Link className="touch-link" href={NUMEROLOGY_PATH}>Число судьбы по дате рождения</Link><SquarePairLink /></div>
       </section>
       <section className="year-catalog numerology-catalog" aria-labelledby="square-catalog-title">
         <p className="eyebrow">Все ячейки</p>

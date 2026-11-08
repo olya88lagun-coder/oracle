@@ -1,10 +1,11 @@
 import type { NumerologyText } from "@oracle/content/numerology";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 type Crumb = { name: string; href: string };
 
 // Страница значения: число судьбы, личный год или время на часах. Разделы — по порядку из текста
-export function NumerologyPageView({ text, crumbs, siblings, footer, emblem, anchors }: { text: NumerologyText; emblem?: string; anchors?: Readonly<Record<string, string>>; crumbs: readonly Crumb[]; siblings: readonly Crumb[]; footer: Crumb }) {
+export function NumerologyPageView({ text, crumbs, siblings, footer, emblem, anchors, children }: { text: NumerologyText; emblem?: string; anchors?: Readonly<Record<string, string>>; crumbs: readonly Crumb[]; siblings: readonly Crumb[]; footer: Crumb; children?: ReactNode }) {
   return <main className="year-page numerology-page">
     <nav aria-label="Хлебные крошки" className="year-breadcrumb">
       <Link href="/">Главная</Link>
@@ -30,6 +31,7 @@ export function NumerologyPageView({ text, crumbs, siblings, footer, emblem, anc
       <ul>{siblings.map((sibling) => <li key={sibling.href}><Link href={sibling.href}>{sibling.name}</Link></li>)}</ul>
     </nav>}
     <p><Link className="button" href={footer.href}>{footer.name}</Link></p>
+    {children}
     <p className="muted year-footnote">Практика для самопознания. Решения о здоровье, деньгах и отношениях опирайте на факты и свою ситуацию.</p>
   </main>;
 }

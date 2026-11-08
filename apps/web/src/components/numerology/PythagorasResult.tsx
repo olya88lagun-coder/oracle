@@ -19,7 +19,7 @@ export type SquareSummaries = {
 const ROWS = [[1, 4, 7], [2, 5, 8], [3, 6, 9]] as const;
 const LATER = "Описание появится позже.";
 
-export function PythagorasResult({ iso, square, summaries, fatePages }: { iso: string; square: PythagorasSquare; summaries: SquareSummaries; fatePages: readonly number[] }) {
+export function PythagorasResult({ iso, square, summaries, fatePages, pairHref }: { iso: string; square: PythagorasSquare; summaries: SquareSummaries; fatePages: readonly number[]; pairHref?: string }) {
   const [year = "", month = "", day = ""] = iso.split("-");
   const fate = calculateFateNumber(iso, new Date())?.value;
   const cellDigits = (cell: number) => (square.counts[cell] ? String(cell).repeat(square.counts[cell]!) : "—");
@@ -58,6 +58,7 @@ export function PythagorasResult({ iso, square, summaries, fatePages }: { iso: s
           prepareMatrixHandoff(sessionStore(), iso);
           reachNumerologyGoal("pythagoras_to_matrix");
         }}>Посчитать матрицу по этой дате</Link></p>
+        {pairHref && <p><Link className="touch-link numerology-pair-link" href={pairHref}>Сравнить с квадратом партнёра</Link></p>}
       </div>
     </div>
   </section>;
