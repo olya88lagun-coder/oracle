@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Icon } from "@/components/Icon";
+import { SpreadGlyph } from "@/components/taro/SpreadGlyph";
 import { breadcrumbsJsonLd, faqPageJsonLd, TaroFaqSection } from "@/components/taro/TaroFaqSection";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { countLabel } from "@/lib/taro-catalog";
@@ -33,7 +35,10 @@ export default function TaroSpreadsPage() {
           {TARO_SPREADS.map((spread) => (
             <li key={spread.slug}>
               <article className="taro-panel taro-spread-card">
-                <p className="eyebrow">{countLabel(spread.positions.length)}</p>
+                <div className="taro-spread-card__diagram">
+                  <SpreadGlyph slug={spread.slug} />
+                  <p className="eyebrow">{countLabel(spread.positions.length)}</p>
+                </div>
                 <h2>{spread.name}</h2>
                 <p>{spread.teaser}</p>
                 <ol className="taro-spread-card__positions">
@@ -42,7 +47,7 @@ export default function TaroSpreadsPage() {
                   ))}
                 </ol>
                 <Link className="button button--lavender" href={spreadPath(spread)} aria-label={`Сделать расклад: ${spread.name}`}>
-                  Сделать расклад
+                  Сделать расклад <Icon name="arrow-right" />
                 </Link>
               </article>
             </li>
