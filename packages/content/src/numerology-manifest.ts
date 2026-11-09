@@ -28,6 +28,7 @@ export const NUMEROLOGY_ACCEPTED_BATCHES: ReadonlySet<number> = new Set<number>(
   5, // время на часах 20:02–23:32 — приняты 08.11.2026
   6, // квадрат Пифагора, ячейки 1–5 — приняты 08.11.2026
   7, // квадрат Пифагора, ячейки 6–9 и линии — приняты 08.11.2026
+  8, // совместимость по квадрату Пифагора — приняты 09.11.2026
 ]);
 
 export const numerologyFile = (page: Pick<NumerologyPageRef, "kind" | "key">): string => `${page.kind}-${page.key}.md`;
