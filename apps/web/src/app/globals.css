@@ -173,6 +173,7 @@ body .stack > * + * { margin-top: 20px; }
 
 .login-card { position: relative; overflow: hidden; background: radial-gradient(circle at 100% 0, var(--lavender-glow), transparent 55%), linear-gradient(180deg, var(--surface-2), var(--surface)); border-color: var(--line-strong); }
 .login-card .display { font-size: clamp(40px, 6vw, 60px); }
+.not-found__nav { display: flex; flex-wrap: wrap; gap: 0 20px; padding-top: 8px; border-top: 1px solid var(--line); }
 .login-card .choice input { accent-color: var(--lavender); }
 
 /* Страница аркана: крупный номер, секции карточками, соседи и сетка всех арканов */
@@ -195,14 +196,19 @@ body .stack > * + * { margin-top: 20px; }
 .arcanum-section[data-static] .arcanum-section__icon { display: none; }
 /* Ряд «Все 22 аркана»: карточки с миниатюрой. minmax(0, 1fr) — длинные имена переносятся, а не раздвигают ряд за край */
 .arcana-hub__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
-.arcana-hub__card { display: grid; gap: 6px; align-content: start; height: 100%; padding: 8px 8px 14px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink-soft); text-decoration: none; transition: border-color var(--dur-base) var(--ease-out); }
+.arcana-hub__card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; align-content: start; height: 100%; padding: 8px 8px 14px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink-soft); text-decoration: none; transition: border-color var(--dur-base) var(--ease-out); }
 .arcana-hub__card:hover, .arcana-hub__card:focus-visible { border-color: var(--accent-line); }
 .arcana-hub__card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .arcana-hub__art { position: relative; display: block; aspect-ratio: 1; overflow: hidden; border-radius: calc(var(--radius) - 4px); background: var(--surface); }
 .arcana-hub__art img { object-fit: cover; }
 .arcana-hub__head { display: flex; gap: 8px; align-items: baseline; margin-top: 4px; }
 .arcana-hub__head b { color: var(--accent); font-family: var(--font-display); font-weight: 400; font-size: 18px; }
-.arcana-hub__name { color: var(--ink); font-family: var(--font-display); font-size: 21px; line-height: 1.2; }
+.arcana-hub__name { min-width: 0; color: var(--ink); font-family: var(--font-display); font-size: 21px; line-height: 1.2; overflow-wrap: break-word; }
+/* «Справедливость» в 21 px шире колонки на 375 px: номер над именем, имя мельче */
+@media (max-width: 420px) {
+  .arcana-hub__head { flex-direction: column; gap: 0; }
+  .arcana-hub__name { font-size: 17px; }
+}
 .arcana-hub__keys { color: var(--accent); font-size: 14px; line-height: 1.4; }
 .arcana-hub__text { font-size: 14px; line-height: 1.5; }
 .arcana-hub__how, .arcana-hub__faq { display: grid; gap: 14px; max-width: 780px; margin-top: 20px; }
@@ -848,12 +854,19 @@ a.report-toc__title:hover { color: var(--accent); }
 .footer a:hover, .footer .link-button:hover { color: var(--ink); }
 .footer__bottom { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
 .footer .link-button { text-decoration: none; }
-.footer__bottom .disclaimer { margin: 0; max-width: 640px; font-size: 13px; }
+.footer__bottom .disclaimer { margin: 0; max-width: 640px; font-size: 14px; }
 @media (min-width: 860px) {
   .footer { padding: 56px 28px 36px; }
-  .footer__top { grid-template-columns: auto 1fr auto; align-items: center; gap: 40px; }
+  /* шесть практик и пять ссылок «О проекте» в одну строку помещаются только от ~1280 px (1320 — с запасом на полосу прокрутки); уже — ссылки «О проекте» второй строкой под практиками, а не одно слово на перенос */
+  .footer__top { grid-template-columns: auto 1fr; align-items: center; gap: 0 40px; }
+  .footer__top > nav:last-child { grid-column: 2; }
+  .footer nav { gap: 0 18px; }
   .footer__bottom { grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 60px; }
   .footer__bottom nav { justify-content: flex-end; }
+}
+@media (min-width: 1320px) {
+  .footer__top { grid-template-columns: auto 1fr auto; gap: 28px; }
+  .footer__top > nav:last-child { grid-column: auto; }
 }
 .cookie-banner { position: fixed; z-index: 30; inset: auto 0 0; display: grid; gap: 12px; padding: 14px 16px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line-strong); background: var(--surface-2); color: var(--ink-soft); font-size: 14px; box-shadow: 0 -16px 36px rgba(0, 0, 0, 0.3); }
 .cookie-banner p { margin: 0; line-height: 1.55; }
@@ -1018,6 +1031,8 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 .blog-card { display: grid; gap: 12px; align-content: start; padding-bottom: 26px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 .blog-card__art { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; background: var(--surface); }
 .blog-card__art img { object-fit: cover; transition: transform 400ms var(--ease-out); }
+/* вертикальная карта Таро в широкой карточке: кадр с верха карты, чтобы не резать фигуру по шее */
+:is(.blog-card__art, .home-blog__art, .blog-lead__art) img[src^="/taro/"] { object-position: 50% 22%; }
 .blog-card:hover .blog-card__art img { transform: scale(1.025); }
 .blog-card__title { margin-top: 4px; font-family: var(--font-display); font-size: 28px; line-height: 1.25; text-wrap: balance; }
 .blog-card:hover .blog-card__title { color: var(--accent); }
@@ -1032,6 +1047,9 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 .blog-article-head__author { color: var(--accent); font-size: 14px; }
 .blog-cover { position: relative; width: min(1060px, calc(100% - 32px)); aspect-ratio: 1.7 / 1; margin: 0 auto 28px; overflow: hidden; background: var(--surface); }
 .blog-cover img { object-fit: cover; object-position: 72% 50%; }
+/* вертикальный скан карты Таро в широкой рамке обрезался до фрагмента — показываем карту целиком */
+.blog-cover:has(img[src^="/taro/"]) { background: radial-gradient(ellipse at 50% 50%, var(--surface-2), var(--surface) 70%); }
+.blog-cover img[src^="/taro/"] { padding-block: 20px; object-fit: contain; object-position: 50% 50%; }
 .blog-article-layout { width: min(1060px, calc(100% - 32px)); margin: 0 auto; }
 .blog-toc__fold { margin-bottom: 30px; border-block: 1px solid var(--line); font-size: 14px; }
 .blog-toc__fold summary { display: flex; align-items: center; justify-content: space-between; min-height: 44px; list-style: none; cursor: pointer; }
@@ -1786,9 +1804,12 @@ body .stack > .taro-day-info { display: grid; gap: 44px; margin-top: 56px; paddi
   .taro-spread-tile__art { padding: 6px 12px 0; }
 }
 @media (min-width: 960px) {
-  .taro-spreads-promo__list { grid-template-columns: repeat(5, minmax(0, 1fr)); }
   .taro-spread-tile { padding: 20px 16px 22px; }
   .taro-spread-tile__art { padding: 0; }
+}
+/* six spreads: one row of six on wide screens, 3 + 3 below */
+@media (min-width: 1200px) {
+  .taro-spreads-promo__list { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 }
 @media (prefers-reduced-motion: reduce) { .taro-spread-tile { transition: none; } .taro-spread-tile:hover { transform: none; } }
 

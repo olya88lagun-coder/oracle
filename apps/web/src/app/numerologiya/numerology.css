@@ -349,9 +349,19 @@
   font-size: 22px;
 }
 
+/* «Линии» не помещаются в клетку под цифру */
+.numerology-siblings li:has(> a[href$="/linii"]) {
+  grid-column: span 2;
+}
+
 .numerology-article ~ p {
   max-width: 740px;
   margin-inline: auto;
+}
+
+/* Ссылка на сравнение квадратов — по левому краю колонки текста, как кнопка над ней */
+.numerology-article ~ .numerology-pair-link {
+  margin: 0 0 16px max(0px, calc((100% - 740px) / 2));
 }
 
 @media (max-width: 760px) {
