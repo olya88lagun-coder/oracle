@@ -1820,6 +1820,13 @@ body .stack > .taro-spreads, body .stack > .taro-spread-info, body .stack > .tar
 /* Сравнение режимов Лилы: одинаковый порядок чтения на телефоне и компьютере. */
 .lila-modes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
 @media (min-width: 900px) { .lila-modes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; } }
+/* Пример ответа проводника на /lila: реплики лентой, абзац проводника выделен лавандовой линией */
+.lila-demo { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.lila-demo li { min-width: 0; padding: 12px 16px; border-left: 2px solid var(--line-strong); overflow-wrap: anywhere; }
+.lila-demo small { display: block; color: var(--accent); font-size: 14px; }
+.lila-demo p { margin: 6px 0 0; }
+.lila-demo .lila-demo__guide { border-left-color: var(--lavender); background: var(--lavender-glow); }
+.lila-demo__guide small { color: var(--lavender); }
 
 
 /* Натальная карта: принятое оформление этапа 2 поверх рабочей разметки PR #97.
