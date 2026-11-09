@@ -13,6 +13,7 @@ import { lilaCellPath, LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
 import { jsonLdScript, lilaGameJsonLd, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { availableCellImages } from "@/server/lila-images";
 import { salesEnabled } from "@/server/payments-deps";
+import { DEMO_INTENTION } from "@/server/product-demos";
 
 export const metadata: Metadata = publicMetadata({
   title: "Игра Лила онлайн — играть бесплатно, поле из 72 клеток",
@@ -24,6 +25,9 @@ export const metadata: Metadata = publicMetadata({
 
 // Продажа зависит от настроек работающего сервера, а не окружения сборки.
 export const dynamic = "force-dynamic";
+
+// Демонстрационный абзац написан вручную по правилам GUIDE_SYSTEM из packages/ai/src/lila-prompt.ts (350–550 знаков, гипотезы, змея названа, встречный вопрос)
+const DEMO_GUIDE = "Вы пришли сюда по змее с «Зависти», и это может перекликаться с вашей прошлой записью: «Сравниваю свой темп с чужим». Часто сравнение незаметно подменяет собственный план чужим: неделя начинает строиться под то, сколько успевают другие, а не под ваши силы и сроки. Стоит заметить, чьи результаты сейчас кажутся вам мерилом. Что останется в вашем плане, если убрать из него этот ориентир?";
 
 export default function LilaPage() {
   const images = availableCellImages();
@@ -84,6 +88,20 @@ export default function LilaPage() {
           <div className="stack"><h3>С проводником · {formatRubles(LILA_SESSION_PRICE_KOPECKS)}</h3><p>Одна новая партия. ИИ связывает ходы с намерением. После завершения — четыре главы: «Намерение и путь», «Что повторялось», «Что вы замечали», «Вывод и шаг на неделю», а также PDF.</p><p>Вход через VK ID и разовая оплата до начала. Намерение и записи передаются GigaChat для подготовки текста. Если ИИ недоступен, итог собирается из фактов и готовых описаний.</p><p><Link className="button button--lavender" href={LILA_GAME_PATH}>Играть с проводником · {formatRubles(LILA_SESSION_PRICE_KOPECKS)}</Link></p><p className="muted">Сначала формулируете вопрос, оплата — на следующем шаге.</p><Link className="text-link" href="/lila/primer">Посмотреть пример итога и PDF</Link></div>
         </div>
         <p className="muted">В обоих режимах одинаковые правила поля. Проводник предлагает гипотезы для размышления и не предсказывает исход вашего вопроса.</p>
+      </section>}
+
+      {guided && <section className="card stack" aria-labelledby="demo-title">
+        <p className="eyebrow">Пример, а не настоящая партия</p>
+        <h2 id="demo-title">Как отвечает проводник</h2>
+        <p>Вопрос, ход и запись придуманы, абзац проводника составлен вручную по тем же правилам, что получает ИИ. В вашей партии формулировки будут другими.</p>
+        <ol className="lila-demo">
+          <li><small>Намерение</small><p>«{DEMO_INTENTION}»</p></li>
+          <li><small>Ход</small><p>Кубик — 6. Клетка 12 «Зависть», змея ведёт на клетку 8 «Алчность».</p></li>
+          <li className="lila-demo__guide"><small>Проводник · ИИ</small><p>{DEMO_GUIDE}</p></li>
+          <li><small>Запись игрока</small><p>«Вижу, как сравнение отвлекает от моего плана.»</p></li>
+        </ol>
+        <p>Сколько длится партия: времени не ограничено, темп задаёте вы. Завершить партию и получить итог можно с десятого хода; всего в партии — не больше 120 ходов.</p>
+        <p>Партию можно прервать и продолжить позже: партия с проводником хранится в вашем портрете и при следующем входе в игру откроется с того же хода.</p>
       </section>}
 
       <section className="stack" aria-labelledby="field">
