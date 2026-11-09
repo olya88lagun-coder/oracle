@@ -46,7 +46,8 @@ test("pair lines: temperament first with levels, eight lines, links to line anch
   expect(html).toContain("Линии пары");
   const lines = html.slice(html.indexOf("Линии пары"));
   expect(lines.indexOf("Темперамент")).toBeLessThan(lines.indexOf("Целеустремлённость"));
-  expect(html).toContain("у вас 6 (много), у партнёра 5 (средне)");
+  expect(html).toContain("(3-5-7): у вас 6 (много), у партнёра 5 (средне)");
+  expect(html).toContain("<strong>Темперамент</strong> (3-5-7)");
   expect(html).toContain("Темперамент разный.");
   expect((html.match(/numerology-pair__line"/g) ?? []).length).toBe(8);
   expect(html).toContain('href="/numerologiya/kvadrat-pifagora/linii#temperament"');

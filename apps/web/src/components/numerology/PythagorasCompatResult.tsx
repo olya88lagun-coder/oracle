@@ -1,4 +1,4 @@
-import type { SquareLineId } from "@oracle/core";
+import { SQUARE_LINES, type SquareLineId } from "@oracle/core";
 import Link from "next/link";
 import { COMPAT_PATH } from "@/lib/compat";
 import { PYTHAGORAS_PATH, SQUARE_CELL_NAMES, SQUARE_LINE_NAMES, SQUARE_LINES_PATH, squareCellPath, squareVariant } from "@/lib/pythagoras";
@@ -80,7 +80,7 @@ export function PythagorasCompatResult({ outcome, texts }: { outcome: Extract<Pa
       <ul className="numerology-pair__lines">{pair.lines.map((line) => {
         const text = texts.lines[line.id]?.[line.relation];
         return <li key={line.id} className="numerology-pair__line">
-          <p><strong>{SQUARE_LINE_NAMES[line.id]}</strong>: у вас {line.you} ({LINE_LEVEL_NAMES[line.youLevel]}), у партнёра {line.partner} ({LINE_LEVEL_NAMES[line.partnerLevel]})</p>
+          <p><strong>{SQUARE_LINE_NAMES[line.id]}</strong> ({SQUARE_LINES.find((item) => item.id === line.id)?.cells.join("-")}): у вас {line.you} ({LINE_LEVEL_NAMES[line.youLevel]}), у партнёра {line.partner} ({LINE_LEVEL_NAMES[line.partnerLevel]})</p>
           {text ? <p>{text}</p> : <p className="muted">{LATER}</p>}
           <p><Link className="touch-link" href={`${SQUARE_LINES_PATH}#${line.id}`}>Подробнее о линии</Link></p>
         </li>;
