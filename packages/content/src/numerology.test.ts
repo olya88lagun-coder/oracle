@@ -13,6 +13,9 @@ import {
   numerologySummary,
   numerologyText,
   parseNumerologyPage,
+  pairCellSection,
+  pairLineSection,
+  pairSectionTitles,
   squareSectionTitles,
 } from "./numerology-texts";
 
@@ -87,10 +90,11 @@ ${filler(12)}
 `;
 
 describe("numerology manifest", () => {
-  test("12 fate, 9 year, 37 clock and 10 square pages in batches 12/9/15/15/7/5/5", () => {
-    expect(NUMEROLOGY_PAGES).toHaveLength(68);
-    const sizes = [1, 2, 3, 4, 5, 6, 7].map((batch) => NUMEROLOGY_PAGES.filter((page) => page.batch === batch).length);
-    expect(sizes).toEqual([12, 9, 15, 15, 7, 5, 5]);
+  test("12 fate, 9 year, 37 clock, 10 square and 1 pair pages in batches 12/9/15/15/7/5/5/1", () => {
+    expect(NUMEROLOGY_PAGES).toHaveLength(69);
+    const sizes = [1, 2, 3, 4, 5, 6, 7, 8].map((batch) => NUMEROLOGY_PAGES.filter((page) => page.batch === batch).length);
+    expect(sizes).toEqual([12, 9, 15, 15, 7, 5, 5, 1]);
+    expect(NUMEROLOGY_PAGES.filter((page) => page.kind === "pair")).toEqual([{ kind: "pair", key: "sovmestimost", batch: 8 }]);
     expect(NUMEROLOGY_PAGES.filter((page) => page.kind === "square").map((page) => `${page.key}:${page.batch}`)).toEqual(["1:6", "2:6", "3:6", "4:6", "5:6", "6:7", "7:7", "8:7", "9:7", "linii:7"]);
     expect(numerologyFile({ kind: "clock", key: "11-11" })).toBe("clock-11-11.md");
   });
@@ -223,5 +227,55 @@ ${filler(paragraphs)}`).join("\n\n")}
   test("square pages stay closed until batches 6 and 7 are accepted", () => {
     if (!NUMEROLOGY_ACCEPTED_BATCHES.has(6)) expect(acceptedNumerologyPages("square").filter((page) => page.batch === 6)).toEqual([]);
     if (!NUMEROLOGY_ACCEPTED_BATCHES.has(7)) expect(acceptedNumerologyPages("square").filter((page) => page.batch === 7)).toEqual([]);
+  });
+});
+
+describe("Pythagoras compatibility texts", () => {
+  const pair = (titles: readonly string[], paragraphs: number) => `---
+kind: pair
+key: sovmestimost
+title: Совместимость по квадрату Пифагора
+description: Как сравнить квадраты Пифагора двух людей: ячейки и линии пары, где вы похожи и где различаетесь. Символическое прочтение без прогнозов.
+batch: 8
+---
+
+${titles.map((title) => title === "Частые вопросы" ? `## ${title}
+
+**Первый вопрос?**
+
+Ответ.
+
+**Второй вопрос?**
+
+Ответ.` : `## ${title}
+
+${filler(paragraphs)}`).join("\n\n")}
+`;
+
+  test("sections: two intro, 27 cell relations, 16 line relations, faq", () => {
+    const titles = pairSectionTitles();
+    expect(titles).toHaveLength(46);
+    expect(titles.slice(0, 5)).toEqual(["Как считается совместимость по квадрату", "Как читать сравнение", "1 · у обоих пусто", "1 · похоже", "1 · по-разному"]);
+    expect(titles[28]).toBe("9 · по-разному");
+    expect(titles.slice(29, 31)).toEqual(["Целеустремлённость · один уровень", "Целеустремлённость · разный уровень"]);
+    expect(titles.at(-2)).toBe("Темперамент · разный уровень");
+    expect(titles.at(-1)).toBe("Частые вопросы");
+  });
+
+  test("section names for a cell and a line relation", () => {
+    expect(pairCellSection(4, "apart")).toBe("4 · по-разному");
+    expect(pairLineSection("temperament", "same")).toBe("Темперамент · один уровень");
+  });
+
+  test("a pair page parses, needs every section and 18000 characters", () => {
+    const text = parseNumerologyPage(pair(pairSectionTitles(), 4), "pair-sovmestimost.md");
+    expect(text.kind).toBe("pair");
+    expect(text.sections).toHaveLength(45);
+    expect(() => parseNumerologyPage(pair(pairSectionTitles().filter((title) => title !== "5 · похоже"), 4), "pair-sovmestimost.md")).toThrow(NumerologyFormatError);
+    expect(() => parseNumerologyPage(pair(pairSectionTitles(), 1), "pair-sovmestimost.md")).toThrow(/18000/);
+  });
+
+  test("the pair page stays closed until batch 8 is accepted", () => {
+    if (!NUMEROLOGY_ACCEPTED_BATCHES.has(8)) expect(acceptedNumerologyPages("pair")).toEqual([]);
   });
 });

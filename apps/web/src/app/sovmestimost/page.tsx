@@ -7,6 +7,7 @@ import { BLOG_PATH } from "@/lib/blog";
 import { CompatCalculator } from "@/components/compat/CompatCalculator";
 import { compatFaqJsonLd, CompatCta, CompatGuide, CompatPreview } from "@/components/compat/CompatGuide";
 import { COMPAT_PATH, compatArcanumPath } from "@/lib/compat";
+import { acceptedPairPaths } from "@/lib/numerology-pages";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { listPaidPurchases } from "@oracle/db";
@@ -64,6 +65,10 @@ export default async function CompatibilityPage() {
           <Link className="text-link" href={`${BLOG_PATH}/kak-schitaetsya-matritsa-sovmestimosti`}>
             Проверить формулу расчёта
           </Link>
+          {acceptedPairPaths().length > 0 && <>
+            {" · "}
+            <Link className="text-link" href={acceptedPairPaths()[0]!}>Совместимость по квадрату Пифагора</Link>
+          </>}
         </p>
         <CompatPreview />
         <CompatGuide />

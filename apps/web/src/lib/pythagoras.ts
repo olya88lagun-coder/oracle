@@ -1,4 +1,4 @@
-import { acceptedNumerologyPages, SQUARE_LINE_TITLES } from "@oracle/content/numerology";
+import { SQUARE_LINE_TITLES } from "@oracle/content/numerology-format";
 import { calculatePythagorasSquare, type PythagorasSquare, type SquareLineId } from "@oracle/core";
 import { DATE_ERROR } from "./matrix-save";
 import { NUMEROLOGY_PATH } from "./numerology";
@@ -7,11 +7,7 @@ import { NUMEROLOGY_PATH } from "./numerology";
 export const PYTHAGORAS_PATH = `${NUMEROLOGY_PATH}/kvadrat-pifagora`;
 export const squareCellPath = (cell: number): string => `${PYTHAGORAS_PATH}/${cell}`;
 export const SQUARE_LINES_PATH = `${PYTHAGORAS_PATH}/linii`;
-
-// Только принятые партии: у непринятых страниц нет адреса в карте сайта и ссылок
-export function acceptedSquarePaths(): string[] {
-  return acceptedNumerologyPages("square").map((page) => `${PYTHAGORAS_PATH}/${page.key}`);
-}
+export const PYTHAGORAS_COMPAT_PATH = `${PYTHAGORAS_PATH}/sovmestimost`;
 
 // Названия на сайте; в традиции 4 — «здоровье», 8 — «долг»: о здоровье и долге не пишем
 export const SQUARE_CELL_NAMES: Readonly<Record<number, string>> = {

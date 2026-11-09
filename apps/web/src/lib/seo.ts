@@ -15,8 +15,9 @@ import { DOCUMENT_PATHS } from "./legal";
 import { TARO_DAY_PATH, TARO_PATH, TARO_SPREADS_PATH, taroCardPath } from "./taro-paths";
 import { spreadPath, TARO_SPREADS } from "./taro-spreads";
 import { SITE_NAME, SITE_URL, SOCIAL_LINKS } from "./site";
-import { acceptedClockPaths, acceptedFatePaths, acceptedPersonalYearPaths, CLOCK_PATH, NUMEROLOGY_PATH, PERSONAL_YEAR_PATH } from "./numerology";
-import { acceptedSquarePaths, PYTHAGORAS_PATH } from "./pythagoras";
+import { CLOCK_PATH, NUMEROLOGY_PATH, PERSONAL_YEAR_PATH } from "./numerology";
+import { acceptedClockPaths, acceptedFatePaths, acceptedPairPaths, acceptedPersonalYearPaths, acceptedSquarePaths } from "./numerology-pages";
+import { PYTHAGORAS_PATH } from "./pythagoras";
 
 // Личные страницы: вход, портрет и всё, что под ними. В поиск не попадают
 export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", "/lila/igra", "/admin"];
@@ -26,7 +27,7 @@ export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", 
 export const ROBOTS_DISALLOW: readonly string[] = ["/api/", "/admin"];
 
 // Практики и их справочники; следующие планы добавят свои
-export const PUBLIC_PATHS: string[] = ["/", "/arkan-2027", NUMEROLOGY_PATH, ...acceptedFatePaths(), PERSONAL_YEAR_PATH, ...acceptedPersonalYearPaths(), CLOCK_PATH, ...acceptedClockPaths(), PYTHAGORAS_PATH, ...acceptedSquarePaths(), ...ARCANA.map(yearArcanumPath), MATRIX_PATH, ARCANA_HUB_PATH, COMPAT_PATH, ...ARCANA.map(compatArcanumPath), ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, TARO_SPREADS_PATH, ...TARO_SPREADS.map(spreadPath), ...TAROT_DECK.map(taroCardPath), NATAL_PATH, ...QUICK_VARIANTS.map((variant) => QUICK_PAGES[variant].path), `${NATAL_PATH}/primer`, GLOSSARY_PATH, ...acceptedNatalPages().map(natalPagePath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), "/metodika", "/matrica-sudby/primer", "/lila/primer", ...DOCUMENT_PATHS];
+export const PUBLIC_PATHS: string[] = ["/", "/arkan-2027", NUMEROLOGY_PATH, ...acceptedFatePaths(), PERSONAL_YEAR_PATH, ...acceptedPersonalYearPaths(), CLOCK_PATH, ...acceptedClockPaths(), PYTHAGORAS_PATH, ...acceptedSquarePaths(), ...acceptedPairPaths(), ...ARCANA.map(yearArcanumPath), MATRIX_PATH, ARCANA_HUB_PATH, COMPAT_PATH, ...ARCANA.map(compatArcanumPath), ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, TARO_SPREADS_PATH, ...TARO_SPREADS.map(spreadPath), ...TAROT_DECK.map(taroCardPath), NATAL_PATH, ...QUICK_VARIANTS.map((variant) => QUICK_PAGES[variant].path), `${NATAL_PATH}/primer`, GLOSSARY_PATH, ...acceptedNatalPages().map(natalPagePath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), "/metodika", "/matrica-sudby/primer", "/lila/primer", ...DOCUMENT_PATHS];
 
 type PreviewImage = { url: string; alt: string; width?: number; height?: number };
 

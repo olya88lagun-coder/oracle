@@ -5,7 +5,7 @@ import { reachNumerologyGoal } from "@/lib/numerology";
 import { squareOutcome, type SquareOutcome } from "@/lib/pythagoras";
 import { PythagorasResult, type SquareSummaries } from "./PythagorasResult";
 
-export function PythagorasCalculator({ summaries, fatePages }: { summaries: SquareSummaries; fatePages: readonly number[] }) {
+export function PythagorasCalculator({ summaries, fatePages, pairHref }: { summaries: SquareSummaries; fatePages: readonly number[]; pairHref?: string }) {
   const input = useRef<HTMLInputElement>(null);
   const [outcome, setOutcome] = useState<SquareOutcome | null>(null);
   function calculate(event: FormEvent<HTMLFormElement>) {
@@ -33,6 +33,6 @@ export function PythagorasCalculator({ summaries, fatePages }: { summaries: Squa
       </div>
       <div className="year-hero__art" aria-hidden="true"><span>3×3</span><p>девять ячеек<br />восемь линий</p></div>
     </section>
-    {outcome?.ok && <PythagorasResult key={outcome.iso} iso={outcome.iso} square={outcome.square} summaries={summaries} fatePages={fatePages} />}
+    {outcome?.ok && <PythagorasResult key={outcome.iso} iso={outcome.iso} square={outcome.square} summaries={summaries} fatePages={fatePages} pairHref={pairHref} />}
   </>;
 }

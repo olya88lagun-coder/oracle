@@ -3,6 +3,7 @@ import { SQUARE_LINES } from "@oracle/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NumerologyPageView } from "@/components/numerology/NumerologyPageView";
+import { SquarePairLink } from "@/components/numerology/SquarePairLink";
 import { NUMEROLOGY_PATH } from "@/lib/numerology";
 import { PYTHAGORAS_PATH, SQUARE_LINE_NAMES, squareVariant } from "@/lib/pythagoras";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
@@ -56,6 +57,6 @@ export default async function SquareCellPage({ params }: Params) {
   const siblings = acceptedNumerologyPages("square").filter((page) => page.key !== cell).map((page) => ({ name: labelOf(page.key), href: pathOf(page.key) }));
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
-    <NumerologyPageView text={text} emblem={cell === "linii" ? "3×3" : cell} anchors={anchorsOf(cell)} crumbs={[{ name: "Нумерология", href: NUMEROLOGY_PATH }, { name: "Квадрат Пифагора", href: PYTHAGORAS_PATH }]} siblings={siblings} footer={{ name: "Построить свой квадрат", href: PYTHAGORAS_PATH }} />
+    <NumerologyPageView text={text} emblem={cell === "linii" ? "3×3" : cell} anchors={anchorsOf(cell)} crumbs={[{ name: "Нумерология", href: NUMEROLOGY_PATH }, { name: "Квадрат Пифагора", href: PYTHAGORAS_PATH }]} siblings={siblings} footer={{ name: "Построить свой квадрат", href: PYTHAGORAS_PATH }}><SquarePairLink /></NumerologyPageView>
   </>;
 }

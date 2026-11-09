@@ -1,5 +1,4 @@
-import { acceptedNumerologyPages } from "@oracle/content/numerology";
-import { calculateFateNumber, calculatePersonalYear, CLOCK_TIMES, type ClockTime, type FateNumber, type PersonalYear } from "@oracle/core";
+import { calculateFateNumber, calculatePersonalYear, type FateNumber, type PersonalYear } from "@oracle/core";
 import { reachGoal, type Goal } from "./analytics";
 import { isAnalyticsReady } from "./analytics-runtime";
 import { DATE_ERROR } from "./matrix-save";
@@ -7,11 +6,6 @@ import { DATE_ERROR } from "./matrix-save";
 // Раздел «Нумерология» (docs/superpowers/specs/2026-11-08-numerology-design.md): калькулятор числа судьбы и страницы чисел
 export const NUMEROLOGY_PATH = "/numerologiya";
 export const fatePath = (n: number): string => `${NUMEROLOGY_PATH}/chislo-sudby/${n}`;
-
-// Только принятые партии: у непринятых страниц нет адреса в карте сайта и ссылок
-export function acceptedFatePaths(): string[] {
-  return acceptedNumerologyPages("fate").map((page) => fatePath(Number(page.key)));
-}
 
 export type FateOutcome = { ok: true; iso: string; result: FateNumber } | { ok: false; error: string };
 
@@ -23,10 +17,6 @@ export function fateOutcome(iso: string, today: Date): FateOutcome {
 export const PERSONAL_YEAR_PATH = `${NUMEROLOGY_PATH}/lichnyy-god-2027`;
 export const personalYearPath = (n: number): string => `${PERSONAL_YEAR_PATH}/${n}`;
 
-export function acceptedPersonalYearPaths(): string[] {
-  return acceptedNumerologyPages("year").map((page) => personalYearPath(Number(page.key)));
-}
-
 export type PersonalYearOutcome = { ok: true; iso: string; result: PersonalYear } | { ok: false; error: string };
 
 export function personalYearOutcome(iso: string, today: Date): PersonalYearOutcome {
@@ -36,24 +26,6 @@ export function personalYearOutcome(iso: string, today: Date): PersonalYearOutco
 
 export const CLOCK_PATH = `${NUMEROLOGY_PATH}/chasy`;
 export const clockPath = (slug: string): string => `${CLOCK_PATH}/${slug}`;
-
-export function acceptedClockPaths(): string[] {
-  return acceptedNumerologyPages("clock").map((page) => clockPath(page.key));
-}
-
-const sameGroup = (a: ClockTime, b: ClockTime): boolean => a.kind === "both" || b.kind === "both" || a.kind === b.kind;
-
-// 2–3 ближайших по времени суток принятых времени той же группы — ряд «Другие значения»
-export function relatedClocks(slug: string): readonly ClockTime[] {
-  const self = CLOCK_TIMES.find((time) => time.slug === slug);
-  if (!self) return [];
-  const accepted = new Set(acceptedNumerologyPages("clock").map((page) => page.key));
-  const at = (t: ClockTime) => t.hours * 60 + t.minutes;
-  return CLOCK_TIMES.filter((time) => time !== self && accepted.has(time.slug) && sameGroup(self, time))
-    .sort((a, b) => Math.abs(at(a) - at(self)) - Math.abs(at(b) - at(self)))
-    .slice(0, 3)
-    .sort((a, b) => at(a) - at(b));
-}
 
 type NumerologyGoal = Extract<Goal, `numerology_${string}` | `personal_year_${string}` | `pythagoras_${string}`>;
 
