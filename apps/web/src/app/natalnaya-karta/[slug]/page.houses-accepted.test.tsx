@@ -30,7 +30,7 @@ describe("/natalnaya-karta/[slug] «planet in house» pages (batch 6, accepted)"
     expect(markup).toContain('<h1 id="meaning-title">Венера в 7 доме</h1>');
     expect(markup).toContain("Планета в доме");
     expect(markup).toContain('aria-label="Венера и 7 дом"');
-    expect(markup).toContain("Это же тело в других домах");
+    expect(markup).toContain("Венера в других домах");
     expect(markup).toContain('href="/natalnaya-karta/venera-v-4-dome"');
     expect(markup).toContain('href="/natalnaya-karta/venera-v-10-dome"');
     expect(markup).toContain("Соседние дома");

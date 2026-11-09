@@ -7,7 +7,7 @@ import {
   DISCLAIMER,
   HOUSE_NEIGHBORS_TITLE,
   HOUSE_NEXT,
-  HOUSE_OTHER_HOUSES_TITLE,
+  bodyInOtherHousesTitle,
   HOUSE_PREVIOUS,
   houseEmblemCaption,
   houseEmblemLabel,
@@ -21,7 +21,7 @@ import {
   MEANING_HERO_LINK,
   MEANING_NEIGHBORS_TITLE,
   MEANING_NEXT,
-  MEANING_OTHER_SIGNS_TITLE,
+  bodyInOtherSignsTitle,
   MEANING_PREVIOUS,
   MEANING_TOC_LABEL,
   MEANING_TOC_TITLE,
@@ -185,7 +185,7 @@ export function NatalPageView({ page, text, cover = natalCoverPath(page.slug) }:
           <NatalCalculatorLink />
         </section>
         <section className="natal-other-signs" aria-labelledby={id("other-signs")}>
-          <h2 id={id("other-signs")}>{house ? HOUSE_OTHER_HOUSES_TITLE : page.kind === "node" ? NODE_OTHER_SIGNS_TITLE : MEANING_OTHER_SIGNS_TITLE}</h2>
+          <h2 id={id("other-signs")}>{house ? bodyInOtherHousesTitle(BODY_NAMES[page.body].name) : page.kind === "node" ? NODE_OTHER_SIGNS_TITLE : bodyInOtherSignsTitle(BODY_NAMES[page.body].name)}</h2>
           <div className="natal-signs-grid">
             {siblings.map((item) => {
               const current = item.slug === page.slug;
