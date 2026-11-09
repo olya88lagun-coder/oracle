@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { reachNumerologyGoal } from "@/lib/numerology";
 import { pairOutcome, type PairOutcome } from "@/lib/pythagoras-compat";
@@ -44,7 +45,11 @@ export function PythagorasCompatCalculator({ texts }: { texts: PairTexts }) {
           <p className="muted" id="pair-privacy">Бесплатно, без регистрации. Даты остаются в браузере.</p>
         </form>
       </div>
-      <div className="year-hero__art" aria-hidden="true"><span>3×3</span><p>два квадрата<br />одна пара</p></div>
+      <div className="year-hero__art" aria-hidden="true">
+        <Image src="/images/numerology/pythagoras-compat-hero.webp" alt="" fill unoptimized />
+        <span>3×3</span>
+        <p>два квадрата<br />одна пара</p>
+      </div>
     </section>
     {outcome?.ok && <PythagorasCompatResult key={outcome.key} outcome={outcome} texts={texts} />}
   </>;

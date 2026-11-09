@@ -419,23 +419,436 @@
 .numerology-square__cells p, .numerology-square__lines p { margin: 0 0 6px; }
 .numerology-square-tile__name { display: block; margin-top: 6px; color: var(--ink-soft); font: 400 14px/1.2 var(--font-body); text-align: center; overflow-wrap: anywhere; }
 
-/* Совместимость по квадрату: базовый вид до оформления Codex (docs/design/codex-brief-pythagoras-compat.md) */
-.numerology-pair__legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0 0 12px; padding: 0; list-style: none; font-size: 14px; color: var(--ink-soft); }
-.numerology-pair__grid { width: 100%; max-width: 520px; margin: 0 0 24px; border-collapse: collapse; table-layout: fixed; }
-.numerology-pair__grid caption { caption-side: top; padding-bottom: 8px; color: var(--ink-soft); font-size: 14px; text-align: left; }
-.numerology-pair__tile { padding: 12px 6px; border: 1px solid var(--line); text-align: center; vertical-align: top; }
-.numerology-pair__tile .numerology-square__name { margin: 0 0 8px; hyphens: auto; overflow-wrap: break-word; }
-.numerology-pair__tile--close { background: var(--surface-2); border-color: var(--accent-line); }
-.numerology-pair__tile--empty { border-style: dashed; }
-.numerology-pair__digits { display: block; font: 400 clamp(18px, 5vw, 26px)/1.2 var(--font-display); overflow-wrap: anywhere; }
-.numerology-pair__who { display: block; font: 400 14px/1.3 var(--font-body); color: var(--ink-soft); }
+/* Совместимость по квадрату Пифагора */
+.numerology-pair-page .numerology-pair-hero {
+  min-height: 0;
+  padding-block: clamp(20px, 5vw, 72px) clamp(40px, 7vw, 96px);
+}
+
+.numerology-pair-page .numerology-pair-hero h1 {
+  font-size: clamp(40px, 5vw, 72px);
+  text-wrap: balance;
+}
+
+.numerology-pair-hero .year-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 520px;
+}
+
+.numerology-pair-hero .year-form .field {
+  min-width: 0;
+  align-content: start;
+}
+
+.numerology-pair-hero .year-form label {
+  display: flex;
+  align-items: end;
+  min-height: 2.8em;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.numerology-pair-hero .year-form > :is(button, p) {
+  grid-column: 1 / -1;
+}
+
+.numerology-pair-page .numerology-pair-hero .year-hero__art {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  align-self: center;
+  align-items: center;
+  justify-content: flex-end;
+  justify-self: center;
+  width: min(100%, 480px);
+  aspect-ratio: 1;
+  margin: 0;
+  padding: 0 0 9%;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  text-align: center;
+}
+
+.numerology-pair-hero .year-hero__art img {
+  z-index: -2;
+  object-fit: cover;
+  object-position: 100% center;
+}
+
+.numerology-pair-hero .year-hero__art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 7px var(--bg), inset 0 0 0 8px var(--accent-line);
+  background: linear-gradient(0deg, var(--bg), var(--scrim-clear) 40%);
+}
+
+.numerology-pair-page .numerology-pair-hero .year-hero__art span {
+  font-size: clamp(30px, 4vw, 48px);
+}
+
+.numerology-pair-page .year-result.numerology-pair {
+  max-width: 960px;
+  padding: clamp(12px, 4vw, 46px);
+}
+
+.numerology-pair .year-result__header h2 {
+  font-size: clamp(28px, 5vw, 46px);
+  text-wrap: balance;
+}
+
+.numerology-pair .year-result__header h2:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 5px;
+}
+
+.numerology-pair__legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 8px;
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.numerology-pair__legend li {
+  padding: 3px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
 .numerology-pair__you { color: var(--accent); }
 .numerology-pair__partner { color: var(--lavender); }
-.numerology-pair__tile .numerology-pair__relation { display: block; margin-top: 8px; color: var(--ink-soft); font-size: 14px; }
-.numerology-pair__working { margin: 0 0 32px; }
-.numerology-pair__working summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; }
-.numerology-pair__working-people { display: grid; gap: 24px; }
-@media (min-width: 768px) { .numerology-pair__working-people { grid-template-columns: 1fr 1fr; } }
-.numerology-pair__cells, .numerology-pair__lines { display: grid; gap: 20px; margin: 0; padding: 0; list-style: none; }
-.numerology-pair__cells p, .numerology-pair__lines p { margin: 0 0 6px; }
-.numerology-pair__variants { display: flex; flex-wrap: wrap; gap: 0 16px; }
+.numerology-pair__digits--empty { color: var(--ink-faint); }
+
+.numerology-pair__grid {
+  width: 100%;
+  margin: 0 0 24px;
+  border-spacing: clamp(4px, 1.1vw, 12px);
+  table-layout: fixed;
+}
+
+.numerology-pair__grid caption {
+  padding-bottom: 8px;
+  color: var(--ink);
+  font: 400 clamp(21px, 3vw, 29px)/1.3 var(--font-display);
+  text-align: center;
+}
+
+.numerology-pair__tile {
+  padding: clamp(8px, 1.6vw, 20px) 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: center;
+  vertical-align: top;
+}
+
+.numerology-pair__tile--close,
+.numerology-pair__legend .numerology-pair__relation--close {
+  border-color: var(--accent-line);
+  background: var(--surface-2);
+}
+
+.numerology-pair__tile--apart,
+.numerology-pair__legend .numerology-pair__relation--apart {
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--accent) 8%, var(--surface)) 49.7%,
+    var(--line-strong) 50%,
+    color-mix(in srgb, var(--lavender) 8%, var(--surface)) 50.3%
+  );
+}
+
+.numerology-pair__tile--empty,
+.numerology-pair__legend .numerology-pair__relation--empty {
+  border-style: dashed;
+  color: var(--ink-faint);
+}
+
+.numerology-pair__tile .numerology-square__name {
+  min-height: 2.6em;
+  margin: 0 0 8px;
+  hyphens: auto;
+  overflow-wrap: anywhere;
+}
+
+.numerology-pair__digits {
+  display: block;
+  font: 400 clamp(20px, 3.8vw, 37px)/1.1 var(--font-display);
+  font-variant-numeric: lining-nums tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.numerology-pair__digits + .numerology-pair__digits { margin-top: 6px; }
+
+.numerology-pair__who {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--ink-soft);
+  font: 400 14px/1.25 var(--font-body);
+}
+
+.numerology-pair__tile .numerology-pair__relation {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.numerology-pair .numerology-pair__working {
+  margin-bottom: clamp(32px, 6vw, 64px);
+  padding: 6px clamp(12px, 3vw, 24px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.numerology-pair__working summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font: 400 23px/1.3 var(--font-display);
+  list-style: none;
+}
+
+.numerology-pair__working summary::-webkit-details-marker { display: none; }
+.numerology-pair__working summary::after { content: "+" / ""; color: var(--accent); }
+.numerology-pair__working[open] summary::after { content: "−" / ""; }
+
+.numerology-pair__working-people {
+  display: grid;
+  gap: 16px;
+  padding-block: 10px 16px;
+}
+
+.numerology-pair__working-people > div {
+  min-width: 0;
+  padding: clamp(12px, 3vw, 20px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.numerology-pair__working-people .year-calculation { font-variant-numeric: tabular-nums; }
+.numerology-pair__working-people .year-calculation li + li { margin-top: 6px; }
+
+.numerology-pair .year-reading > h3 {
+  margin-top: clamp(28px, 5vw, 48px);
+  font-size: clamp(25px, 4vw, 36px);
+}
+
+.numerology-pair__cells,
+.numerology-pair__lines {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.numerology-pair__cell,
+.numerology-pair__line {
+  min-width: 0;
+  padding: clamp(12px, 3vw, 24px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.numerology-pair__cell {
+  display: grid;
+  grid-template-columns: minmax(0, 60px) minmax(0, 1fr);
+  gap: clamp(10px, 3vw, 20px);
+  align-items: start;
+}
+
+.numerology-pair__cells--similar .numerology-pair__cell {
+  border-inline-start-color: color-mix(in srgb, var(--accent), var(--lavender));
+}
+
+.numerology-pair__cells--different .numerology-pair__cell {
+  border-inline-start: 3px double var(--accent-line);
+}
+
+.numerology-pair__mini {
+  display: grid;
+  gap: 4px;
+  padding: 7px 3px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--ink-soft);
+  text-align: center;
+  font: 400 16px/1.2 var(--font-display);
+  font-variant-numeric: lining-nums tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.numerology-pair__mini > :first-child {
+  padding-bottom: 3px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.numerology-pair__cell-body { min-width: 0; }
+.numerology-pair__cell-body > p + p,
+.numerology-pair__line > p + p { margin-top: 8px; }
+.numerology-pair__variants { display: flex; flex-wrap: wrap; gap: 0 14px; }
+
+.numerology-pair__line:first-child {
+  padding: clamp(16px, 4vw, 32px);
+  border-color: var(--line-strong);
+  background: radial-gradient(ellipse at 20% 0%, var(--surface-3), var(--surface) 80%);
+}
+
+.numerology-pair__line:first-child strong {
+  font: 400 clamp(23px, 3vw, 33px)/1.2 var(--font-display);
+}
+
+.numerology-pair__scale {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  max-width: 600px;
+  margin-block: 14px;
+  font-size: 14px;
+}
+
+.numerology-pair__scale > div {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-width: 0;
+}
+
+.numerology-pair__zone {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(24px, auto));
+  justify-items: center;
+  align-items: center;
+  padding: 3px 2px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface-2);
+}
+
+.numerology-pair__zone--shared {
+  border-color: var(--accent-line);
+  background: var(--surface-3);
+}
+
+.numerology-pair__mark {
+  padding: 2px 3px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.numerology-pair__mark.numerology-pair__you { grid-row: 1; }
+.numerology-pair__mark.numerology-pair__partner { grid-row: 2; border-style: dashed; }
+.numerology-pair__zone-label { color: var(--ink-soft); text-align: center; }
+
+.numerology-pair .numerology-pair__next {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.numerology-pair .numerology-pair__next p { margin: 0; }
+
+.numerology-pair__next a {
+  display: flex;
+  height: 100%;
+  min-height: 54px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--surface-3), var(--surface));
+  text-decoration: none;
+}
+
+.numerology-pair__next a:is(:hover, :focus-visible) { border-color: var(--accent-line); }
+
+.numerology-pair-guide {
+  display: block;
+  max-width: 740px;
+  margin-inline: auto;
+  padding-block: clamp(32px, 5vw, 56px);
+}
+
+.numerology-pair-guide + .numerology-pair-guide {
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.numerology-pair-page .year-faq { max-width: 740px; }
+
+.numerology-pair__example {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 440px;
+}
+
+.numerology-pair__example > div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 5px;
+  gap: 3px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: center;
+}
+
+.numerology-pair__example span {
+  padding: 5px 2px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font: 400 17px/1.25 var(--font-display);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+@media (min-width: 761px) {
+  .numerology-pair__working-people,
+  .numerology-pair .numerology-pair__next { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .numerology-pair-page .numerology-pair-hero { padding-block: 10px 28px; }
+  .numerology-pair-page .numerology-pair-hero h1 { font-size: clamp(29px, 8.5vw, 46px); }
+  .numerology-pair-page .numerology-pair-hero .lead { font-size: 14px; line-height: 1.45; }
+  .numerology-pair-page .numerology-pair-hero .eyebrow { letter-spacing: 0.06em; }
+  .numerology-pair-page .numerology-pair-hero .year-hero__copy > * + * { margin-top: 10px; }
+  .numerology-pair-page .numerology-pair-hero .year-form { gap: 8px; margin-top: 10px; }
+  .numerology-pair-hero .year-form .field { gap: 4px; }
+  .numerology-pair-hero .year-form .input { padding-inline: 8px; }
+  .numerology-pair__tile .numerology-square__name { min-height: 3.9em; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .numerology-pair__tile {
+    animation: numerology-pair-tile calc(var(--dur-slow) * 0.64) var(--ease-out) both;
+  }
+
+  .numerology-pair__grid tr:nth-child(2) { --pair-row-delay: 60ms; }
+  .numerology-pair__grid tr:nth-child(3) { --pair-row-delay: 120ms; }
+  .numerology-pair__tile { animation-delay: var(--pair-row-delay, 0ms); }
+  .numerology-pair__tile:nth-child(2) { animation-delay: calc(var(--pair-row-delay, 0ms) + 20ms); }
+  .numerology-pair__tile:nth-child(3) { animation-delay: calc(var(--pair-row-delay, 0ms) + 40ms); }
+
+  @keyframes numerology-pair-tile {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}

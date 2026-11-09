@@ -5022,3 +5022,28 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
     .natal-report:has(#natal-chapter-scenario:target) a[href="#natal-chapter-scenario"] { color: var(--accent-hover); text-decoration: underline; }
   }
 }
+
+/* Общая ссылка на сравнение квадратов из нумерологии и совместимости. */
+:is(.numerology-pair-link, .text-link[href="/numerologiya/kvadrat-pifagora/sovmestimost"]) {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+:is(.numerology-pair-link, .text-link[href="/numerologiya/kvadrat-pifagora/sovmestimost"]):is(:hover, :focus-visible) {
+  border-color: var(--accent-line);
+  color: var(--accent-hover);
+}
+
+:is(.numerology-pair-link, .text-link[href="/numerologiya/kvadrat-pifagora/sovmestimost"]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
