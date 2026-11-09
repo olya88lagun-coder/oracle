@@ -1,12 +1,12 @@
-import { ACCEPTED_BATCHES, natalPageBySlug, NATAL_PAGES, natalText, SIGN_IDS, type NatalPageRef, type NatalPageText } from "@oracle/content/natal";
-import type { SignId } from "@oracle/core/natal";
+import { ACCEPTED_BATCHES, NATAL_HOUSE_PAGES, natalHouseText, natalPageBySlug, NATAL_PAGES, natalText, SIGN_IDS, type NatalHousePageRef, type NatalPageRef, type NatalPageText } from "@oracle/content/natal";
+import type { BodyId, SignId } from "@oracle/core/natal";
 import { shortDescription } from "./short-description";
 
 // У поколенческих планет первый абзац «Сути» один на все двенадцать знаков, и по нему получились бы одинаковые описания в выдаче
 const GENERATIONAL_BODIES: ReadonlySet<NatalPageText["body"]> = new Set(["uranus", "neptune", "pluto"]);
 
 // Описание страницы значения для выдачи и превью: первый абзац «Сути»; у поколенческих планет перед ним стоят название и ключевые слова страницы
-export function natalDescription(text: NatalPageText): string {
+export function natalDescription(text: Pick<NatalPageText, "body" | "name" | "keywords" | "essence">): string {
   const lead = text.essence[0] ?? text.name;
   if (!GENERATIONAL_BODIES.has(text.body)) return shortDescription(lead);
   return shortDescription(`${text.name}: ${text.keywords.join(", ")}. ${lead}`);
@@ -40,3 +40,18 @@ export function nodeAxisFor(page: NatalPageRef, isOpen: (candidate: NatalPageRef
 
 // Все знаки того же тела (только открытые страницы), в порядке зодиака
 export const sameBodyPages = (page: NatalPageRef): NatalPageRef[] => NATAL_PAGES.filter((item) => item.body === page.body && acceptedNatalPage(item.slug));
+
+// Страницы «планета в доме» («Венера в 7 доме»): тот же механизм — открыты только при принятой партии (HOUSE_PAGES_BATCH в ACCEPTED_BATCHES) и при наличии текста
+export const acceptedHousePages = (): NatalHousePageRef[] => NATAL_HOUSE_PAGES.filter((page) => ACCEPTED_BATCHES.has(page.batch) && natalHouseText(page.slug) !== undefined);
+
+export const acceptedHousePage = (slug: string): NatalHousePageRef | undefined => acceptedHousePages().find((page) => page.slug === slug);
+
+// Открытые дома того же тела, по номеру дома
+export const sameBodyHousePages = (body: BodyId): NatalHousePageRef[] => acceptedHousePages().filter((page) => page.body === body);
+
+// Предыдущий и следующий открытый дом того же тела, без перехода по кругу: в пилоте дома идут с пропусками
+export function houseNeighborPages(page: NatalHousePageRef): { previous: NatalHousePageRef | undefined; next: NatalHousePageRef | undefined } {
+  const pages = sameBodyHousePages(page.body);
+  const index = pages.findIndex((item) => item.slug === page.slug);
+  return { previous: index > 0 ? pages[index - 1] : undefined, next: index === -1 ? undefined : pages[index + 1] };
+}

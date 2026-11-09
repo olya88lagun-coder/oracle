@@ -81,6 +81,7 @@ if (import.meta.main) {
   write(join(root, "src", "generated", "tarot.json"), collectArcana(join(root, "tarot")));
   write(join(root, "src", "generated", "tarot-combos.json"), { combos: readText(join(root, "tarot-combos.md")) });
   write(join(root, "src", "generated", "natal.json"), collectArcana(join(root, "natal")));
+  write(join(root, "src", "generated", "natal-house-pages.json"), collectArcana(join(root, "natal-house-pages")));
   write(join(root, "src", "generated", "natal-keys.json"), collectNatalKeys(join(root, "natal")));
   write(join(root, "src", "generated", "natal-houses.json"), collectArcana(join(root, "natal-houses")));
   write(join(root, "src", "generated", "natal-planets.json"), collectNatalPlanets(join(root, "natal-planets.md")));

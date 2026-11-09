@@ -1,4 +1,4 @@
-import { NATAL_KEY_SUMMARIES } from "@oracle/content/natal-keys";
+import { NATAL_HOUSE_PAGE_SLUGS, NATAL_KEY_SUMMARIES } from "@oracle/content/natal-keys";
 import type { BodyId, SignId } from "@oracle/core/natal";
 import { natalPagePath } from "./natal-paths";
 
@@ -19,4 +19,14 @@ export const natalKeyId = (body: NatalKeyBody, sign: SignId): string => `${body}
 export function keyTextFor(body: NatalKeyBody, sign: SignId, registry: NatalKeyRegistry = NATAL_KEY_TEXTS): NatalKeyText | null {
   const key = natalKeyId(body, sign);
   return Object.hasOwn(registry, key) ? (registry[key] ?? null) : null;
+}
+
+// Адрес открытой страницы «планета в доме» («Венера в 7 доме») для ячейки «Дом» в таблице или null, пока партия не принята.
+// Список передаётся параметром, чтобы проверять оба случая без правки константы
+export type NatalHouseRegistry = Readonly<Record<string, string>>;
+
+export function housePageHref(body: string, house: number, registry: NatalHouseRegistry = NATAL_HOUSE_PAGE_SLUGS): string | null {
+  const key = `${body}-${house}`;
+  const slug = Object.hasOwn(registry, key) ? registry[key] : undefined;
+  return slug ? natalPagePath({ slug }) : null;
 }

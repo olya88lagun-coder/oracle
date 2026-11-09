@@ -1,9 +1,11 @@
 import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "vitest";
 import { collectArcana } from "../scripts/build-arcana.mjs";
+import houseRaw from "./generated/natal-house-pages.json";
 import raw from "./generated/natal.json";
-import { checkNatalPages } from "./natal-check";
-import { ACCEPTED_BATCHES, ASPECT_TEXTS, HOUSE_TEXTS, NATAL_PAGES, NATAL_TEXTS, natalPageFile, natalText } from "./natal-texts";
+import { checkNatalHousePages, checkNatalPages } from "./natal-check";
+import { NATAL_HOUSE_PAGE_SLUGS } from "./natal-keys";
+import { ACCEPTED_BATCHES, ASPECT_TEXTS, HOUSE_PAGES_BATCH, HOUSE_TEXTS, NATAL_HOUSE_PAGES, NATAL_HOUSE_TEXTS, NATAL_PAGES, NATAL_TEXTS, natalHousePageSlug, natalHouseText, natalPageFile, natalText } from "./natal-texts";
 import { findStopPhrases } from "./check";
 
 describe("natal texts data", () => {
@@ -30,9 +32,33 @@ describe("natal texts data", () => {
   });
 
   test("only existing batches are accepted, and every page of an accepted batch has its text", () => {
-    const batches = new Set(NATAL_PAGES.map((page) => page.batch));
+    const batches = new Set([...NATAL_PAGES, ...NATAL_HOUSE_PAGES].map((page) => page.batch));
     for (const batch of ACCEPTED_BATCHES) expect(batches.has(batch), `партия ${batch}`).toBe(true);
     for (const page of NATAL_PAGES.filter((item) => ACCEPTED_BATCHES.has(item.batch))) expect(natalText(page.slug), page.slug).toBeDefined();
+  });
+});
+
+describe("planet in house pages (pilot, batch 6)", () => {
+  test("the committed natal-house-pages.json matches the markdown files — run pnpm content:build after editing texts", () => {
+    expect(houseRaw).toEqual(collectArcana(fileURLToPath(new URL("../natal-house-pages", import.meta.url))));
+  });
+
+  test("twelve pilot pages, one file per manifest entry, slugs like venera-v-7-dome", () => {
+    expect(NATAL_HOUSE_PAGES).toHaveLength(12);
+    expect(natalHousePageSlug("venus", 7)).toBe("venera-v-7-dome");
+    expect(Object.keys(houseRaw).sort()).toEqual(NATAL_HOUSE_PAGES.map((page) => page.slug).sort());
+    for (const page of NATAL_HOUSE_PAGES) expect(natalHouseText(page.slug), page.slug).toBeDefined();
+    const signSlugs = new Set(NATAL_PAGES.map((page) => page.slug));
+    for (const page of NATAL_HOUSE_PAGES) expect(signSlugs.has(page.slug), page.slug).toBe(false);
+  });
+
+  test("every text passes the checks of the sign pages and does not repeat them", () => {
+    expect(checkNatalHousePages(NATAL_HOUSE_TEXTS, NATAL_TEXTS)).toEqual([]);
+  });
+
+  test("the batch is not accepted yet: no links from the calculator", () => {
+    expect(ACCEPTED_BATCHES.has(HOUSE_PAGES_BATCH)).toBe(false);
+    expect(NATAL_HOUSE_PAGE_SLUGS).toEqual({});
   });
 });
 

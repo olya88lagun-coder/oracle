@@ -1,4 +1,4 @@
-import type { SignId } from "@oracle/core/natal";
+import type { BodyId, SignId } from "@oracle/core/natal";
 import type { NatalBody } from "./natal-manifest";
 
 // Формат файла текста натальной страницы (packages/content/natal/NNN-slug.md): шапка и пять разделов, как у карт Таро
@@ -29,7 +29,7 @@ export type NatalPageText = {
 
 export class NatalFormatError extends Error {}
 
-const SLUG = /^[a-z]+(-[a-z]+)*$/;
+const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const MIN_QUESTIONS = 3;
 const MAX_QUESTIONS = 5;
 const TITLE_TO_KEY = new Map<string, SectionKey>(Object.entries(NATAL_SECTION_TITLES).map(([key, title]) => [title, key as SectionKey]));
@@ -47,24 +47,50 @@ function listItems(text: string, fail: (message: string) => never): string[] {
   return lines.map((line) => line.slice(2).trim());
 }
 
+type Fail = (message: string) => never;
+type Reading = Omit<NatalPageText, "order" | "sign" | "body" | "batch">;
+
 export function parseNatalPage(source: string, file: string): NatalPageText {
   const fail = (message: string): never => {
     throw new NatalFormatError(`${file}: ${message}`);
   };
-  const match = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(source.replace(/\r\n/g, "\n").trim());
-  if (!match) return fail("нет шапки между строками ---");
-  const fields = new Map((match[1] ?? "").split("\n").map((line) => [line.slice(0, line.indexOf(":")).trim(), line.slice(line.indexOf(":") + 1).trim()] as const));
+  const { fields, reading } = parseReading(source, fail);
   const order = Number(fields.get("order"));
   if (!Number.isInteger(order) || order < 1 || order > 144) fail("order — от 1 до 144");
   const batch = Number(fields.get("batch"));
   if (!Number.isInteger(batch) || batch < 1 || batch > 5) fail("batch — от 1 до 5");
-  const name = fields.get("name") ?? "";
-  if (!name) fail("нет name");
-  const slug = fields.get("slug") ?? "";
-  if (!SLUG.test(slug)) fail("slug — латиница в нижнем регистре через дефис");
   const body = (fields.get("body") ?? "") as NatalBody;
   const sign = (fields.get("sign") ?? "") as SignId;
   if (!body || !sign) fail("нужны body и sign");
+  return { ...reading, order, body, sign, batch };
+}
+
+// Страница «планета в доме» (packages/content/natal-house-pages/<слаг>.md): та же шапка и разделы, но вместо order и sign — house
+export type NatalHousePageText = Reading & { readonly body: BodyId; readonly house: number; readonly batch: number };
+
+export function parseNatalHousePage(source: string, file: string): NatalHousePageText {
+  const fail = (message: string): never => {
+    throw new NatalFormatError(`${file}: ${message}`);
+  };
+  const { fields, reading } = parseReading(source, fail);
+  const house = Number(fields.get("house"));
+  if (!Number.isInteger(house) || house < 1 || house > 12) fail("house — от 1 до 12");
+  const batch = Number(fields.get("batch"));
+  if (!Number.isInteger(batch) || batch < 1) fail("batch — целое число");
+  const body = (fields.get("body") ?? "") as BodyId;
+  if (!body) fail("нужно body");
+  return { ...reading, body, house, batch };
+}
+
+// Общая часть страниц «в знаке» и «в доме»: name, slug, keywords и пять разделов
+function parseReading(source: string, fail: Fail): { fields: Map<string, string>; reading: Reading } {
+  const match = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(source.replace(/\r\n/g, "\n").trim());
+  if (!match) return fail("нет шапки между строками ---");
+  const fields = new Map((match[1] ?? "").split("\n").map((line) => [line.slice(0, line.indexOf(":")).trim(), line.slice(line.indexOf(":") + 1).trim()] as const));
+  const name = fields.get("name") ?? "";
+  if (!name) fail("нет name");
+  const slug = fields.get("slug") ?? "";
+  if (!SLUG.test(slug)) fail("slug — латиница в нижнем регистре и цифры через дефис");
   const keywords = (fields.get("keywords") ?? "").split(";").map((word) => word.trim()).filter(Boolean);
   if (keywords.length < 3 || keywords.length > 4) fail("keywords — 3–4 фразы через «; »");
 
@@ -84,17 +110,16 @@ export function parseNatalPage(source: string, file: string): NatalPageText {
   const [limits, ...extra] = paragraphs(text("limits"));
   if (!limits || extra.length > 0) fail(`«${NATAL_SECTION_TITLES.limits}» — ровно один абзац`);
   return {
-    order,
-    slug,
-    name,
-    body,
-    sign,
-    batch,
-    keywords,
-    essence: paragraphs(text("essence")),
-    manifestation: paragraphs(text("manifestation")),
-    pitfalls: paragraphs(text("pitfalls")),
-    questions: listItems(text("questions"), fail),
-    limits: limits ?? "",
+    fields,
+    reading: {
+      slug,
+      name,
+      keywords,
+      essence: paragraphs(text("essence")),
+      manifestation: paragraphs(text("manifestation")),
+      pitfalls: paragraphs(text("pitfalls")),
+      questions: listItems(text("questions"), fail),
+      limits: limits ?? "",
+    },
   };
 }

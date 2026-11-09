@@ -1,13 +1,19 @@
 import type { AspectId } from "@oracle/core/natal";
+import houseRaw from "./generated/natal-house-pages.json";
 import raw from "./generated/natal.json";
-import { parseNatalPage, type NatalPageText } from "./natal";
+import { parseNatalHousePage, parseNatalPage, type NatalHousePageText, type NatalPageText } from "./natal";
 
 export { NATAL_ASPECT_NAMES, NATAL_CHAPTER_INTROS } from "./natal-report-texts";
 export { ACCEPTED_HOUSE_BATCHES, houseBlock, HOUSE_BODIES, NATAL_HOUSE_FILES, NATAL_PLANETS, planetFunction } from "./natal-houses";
-export { NATAL_SECTION_TITLES, NatalFormatError, parseNatalPage, type NatalPageText } from "./natal";
+export { NATAL_SECTION_TITLES, NatalFormatError, parseNatalHousePage, parseNatalPage, type NatalHousePageText, type NatalPageText } from "./natal";
 export {
   ACCEPTED_BATCHES,
   BODY_NAMES,
+  HOUSE_PAGES_BATCH,
+  natalHousePageBySlug,
+  natalHousePageName,
+  natalHousePageSlug,
+  NATAL_HOUSE_PAGES,
   natalPageBySlug,
   natalPageFile,
   natalPageName,
@@ -17,6 +23,7 @@ export {
   SIGN_IDS,
   SIGN_NAMES,
   type NatalBody,
+  type NatalHousePageRef,
   type NatalPageKind,
   type NatalPageRef,
 } from "./natal-manifest";
@@ -29,6 +36,15 @@ export const NATAL_TEXTS: readonly NatalPageText[] = Object.keys(raw as Record<s
 
 export function natalText(slug: string): NatalPageText | undefined {
   return NATAL_TEXTS.find((page) => page.slug === slug);
+}
+
+// Страницы «планета в доме»: pnpm content:build → src/generated/natal-house-pages.json
+export const NATAL_HOUSE_TEXTS: readonly NatalHousePageText[] = Object.keys(houseRaw as Record<string, string>)
+  .sort()
+  .map((name) => parseNatalHousePage((houseRaw as Record<string, string>)[name] ?? "", `${name}.md`));
+
+export function natalHouseText(slug: string): NatalHousePageText | undefined {
+  return NATAL_HOUSE_TEXTS.find((page) => page.slug === slug);
 }
 
 // Короткие описания домов (система домов — Плацидус, за 66° с. ш. — Порфирий). Дом показывает сферу жизни, в которой проявляется положение

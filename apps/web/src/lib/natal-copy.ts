@@ -300,7 +300,7 @@ export const MEANING_CTA_TEXT = "Посмотрите это положение 
 export const MEANING_OTHER_SIGNS_TITLE = "Это же тело в других знаках";
 export const MEANING_NEIGHBORS_TITLE = "Соседние знаки";
 // Подпись над заголовком страницы значения и ссылка на расчёт в шапке
-export const MEANING_EYEBROW = { planet: "Планета в знаке", ascendant: "Асцендент в знаке", node: "Северный узел в знаке" } as const;
+export const MEANING_EYEBROW = { planet: "Планета в знаке", ascendant: "Асцендент в знаке", node: "Северный узел в знаке", house: "Планета в доме" } as const;
 export const MEANING_HERO_LINK = "Рассчитать свою карту";
 export const meaningCoverAlt = (name: string): string => `Иллюстрация к странице «${name}»`;
 // Страницы «Северный узел в знаке»: ось узлов и подпись блока «в других знаках»
@@ -315,6 +315,15 @@ export const MEANING_NEXT = "Следующий знак";
 export const MEANING_CURRENT_PAGE = " — текущая страница";
 export const meaningTitle = (name: string): string => `${name}: значение в натальной карте`;
 export const meaningEmblemLabel = (body: string, signGenitive: string): string => `${body} и знак ${signGenitive}`;
+// Страницы «планета в доме»: подписи эмблемы, блоков «в других домах» и «соседние дома»; на странице знака — блок «Венера в домах»
+export const houseEmblemLabel = (body: string, house: number): string => `${body} и ${house} дом`;
+export const houseEmblemCaption = (house: number): string => `${house} дом`;
+export const HOUSE_OTHER_HOUSES_TITLE = "Это же тело в других домах";
+export const HOUSE_NEIGHBORS_TITLE = "Соседние дома";
+export const HOUSE_PREVIOUS = "Предыдущий дом";
+export const HOUSE_NEXT = "Следующий дом";
+export const bodyInHousesTitle = (body: string): string => `${body} в домах`;
+export const houseLinkHint = (name: string): string => ` — ${name}: значение`;
 
 // «Солнце и знак Овна»: родительный падеж знака для подписи эмблемы
 export const SIGN_NAMES_GENITIVE: Readonly<Record<SignId, string>> = {
