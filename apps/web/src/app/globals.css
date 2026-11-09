@@ -543,7 +543,13 @@ a.report-toc__title:hover { color: var(--accent); }
 .hero__cta > * { margin: 0; }
 .hero__promise { font-size: 17px; color: var(--ink); }
 .practice-card__cta { width: fit-content; margin-top: 14px; white-space: nowrap; pointer-events: none; }
-.report-offer__teaser { position: relative; color: var(--ink); -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
+/* Связка арканов в блоке продажи: число → общее значение → связка */
+.matrix-link { display: grid; gap: 12px; margin: 0; }
+.matrix-link__point { display: grid; gap: 4px; }
+.matrix-link dt { color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
+.matrix-link__number { font-family: var(--font-display); color: var(--accent); }
+.matrix-link dd { margin: 0; color: var(--ink-soft); font-size: 15px; }
+.matrix-link__text { margin: 0; padding-top: 12px; border-top: 1px solid var(--line); color: var(--ink); }
 
 /* Лила: экраны по макетам Codex (docs/design/mockups/lila-*). Цвета — только переменные из :root */
 /* Вход и справочник */
