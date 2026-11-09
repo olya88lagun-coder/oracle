@@ -855,3 +855,6 @@
     to { opacity: 1; transform: translateY(0); }
   }
 }
+
+/* Хаб: ссылки на другие расчёты — ровным столбиком, каждая в своей строке */
+.numerology-more { display: grid; gap: 4px; margin: 8px 0 0; padding: 0; list-style: none; }
