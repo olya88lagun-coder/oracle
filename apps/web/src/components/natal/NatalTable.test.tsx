@@ -52,3 +52,20 @@ describe("NatalTable meaning links", () => {
     expect(markup).toMatch(/<a class="natal-table__meaning-link" href="[^"]+"><span>Солнце<\/span>/);
   });
 });
+
+describe("NatalTable house links", () => {
+  const houseLinks = (markup: string) => [...markup.matchAll(/<a class="natal-table__meaning-link" href="(\/natalnaya-karta\/[a-z]+-v-\d+-dome)">/g)].map((match) => match[1]);
+
+  test("while the house pages batch is not accepted, house numbers stay plain text", () => {
+    expect(houseLinks(renderToStaticMarkup(<NatalTable chart={sampleChart(true)} />))).toEqual([]);
+  });
+
+  test("an open «planet in house» page turns the house number into a link", () => {
+    const chart = sampleChart(true);
+    const venus = chart.points.find((point) => point.id === "venus");
+    if (!venus || venus.house === null) throw new Error("у Венеры в примере нет дома");
+    const markup = renderToStaticMarkup(<NatalTable chart={chart} houseRegistry={{ [`venus-${venus.house}`]: `venera-v-${venus.house}-dome` }} />);
+    expect(houseLinks(markup)).toEqual([`/natalnaya-karta/venera-v-${venus.house}-dome`]);
+    expect(markup).toContain(`Венера в ${venus.house} доме: значение`);
+  });
+});

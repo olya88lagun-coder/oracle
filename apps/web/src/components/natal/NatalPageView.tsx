@@ -1,9 +1,16 @@
-import { BODY_NAMES, NATAL_SECTION_TITLES, SIGN_NAMES, type NatalPageRef, type NatalPageText } from "@oracle/content/natal";
+import { BODY_NAMES, natalHousePageName, NATAL_SECTION_TITLES, SIGN_NAMES, type NatalHousePageRef, type NatalPageRef, type NatalPageText } from "@oracle/content/natal";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import {
+  bodyInHousesTitle,
   DISCLAIMER,
+  HOUSE_NEIGHBORS_TITLE,
+  HOUSE_NEXT,
+  HOUSE_OTHER_HOUSES_TITLE,
+  HOUSE_PREVIOUS,
+  houseEmblemCaption,
+  houseEmblemLabel,
   meaningEmblemLabel,
   MEANING_BREADCRUMBS_LABEL,
   MEANING_CTA_TEXT,
@@ -23,7 +30,7 @@ import {
   SIGN_NAMES_GENITIVE,
 } from "@/lib/natal-copy";
 import { natalCoverPath, NATAL_COVER_SIZE } from "@/lib/natal-covers";
-import { neighborPages, sameBodyPages } from "@/lib/natal-pages";
+import { houseNeighborPages, neighborPages, sameBodyHousePages, sameBodyPages } from "@/lib/natal-pages";
 import { NATAL_PATH, natalPagePath } from "@/lib/natal-paths";
 import { NatalCalculatorLink } from "./NatalCalculatorLink";
 import { bodyGlyphId, NatalGlyph } from "./NatalGlyph";
@@ -32,10 +39,44 @@ import { NatalSprite } from "./NatalSprite";
 
 // Страница значения («Солнце в Овне», «Асцендент в Раке»). Разметка и классы — по макету natal-page.html; оформление добавляет дизайн.
 // Один <h1>; оглавление, пять разделов, приглашение рассчитать карту, ссылки на тот же объект в других знаках и на соседние знаки.
+// Страница «планета в доме» («Венера в 7 доме») — та же вёрстка: вместо знаков — открытые дома того же тела; у страницы знака планеты — блок «<тело> в домах», если дома открыты.
 
 const SECTION_KEYS = ["essence", "manifestation", "pitfalls", "questions", "limits"] as const;
 
-const titleOf = (item: NatalPageRef): string => `${BODY_NAMES[item.body].name} ${SIGN_NAMES[item.sign].preposition} ${SIGN_NAMES[item.sign].prepositional}`;
+type AnyPage = NatalPageRef | NatalHousePageRef;
+type Reading = Pick<NatalPageText, "name" | "keywords" | "essence" | "manifestation" | "pitfalls" | "questions" | "limits">;
+
+const titleOf = (item: AnyPage): string =>
+  item.kind === "house" ? natalHousePageName(item.body, item.house) : `${BODY_NAMES[item.body].name} ${SIGN_NAMES[item.sign].preposition} ${SIGN_NAMES[item.sign].prepositional}`;
+
+// Значок пункта в сетке «в других знаках / домах»: глиф знака или номер дома
+const ItemMark = ({ item }: { item: AnyPage }) =>
+  item.kind === "house" ? (
+    <span className="natal-signs-grid__house" aria-hidden="true">
+      {item.house}
+    </span>
+  ) : (
+    <NatalGlyph id={item.sign} />
+  );
+
+// Обложек у страниц домов нет: глиф планеты и номер дома
+function HouseEmblem({ page }: { page: NatalHousePageRef }) {
+  const body = BODY_NAMES[page.body].name;
+  return (
+    <figure className="natal-emblem" data-variant={bodyGlyphId(page.body)} role="img" aria-label={houseEmblemLabel(body, page.house)}>
+      <div className="natal-emblem__pair">
+        <NatalGlyph id={bodyGlyphId(page.body)} />
+        <span className="natal-emblem__divider" aria-hidden="true" />
+        <span className="natal-emblem__axis" aria-hidden="true">
+          {page.house}
+        </span>
+      </div>
+      <figcaption>
+        {body} · {houseEmblemCaption(page.house)}
+      </figcaption>
+    </figure>
+  );
+}
 
 function Emblem({ page }: { page: NatalPageRef }) {
   const ascendant = page.body === "ascendant";
@@ -61,9 +102,12 @@ function Emblem({ page }: { page: NatalPageRef }) {
 }
 
 // cover по умолчанию берётся из списка обложек; тесты передают null, чтобы проверять эмблему, не завися от того, у каких знаков уже есть картинки
-export function NatalPageView({ page, text, cover = natalCoverPath(page.slug) }: { page: NatalPageRef; text: NatalPageText; cover?: string | null }) {
-  const { previous, next } = neighborPages(page);
-  const siblings = sameBodyPages(page);
+export function NatalPageView({ page, text, cover = natalCoverPath(page.slug) }: { page: AnyPage; text: Reading; cover?: string | null }) {
+  const house = page.kind === "house";
+  const { previous, next }: { previous: AnyPage | undefined; next: AnyPage | undefined } = page.kind === "house" ? houseNeighborPages(page) : neighborPages(page);
+  const siblings: AnyPage[] = page.kind === "house" ? sameBodyHousePages(page.body) : sameBodyPages(page);
+  // Со страницы «планета в знаке» — ссылки на открытые дома той же планеты; пока партия домов не принята, блока нет
+  const housePages = page.kind === "planet" && page.body !== "ascendant" && page.body !== "northNode" ? sameBodyHousePages(page.body) : [];
   const id = (key: string) => `${page.body}-${key}`;
   const paragraphs = (items: readonly string[]): ReactNode => items.map((paragraph) => <p key={paragraph}>{paragraph}</p>);
   const sections: Record<(typeof SECTION_KEYS)[number], ReactNode> = {
@@ -105,12 +149,14 @@ export function NatalPageView({ page, text, cover = natalCoverPath(page.slug) }:
           <figure className="natal-cover">
             <Image src={cover} width={NATAL_COVER_SIZE} height={NATAL_COVER_SIZE} alt={meaningCoverAlt(text.name)} priority unoptimized />
           </figure>
+        ) : page.kind === "house" ? (
+          <HouseEmblem page={page} />
         ) : (
           <Emblem page={page} />
         )}
       </header>
       <article aria-labelledby="meaning-title">
-        <NatalNodeAxis page={page} idPrefix={page.body} />
+        {page.kind !== "house" && <NatalNodeAxis page={page} idPrefix={page.body} />}
         <div className="natal-reading-layout">
           <aside className="natal-toc" aria-label="Оглавление">
             <p className="natal-toc__title">{MEANING_TOC_TITLE}</p>
@@ -139,13 +185,13 @@ export function NatalPageView({ page, text, cover = natalCoverPath(page.slug) }:
           <NatalCalculatorLink />
         </section>
         <section className="natal-other-signs" aria-labelledby={id("other-signs")}>
-          <h2 id={id("other-signs")}>{page.kind === "node" ? NODE_OTHER_SIGNS_TITLE : MEANING_OTHER_SIGNS_TITLE}</h2>
+          <h2 id={id("other-signs")}>{house ? HOUSE_OTHER_HOUSES_TITLE : page.kind === "node" ? NODE_OTHER_SIGNS_TITLE : MEANING_OTHER_SIGNS_TITLE}</h2>
           <div className="natal-signs-grid">
             {siblings.map((item) => {
               const current = item.slug === page.slug;
               return (
                 <Link key={item.slug} className="natal-signs-grid__item" href={natalPagePath(item)} aria-current={current ? "page" : undefined}>
-                  <NatalGlyph id={item.sign} />
+                  <ItemMark item={item} />
                   <span>{titleOf(item)}</span>
                   {current && <span className="sr-only">{MEANING_CURRENT_PAGE}</span>}
                 </Link>
@@ -153,16 +199,29 @@ export function NatalPageView({ page, text, cover = natalCoverPath(page.slug) }:
             })}
           </div>
         </section>
+        {housePages.length > 0 && (
+          <section className="natal-other-signs" aria-labelledby={id("houses")}>
+            <h2 id={id("houses")}>{bodyInHousesTitle(BODY_NAMES[page.body].name)}</h2>
+            <div className="natal-signs-grid">
+              {housePages.map((item) => (
+                <Link key={item.slug} className="natal-signs-grid__item" href={natalPagePath(item)} prefetch={false}>
+                  <ItemMark item={item} />
+                  <span>{titleOf(item)}</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
         <section className="natal-neighbors" aria-labelledby={id("neighbors")}>
-          <h2 id={id("neighbors")}>{MEANING_NEIGHBORS_TITLE}</h2>
-          <nav className="natal-pager" aria-label={MEANING_NEIGHBORS_TITLE}>
+          <h2 id={id("neighbors")}>{house ? HOUSE_NEIGHBORS_TITLE : MEANING_NEIGHBORS_TITLE}</h2>
+          <nav className="natal-pager" aria-label={house ? HOUSE_NEIGHBORS_TITLE : MEANING_NEIGHBORS_TITLE}>
             {previous && (
               <Link href={natalPagePath(previous)}>
                 <span className="natal-pager__arrow" aria-hidden="true">
                   ←
                 </span>
                 <span>
-                  <span className="natal-pager__label">{MEANING_PREVIOUS}</span>
+                  <span className="natal-pager__label">{house ? HOUSE_PREVIOUS : MEANING_PREVIOUS}</span>
                   {titleOf(previous)}
                 </span>
               </Link>
@@ -170,7 +229,7 @@ export function NatalPageView({ page, text, cover = natalCoverPath(page.slug) }:
             {next && (
               <Link href={natalPagePath(next)}>
                 <span>
-                  <span className="natal-pager__label">{MEANING_NEXT}</span>
+                  <span className="natal-pager__label">{house ? HOUSE_NEXT : MEANING_NEXT}</span>
                   {titleOf(next)}
                 </span>
                 <span className="natal-pager__arrow" aria-hidden="true">

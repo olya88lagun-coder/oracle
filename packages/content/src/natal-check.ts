@@ -1,10 +1,10 @@
 import { findStopPhrases } from "./check";
-import type { NatalPageText } from "./natal";
-import { natalPageBySlug, natalPageName, natalPageOrder } from "./natal-manifest";
+import type { NatalHousePageText, NatalPageText } from "./natal";
+import { natalHousePageBySlug, natalHousePageName, natalPageBySlug, natalPageName, natalPageOrder } from "./natal-manifest";
 
 // Проверка текстов натальных страниц: объём, обороты-предсказания и главное — шаблонность (одинаковые абзацы на разных страницах)
 
-export const MIN_WORDS = { planet: 330, ascendant: 250, node: 330 } as const;
+export const MIN_WORDS = { planet: 330, ascendant: 250, node: 330, house: 330 } as const;
 export const MAX_SHARED_SHINGLES = 0.25;
 const SHINGLE_SIZE = 5;
 
@@ -13,8 +13,10 @@ const QUESTION_LENGTH = { min: 25, max: 220 } as const;
 
 const wordList = (text: string) => text.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ").split(/\s+/).filter(Boolean);
 
-export const pageText = (page: NatalPageText): string => [...page.essence, ...page.manifestation, ...page.pitfalls, ...page.questions, page.limits].join("\n");
-export const pageWords = (page: NatalPageText): number => wordList(pageText(page)).length;
+type Reading = Pick<NatalPageText, "slug" | "name" | "keywords" | "essence" | "manifestation" | "pitfalls" | "questions" | "limits">;
+
+export const pageText = (page: Reading): string => [...page.essence, ...page.manifestation, ...page.pitfalls, ...page.questions, page.limits].join("\n");
+export const pageWords = (page: Reading): number => wordList(pageText(page)).length;
 
 const shingles = (text: string, size = SHINGLE_SIZE): Set<string> => {
   const list = wordList(text);
@@ -43,6 +45,13 @@ function checkPage(page: NatalPageText): string[] {
   if (page.order !== natalPageOrder(page.slug)) at(`order должен быть ${natalPageOrder(page.slug)}`);
   const expectedName = natalPageName(ref.body, ref.sign);
   if (page.name !== expectedName) at(`name должно быть «${expectedName}»`);
+  return [...errors, ...checkReading(page, MIN_WORDS[ref.kind])];
+}
+
+// Разделы, вопросы, объём и обороты-предсказания: одинаково для страниц «в знаке» и «в доме»
+function checkReading(page: Reading, minimum: number): string[] {
+  const errors: string[] = [];
+  const at = (message: string) => errors.push(`${page.slug}: ${message}`);
   for (const key of ["essence", "manifestation", "pitfalls"] as const) {
     const range = SECTION_COUNTS[key];
     const count = page[key].length;
@@ -53,7 +62,6 @@ function checkPage(page: NatalPageText): string[] {
     if (question.length < QUESTION_LENGTH.min || question.length > QUESTION_LENGTH.max) at(`вопрос «${question.slice(0, 30)}…»: от ${QUESTION_LENGTH.min} до ${QUESTION_LENGTH.max} знаков`);
   }
   const words = pageWords(page);
-  const minimum = MIN_WORDS[ref.kind];
   if (words < minimum) at(`слов ${words}, нужно не меньше ${minimum}`);
   const stops = findStopPhrases([page.name, ...page.keywords, pageText(page)].join("\n"));
   if (stops.length > 0) at(`запрещённые обороты — ${stops.join(", ")}`);
@@ -68,10 +76,16 @@ export function checkNatalPages(pages: readonly NatalPageText[]): string[] {
     seen.add(page.slug);
     errors.push(...checkPage(page));
   }
-  // Шаблонность: любая пара страниц не должна делить больше четверти пятисловных последовательностей.
-  // Множества считаются один раз на страницу: пар тысячи, а пересчёт на каждой паре занимал секунды
+  return [...errors, ...similarPairs(pages, pages.length)];
+}
+
+// Шаблонность: любая пара страниц не должна делить больше четверти пятисловных последовательностей.
+// Сравниваются пары, где хотя бы одна страница из первых `checked`; остальные страницы — только образец для сравнения.
+// Множества считаются один раз на страницу: пар тысячи, а пересчёт на каждой паре занимал секунды
+function similarPairs(pages: readonly Reading[], checked: number): string[] {
+  const errors: string[] = [];
   const sets = pages.map((page) => shingles(pageText(page)));
-  for (let i = 0; i < pages.length; i++) {
+  for (let i = 0; i < checked; i++) {
     for (let j = i + 1; j < pages.length; j++) {
       const first = pages[i];
       const second = pages[j];
@@ -83,4 +97,25 @@ export function checkNatalPages(pages: readonly NatalPageText[]): string[] {
     }
   }
   return errors;
+}
+
+// Страницы «планета в доме»: шапка по манифесту, те же разделы и объём, что у страниц знаков,
+// и шаблонность — между собой и с каждой страницей «планета в знаке», чтобы дом не пересказывал знак
+export function checkNatalHousePages(pages: readonly NatalHousePageText[], signPages: readonly NatalPageText[]): string[] {
+  const errors: string[] = [];
+  const seen = new Set<string>();
+  for (const page of pages) {
+    if (seen.has(page.slug)) errors.push(`${page.slug}: страница повторяется`);
+    seen.add(page.slug);
+    const ref = natalHousePageBySlug(page.slug);
+    if (!ref) {
+      errors.push(`${page.slug}: нет в манифесте`);
+      continue;
+    }
+    if (page.body !== ref.body || page.house !== ref.house || page.batch !== ref.batch) errors.push(`${page.slug}: шапка не совпадает с манифестом (${ref.body}, ${ref.house} дом, партия ${ref.batch})`);
+    const expectedName = natalHousePageName(ref.body, ref.house);
+    if (page.name !== expectedName) errors.push(`${page.slug}: name должно быть «${expectedName}»`);
+    errors.push(...checkReading(page, MIN_WORDS.house));
+  }
+  return [...errors, ...similarPairs([...pages, ...signPages], pages.length)];
 }

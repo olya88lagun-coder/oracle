@@ -77,3 +77,26 @@ export function natalPageFile(slug: string): string {
 // партия 2 (Меркурий, Венера, Марс), партия 3 (Юпитер, Сатурн) и партия 4 (Уран, Нептун, Плутон) — 20 октября 2026.
 // Партия 5 (северный узел в знаках, 12 страниц) принята 21 октября 2026
 export const ACCEPTED_BATCHES: ReadonlySet<number> = new Set<number>([1, 2, 3, 4, 5]);
+
+// Страницы «планета в доме» («Венера в 7 доме»): пилот из 12 страниц, партия 6. Тексты — packages/content/natal-house-pages/<слаг>.md.
+// Открываются тем же ACCEPTED_BATCHES: пока номера 6 там нет, страницы — 404, их нет в карте сайта и на них не ведут ссылки
+export const HOUSE_PAGES_BATCH = 6;
+export type NatalHousePageRef = { slug: string; kind: "house"; body: BodyId; house: number; batch: number };
+
+const HOUSE_PILOT: readonly (readonly [BodyId, readonly number[]])[] = [
+  ["sun", [1, 10]],
+  ["moon", [1, 4, 7, 10]],
+  ["venus", [1, 4, 7, 10]],
+  ["mars", [1, 7]],
+];
+
+export const natalHousePageSlug = (body: BodyId, house: number): string => `${BODY_NAMES[body].slugPart}-v-${house}-dome`;
+
+// «Венера в 7 доме» — так пишут в поиске
+export const natalHousePageName = (body: BodyId, house: number): string => `${BODY_NAMES[body].name} в ${house} доме`;
+
+export const NATAL_HOUSE_PAGES: readonly NatalHousePageRef[] = HOUSE_PILOT.flatMap(([body, houses]) =>
+  houses.map((house) => ({ slug: natalHousePageSlug(body, house), kind: "house" as const, body, house, batch: HOUSE_PAGES_BATCH })),
+);
+
+export const natalHousePageBySlug = (slug: string): NatalHousePageRef | undefined => NATAL_HOUSE_PAGES.find((page) => page.slug === slug);
