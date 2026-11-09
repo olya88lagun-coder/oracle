@@ -43,6 +43,8 @@
 .year-guide { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; padding: 72px 0; }
 .year-guide p { color: var(--ink-soft); }
 .year-method { border-left: 1px solid var(--line-strong); padding-left: 32px; }
+/* ссылки под формулой — каждая своей строкой, иначе соседние слипаются без пробела */
+.year-method > .touch-link { display: flex; width: fit-content; }
 .year-catalog { padding: 24px 0 72px; }
 .year-catalog h2 { margin: 16px 0 12px; }
 .year-catalog__lead { max-width: 700px; margin: 0 0 32px; color: var(--ink-soft); line-height: 1.7; }
