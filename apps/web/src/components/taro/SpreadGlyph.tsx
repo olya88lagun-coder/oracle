@@ -5,7 +5,7 @@ export const GLYPH_BOX = { width: 120, height: 112, card: { w: 24, h: 38 } } as 
 export const GLYPH_LAYOUTS: Readonly<Record<string, readonly (readonly [number, number])[]>> = {
   "tri-karty": [[8, 36], [48, 36], [88, 36]],
   otnosheniya: [[8, 6], [48, 6], [88, 6], [48, 60]],
-  vybor: [[48, 0], [8, 34], [8, 74], [88, 34], [88, 74]],
+  vybor: [[8, 8], [8, 62], [88, 8], [88, 62], [48, 62]],
   "delo-i-dengi": [[8, 70], [48, 44], [88, 18]],
   "na-segodnya": [[8, 56], [48, 22], [88, 56]],
   // Три карты итогов сверху, две карты на новый год ниже и по центру

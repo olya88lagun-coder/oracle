@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 import { reachGoal } from "@/lib/analytics";
 import { pickDistinctIndexes, type SpreadNext, type SpreadPosition } from "@/lib/taro-spreads";
 import { TaroBack } from "./TaroBack";
@@ -54,61 +54,76 @@ export function SpreadPlay({ positions, cards, next }: { positions: readonly Spr
 
   return (
     <section className="taro-spread-play" aria-labelledby="spread-play-title">
-      <h2 id="spread-play-title">Ваш расклад</h2>
-      <div className="field">
-        <label htmlFor="spread-question">Ваш вопрос (необязательно)</label>
-        <input
-          id="spread-question"
-          className="input"
-          type="text"
-          maxLength={MAX_QUESTION}
-          autoComplete="off"
-          disabled={!ready}
-          aria-describedby="spread-question-note"
-          value={question}
-          onChange={(event) => setQuestion(event.target.value)}
-        />
-        <p id="spread-question-note" className="muted">
-          Вопрос остаётся в вашем браузере и никуда не отправляется.
-        </p>
-      </div>
-      <p id="spread-pick-label">Откройте карты по очереди: нажмите на рубашку.</p>
-      <ol className="taro-spread-slots" aria-labelledby="spread-pick-label" style={{ "--spread-cols": positions.length } as CSSProperties} ref={slotsRef}>
-        {positions.map((position, index) => {
-          const card = opened[index] && picked ? cards[picked[index]!] : undefined;
-          return (
-            <li key={position.title} className="taro-spread-slot">
-              {card ? (
-                <figure>
-                  <Image src={card.image} alt="" width={277} height={480} unoptimized />
-                  <figcaption>{card.name}</figcaption>
-                </figure>
-              ) : (
-                <button type="button" className="taro-pick taro-spread-pick" aria-label={`Позиция ${index + 1}: ${position.title}`} disabled={!ready} onClick={() => open([index])}>
-                  <TaroBack />
-                </button>
-              )}
-              <p className="taro-spread-slot__title">
-                {index + 1}. {position.title}
-              </p>
-            </li>
-          );
-        })}
-      </ol>
-      <div className="row taro-actions">
-        {!complete && (
-          <button type="button" className="button button--ghost" disabled={!ready} onClick={() => open(positions.map((_, index) => index))}>
-            Открыть все карты
-          </button>
-        )}
-        {complete && (
-          <button type="button" className="button button--ghost" onClick={again}>
-            Новый расклад
-          </button>
-        )}
-        <p role="status" className="muted">
-          {status}
-        </p>
+      <div className="taro-spread-table">
+        <div className="taro-spread-stage">
+          <h2 id="spread-play-title">Ваш расклад</h2>
+          <div className="field">
+            <label htmlFor="spread-question">Ваш вопрос (необязательно)</label>
+            <input
+              id="spread-question"
+              className="input"
+              type="text"
+              maxLength={MAX_QUESTION}
+              autoComplete="off"
+              disabled={!ready}
+              aria-describedby="spread-question-note"
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+            />
+            <p id="spread-question-note" className="muted">
+              Вопрос остаётся в вашем браузере и никуда не отправляется.
+            </p>
+          </div>
+          <p id="spread-pick-label">Откройте карты по очереди: нажмите на рубашку.</p>
+          <ol className="taro-spread-slots" aria-labelledby="spread-pick-label" ref={slotsRef}>
+            {positions.map((position, index) => {
+              const card = opened[index] && picked ? cards[picked[index]!] : undefined;
+              return (
+                <li key={position.title} className="taro-spread-slot">
+                  {card ? (
+                    <figure>
+                      <Image src={card.image} alt="" width={277} height={480} unoptimized />
+                      <figcaption>{card.name}</figcaption>
+                    </figure>
+                  ) : (
+                    <button type="button" className="taro-pick taro-spread-pick" aria-label={`Позиция ${index + 1}: ${position.title}`} disabled={!ready} onClick={() => open([index])}>
+                      <TaroBack />
+                    </button>
+                  )}
+                  <p className="taro-spread-slot__title">
+                    {index + 1}. {position.title}
+                  </p>
+                </li>
+              );
+            })}
+          </ol>
+          <div className="row taro-actions">
+            {!complete && (
+              <button type="button" className="button button--ghost" disabled={!ready} onClick={() => open(positions.map((_, index) => index))}>
+                Открыть все карты
+              </button>
+            )}
+            {complete && (
+              <button type="button" className="button button--ghost" onClick={again}>
+                Новый расклад
+              </button>
+            )}
+            <p role="status" className="muted">
+              {status}
+            </p>
+          </div>
+        </div>
+        <section className="taro-spread-key" aria-labelledby="spread-positions">
+          <h2 id="spread-positions">Позиции расклада</h2>
+          <ol className="taro-spread-positions">
+            {positions.map((position) => (
+              <li key={position.title}>
+                <strong>{position.title}</strong>
+                <span>{position.hint}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
       </div>
       {openedCount > 0 && picked && (
         <section className="taro-spread-reading" aria-labelledby="spread-reading-title">

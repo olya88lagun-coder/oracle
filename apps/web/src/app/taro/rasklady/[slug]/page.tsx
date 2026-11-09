@@ -35,22 +35,12 @@ export default async function TaroSpreadPage({ params }: Params) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(faqPageJsonLd(spread.faq)) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbs) }} />
-      <main className="page page--wide stack taro-page taro-spread-page">
+      <main className="page page--wide stack taro-page taro-spread-page" data-spread={spread.slug}>
         <header className="taro-spreads-head">
           <p className="eyebrow eyebrow--line">Расклад Таро</p>
           <h1 className="display">{spread.name}</h1>
           <p className="lead">{spread.lead}</p>
         </header>
-        <section aria-labelledby="spread-positions" className="taro-spread-info">
-          <h2 id="spread-positions">Позиции расклада</h2>
-          <ol className="taro-spread-positions">
-            {spread.positions.map((position) => (
-              <li key={position.title}>
-                <strong>{position.title}.</strong> {position.hint}
-              </li>
-            ))}
-          </ol>
-        </section>
         <SpreadPlay positions={spread.positions} cards={spreadDeck(spread)} next={spread.next} />
         <section aria-labelledby="spread-guide" className="taro-spread-info taro-spread-guide">
           <h2 id="spread-guide">Как читать расклад</h2>

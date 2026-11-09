@@ -1746,9 +1746,20 @@ body .stack > .taro-day-info { display: grid; gap: 44px; margin-top: 56px; paddi
 .taro-spreads-head > * { margin: 0; }
 .taro-spreads { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
 .taro-spreads > li { min-width: 0; }
-.taro-spread-card { height: 100%; }
+.taro-spread-card { height: 100%; grid-template-rows: auto auto auto 1fr auto; }
+.taro-spread-card__diagram {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 16px;
+  border-radius: var(--radius);
+  background: radial-gradient(ellipse at 22% 50%, var(--lavender-glow), transparent 74%), var(--bg);
+}
+.taro-spread-card__diagram .taro-glyph { width: 88px; flex-shrink: 0; }
+.taro-spread-card__diagram .eyebrow { margin: 0; color: var(--accent); letter-spacing: 0.08em; }
 .taro-spread-card h2 { font-size: clamp(24px, 3.5vw, 30px); line-height: 1.2; }
-.taro-spread-card__positions { display: grid; gap: 4px; margin: 0; padding-left: 22px; color: var(--ink-soft); font-size: 15px; }
+.taro-spread-card__positions { display: grid; align-content: start; gap: 4px; margin: 0; padding-left: 22px; color: var(--ink-soft); font-size: 15px; }
 .taro-spread-card .button { justify-self: start; }
 .taro-spreads-more { display: flex; flex-wrap: wrap; gap: 6px 28px; margin: 0; }
 /* Таро: предложение раскладов под первым экраном: плитки с рисунком раскладки */
@@ -1782,40 +1793,76 @@ body .stack > .taro-day-info { display: grid; gap: 44px; margin-top: 56px; paddi
 @media (prefers-reduced-motion: reduce) { .taro-spread-tile { transition: none; } .taro-spread-tile:hover { transform: none; } }
 
 .taro-spread-info h2, .taro-spread-others h2, .taro-spread-play h2 { margin: 0 0 14px; font-size: clamp(26px, 4vw, 36px); line-height: 1.2; }
+.taro-spread-page { max-width: 1216px; padding-inline: clamp(16px, 3vw, 32px); }
+.taro-spread-page .taro-spreads-head { max-width: 50rem; }
+.taro-spread-page .display { font-size: clamp(36px, 5.6vw, 68px); }
+.taro-spread-guide { max-width: 46rem; margin-inline: auto; padding-top: 28px; border-top: 1px solid var(--line); }
 .taro-spread-guide h3 { margin: 22px 0 8px; font-size: 20px; line-height: 1.3; }
 .taro-spread-guide p { max-width: 720px; margin: 0 0 12px; color: var(--ink-soft); line-height: 1.7; }
-.taro-spread-positions { display: grid; gap: 10px; max-width: 46em; margin: 0; padding-left: 22px; color: var(--ink-soft); }
-.taro-spread-positions strong { color: var(--ink); font-weight: 500; }
-.taro-spread-play { display: grid; gap: 22px; }
+.taro-spread-positions { display: grid; gap: 14px; margin: 0; padding-inline-start: 26px; color: var(--ink-soft); font-size: 14px; line-height: 1.55; }
+.taro-spread-positions li { padding-inline-start: 4px; }
+.taro-spread-positions li::marker { color: var(--accent); font-weight: 600; }
+.taro-spread-positions strong { display: block; color: var(--ink); font-weight: 600; }
+.taro-spread-play { display: grid; gap: clamp(28px, 5vw, 56px); }
 .taro-spread-play h2 { margin: 0; }
 .taro-spread-play p { margin: 0; }
+.taro-spread-table {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  padding: clamp(14px, 3vw, 32px);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: radial-gradient(ellipse at 30% 42%, var(--lavender-glow), transparent 64%), var(--surface);
+}
+.taro-spread-stage { display: grid; align-content: start; gap: 16px; min-width: 0; }
+.taro-spread-key { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+.taro-spread-key h2 { margin-bottom: 16px; font-size: clamp(22px, 3vw, 28px); }
 .taro-spread-play .field { max-width: 560px; }
-.taro-spread-slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 12px; margin: 0; padding: 0; list-style: none; }
-.taro-spread-slot { display: grid; align-content: start; justify-items: center; gap: 8px; min-width: 0; text-align: center; }
+.taro-spread-slots { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px clamp(4px, 1.25vw, 12px); width: min(100%, 36rem); margin: 0 auto; padding: 6px 0; list-style: none; }
+.taro-spread-slot { display: grid; grid-column: span 2; align-content: start; justify-items: center; gap: 8px; min-width: 0; text-align: center; }
+/* Раскладки повторяют схемы каталога. Порядок кнопок следует нумерации позиций. */
+[data-spread="otnosheniya"] .taro-spread-slot:nth-child(4) { grid-column: 3 / span 2; }
+[data-spread="vybor"] .taro-spread-slot:nth-child(1) { grid-area: 1 / 1 / auto / span 2; }
+[data-spread="vybor"] .taro-spread-slot:nth-child(2) { grid-area: 2 / 1 / auto / span 2; }
+[data-spread="vybor"] .taro-spread-slot:nth-child(3) { grid-area: 1 / 5 / auto / span 2; }
+[data-spread="vybor"] .taro-spread-slot:nth-child(4) { grid-area: 2 / 5 / auto / span 2; }
+[data-spread="vybor"] .taro-spread-slot:nth-child(5) { grid-area: 2 / 3 / auto / span 2; }
+[data-spread="novyy-god"] .taro-spread-slot:nth-child(4) { grid-column: 2 / span 2; }
+[data-spread="delo-i-dengi"] .taro-spread-slot:nth-child(1) { margin-top: clamp(16px, 3vw, 40px); }
+[data-spread="delo-i-dengi"] .taro-spread-slot:nth-child(2),
+[data-spread="na-segodnya"] .taro-spread-slot:not(:nth-child(2)) { margin-top: clamp(8px, 1.5vw, 20px); }
 .taro-spread-slot figure { display: grid; justify-items: center; gap: 6px; width: 100%; margin: 0; }
-.taro-spread-slot img, .taro-spread-pick { width: 100%; height: auto; }
+.taro-spread-slot img, .taro-spread-pick { display: block; width: 100%; height: auto; }
 .taro-spread-slot > .taro-spread-pick { --tilt: 0deg; --lift: 0px; }
-.taro-spread-slot img { border-radius: 12px; box-shadow: var(--shadow); }
+.taro-spread-slot figure img { aspect-ratio: 277 / 415; object-fit: contain; }
+.taro-spread-slot img { border-radius: clamp(5px, 1vw, 12px); box-shadow: var(--shadow); }
 .taro-spread-slot figcaption { max-width: 100%; font-family: var(--font-display); font-size: 16px; line-height: 1.25; overflow-wrap: break-word; hyphens: auto; }
-.taro-spread-slot__title { color: var(--ink-soft); font-size: 14px; line-height: 1.35; }
-.taro-spread-reading { display: grid; gap: 16px; }
+.taro-spread-slot__title { max-width: 100%; color: var(--ink); font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
+.taro-spread-stage .taro-actions { margin-top: 4px; }
+.taro-spread-reading { display: grid; gap: 16px; width: min(100%, 50rem); margin-inline: auto; }
 .taro-spread-reading h2 { margin: 0; }
-.taro-spread-reading > h2, .taro-spread-reading > p { grid-column: 1 / -1; }
+.taro-spread-question { overflow-wrap: anywhere; }
+.taro-spread-panel .eyebrow { color: var(--accent); letter-spacing: 0.08em; }
 .taro-spread-panel h3 { margin: 0; font-family: var(--font-display); font-size: 24px; font-weight: 400; line-height: 1.2; }
 .taro-spread-panel h3 a { color: var(--ink); text-decoration: none; }
 .taro-spread-panel h3 a:hover { color: var(--accent); }
 .taro-spread-panel h3 a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 .taro-spread-panel ul { display: grid; gap: 6px; margin: 0; padding-left: 20px; color: var(--ink-soft); }
-.taro-spread-next { grid-column: 1 / -1; justify-items: start; }
+.taro-spread-next { justify-items: start; }
 .taro-spread-next h2 { margin: 0; font-size: clamp(22px, 3vw, 28px); line-height: 1.2; }
-.taro-spread-others ul { display: flex; flex-wrap: wrap; gap: 4px 28px; margin: 0; padding: 0; list-style: none; }
+.taro-spread-others ul { display: grid; gap: 0 24px; margin: 0; padding: 0; list-style: none; }
+.taro-spread-others li { border-bottom: 1px solid var(--line); }
 body .stack > .taro-spreads, body .stack > .taro-spread-info, body .stack > .taro-spread-play, body .stack > .taro-spreads-faq, body .stack > .taro-spread-others, body .stack > .taro-spreads-more { margin-top: 36px; }
-@media (min-width: 760px) { .taro-spreads { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; } }
-@media (min-width: 900px) {
-  .taro-spread-slots { grid-template-columns: repeat(var(--spread-cols, 3), minmax(0, 1fr)); max-width: 880px; gap: 18px; }
-  .taro-spread-reading { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-  body .stack > .taro-spreads, body .stack > .taro-spread-info, body .stack > .taro-spread-play, body .stack > .taro-spreads-faq, body .stack > .taro-spread-others, body .stack > .taro-spreads-more { margin-top: 52px; }
+@media (min-width: 760px) {
+  .taro-spreads, .taro-spread-others ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .taro-spreads { gap: 20px; }
 }
+@media (min-width: 900px) {
+  .taro-spread-table { grid-template-columns: minmax(0, 1fr) minmax(230px, 28%); gap: 28px; }
+  .taro-spread-key { margin: 0; padding: 0 0 0 24px; border-top: 0; border-inline-start: 1px solid var(--line); }
+  body .stack > .taro-spreads, body .stack > .taro-spread-info, body .stack > .taro-spreads-faq, body .stack > .taro-spread-others, body .stack > .taro-spreads-more { margin-top: 52px; }
+}
+@media (min-width: 1080px) { .taro-spreads { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
 /* Сравнение режимов Лилы: одинаковый порядок чтения на телефоне и компьютере. */
 .lila-modes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
