@@ -14,6 +14,12 @@ import "../../numerology.css";
 
 const INTRO = ["Как считается совместимость по квадрату", "Как читать сравнение"] as const;
 
+// Декоративные квадраты для примера 14.05.1987 и 07.03.1976 из вводного текста.
+const EXAMPLE = [
+  { person: "you", cells: ["11", "4", "7", "—", "55", "88", "333", "6", "9"] },
+  { person: "partner", cells: ["111", "—", "77", "—", "—", "—", "333", "66", "99"] },
+] as const;
+
 // Только принятая партия 8; до этого страница — настоящий 404
 const acceptedText = (): NumerologyText | undefined => (acceptedNumerologyPages("pair").length ? numerologyText("pair", "sovmestimost") : undefined);
 
@@ -56,7 +62,15 @@ export default function PythagorasCompatPage() {
       <nav aria-label="Хлебные крошки" className="year-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href={NUMEROLOGY_PATH}>Нумерология</Link><span aria-hidden="true">/</span><Link href={PYTHAGORAS_PATH}>Квадрат Пифагора</Link><span aria-hidden="true">/</span><span>Совместимость</span></nav>
       <PythagorasCompatCalculator texts={pairTexts(text)} />
       {intro.map((section, i) => <section key={section.title} className="year-guide numerology-pair-guide" aria-labelledby={`pair-guide-${i}`}>
-        <div className="stack"><h2 id={`pair-guide-${i}`}>{section.title}</h2>{section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
+        <div className="stack">
+          <h2 id={`pair-guide-${i}`}>{section.title}</h2>
+          {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          {i === 0 && <div className="numerology-pair__example" aria-hidden="true">
+            {EXAMPLE.map(({ person, cells }) => <div key={person} className={"numerology-pair__" + person}>
+              {cells.map((value, index) => <span key={index}>{value}</span>)}
+            </div>)}
+          </div>}
+        </div>
       </section>)}
       <section className="year-faq" aria-labelledby="pair-faq-title"><p className="eyebrow">Вопросы</p><h2 id="pair-faq-title">Частые вопросы</h2>{text.faq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}</section>
       <p className="muted year-footnote">Практика для самопознания. Решения о здоровье, деньгах и отношениях опирайте на факты и свою ситуацию.</p>

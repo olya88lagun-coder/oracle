@@ -16,6 +16,13 @@ const LATER = "Описание появится позже.";
 const RELATION_LABELS: Readonly<Record<CellRelation, string>> = { empty: "у обоих пусто", close: "похоже", apart: "по-разному" };
 
 const digits = (cell: number, count: number) => (count ? String(cell).repeat(count) : "—");
+function TileDigits({ cell, count, person }: { cell: number; count: number; person: "you" | "partner" }) {
+  const label = person === "you" ? "Вы: " : "Партнёр: ";
+  return <span className={
+    count ? "numerology-pair__digits numerology-pair__" + person : "numerology-pair__digits numerology-pair__digits--empty"
+  }><span className="numerology-pair__who">{label}</span>{digits(cell, count)}</span>;
+}
+
 const variantLabel = (cell: number, count: number) => (count ? squareVariant(cell, count).title : "пустая ячейка");
 const variantHref = (cell: number, count: number) => `${squareCellPath(cell)}#${squareVariant(cell, count).anchor}`;
 const dateOf = (iso: string) => iso.split("-").reverse().join(".");
@@ -23,12 +30,19 @@ const dateOf = (iso: string) => iso.split("-").reverse().join(".");
 function CellCard({ item, texts }: { item: PairCell; texts: PairTexts }) {
   const text = texts.cells[item.cell]?.[item.relation];
   return <li className="numerology-pair__cell">
-    <p><strong>{item.cell} · {SQUARE_CELL_NAMES[item.cell]}</strong>: у вас {digits(item.cell, item.you)}, у партнёра {digits(item.cell, item.partner)}</p>
-    {text ? <p>{text}</p> : <p className="muted">{LATER}</p>}
-    <p className="numerology-pair__variants">
-      <Link className="touch-link numerology-pair__you" href={variantHref(item.cell, item.you)}>Ваш вариант: {variantLabel(item.cell, item.you)}</Link>
-      <Link className="touch-link numerology-pair__partner" href={variantHref(item.cell, item.partner)}>Вариант партнёра: {variantLabel(item.cell, item.partner)}</Link>
-    </p>
+    <div className="numerology-pair__mini" aria-hidden="true">
+      <span>{item.cell}</span>
+      <span className={item.you ? "numerology-pair__you" : "numerology-pair__digits--empty"}>{digits(item.cell, item.you)}</span>
+      <span className={item.partner ? "numerology-pair__partner" : "numerology-pair__digits--empty"}>{digits(item.cell, item.partner)}</span>
+    </div>
+    <div className="numerology-pair__cell-body">
+      <p><strong>{item.cell} · {SQUARE_CELL_NAMES[item.cell]}</strong>: у вас {digits(item.cell, item.you)}, у партнёра {digits(item.cell, item.partner)}</p>
+      {text ? <p>{text}</p> : <p className="muted">{LATER}</p>}
+      <p className="numerology-pair__variants">
+        <Link className="touch-link numerology-pair__you" href={variantHref(item.cell, item.you)}>Ваш вариант: {variantLabel(item.cell, item.you)}</Link>
+        <Link className="touch-link numerology-pair__partner" href={variantHref(item.cell, item.partner)}>Вариант партнёра: {variantLabel(item.cell, item.partner)}</Link>
+      </p>
+    </div>
   </li>;
 }
 
@@ -54,8 +68,8 @@ export function PythagorasCompatResult({ outcome, texts }: { outcome: Extract<Pa
         const item = byCell.get(cell)!;
         return <td key={cell} className={`numerology-pair__tile numerology-pair__tile--${item.relation}`}>
           <span className="numerology-square__name">{cell} · {SQUARE_CELL_NAMES[cell]}</span>
-          <span className="numerology-pair__digits numerology-pair__you"><span className="numerology-pair__who">Вы: </span>{digits(cell, item.you)}</span>
-          <span className="numerology-pair__digits numerology-pair__partner"><span className="numerology-pair__who">Партнёр: </span>{digits(cell, item.partner)}</span>
+          <TileDigits cell={cell} count={item.you} person="you" />
+          <TileDigits cell={cell} count={item.partner} person="partner" />
           <span className="numerology-pair__relation">{RELATION_LABELS[item.relation]}</span>
         </td>;
       })}</tr>)}</tbody>
@@ -63,29 +77,43 @@ export function PythagorasCompatResult({ outcome, texts }: { outcome: Extract<Pa
     <details className="numerology-pair__working">
       <summary>Как посчитано</summary>
       <div className="numerology-pair__working-people">
-        <div className="stack"><h3>Вы</h3><SquareWorking iso={youIso} square={pair.you} /></div>
-        <div className="stack"><h3>Партнёр</h3><SquareWorking iso={partnerIso} square={pair.partner} /></div>
+        <div className="stack"><h3 className="numerology-pair__you">Вы</h3><SquareWorking iso={youIso} square={pair.you} /></div>
+        <div className="stack"><h3 className="numerology-pair__partner">Партнёр</h3><SquareWorking iso={partnerIso} square={pair.partner} /></div>
       </div>
     </details>
     <div className="stack year-reading">
       {similar.length ? <>
         <h3>Где вы похожи</h3>
-        <ul className="numerology-pair__cells">{similar.map((item) => <CellCard key={item.cell} item={item} texts={texts} />)}</ul>
+        <ul className="numerology-pair__cells numerology-pair__cells--similar">{similar.map((item) => <CellCard key={item.cell} item={item} texts={texts} />)}</ul>
       </> : <p>Во всех ячейках у вас заметные различия.</p>}
       {different.length ? <>
         <h3>Где различаетесь</h3>
-        <ul className="numerology-pair__cells">{different.map((item) => <CellCard key={item.cell} item={item} texts={texts} />)}</ul>
+        <ul className="numerology-pair__cells numerology-pair__cells--different">{different.map((item) => <CellCard key={item.cell} item={item} texts={texts} />)}</ul>
       </> : <p>Во всех ячейках у вас похожая картина.</p>}
       <h3>Линии пары</h3>
       <ul className="numerology-pair__lines">{pair.lines.map((line) => {
         const text = texts.lines[line.id]?.[line.relation];
         return <li key={line.id} className="numerology-pair__line">
           <p><strong>{SQUARE_LINE_NAMES[line.id]}</strong> ({SQUARE_LINES.find((item) => item.id === line.id)?.cells.join("-")}): у вас {line.you} ({LINE_LEVEL_NAMES[line.youLevel]}), у партнёра {line.partner} ({LINE_LEVEL_NAMES[line.partnerLevel]})</p>
+          <div className="numerology-pair__scale" aria-hidden="true">
+            {(["low", "mid", "high"] as const).map((level) => {
+              const youHere = line.youLevel === level;
+              const partnerHere = line.partnerLevel === level;
+              const zoneClass = youHere && partnerHere ? "numerology-pair__zone numerology-pair__zone--shared" : "numerology-pair__zone";
+              return <div key={level}>
+                <div className={zoneClass}>
+                  {youHere && <span className="numerology-pair__mark numerology-pair__you">Вы: {line.you}</span>}
+                  {partnerHere && <span className="numerology-pair__mark numerology-pair__partner">Партнёр: {line.partner}</span>}
+                </div>
+                <div className="numerology-pair__zone-label">{LINE_LEVEL_NAMES[level]}</div>
+              </div>;
+            })}
+          </div>
           {text ? <p>{text}</p> : <p className="muted">{LATER}</p>}
           <p><Link className="touch-link" href={`${SQUARE_LINES_PATH}#${line.id}`}>Подробнее о линии</Link></p>
         </li>;
       })}</ul>
-      <div className="year-action stack">
+      <div className="year-action stack numerology-pair__next">
         <p><Link className="touch-link" href={PYTHAGORAS_PATH}>Квадрат Пифагора по одной дате</Link></p>
         <p><Link className="touch-link" href={COMPAT_PATH}>Совместимость по матрице судьбы</Link></p>
       </div>
