@@ -1,4 +1,4 @@
-import { ACCEPTED_BATCHES, NATAL_PAGES } from "@oracle/content/natal";
+import { ACCEPTED_BATCHES, NATAL_HOUSE_PAGES, NATAL_PAGES } from "@oracle/content/natal";
 import { renderToStaticMarkup } from "react-dom/server";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import { PUBLIC_PATHS } from "@/lib/seo";
@@ -75,7 +75,7 @@ describe("/natalnaya-karta page", () => {
     const extra = ["/natalnaya-karta/primer", "/natalnaya-karta/ascendent", "/natalnaya-karta/lunnyy-znak", "/natalnaya-karta/slovar-terminov"];
     for (const path of extra) expect(PUBLIC_PATHS).toContain(path);
     const meaning = PUBLIC_PATHS.filter((path) => path.startsWith("/natalnaya-karta/") && !extra.includes(path));
-    expect(meaning).toHaveLength(NATAL_PAGES.filter((page) => ACCEPTED_BATCHES.has(page.batch)).length);
+    expect(meaning).toHaveLength([...NATAL_PAGES, ...NATAL_HOUSE_PAGES].filter((page) => ACCEPTED_BATCHES.has(page.batch)).length);
     expect(meaning).toContain("/natalnaya-karta/solntse-v-ovne");
     const closed = NATAL_PAGES.find((page) => !ACCEPTED_BATCHES.has(page.batch));
     if (closed) expect(PUBLIC_PATHS).not.toContain(`/natalnaya-karta/${closed.slug}`);

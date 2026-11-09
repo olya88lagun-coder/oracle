@@ -1,4 +1,4 @@
-import { natalPageBySlug, natalText } from "@oracle/content/natal";
+import { NATAL_HOUSE_PAGES, natalPageBySlug, natalText } from "@oracle/content/natal";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
 import { acceptedNatalPage } from "@/lib/natal-pages";
@@ -44,7 +44,7 @@ describe("NatalPageView: Sun in Aries", () => {
   test("invites to the calculator with a link, and lists the Sun in all twelve signs with the current one marked", () => {
     expect(markup).toContain('<h2 id="sun-calculate">Рассчитайте свою карту</h2>');
     expect(markup).toContain('<a class="natal-button natal-button--calculate" href="/natalnaya-karta">Рассчитать карту</a>');
-    expect(count(markup, /class="natal-signs-grid__item"/g)).toBe(12);
+    expect(count(markup, /class="natal-signs-grid__item"/g)).toBe(12 + NATAL_HOUSE_PAGES.filter((page) => page.body === "sun").length); // двенадцать знаков и блок «Солнце в домах»
     expect(count(markup, /aria-current="page"/g)).toBe(2); // хлебная крошка и текущий знак
     expect(markup).toContain('href="/natalnaya-karta/solntse-v-rybah"');
     expect(markup).toContain("<span>Солнце во Льве</span>");

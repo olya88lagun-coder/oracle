@@ -1,18 +1,12 @@
 import { NATAL_HOUSE_PAGES } from "@oracle/content/natal";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import sitemap from "../../sitemap";
 import NatalMeaningPage, { generateMetadata, generateStaticParams } from "./page";
 
-// Как будет после приёмки: партия 6 («планета в доме») добавлена в ACCEPTED_BATCHES
-vi.mock("../../../../../../packages/content/src/natal-manifest", async (importOriginal) => ({
-  ...(await importOriginal<object>()),
-  ACCEPTED_BATCHES: new Set([1, 2, 3, 4, 5, 6]),
-}));
-
 const params = (slug: string) => ({ params: Promise.resolve({ slug }) });
 
-describe("/natalnaya-karta/[slug] after the «planet in house» batch is accepted", () => {
+describe("/natalnaya-karta/[slug] «planet in house» pages (batch 6, accepted)", () => {
   test("all twelve house pages are built and listed in the sitemap", () => {
     const slugs = generateStaticParams().map((item) => item.slug);
     const urls = sitemap().map((entry) => entry.url);
