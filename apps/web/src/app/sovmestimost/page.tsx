@@ -18,7 +18,7 @@ import { isOwnerUser } from "@/server/owner";
 import { currentUser } from "@/server/viewer";
 
 export const metadata: Metadata = publicMetadata({
-  title: "Совместимость по дате рождения: аркан и матрица совместимости онлайн",
+  title: "Матрица совместимости по дате рождения онлайн",
   description: "Рассчитайте аркан совместимости по дате рождения бесплатно: две даты дают аркан пары и сравнение матриц судьбы. Без регистрации, процентов и вердиктов.",
   path: COMPAT_PATH,
   image: SITE_PREVIEW_IMAGE,
