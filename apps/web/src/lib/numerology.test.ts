@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { DATE_ERROR } from "./matrix-save";
-import { acceptedClockPaths, CLOCK_FAQ, CLOCK_PATH, clockPath, FATE_FAQ, fateOutcome, fatePath, NUMEROLOGY_PATH, PERSONAL_YEAR_FAQ, PERSONAL_YEAR_PATH, personalYearOutcome, personalYearPath, relatedClocks } from "./numerology";
+import { CLOCK_FAQ, CLOCK_PATH, clockPath, FATE_FAQ, fateOutcome, fatePath, NUMEROLOGY_PATH, PERSONAL_YEAR_FAQ, PERSONAL_YEAR_PATH, personalYearOutcome, personalYearPath } from "./numerology";
+import { acceptedClockPaths, relatedClocks } from "./numerology-pages";
 
 const TODAY = new Date("2026-11-08");
 

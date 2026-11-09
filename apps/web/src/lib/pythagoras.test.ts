@@ -1,7 +1,8 @@
 import { expect, test } from "vitest";
 import { GOALS } from "./analytics";
 import { DATE_ERROR } from "./matrix-save";
-import { acceptedSquarePaths, PYTHAGORAS_PATH, SQUARE_CELL_NAMES, SQUARE_FAQ, SQUARE_LINE_NAMES, SQUARE_LINES_PATH, squareCellPath, squareOutcome, squareVariant } from "./pythagoras";
+import { acceptedSquarePaths } from "./numerology-pages";
+import { PYTHAGORAS_PATH, SQUARE_CELL_NAMES, SQUARE_FAQ, SQUARE_LINE_NAMES, SQUARE_LINES_PATH, squareCellPath, squareOutcome, squareVariant } from "./pythagoras";
 
 const TODAY = new Date("2026-11-08");
 

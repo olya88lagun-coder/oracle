@@ -15,8 +15,9 @@ import { DOCUMENT_PATHS } from "./legal";
 import { TARO_DAY_PATH, TARO_PATH, TARO_SPREADS_PATH, taroCardPath } from "./taro-paths";
 import { spreadPath, TARO_SPREADS } from "./taro-spreads";
 import { SITE_NAME, SITE_URL, SOCIAL_LINKS } from "./site";
-import { acceptedClockPaths, acceptedFatePaths, acceptedPersonalYearPaths, CLOCK_PATH, NUMEROLOGY_PATH, PERSONAL_YEAR_PATH } from "./numerology";
-import { acceptedPairPaths, acceptedSquarePaths, PYTHAGORAS_PATH } from "./pythagoras";
+import { CLOCK_PATH, NUMEROLOGY_PATH, PERSONAL_YEAR_PATH } from "./numerology";
+import { acceptedClockPaths, acceptedFatePaths, acceptedPairPaths, acceptedPersonalYearPaths, acceptedSquarePaths } from "./numerology-pages";
+import { PYTHAGORAS_PATH } from "./pythagoras";
 
 // Личные страницы: вход, портрет и всё, что под ними. В поиск не попадают
 export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", "/lila/igra", "/admin"];

@@ -7,7 +7,7 @@ import { BLOG_PATH } from "@/lib/blog";
 import { CompatCalculator } from "@/components/compat/CompatCalculator";
 import { compatFaqJsonLd, CompatCta, CompatGuide, CompatPreview } from "@/components/compat/CompatGuide";
 import { COMPAT_PATH, compatArcanumPath } from "@/lib/compat";
-import { acceptedPairPaths } from "@/lib/pythagoras";
+import { acceptedPairPaths } from "@/lib/numerology-pages";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { listPaidPurchases } from "@oracle/db";

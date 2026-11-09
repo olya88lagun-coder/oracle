@@ -2,7 +2,7 @@ import { calculatePythagorasSquare, SQUARE_LINES, type PythagorasSquare, type Sq
 import { DATE_ERROR } from "./matrix-save";
 
 // Совместимость по квадрату Пифагора (docs/superpowers/specs/2026-11-09-pythagoras-compat-design.md)
-export { acceptedPairPaths, PYTHAGORAS_COMPAT_PATH } from "./pythagoras";
+export { PYTHAGORAS_COMPAT_PATH } from "./pythagoras";
 
 export type CellRelation = "empty" | "close" | "apart";
 export type LineLevel = "low" | "mid" | "high";

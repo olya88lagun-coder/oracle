@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, test, vi } from "vitest";
-import { acceptedFatePaths } from "@/lib/numerology";
+import { acceptedFatePaths } from "@/lib/numerology-pages";
 import { PUBLIC_PATHS } from "@/lib/seo";
 import Page from "./page";
 
