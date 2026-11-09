@@ -34,6 +34,9 @@ export function PythagorasCompatCalculator({ texts }: { texts: PairTexts }) {
   };
   return <>
     <section className="year-hero numerology-pair-hero" aria-labelledby="pair-title">
+      <div className="numerology-pair-hero__background" aria-hidden="true">
+        <Image src="/images/numerology/pythagoras-compat-hero.webp" alt="" fill unoptimized loading="eager" />
+      </div>
       <div className="year-hero__copy stack">
         <p className="eyebrow">Нумерология · квадрат Пифагора</p>
         <h1 className="display" id="pair-title">Совместимость по квадрату Пифагора</h1>
@@ -46,7 +49,6 @@ export function PythagorasCompatCalculator({ texts }: { texts: PairTexts }) {
         </form>
       </div>
       <div className="year-hero__art" aria-hidden="true">
-        <Image src="/images/numerology/pythagoras-compat-hero.webp" alt="" fill unoptimized />
         <span>3×3</span>
         <p>два квадрата<br />одна пара</p>
       </div>

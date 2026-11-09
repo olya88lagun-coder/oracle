@@ -420,9 +420,44 @@
 .numerology-square-tile__name { display: block; margin-top: 6px; color: var(--ink-soft); font: 400 14px/1.2 var(--font-body); text-align: center; overflow-wrap: anywhere; }
 
 /* Совместимость по квадрату Пифагора */
+.year-page.numerology-pair-page {
+  --pair-page-gutter: 28px;
+  max-width: none;
+  padding-inline: 0;
+}
+
+.numerology-pair-page > :not(.numerology-pair-hero) {
+  width: min(calc(100% - var(--pair-page-gutter) * 2), 1144px);
+  margin-inline: auto;
+}
+
 .numerology-pair-page .numerology-pair-hero {
-  min-height: 0;
-  padding-block: clamp(20px, 5vw, 72px) clamp(40px, 7vw, 96px);
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(600px, 55vw, var(--practice-hero-height));
+  padding-block: clamp(32px, 5vw, 72px) 48px;
+  padding-inline: max(var(--pair-page-gutter), calc((100% - 1144px) / 2));
+}
+
+.numerology-pair-hero__background {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.numerology-pair-hero__background img {
+  object-fit: cover;
+  object-position: 68% 55%;
+}
+
+.numerology-pair-hero__background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(0deg, var(--bg), var(--scrim-clear) 32%),
+    linear-gradient(90deg, var(--practice-hero-shade-start), var(--practice-hero-shade-middle) 43%, var(--practice-hero-shade-edge) 75%, var(--scrim-clear));
 }
 
 .numerology-pair-page .numerology-pair-hero h1 {
@@ -450,43 +485,6 @@
 
 .numerology-pair-hero .year-form > :is(button, p) {
   grid-column: 1 / -1;
-}
-
-.numerology-pair-page .numerology-pair-hero .year-hero__art {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  align-self: center;
-  align-items: center;
-  justify-content: flex-end;
-  justify-self: center;
-  width: min(100%, 480px);
-  aspect-ratio: 1;
-  margin: 0;
-  padding: 0 0 9%;
-  border: 1px solid var(--line-strong);
-  border-radius: 50%;
-  text-align: center;
-}
-
-.numerology-pair-hero .year-hero__art img {
-  z-index: -2;
-  object-fit: cover;
-  object-position: 100% center;
-}
-
-.numerology-pair-hero .year-hero__art::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  box-shadow: inset 0 0 0 7px var(--bg), inset 0 0 0 8px var(--accent-line);
-  background: linear-gradient(0deg, var(--bg), var(--scrim-clear) 40%);
-}
-
-.numerology-pair-page .numerology-pair-hero .year-hero__art span {
-  font-size: clamp(30px, 4vw, 48px);
 }
 
 .numerology-pair-page .year-result.numerology-pair {
@@ -825,7 +823,12 @@
 }
 
 @media (max-width: 760px) {
-  .numerology-pair-page .numerology-pair-hero { padding-block: 10px 28px; }
+  .year-page.numerology-pair-page { --pair-page-gutter: 16px; }
+  .numerology-pair-page .numerology-pair-hero { min-height: 0; padding-block: 10px 28px; }
+  .numerology-pair-hero__background img { object-position: 70% center; }
+  .numerology-pair-hero__background::after {
+    background: linear-gradient(0deg, var(--bg), var(--practice-hero-shade-mobile) 46%);
+  }
   .numerology-pair-page .numerology-pair-hero h1 { font-size: clamp(29px, 8.5vw, 46px); }
   .numerology-pair-page .numerology-pair-hero .lead { font-size: 14px; line-height: 1.45; }
   .numerology-pair-page .numerology-pair-hero .eyebrow { letter-spacing: 0.06em; }
