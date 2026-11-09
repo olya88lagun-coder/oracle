@@ -26,8 +26,8 @@ export function collectLila(file) {
   return { cells: readText(file) };
 }
 
-export function collectCompat(file) {
-  return { unions: readText(file) };
+export function collectCompat(file, spheresFile) {
+  return { unions: readText(file), spheres: readText(spheresFile) };
 }
 
 // Статьи блога: одна запись на файл, имя файла без .md — slug
@@ -76,7 +76,7 @@ if (import.meta.main) {
   write(join(root, "src", "generated", "arcana.json"), collectArcana(join(root, "arcana")));
   write(join(root, "src", "generated", "positions.json"), collectPositions(join(root, "positions.md")));
   write(join(root, "src", "generated", "lila.json"), collectLila(join(root, "lila-cells.md")));
-  write(join(root, "src", "generated", "compat.json"), collectCompat(join(root, "compat-arcana.md")));
+  write(join(root, "src", "generated", "compat.json"), collectCompat(join(root, "compat-arcana.md"), join(root, "compat-spheres.md")));
   write(join(root, "src", "generated", "year.json"), { texts: readText(join(root, "year-arcana.md")) });
   write(join(root, "src", "generated", "tarot.json"), collectArcana(join(root, "tarot")));
   write(join(root, "src", "generated", "tarot-combos.json"), { combos: readText(join(root, "tarot-combos.md")) });
