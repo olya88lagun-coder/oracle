@@ -8,8 +8,9 @@ import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { checkoutParams, reachGoal, reachGoalThenNavigate, type CheckoutProduct, type Goal } from "@/lib/analytics";
 import { arcanumImage, MATRIX_PATH } from "@/lib/arcana-paths";
 import { loginHref } from "@/lib/next-path";
-import { chapterArcanaLabel, EMAIL_ERROR, EMAIL_PATTERN, purchaseErrorCode, purchaseErrorMessage, reportPath, teaserText, type OfferState } from "@/lib/report-offer";
+import { chapterArcanaLabel, EMAIL_ERROR, EMAIL_PATTERN, purchaseErrorCode, purchaseErrorMessage, reportPath, type OfferState } from "@/lib/report-offer";
 import { useOfferViewGoal } from "../useOfferViewGoal";
+import { relationshipLink } from "./matrix-link";
 
 // compat — предложение под результатом совместимости: разбор покупается для собственной даты человека, а не для пары.
 // Цели у него свои, чтобы конверсия матрицы не смешивалась с совместимостью
@@ -132,7 +133,7 @@ function OfferAction({ state, onSaveDate, goals, compat, free }: { state: Props[
 
 export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }: Props) {
   const center = arcanumByNumber(matrix.E);
-  const love = arcanumByNumber(matrix.love);
+  const link = relationshipLink(matrix);
   const goals = compat ? COMPAT_GOALS : MATRIX_GOALS;
   const ref = useOfferViewGoal(goals.view, !free);
   return (
@@ -159,11 +160,19 @@ export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }:
       <div className="stack report-offer__side">
         <Image className="report-offer__art" src={arcanumImage(center, "card")} alt="" width={480} height={480} sizes="(min-width: 960px) 380px, 100vw" unoptimized />
         <div className="report-offer__sample stack">
-          <p className="eyebrow">Пример трактовки вашего аркана</p>
-          <p className="report-offer__teaser">
-            Ваша точка любви — {love.number} {love.name}. {teaserText(love.love.join(" "), 280)}
-          </p>
-          <p className="muted">Этот фрагмент показывает описание одной точки. Полный разбор связывает темы нескольких точек в семь глав.</p>
+          <p className="eyebrow">Связка ваших арканов · отношения</p>
+          <dl className="matrix-link">
+            {link.points.map((item) => (
+              <div key={item.role} className="matrix-link__point">
+                <dt>
+                  {item.role}: <span className="matrix-link__number">{item.number}</span> {item.name}
+                </dt>
+                <dd>{item.meaning}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="matrix-link__text">{link.link}</p>
+          <p className="muted">Число, общее значение, связка. В разборе глава «Отношения» развивает эту связку в целый текст, и так — для всех семи глав.</p>
           <Link className="text-link" href="/matrica-sudby/primer">Посмотреть полный пример и PDF</Link>
         </div>
       </div>
