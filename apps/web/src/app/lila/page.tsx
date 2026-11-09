@@ -97,7 +97,7 @@ export default function LilaPage() {
         <ol className="lila-demo">
           <li><small>Намерение</small><p>«{DEMO_INTENTION}»</p></li>
           <li><small>Ход</small><p>Кубик — 6. Клетка 12 «Зависть», змея ведёт на клетку 8 «Алчность».</p></li>
-          <li className="lila-demo__guide"><small>Проводник · ИИ</small><p>{DEMO_GUIDE}</p></li>
+          <li className="lila-demo__guide"><small>Проводник · пример</small><p>{DEMO_GUIDE}</p></li>
           <li><small>Запись игрока</small><p>«Вижу, как сравнение отвлекает от моего плана.»</p></li>
         </ol>
         <p>Сколько длится партия: времени не ограничено, темп задаёте вы. Завершить партию и получить итог можно с десятого хода; всего в партии — не больше 120 ходов.</p>
