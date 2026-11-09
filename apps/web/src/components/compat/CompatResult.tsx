@@ -1,5 +1,5 @@
 import { arcanumByNumber } from "@oracle/content";
-import { compatUnionByNumber } from "@oracle/content/compat";
+import { compatSpheresByNumber, compatUnionByNumber, type CompatSpheres } from "@oracle/content/compat";
 import { KEY_POINTS, type Compatibility } from "@oracle/core";
 import Image from "next/image";
 import Link from "next/link";
@@ -35,9 +35,37 @@ function Person({ title, person }: { title: string; person: Compatibility["peopl
   );
 }
 
+// Сферы союза: выводятся, только когда владелица приняла тексты (COMPAT_SPHERES_ACCEPTED)
+function Spheres({ spheres }: { spheres: CompatSpheres }) {
+  return (
+    <section className="stack compat-spheres" aria-labelledby="compat-spheres-title">
+      <h2 id="compat-spheres-title">Аркан {spheres.number} в жизни пары</h2>
+      <div className="compat-spheres__grid">
+        <div className="card stack">
+          <h3>Что сближает</h3>
+          <p>{spheres.closer}</p>
+        </div>
+        <div className="card stack">
+          <h3>Где возможны разногласия</h3>
+          <p>{spheres.friction}</p>
+        </div>
+        <div className="card stack">
+          <h3>Как договариваться</h3>
+          <p>{spheres.agree}</p>
+        </div>
+        <div className="card stack">
+          <h3>Вопрос для разговора</h3>
+          <p className="lila-turn__question">{spheres.question}</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function CompatResult({ compat, headingRef, actions }: Props) {
   const arcanum = arcanumByNumber(compat.pair);
   const union = compatUnionByNumber(compat.pair);
+  const spheres = compatSpheresByNumber(compat.pair);
   return (
     <section className="stack compat-result" aria-labelledby="compat-pair-title">
       <h2 id="compat-pair-title" ref={headingRef} tabIndex={-1}>
@@ -68,6 +96,8 @@ export function CompatResult({ compat, headingRef, actions }: Props) {
           </p>
         </div>
       </div>
+
+      {spheres && <Spheres spheres={spheres} />}
 
       <h2>Вы и партнёр</h2>
       <div className="compat-people">

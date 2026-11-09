@@ -680,6 +680,9 @@ a.report-toc__title:hover { color: var(--accent); }
   .compat-pair__art { max-width: none; }
 }
 .compat-fact { padding-top: 12px; border-top: 1px solid var(--line); }
+.compat-spheres__grid { display: grid; gap: 16px; }
+.compat-spheres__grid h3 { margin: 0; }
+@media (min-width: 720px) { .compat-spheres__grid { grid-template-columns: 1fr 1fr; } }
 .compat-people { display: grid; gap: 16px; }
 @media (min-width: 900px) { .compat-people { grid-template-columns: 1fr 1fr; align-items: start; } }
 .compat-person h3 { margin: 0; }
