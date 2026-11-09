@@ -56,9 +56,9 @@ describe("planet in house pages (pilot, batch 6)", () => {
     expect(checkNatalHousePages(NATAL_HOUSE_TEXTS, NATAL_TEXTS)).toEqual([]);
   });
 
-  test("the batch is not accepted yet: no links from the calculator", () => {
-    expect(ACCEPTED_BATCHES.has(HOUSE_PAGES_BATCH)).toBe(false);
-    expect(NATAL_HOUSE_PAGE_SLUGS).toEqual({});
+  test("the batch is accepted: the calculator links every house page", () => {
+    expect(ACCEPTED_BATCHES.has(HOUSE_PAGES_BATCH)).toBe(true);
+    expect(Object.values(NATAL_HOUSE_PAGE_SLUGS).sort()).toEqual(NATAL_HOUSE_PAGES.map((page) => page.slug).sort());
   });
 });
 

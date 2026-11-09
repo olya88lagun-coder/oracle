@@ -1,4 +1,4 @@
-import { ACCEPTED_BATCHES, HOUSE_PAGES_BATCH, NATAL_HOUSE_PAGES, NATAL_PAGES } from "@oracle/content/natal";
+import { ACCEPTED_BATCHES, NATAL_HOUSE_PAGES, NATAL_PAGES } from "@oracle/content/natal";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
 import sitemap from "../../sitemap";
@@ -7,7 +7,7 @@ import NatalMeaningPage, { dynamicParams, generateMetadata, generateStaticParams
 const params = (slug: string) => ({ params: Promise.resolve({ slug }) });
 const NOT_FOUND = /NEXT_HTTP_ERROR_FALLBACK;404|NEXT_NOT_FOUND/;
 // Принятые партии открыты, остальные (если ещё есть) закрыты настоящим 404
-const accepted = NATAL_PAGES.filter((page) => ACCEPTED_BATCHES.has(page.batch));
+const accepted = [...NATAL_PAGES, ...NATAL_HOUSE_PAGES].filter((page) => ACCEPTED_BATCHES.has(page.batch));
 const closed = NATAL_PAGES.find((page) => !ACCEPTED_BATCHES.has(page.batch));
 
 describe("/natalnaya-karta/[slug]", () => {
@@ -54,25 +54,5 @@ describe("/natalnaya-karta/[slug]", () => {
     expect(graph[0]?.headline).toBe("Луна в Раке: значение в натальной карте");
     expect(graph[1]?.itemListElement?.map((item) => item.name)).toEqual(["Натальная карта", "Луна в Раке"]);
     expect(markup.indexOf("application/ld+json")).toBeLessThan(markup.indexOf("<main"));
-  });
-});
-
-describe("/natalnaya-karta/[slug]: «planet in house» pilot while its batch is not accepted", () => {
-  test("none of the house pages is built, each is a real 404 and none is in the sitemap", async () => {
-    expect(ACCEPTED_BATCHES.has(HOUSE_PAGES_BATCH)).toBe(false);
-    const slugs = generateStaticParams().map((item) => item.slug);
-    const paths = sitemap().map((entry) => entry.url);
-    for (const page of NATAL_HOUSE_PAGES) {
-      expect(slugs).not.toContain(page.slug);
-      expect(paths.some((url) => url.endsWith(`/natalnaya-karta/${page.slug}`)), page.slug).toBe(false);
-      await expect(NatalMeaningPage(params(page.slug))).rejects.toThrow(NOT_FOUND);
-      expect(await generateMetadata(params(page.slug))).toEqual({});
-    }
-  });
-
-  test("the sign page does not link to closed house pages", async () => {
-    const markup = renderToStaticMarkup(await NatalMeaningPage(params("venera-v-vesah")));
-    expect(markup).not.toContain("Венера в домах");
-    expect(markup).not.toMatch(/-dome"/);
   });
 });

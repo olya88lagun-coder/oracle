@@ -1,5 +1,6 @@
 import type { NatalChart } from "@oracle/core/natal";
 import { renderToStaticMarkup } from "react-dom/server";
+import { ACCEPTED_BATCHES, NATAL_HOUSE_PAGES } from "@oracle/content/natal";
 import { describe, expect, test } from "vitest";
 import { MEANING_LINK_HINT } from "@/lib/natal-copy";
 import { natalKeyId, type NatalKeyRegistry } from "@/lib/natal-texts";
@@ -20,7 +21,7 @@ const links = (markup: string) => [...markup.matchAll(/<a class="natal-table__me
 describe("NatalTable meaning links", () => {
   test("links the ten bodies, the lunar node and the ascendant to their pages, and not the midheaven", () => {
     const chart = sampleChart(true);
-    const markup = renderToStaticMarkup(<NatalTable chart={chart} registry={registryFor(chart)} />);
+    const markup = renderToStaticMarkup(<NatalTable chart={chart} registry={registryFor(chart)} houseRegistry={{}} />);
     const found = links(markup);
     expect(found).toHaveLength(12);
     expect(found.some((href) => href?.includes("midheaven"))).toBe(false);
@@ -39,10 +40,10 @@ describe("NatalTable meaning links", () => {
   test("a body whose page is not open stays plain text", () => {
     const chart = sampleChart(true);
     const sun = chart.points.find((point) => point.id === "sun");
-    const markup = renderToStaticMarkup(<NatalTable chart={chart} registry={{ [natalKeyId("sun", sun?.sign ?? "aries")]: { summary: "Выдержка", href: "/natalnaya-karta/sun" } }} />);
+    const markup = renderToStaticMarkup(<NatalTable chart={chart} registry={{ [natalKeyId("sun", sun?.sign ?? "aries")]: { summary: "Выдержка", href: "/natalnaya-karta/sun" } }} houseRegistry={{}} />);
     expect(links(markup)).toEqual(["/natalnaya-karta/sun"]);
     expect(markup.match(/<a /g)).toHaveLength(1);
-    expect(renderToStaticMarkup(<NatalTable chart={chart} registry={{}} />)).not.toContain("<a ");
+    expect(renderToStaticMarkup(<NatalTable chart={chart} registry={{}} houseRegistry={{}} />)).not.toContain("<a ");
   });
 
   test("the link keeps the body name and adds a hidden hint for screen readers", () => {
@@ -56,8 +57,11 @@ describe("NatalTable meaning links", () => {
 describe("NatalTable house links", () => {
   const houseLinks = (markup: string) => [...markup.matchAll(/<a class="natal-table__meaning-link" href="(\/natalnaya-karta\/[a-z]+-v-\d+-dome)">/g)].map((match) => match[1]);
 
-  test("while the house pages batch is not accepted, house numbers stay plain text", () => {
-    expect(houseLinks(renderToStaticMarkup(<NatalTable chart={sampleChart(true)} />))).toEqual([]);
+  test("by default house numbers link only to the accepted «planet in house» pages", () => {
+    const open = new Set(NATAL_HOUSE_PAGES.filter((page) => ACCEPTED_BATCHES.has(page.batch)).map((page) => `/natalnaya-karta/${page.slug}`));
+    const found = houseLinks(renderToStaticMarkup(<NatalTable chart={sampleChart(true)} />));
+    expect(found.length).toBeGreaterThan(0);
+    for (const href of found) expect(open.has(href ?? ""), href).toBe(true);
   });
 
   test("an open «planet in house» page turns the house number into a link", () => {

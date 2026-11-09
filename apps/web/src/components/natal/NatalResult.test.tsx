@@ -43,7 +43,7 @@ describe("NatalResult with a known time", () => {
     expect(markup).toContain('<th scope="col">Тело</th><th scope="col">Знак</th><th scope="col">Градусы</th><th scope="col">Дом</th>');
     const rows = rowsOf(markup);
     expect(rows).toHaveLength(13);
-    expect(textOf(rows[0] as string)).toBe("Солнце Рыбы 16°32′ 10");
+    expect(textOf(rows[0] as string)).toBe("Солнце Рыбы 16°32′ 10 — Солнце в 10 доме: значение"); // номер дома — ссылка на открытую страницу «Солнце в 10 доме»
     expect(textOf(rows[1] as string)).toBe("Луна Рак 28°07′ 2");
     expect(textOf(rows[5] as string)).toBe("Юпитер Рак 1°00′ 12");
     expect(textOf(rows[9] as string)).toBe("Плутон Скорпион 17°43′ обратное движение 5");
@@ -59,7 +59,7 @@ describe("NatalResult with a known time", () => {
     expect(markup).toContain(
       '<span class="natal-table__degree">17°43′<svg class="natal-glyph natal-glyph--retro" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><use href="#glyph-retro"></use></svg><span class="sr-only">обратное движение</span></span>',
     );
-    expect(count(markup.slice(markup.indexOf("<table"), markup.indexOf("</table>")), /sr-only/g)).toBe(2);
+    expect(count(markup.slice(markup.indexOf("<table"), markup.indexOf("</table>")), /<span class="sr-only">обратное движение/g)).toBe(2);
   });
 
   test("uses glyphs from the page sprite, never a copy of them", () => {
@@ -96,7 +96,8 @@ describe("NatalResult with a known time", () => {
   });
 
   test("nothing about the birth data is put into a link", () => {
-    expect(markup).not.toMatch(/href="[^#"][^"]*"/);
+    // Ссылки ведут только на общие страницы значений («Солнце в 10 доме»), без даты, времени и места
+    expect(markup).not.toMatch(/href="(?!#|\/natalnaya-karta\/[a-z0-9-]+")[^"]*"/);
   });
 });
 
@@ -197,8 +198,10 @@ describe("NatalResult with the shipped meaning pages", () => {
   test("links the planets, the lunar node and the ascendant in the table to their pages, and the midheaven to none", () => {
     const markup = renderToStaticMarkup(<NatalResult chart={withTime} birth={SAMPLE_BIRTH} />);
     const table = markup.slice(markup.indexOf("<table"), markup.indexOf("</table>"));
-    const hrefs = [...table.matchAll(/class="natal-table__meaning-link" href="([^"]+)"/g)].map((match) => match[1]);
+    const all = [...table.matchAll(/class="natal-table__meaning-link" href="([^"]+)"/g)].map((match) => match[1]);
+    const hrefs = all.filter((href) => !href?.endsWith("-dome"));
     expect(hrefs).toHaveLength(12);
+    expect(all).toContain("/natalnaya-karta/solntse-v-10-dome");
     expect(hrefs.some((href) => href?.startsWith("/natalnaya-karta/severnyy-uzel-"))).toBe(true);
     expect(hrefs).toContain("/natalnaya-karta/solntse-v-rybah");
     expect(hrefs).toContain("/natalnaya-karta/ascendent-v-rake");
