@@ -4486,14 +4486,23 @@ main:has(> .natal-intro) > .natal-quick {
 
 .natal-catalog__link:hover { color: var(--accent); text-decoration: underline; }
 
+/* «Планеты в домах»: четыре открытые группы, заголовок группы — как summary каталога знаков */
+.natal-catalog--houses .natal-catalog__groups { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.natal-catalog--houses .natal-catalog__group { border-color: var(--accent); }
+.natal-catalog--houses .natal-catalog__group ul { grid-template-columns: minmax(0, 1fr); }
+.natal-catalog__group-title { padding: 14px 22px 2px; color: var(--accent); font-size: 18px; font-weight: 400; line-height: 1.4; }
+.natal-catalog__note { margin-top: 16px; }
+
 @media (max-width: 960px) {
-  .natal-catalog__groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .natal-catalog__groups,
+  .natal-catalog--houses .natal-catalog__groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 760px) {
   .natal-catalog { margin-top: 40px; }
   .natal-catalog h2 { font-size: 26px; }
-  .natal-catalog__groups { grid-template-columns: minmax(0, 1fr); }
+  .natal-catalog__groups,
+  .natal-catalog--houses .natal-catalog__groups { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* Единая сцена пяти практик. Только первые экраны; тексты, формы и результат не меняются. */
