@@ -14,6 +14,7 @@ import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { COMPAT_PATH } from "@/lib/compat";
 import { LILA_PATH } from "@/lib/lila-paths";
 import { NATAL_PATH } from "@/lib/natal-paths";
+import { NUMEROLOGY_PATH } from "@/lib/numerology";
 import { TARO_PATH } from "@/lib/taro-paths";
 import { articleFaqJsonLd, BLOG_PATH, BLOG_POSTS, BLOG_TOPIC_LABELS, blogPath, blogPostBySlug, blogPostJsonLd, relatedPosts } from "@/lib/blog";
 import { DISCLAIMER } from "@/lib/legal";
@@ -37,6 +38,7 @@ const PRACTICE_BY_TOPIC = {
   lila: { href: LILA_PATH, title: "Лила", text: "Сформулируйте намерение и пройдите путь по полю из 72 клеток." },
   taro: { href: TARO_PATH, title: "Таро и карта дня", text: "Одна карта на сегодня: образ, действие и вопрос для себя." },
   natal: { href: NATAL_PATH, title: "Натальная карта", text: "Дата, время и место рождения: знаки Солнца, Луны и планет, асцендент. Расчёт делается в вашем браузере." },
+  numerology: { href: NUMEROLOGY_PATH, title: "Нумерология", text: "Рассчитайте число судьбы или выберите другую практику в разделе нумерологии." },
 } as const;
 
 export const dynamicParams = false;
