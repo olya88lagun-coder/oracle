@@ -387,8 +387,8 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     status: "published",
   },
 
-  // Пополнение 10.11.2026: Яндекс Вордстат, «Топы запросов», все регионы и устройства, фразы в кавычках.
-  // Ниже частотность за 10.09–09.10.2026. Темы чередуют разделы и не меняют порядок прежних черновиков.
+  // Пополнение 10.11.2026: Яндекс Вордстат, «Топы запросов», все регионы и устройства.
+  // Частотность за 10.09–09.10.2026, фразы в кавычках, если не указано иное. Порядок прежних черновиков сохранён.
   // 433. Показать, где на круге и в таблице искать дом, чем он отличается от знака и как читать два положения вместе.
   // Дать примеры только по принятым страницам. Не дублировать общий порядок чтения карты или сравнение систем домов.
   {
@@ -438,6 +438,98 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: NUMEROLOGY_ALT,
     basis: ["numerology-square"],
     internalLinks: ["/numerologiya/kvadrat-pifagora", "/numerologiya/kvadrat-pifagora/1", "/numerologiya/kvadrat-pifagora/linii"],
+    status: "draft",
+  },
+
+  // 862. Сравнить два инструмента на одной условной паре: совпадения ячеек в квадрате и общий аркан в матрице.
+  // Не пересказывать инструкции каждого калькулятора и не давать проценты, вердикты или советы о выборе партнёра.
+  {
+    slug: "numerologiya-sovmestimosti-kvadrat-i-matritsa",
+    title: "Совместимость по дате рождения: чем отличаются квадрат Пифагора и матрица",
+    primaryQuery: "нумерология совместимости по дате рождения",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-pair", "compat-formulas", "compat-texts"],
+    internalLinks: ["/numerologiya/kvadrat-pifagora/sovmestimost", "/sovmestimost"],
+    status: "draft",
+  },
+  // 22. Объяснить последовательность 1–9, переход от 9 к 1 и показать его на двух календарных годах для одной даты.
+  // Опора — принятые значения 9 и 1, без прогноза событий или повторения инструкции калькулятора 2027.
+  {
+    slug: "devyatiletniy-tsikl-v-numerologii",
+    title: "Девятилетний цикл в нумерологии: как сменяются личные годы с 1 по 9",
+    primaryQuery: "девятилетний цикл в нумерологии",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-year"],
+    internalLinks: ["/numerologiya/lichnyy-god-2027", "/numerologiya/lichnyy-god-2027/1", "/numerologiya/lichnyy-god-2027/9"],
+    status: "draft",
+  },
+  // 60. Объяснить, что на сайте карты всегда прямые, и показать на двух картах, как читать сложную сторону
+  // через позицию расклада и раздел «Перекос». Значения перевёрнутых карт не придумывать.
+  {
+    slug: "perevernutye-karty-taro-i-pryamoe-chtenie",
+    title: "Перевёрнутые карты Таро: что меняется, если читать только прямые",
+    primaryQuery: "перевернутые карты таро",
+    cluster: "taro",
+    image: "/taro/18-zvezda.webp",
+    imageAlt: "Карта Таро «Звезда» из колоды Райдера — Уэйта",
+    basis: ["tarot", "tarot-practice", "tarot-spreads"],
+    internalLinks: ["/taro", "/taro/rasklady/tri-karty", "/taro/karty/zvezda", "/taro/karty/bashnya"],
+    status: "draft",
+  },
+  // 14; «квадрат пифагора 2000» — 264 без кавычек. Дать отдельный контрольный пример для даты после 2000 года.
+  // Показать обработку нулей и четыре рабочих числа; добавку 19 упомянуть только как отличие методик из FAQ.
+  {
+    slug: "kvadrat-pifagora-posle-2000-goda",
+    title: "Квадрат Пифагора для рождённых после 2000 года: расчёт с нулями в дате",
+    primaryQuery: "квадрат пифагора после 2000 года",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-square"],
+    internalLinks: ["/numerologiya/kvadrat-pifagora", "/numerologiya/kvadrat-pifagora/1"],
+    status: "draft",
+  },
+  // 12; «пустой дом натальная карта» — 267 без кавычек. На примере отличить рассчитанный дом без планет
+  // от режима без времени рождения, когда дома не строятся. Не делать выводов о событиях или сферах жизни.
+  {
+    slug: "pustye-doma-v-natalnoy-karte",
+    title: "Пустые дома в натальной карте: что видно в круге и таблице",
+    primaryQuery: "пустые дома в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika"],
+    status: "draft",
+  },
+  // 20 без кавычек, 09.10–09.11.2026. Помочь выбрать между существующими раскладами по цели и ситуации.
+  // Один вопрос разобрать с двух сторон на примере разных позиций. Не повторять каталог и общие правила чтения карт.
+  {
+    slug: "kak-vybrat-rasklad-taro",
+    title: "Как выбрать расклад Таро под свой вопрос: ситуация, выбор или разговор",
+    primaryQuery: "как выбрать расклад таро",
+    cluster: "taro",
+    image: "/taro/02-mag.webp",
+    imageAlt: "Карта Таро «Маг» из колоды Райдера — Уэйта",
+    basis: ["tarot", "tarot-spreads"],
+    internalLinks: ["/taro", "/taro/rasklady/tri-karty", "/taro/rasklady/vybor", "/taro/rasklady/otnosheniya", "/taro/karty/mag"],
+    status: "draft",
+  },
+  // 217 без кавычек; 1 в кавычках за 09.10–09.11.2026. На одной условной дате показать два разных результата.
+  // Не искать соответствие между значением числа судьбы и значением аркана с тем же номером.
+  {
+    slug: "chislo-sudby-i-matritsa-sudby",
+    title: "Число судьбы и матрица судьбы: чем отличаются результаты на одной дате",
+    primaryQuery: "число судьбы и матрица судьбы",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-fate", "matrix-formulas", "positions"],
+    internalLinks: ["/numerologiya", "/matrica-sudby", "/blog/rasshifrovka-matritsy-sudby"],
     status: "draft",
   },
 

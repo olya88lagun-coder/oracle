@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { ARCANA } from "@oracle/content";
-import { ARTICLES, CONTENT_PLAN, checkArticle, linksOf, parseMarkdown, type ArticleCheckContext } from "@oracle/content/articles";
+import { ARTICLES, CONTENT_PLAN, TOOL_PATHS, checkArticle, linksOf, parseMarkdown, type ArticleCheckContext } from "@oracle/content/articles";
 import { LILA_CELLS } from "@oracle/content/lila";
 import { describe, expect, test } from "vitest";
 import { BLOG_POSTS } from "./blog";
@@ -26,6 +26,7 @@ describe("content plan", () => {
     for (const topic of CONTENT_PLAN) {
       expect(topic.internalLinks.filter((link) => !PUBLIC_PATHS.includes(link)), topic.slug).toEqual([]);
       expect(imageProblem(topic.image), topic.slug).toBeNull();
+      expect(topic.internalLinks.some((link) => TOOL_PATHS.includes(link)), topic.slug).toBe(true);
     }
   });
 

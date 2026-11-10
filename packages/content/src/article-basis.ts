@@ -7,7 +7,8 @@ export const ARTICLE_BASIS = {
   "compat-formulas": { label: "Формулы расчёта совместимости", files: ["packages/core/src/compatibility.ts"] },
   tarot: { label: "Проверенные тексты 78 карт Таро", files: ["packages/content/tarot"] },
   "tarot-deck": { label: "Состав и порядок колоды Райдера — Уэйта", files: ["packages/content/src/tarot-deck.ts"] },
-  "tarot-practice": { label: "Правила карты дня и ограничения сервиса", files: ["apps/web/src/components/taro/TaroGuide.tsx", "apps/web/src/app/taro/karta-dnya/page.tsx"] },
+  "tarot-practice": { label: "Правила карты дня и ограничения сервиса", files: ["apps/web/src/components/taro/TaroGuide.tsx", "apps/web/src/components/taro/TaroDayGuide.tsx", "apps/web/src/app/taro/karta-dnya/page.tsx"] },
+  "tarot-spreads": { label: "Позиции и правила раскладов Таро на сайте", files: ["apps/web/src/lib/taro-spreads.ts"] },
   natal: { label: "Принятые тексты натальной карты «Твоего оракула»", files: ["packages/content/natal"] },
   "natal-house-pages": { label: "Принятые описания планет в домах натальной карты", files: ["packages/content/natal-house-pages", "packages/content/src/natal-manifest.ts"] },
   "natal-method": { label: "Метод и экран калькулятора натальной карты", files: ["apps/web/src/app/metodika/page.tsx", "apps/web/src/lib/natal-copy.ts", "apps/web/src/lib/natal-cities.ts", "packages/core/src/natal/aspects.ts", "packages/core/src/natal/houses.ts"] },
@@ -17,6 +18,8 @@ export const ARTICLE_BASIS = {
   "numerology-fate": { label: "Формула и описания чисел судьбы", files: ["packages/core/src/numerology.ts", "apps/web/src/lib/numerology.ts", "packages/content/numerology"] },
   "numerology-clock": { label: "Справочник повторяющихся сочетаний на часах", files: ["apps/web/src/lib/numerology.ts", "packages/content/numerology"] },
   "numerology-square": { label: "Расчёт и чтение квадрата Пифагора", files: ["packages/core/src/numerology.ts", "apps/web/src/lib/pythagoras.ts", "packages/content/numerology"] },
+  "numerology-pair": { label: "Сравнение двух квадратов Пифагора", files: ["packages/core/src/numerology.ts", "packages/content/numerology/pair-sovmestimost.md"] },
+  "numerology-year": { label: "Расчёт и значения личного года", files: ["packages/core/src/numerology.ts", "apps/web/src/lib/numerology.ts", "packages/content/numerology"] },
 } as const;
 
 export type ArticleBasisKey = keyof typeof ARTICLE_BASIS;
