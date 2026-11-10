@@ -11,7 +11,11 @@ export type ArticleCheckContext = {
   readonly today: string;
 };
 
-export const TOOL_PATHS: readonly string[] = ["/matrica-sudby", "/sovmestimost", "/lila", "/taro", "/taro/karta-dnya", "/natalnaya-karta"];
+export const TOOL_PATHS: readonly string[] = [
+  "/matrica-sudby", "/sovmestimost", "/lila", "/taro", "/taro/karta-dnya", "/natalnaya-karta",
+  "/numerologiya", "/numerologiya/chasy", "/numerologiya/lichnyy-god-2027",
+  "/numerologiya/kvadrat-pifagora", "/numerologiya/kvadrat-pifagora/sovmestimost",
+];
 export const BODY_MIN = 4000;
 export const BODY_MAX = 9000;
 const SECTIONS_MIN = 3;

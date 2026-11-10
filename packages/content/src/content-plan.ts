@@ -5,8 +5,8 @@ export type PlanTopic = {
   readonly title: string;
   // запрос, на который первый абзац статьи отвечает сразу
   readonly primaryQuery: string;
-  readonly cluster: "matrix" | "compat" | "lila" | "taro" | "natal" | "general";
-  // картинки: /hero.webp, /arcana/NN-slug.webp, /lila/NN-slug.webp, /taro/NN-slug.webp; для натальной карты — /practices/natal.webp
+  readonly cluster: "matrix" | "compat" | "lila" | "taro" | "natal" | "numerology" | "general";
+  // Картинки: /hero.webp, иллюстрации арканов, клеток и карт либо обложки практик natal и numerology.
   readonly image: string;
   readonly imageAlt: string;
   readonly basis: readonly ArticleBasisKey[];
@@ -17,6 +17,7 @@ export type PlanTopic = {
 
 const HERO_ALT = "Матрица судьбы — символическая схема по дате рождения";
 const NATAL_ALT = "Натальная карта — диск с символами Солнца, Луны и звёзд";
+const NUMEROLOGY_ALT = "Символическая иллюстрация раздела «Нумерология»";
 
 // Очередь по убыванию пользы; спрос — Яндекс Вордстат за 30.08–28.09.2026 (см. docs/superpowers/specs/2026-09-30-seo-articles-design.md).
 // Тема получает status: "published" ровно тогда, когда выходит статья
@@ -384,6 +385,152 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     basis: ["matrix-formulas", "arcana", "positions"],
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-19-solnce", "/blog/rasshifrovka-matritsy-sudby"],
     status: "published",
+  },
+
+  // Пополнение 10.11.2026: Яндекс Вордстат, «Топы запросов», все регионы и устройства.
+  // Частотность за 10.09–09.10.2026, фразы в кавычках, если не указано иное. Порядок прежних черновиков сохранён.
+  // 433. Показать, где на круге и в таблице искать дом, чем он отличается от знака и как читать два положения вместе.
+  // Дать примеры только по принятым страницам. Не дублировать общий порядок чтения карты или сравнение систем домов.
+  {
+    slug: "doma-v-natalnoy-karte",
+    title: "Дома в натальной карте: где их найти и как читать положение планеты",
+    primaryQuery: "дома в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method", "natal-house-pages"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/luna-v-4-dome", "/natalnaya-karta/venera-v-7-dome"],
+    status: "draft",
+  },
+  // 104. Сценарий наблюдения: записать все взгляды на часы за день, включая обычное время. Не повторять каталог значений.
+  {
+    slug: "pochemu-zamechaem-odinakovye-tsifry-na-chasah",
+    title: "Почему постоянно замечаем одинаковые цифры на часах и как это проверить",
+    primaryQuery: "почему постоянно вижу одинаковые цифры на часах",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-clock"],
+    internalLinks: ["/numerologiya/chasy", "/numerologiya/chasy/11-11", "/numerologiya/chasy/22-22"],
+    status: "draft",
+  },
+  // 62. Сопоставить 11, 22 и 33 на примерах сумм и показать, почему не сводим их к 2, 4 и 6.
+  // Отделить число судьбы от числа года и личного года. Не пересказывать три справочные страницы по отдельности.
+  {
+    slug: "master-chisla-11-22-33",
+    title: "Мастер-числа 11, 22 и 33: когда они получаются и почему их не сворачивают",
+    primaryQuery: "мастер числа в нумерологии",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-fate"],
+    internalLinks: ["/numerologiya", "/numerologiya/chislo-sudby/11", "/numerologiya/chislo-sudby/22", "/numerologiya/chislo-sudby/33"],
+    status: "draft",
+  },
+  // 57; «как читать квадрат пифагора» — 14. Разобрать готовый результат от ячеек к линиям на одном примере.
+  // Не повторять формулу с лендинга, каталог ячеек или справочник линий. Пустая ячейка не оценивает человека.
+  {
+    slug: "rasshifrovka-kvadrata-pifagora",
+    title: "Расшифровка квадрата Пифагора: как читать ячейки и линии на примере",
+    primaryQuery: "расшифровка квадрата пифагора",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-square"],
+    internalLinks: ["/numerologiya/kvadrat-pifagora", "/numerologiya/kvadrat-pifagora/1", "/numerologiya/kvadrat-pifagora/linii"],
+    status: "draft",
+  },
+
+  // 862. Сравнить два инструмента на одной условной паре: совпадения ячеек в квадрате и общий аркан в матрице.
+  // Не пересказывать инструкции каждого калькулятора и не давать проценты, вердикты или советы о выборе партнёра.
+  {
+    slug: "numerologiya-sovmestimosti-kvadrat-i-matritsa",
+    title: "Совместимость по дате рождения: чем отличаются квадрат Пифагора и матрица",
+    primaryQuery: "нумерология совместимости по дате рождения",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-pair", "compat-formulas", "compat-texts"],
+    internalLinks: ["/numerologiya/kvadrat-pifagora/sovmestimost", "/sovmestimost"],
+    status: "draft",
+  },
+  // 22. Объяснить последовательность 1–9, переход от 9 к 1 и показать его на двух календарных годах для одной даты.
+  // Опора — принятые значения 9 и 1, без прогноза событий или повторения инструкции калькулятора 2027.
+  {
+    slug: "devyatiletniy-tsikl-v-numerologii",
+    title: "Девятилетний цикл в нумерологии: как сменяются личные годы с 1 по 9",
+    primaryQuery: "девятилетний цикл в нумерологии",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-year"],
+    internalLinks: ["/numerologiya/lichnyy-god-2027", "/numerologiya/lichnyy-god-2027/1", "/numerologiya/lichnyy-god-2027/9"],
+    status: "draft",
+  },
+  // 60. Объяснить, что на сайте карты всегда прямые, и показать на двух картах, как читать сложную сторону
+  // через позицию расклада и раздел «Перекос». Значения перевёрнутых карт не придумывать.
+  {
+    slug: "perevernutye-karty-taro-i-pryamoe-chtenie",
+    title: "Перевёрнутые карты Таро: что меняется, если читать только прямые",
+    primaryQuery: "перевернутые карты таро",
+    cluster: "taro",
+    image: "/taro/18-zvezda.webp",
+    imageAlt: "Карта Таро «Звезда» из колоды Райдера — Уэйта",
+    basis: ["tarot", "tarot-practice", "tarot-spreads"],
+    internalLinks: ["/taro", "/taro/rasklady/tri-karty", "/taro/karty/zvezda", "/taro/karty/bashnya"],
+    status: "draft",
+  },
+  // 14; «квадрат пифагора 2000» — 264 без кавычек. Дать отдельный контрольный пример для даты после 2000 года.
+  // Показать обработку нулей и четыре рабочих числа; добавку 19 упомянуть только как отличие методик из FAQ.
+  {
+    slug: "kvadrat-pifagora-posle-2000-goda",
+    title: "Квадрат Пифагора для рождённых после 2000 года: расчёт с нулями в дате",
+    primaryQuery: "квадрат пифагора после 2000 года",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-square"],
+    internalLinks: ["/numerologiya/kvadrat-pifagora", "/numerologiya/kvadrat-pifagora/1"],
+    status: "draft",
+  },
+  // 12; «пустой дом натальная карта» — 267 без кавычек. На примере отличить рассчитанный дом без планет
+  // от режима без времени рождения, когда дома не строятся. Не делать выводов о событиях или сферах жизни.
+  {
+    slug: "pustye-doma-v-natalnoy-karte",
+    title: "Пустые дома в натальной карте: что видно в круге и таблице",
+    primaryQuery: "пустые дома в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method"],
+    internalLinks: ["/natalnaya-karta", "/metodika"],
+    status: "draft",
+  },
+  // 20 без кавычек, 09.10–09.11.2026. Помочь выбрать между существующими раскладами по цели и ситуации.
+  // Один вопрос разобрать с двух сторон на примере разных позиций. Не повторять каталог и общие правила чтения карт.
+  {
+    slug: "kak-vybrat-rasklad-taro",
+    title: "Как выбрать расклад Таро под свой вопрос: ситуация, выбор или разговор",
+    primaryQuery: "как выбрать расклад таро",
+    cluster: "taro",
+    image: "/taro/02-mag.webp",
+    imageAlt: "Карта Таро «Маг» из колоды Райдера — Уэйта",
+    basis: ["tarot", "tarot-spreads"],
+    internalLinks: ["/taro", "/taro/rasklady/tri-karty", "/taro/rasklady/vybor", "/taro/rasklady/otnosheniya", "/taro/karty/mag"],
+    status: "draft",
+  },
+  // 217 без кавычек; 1 в кавычках за 09.10–09.11.2026. На одной условной дате показать два разных результата.
+  // Не искать соответствие между значением числа судьбы и значением аркана с тем же номером.
+  {
+    slug: "chislo-sudby-i-matritsa-sudby",
+    title: "Число судьбы и матрица судьбы: чем отличаются результаты на одной дате",
+    primaryQuery: "число судьбы и матрица судьбы",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-fate", "matrix-formulas", "positions"],
+    internalLinks: ["/numerologiya", "/matrica-sudby", "/blog/rasshifrovka-matritsy-sudby"],
+    status: "draft",
   },
 
   // «игра лила ведущая» 130, «мастера игры лила» 192, «проводник игры лила» 294. Не повторять статью об ИИ-проводнике: отвечать на вопрос «обязателен ли ведущий».

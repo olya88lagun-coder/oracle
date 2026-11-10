@@ -1,14 +1,14 @@
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { ARCANA } from "@oracle/content";
-import { ARTICLES, CONTENT_PLAN, checkArticle, linksOf, parseMarkdown, type ArticleCheckContext } from "@oracle/content/articles";
+import { ARTICLES, CONTENT_PLAN, TOOL_PATHS, checkArticle, linksOf, parseMarkdown, type ArticleCheckContext } from "@oracle/content/articles";
 import { LILA_CELLS } from "@oracle/content/lila";
 import { describe, expect, test } from "vitest";
 import { BLOG_POSTS } from "./blog";
 import { PUBLIC_PATHS } from "./seo";
 
 const PUBLIC_DIR = fileURLToPath(new URL("../../public/", import.meta.url));
-const ALLOWED_IMAGE = /^\/(?:hero|practices\/natal|(?:arcana|lila|taro)\/\d{2}-[a-z]+(?:-[a-z]+)*)\.webp$/;
+const ALLOWED_IMAGE = /^\/(?:hero|practices\/(?:natal|numerology)|(?:arcana|lila|taro)\/\d{2}-[a-z]+(?:-[a-z]+)*)\.webp$/;
 const MANUAL_SLUGS = new Set(BLOG_POSTS.filter((post) => !ARTICLES.some((article) => article.slug === post.slug)).map((post) => post.slug));
 
 const context: ArticleCheckContext = {
@@ -19,13 +19,14 @@ const context: ArticleCheckContext = {
 };
 
 const imageProblem = (url: string): string | null =>
-  !ALLOWED_IMAGE.test(url) ? `${url}: разрешены только /hero.webp и существующие иллюстрации арканов, клеток и карт Таро` : existsSync(`${PUBLIC_DIR}${url.slice(1)}`) ? null : `${url}: файла нет в apps/web/public`;
+  !ALLOWED_IMAGE.test(url) ? `${url}: изображение не входит в список разрешённых` : existsSync(`${PUBLIC_DIR}${url.slice(1)}`) ? null : `${url}: файла нет в apps/web/public`;
 
 describe("content plan", () => {
   test("uses only existing internal links and allowed existing images", () => {
     for (const topic of CONTENT_PLAN) {
       expect(topic.internalLinks.filter((link) => !PUBLIC_PATHS.includes(link)), topic.slug).toEqual([]);
       expect(imageProblem(topic.image), topic.slug).toBeNull();
+      expect(topic.internalLinks.some((link) => TOOL_PATHS.includes(link)), topic.slug).toBe(true);
     }
   });
 
