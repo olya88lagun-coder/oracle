@@ -373,32 +373,6 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     status: "published",
   },
 
-  // «арканы в совместимости матрица судьбы» 2496. Хаб по «Союзу» из compat-arcana.md: коротко, без пересказа фраз; не повторять статью о структуре результата.
-  {
-    slug: "arkany-v-sovmestimosti-matritsa-sudby",
-    title: "Аркан пары в матрице совместимости: 22 темы союза",
-    primaryQuery: "арканы в совместимости матрица судьбы",
-    cluster: "compat",
-    image: "/arcana/06-vlyublennye.webp",
-    imageAlt: "Аркан 6 «Влюблённые» — образ выбора и близости",
-    basis: ["compat-texts", "compat-formulas"],
-    internalLinks: ["/sovmestimost", "/matrica-sudby/arkan-6-vlyublennye", "/blog/matritsa-sovmestimosti-rasshifrovka"],
-    status: "draft",
-  },
-
-  // «сколько вопросов можно задать таро» 38, «…картам таро» 24, «какие вопросы нельзя задавать таро» 24. Без запретов «по традиции»: только практика самонаблюдения.
-  {
-    slug: "skolko-voprosov-mozhno-zadat-taro",
-    title: "Сколько вопросов можно задать Таро и можно ли переспрашивать",
-    primaryQuery: "сколько вопросов можно задать таро",
-    cluster: "taro",
-    image: "/taro/21-sud.webp",
-    imageAlt: "Карта Таро «Суд» из колоды Райдера — Уэйта",
-    basis: ["tarot", "tarot-deck", "tarot-practice"],
-    internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/sud", "/blog/kak-zadat-vopros-taro"],
-    status: "draft",
-  },
-
   // «матрица судьбы ребенка бесплатно» 298, «онлайн ребенок» 102. Расчёт по одной дате; без ярлыков ребёнку, прогнозов, педагогических и медицинских советов.
   {
     slug: "matritsa-sudby-rebenka",
@@ -409,7 +383,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Аркан 19 «Солнце» — образ света и радости",
     basis: ["matrix-formulas", "arcana", "positions"],
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-19-solnce", "/blog/rasshifrovka-matritsy-sudby"],
-    status: "draft",
+    status: "published",
   },
 
   // «игра лила ведущая» 130, «мастера игры лила» 192, «проводник игры лила» 294. Не повторять статью об ИИ-проводнике: отвечать на вопрос «обязателен ли ведущий».
