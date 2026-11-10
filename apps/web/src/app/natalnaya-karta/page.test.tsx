@@ -58,6 +58,17 @@ describe("/natalnaya-karta page", () => {
     expect(markup).toContain('href="/natalnaya-karta/primer"');
   });
 
+  test("lists every open «planet in house» page above the sign catalog, grouped Sun, Moon, Venus, Mars", () => {
+    const houses = NATAL_HOUSE_PAGES.filter((page) => ACCEPTED_BATCHES.has(page.batch));
+    expect(houses).toHaveLength(12);
+    const section = markup.slice(markup.indexOf('id="natal-houses-title"'), markup.indexOf('id="natal-catalog-title"'));
+    expect(section).toContain(">Планеты в домах</h2>");
+    for (const page of houses) expect(section, page.slug).toMatch(new RegExp(`href="/natalnaya-karta/${page.slug}">[^<]+ в ${page.house} доме</a>`));
+    expect(section).toContain('href="/natalnaya-karta/venera-v-7-dome">Венера в 7 доме</a>');
+    const order = ["Солнце", "Луна", "Венера", "Марс"].map((name) => section.indexOf(`>${name}</h3>`));
+    expect(order.every((at, i) => at > 0 && (i === 0 || at > order[i - 1]!))).toBe(true);
+  });
+
   test("is server-rendered as an empty form: no result yet", () => {
     expect(markup).not.toContain("natal-result");
     expect(markup).toContain("Рассчитать карту");
