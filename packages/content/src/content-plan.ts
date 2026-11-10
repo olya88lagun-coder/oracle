@@ -347,45 +347,6 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     status: "published",
   },
 
-  // «задать вопрос таро онлайн» 558, «таро заданный вопрос онлайн» 558, «…бесплатно» 425. На сайте только карта дня: онлайн-расклад по вопросу не обещать.
-  {
-    slug: "zadat-vopros-taro-onlayn",
-    title: "Задать вопрос Таро онлайн: что даёт карта дня и чем она отличается от расклада",
-    primaryQuery: "задать вопрос таро онлайн",
-    cluster: "taro",
-    image: "/taro/02-mag.webp",
-    imageAlt: "Карта Таро «Маг» из колоды Райдера — Уэйта",
-    basis: ["tarot", "tarot-deck", "tarot-practice"],
-    internalLinks: ["/taro", "/taro/karta-dnya", "/taro/karty/mag", "/blog/kak-zadat-vopros-taro"],
-    status: "draft",
-  },
-
-  // «аркан профессии матрица судьбы» 667, «профессия по матрице судьбы» 367, «какая профессия» 264. Опора — разделы «В деньгах и деле»; списков профессий и советов о карьере не давать.
-  {
-    slug: "professiya-po-matritse-sudby",
-    title: "Профессия и дело в матрице судьбы: как читать раздел о деньгах и деле",
-    primaryQuery: "профессия по матрице судьбы",
-    cluster: "matrix",
-    image: "/arcana/08-spravedlivost.webp",
-    imageAlt: "Аркан 8 «Справедливость» — образ честного обмена",
-    basis: ["arcana", "positions"],
-    internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-8-spravedlivost", "/blog/liniya-deneg-v-matritse-sudby"],
-    status: "draft",
-  },
-
-  // «матрица судьбы в плюсе» 989, «минус» 818, «энергии в плюсе» 112. Опора — списки «В ресурсе» и «В перекосе» из текстов арканов.
-  {
-    slug: "plyus-i-minus-arkana-v-matritse-sudby",
-    title: "Ресурс и перекос аркана: что значат «плюс» и «минус» в матрице судьбы",
-    primaryQuery: "матрица судьбы в плюсе и в минусе",
-    cluster: "matrix",
-    image: "/arcana/11-sila.webp",
-    imageAlt: "Аркан 11 «Сила» — образ мягкой выдержки",
-    basis: ["arcana", "positions"],
-    internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-11-sila", "/blog/rasshifrovka-matritsy-sudby"],
-    status: "draft",
-  },
-
   // Вордстат за 30 дней: «под каким арканом будет 2027 год» ≈ 40, «2027 год какой аркан», «2027 год аркан сила», «аркан года по дате рождения на 2027». Сезонный пик спроса декабрь — январь. Число года 11 — Сила в Матрице, в колоде Райдера — Уэйта номера Силы и Справедливости поменяны местами; личный аркан считает страница /arkan-2027.
   {
     slug: "chislo-goda-2027",
@@ -399,19 +360,6 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     status: "published",
   },
 
-  // «матрица судьбы каналы» 3210, «денежный канал» 1100, «любовный канал» 464, «канал отношений» 459. У нас «канал» называется «линия»; не дублировать две статьи, а дать обзор и связь.
-  {
-    slug: "kanaly-v-matritse-sudby",
-    title: "Каналы в матрице судьбы: денежный и любовный канал — что это",
-    primaryQuery: "матрица судьбы каналы",
-    cluster: "matrix",
-    image: "/hero.webp",
-    imageAlt: HERO_ALT,
-    basis: ["positions", "matrix-formulas"],
-    internalLinks: ["/matrica-sudby", "/blog/liniya-lyubvi-v-matritse-sudby", "/blog/liniya-deneg-v-matritse-sudby"],
-    status: "draft",
-  },
-
   // «матрица судьбы таро» 1304, «арканы таро в матрице судьбы» 428. Нумерация разная: Сила — 11 в Матрице и 8 в Таро, Справедливость — 8 и 12, Шут — 22 и 0.
   {
     slug: "arkany-matritsy-i-karty-taro",
@@ -422,7 +370,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: "Аркан 11 «Сила» — образ мягкой выдержки",
     basis: ["arcana", "tarot", "tarot-deck"],
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-11-sila", "/taro", "/taro/karty/sila"],
-    status: "draft",
+    status: "published",
   },
 
   // «арканы в совместимости матрица судьбы» 2496. Хаб по «Союзу» из compat-arcana.md: коротко, без пересказа фраз; не повторять статью о структуре результата.
