@@ -5,8 +5,8 @@ export type PlanTopic = {
   readonly title: string;
   // запрос, на который первый абзац статьи отвечает сразу
   readonly primaryQuery: string;
-  readonly cluster: "matrix" | "compat" | "lila" | "taro" | "natal" | "general";
-  // картинки: /hero.webp, /arcana/NN-slug.webp, /lila/NN-slug.webp, /taro/NN-slug.webp; для натальной карты — /practices/natal.webp
+  readonly cluster: "matrix" | "compat" | "lila" | "taro" | "natal" | "numerology" | "general";
+  // Картинки: /hero.webp, иллюстрации арканов, клеток и карт либо обложки практик natal и numerology.
   readonly image: string;
   readonly imageAlt: string;
   readonly basis: readonly ArticleBasisKey[];
@@ -17,6 +17,7 @@ export type PlanTopic = {
 
 const HERO_ALT = "Матрица судьбы — символическая схема по дате рождения";
 const NATAL_ALT = "Натальная карта — диск с символами Солнца, Луны и звёзд";
+const NUMEROLOGY_ALT = "Символическая иллюстрация раздела «Нумерология»";
 
 // Очередь по убыванию пользы; спрос — Яндекс Вордстат за 30.08–28.09.2026 (см. docs/superpowers/specs/2026-09-30-seo-articles-design.md).
 // Тема получает status: "published" ровно тогда, когда выходит статья
@@ -384,6 +385,60 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     basis: ["matrix-formulas", "arcana", "positions"],
     internalLinks: ["/matrica-sudby", "/matrica-sudby/arkan-19-solnce", "/blog/rasshifrovka-matritsy-sudby"],
     status: "published",
+  },
+
+  // Пополнение 10.11.2026: Яндекс Вордстат, «Топы запросов», все регионы и устройства, фразы в кавычках.
+  // Ниже частотность за 10.09–09.10.2026. Темы чередуют разделы и не меняют порядок прежних черновиков.
+  // 433. Показать, где на круге и в таблице искать дом, чем он отличается от знака и как читать два положения вместе.
+  // Дать примеры только по принятым страницам. Не дублировать общий порядок чтения карты или сравнение систем домов.
+  {
+    slug: "doma-v-natalnoy-karte",
+    title: "Дома в натальной карте: где их найти и как читать положение планеты",
+    primaryQuery: "дома в натальной карте",
+    cluster: "natal",
+    image: "/practices/natal.webp",
+    imageAlt: NATAL_ALT,
+    basis: ["natal-method", "natal-house-pages"],
+    internalLinks: ["/natalnaya-karta", "/natalnaya-karta/luna-v-4-dome", "/natalnaya-karta/venera-v-7-dome"],
+    status: "draft",
+  },
+  // 104. Сценарий наблюдения: записать все взгляды на часы за день, включая обычное время. Не повторять каталог значений.
+  {
+    slug: "pochemu-zamechaem-odinakovye-tsifry-na-chasah",
+    title: "Почему постоянно замечаем одинаковые цифры на часах и как это проверить",
+    primaryQuery: "почему постоянно вижу одинаковые цифры на часах",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-clock"],
+    internalLinks: ["/numerologiya/chasy", "/numerologiya/chasy/11-11", "/numerologiya/chasy/22-22"],
+    status: "draft",
+  },
+  // 62. Сопоставить 11, 22 и 33 на примерах сумм и показать, почему не сводим их к 2, 4 и 6.
+  // Отделить число судьбы от числа года и личного года. Не пересказывать три справочные страницы по отдельности.
+  {
+    slug: "master-chisla-11-22-33",
+    title: "Мастер-числа 11, 22 и 33: когда они получаются и почему их не сворачивают",
+    primaryQuery: "мастер числа в нумерологии",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-fate"],
+    internalLinks: ["/numerologiya", "/numerologiya/chislo-sudby/11", "/numerologiya/chislo-sudby/22", "/numerologiya/chislo-sudby/33"],
+    status: "draft",
+  },
+  // 57; «как читать квадрат пифагора» — 14. Разобрать готовый результат от ячеек к линиям на одном примере.
+  // Не повторять формулу с лендинга, каталог ячеек или справочник линий. Пустая ячейка не оценивает человека.
+  {
+    slug: "rasshifrovka-kvadrata-pifagora",
+    title: "Расшифровка квадрата Пифагора: как читать ячейки и линии на примере",
+    primaryQuery: "расшифровка квадрата пифагора",
+    cluster: "numerology",
+    image: "/practices/numerology.webp",
+    imageAlt: NUMEROLOGY_ALT,
+    basis: ["numerology-square"],
+    internalLinks: ["/numerologiya/kvadrat-pifagora", "/numerologiya/kvadrat-pifagora/1", "/numerologiya/kvadrat-pifagora/linii"],
+    status: "draft",
   },
 
   // «игра лила ведущая» 130, «мастера игры лила» 192, «проводник игры лила» 294. Не повторять статью об ИИ-проводнике: отвечать на вопрос «обязателен ли ведущий».
