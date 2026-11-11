@@ -20,9 +20,10 @@ describe("legal constants", () => {
     }
   });
 
-  test("Metrika is consented to separately in the cookie banner, not at login", () => {
-    expect(DATA_RECIPIENTS.map((recipient) => recipient.name)).toContain("Яндекс.Метрика");
+  test("Metrika and the VK Ads pixel are consented to in the cookie banner, not at login", () => {
+    expect(DATA_RECIPIENTS.map((recipient) => recipient.name)).toEqual(expect.arrayContaining(["Яндекс.Метрика", "VK Реклама (ООО «ВК»)"]));
     expect(LOGIN_CONSENT_RECIPIENTS.map((recipient) => recipient.name)).not.toContain("Яндекс.Метрика");
+    expect(LOGIN_CONSENT_RECIPIENTS.map((recipient) => recipient.name)).not.toContain("VK Реклама (ООО «ВК»)");
   });
 
   test("payment and report recipients work under the offer and stay out of the login consent", () => {

@@ -3,6 +3,8 @@ export { LOGIN_MARK } from "./login-mark";
 // Номер счётчика и код Вебмастера видны в коде страницы любому, это не секреты.
 // Пока значений нет (null), Метрика не загружается и метатег не выводится
 export const METRIKA_ID: number | null = 113068094;
+// Пиксель VK Рекламы (top-fwz1.mail.ru): грузится вместе с Метрикой и только после «Принять»
+export const VK_PIXEL_ID: number | null = 3813448;
 export const YANDEX_VERIFICATION: string | null = "9512ea7a80f720a4";
 
 // План 1: вход и дата; план 2а: воронка матрицы судьбы; план 3а и 3б: Лила; план 5: совместимость; план 6: таро;
@@ -48,15 +50,17 @@ export function sanitizePath(path: string): string {
 
 // Метки рекламы нужны Метрике, чтобы связать визит с кампанией Директа: без них рекламный трафик выглядит как прямой заход.
 // Пропускаем только их и только безобидные значения (буквы, цифры и несколько знаков, до 100 символов); остальные параметры отрезаются
-const AD_PARAMS = ["yclid", "ysclid", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
+// rb_clickid — номер клика VK Рекламы (около 130 знаков, только цифры, a–f и дефис): по нему пиксель связывает визит с объявлением
+const AD_PARAMS = ["yclid", "ysclid", "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "rb_clickid"] as const;
 const SAFE_AD_VALUE = /^[\p{L}\p{N}_.\-~ +]{1,100}$/u;
+const VK_CLICK_ID = /^[\da-f-]{1,200}$/i;
 
 export function adParams(search: string): string {
   const params = new URLSearchParams(search);
   const kept = new URLSearchParams();
   for (const key of AD_PARAMS) {
     const value = params.get(key);
-    if (value && SAFE_AD_VALUE.test(value)) kept.set(key, value);
+    if (value && (key === "rb_clickid" ? VK_CLICK_ID : SAFE_AD_VALUE).test(value)) kept.set(key, value);
   }
   const text = kept.toString();
   return text ? `?${text}` : "";

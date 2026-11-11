@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { COOKIE_SETTINGS_EVENT, hitUrl, LOGIN_MARK, METRIKA_ID, reachGoal, readChoice, sanitizeReferrer, saveChoice, type CookieChoice } from "@/lib/analytics";
+import { COOKIE_SETTINGS_EVENT, hitUrl, LOGIN_MARK, METRIKA_ID, reachGoal, readChoice, sanitizeReferrer, saveChoice, VK_PIXEL_ID, type CookieChoice } from "@/lib/analytics";
 import { markAnalyticsReady, setAnalyticsConsent } from "@/lib/analytics-runtime";
 import { SITE_URL } from "@/lib/site";
 
@@ -41,6 +41,23 @@ function sendHit(counterId: number, pathname: string): void {
   ym(counterId, "hit", hitUrl(origin, pathname, window.location.search), { referer: sanitizeReferrer(document.referrer, origin) });
 }
 
+type TmrWindow = Window & { _tmr?: unknown[] };
+
+// Стандартная очередь пикселя VK Рекламы: события до загрузки code.js сохраняются в _tmr
+function loadVkPixel(): void {
+  (window as TmrWindow)._tmr ??= [];
+  if (document.getElementById("tmr-code")) return;
+  const script = document.createElement("script");
+  script.id = "tmr-code";
+  script.async = true;
+  script.src = "https://top-fwz1.mail.ru/js/code.js";
+  document.head.appendChild(script);
+}
+
+function sendVkHit(pixelId: number, pathname: string): void {
+  (window as TmrWindow)._tmr?.push({ id: String(pixelId), type: "pageView", url: hitUrl(window.location.origin, pathname, window.location.search), start: Date.now() });
+}
+
 function takeLoginMark(): void {
   const url = new URL(window.location.href);
   if (url.searchParams.get(LOGIN_MARK.param) !== LOGIN_MARK.value) return;
@@ -68,12 +85,14 @@ export function Analytics() {
     setAnalyticsConsent(choice === "all" && canCount());
     if (choice !== "all" || METRIKA_ID === null || !canCount()) return;
     loadMetrika(METRIKA_ID);
+    if (VK_PIXEL_ID !== null) loadVkPixel();
     loaded.current = true;
   }, [choice]);
 
   useEffect(() => {
     if (choice === undefined) return;
     if (loaded.current && METRIKA_ID !== null) sendHit(METRIKA_ID, pathname);
+    if (loaded.current && VK_PIXEL_ID !== null) sendVkHit(VK_PIXEL_ID, pathname);
     takeLoginMark();
   }, [pathname, choice]);
 
@@ -108,7 +127,7 @@ export function Analytics() {
   return (
     <div ref={bannerRef} className="cookie-banner" role="dialog" aria-label="Cookie">
       <p>
-        Необходимые cookie помогают сайту работать. Аналитические (Яндекс.Метрика) — с вашего согласия. <Link href="/privacy">Подробнее</Link>
+        Необходимые cookie помогают сайту работать. Аналитические (Яндекс.Метрика и пиксель VK Рекламы) — с вашего согласия. <Link href="/privacy">Подробнее</Link>
       </p>
       <div className="cookie-banner__actions">
         <button type="button" className="button button--ghost" onClick={() => decide("necessary")}>
