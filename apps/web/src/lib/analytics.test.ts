@@ -74,6 +74,12 @@ describe("ad parameters", () => {
     expect(adParams("?yclid=123456&utm_source=yandex&utm_campaign=matrix-test&from=login&next=%2Fportret")).toBe("?yclid=123456&utm_source=yandex&utm_campaign=matrix-test");
   });
 
+  test("keeps the VK Ads click id, but only as hex digits and dashes", () => {
+    const id = "250423487-1794283804-339353313-0-" + "d119f78280a79a09".repeat(6);
+    expect(adParams(`?rb_clickid=${id}&from=vk`)).toBe(`?rb_clickid=${id}`);
+    expect(adParams("?rb_clickid=a%40b.ru")).toBe("");
+  });
+
   test("keeps readable Cyrillic and spaces in a tag", () => {
     expect(adParams("?utm_term=%D0%BC%D0%B0%D1%82%D1%80%D0%B8%D1%86%D0%B0+%D1%81%D1%83%D0%B4%D1%8C%D0%B1%D1%8B")).toBe("?utm_term=%D0%BC%D0%B0%D1%82%D1%80%D0%B8%D1%86%D0%B0+%D1%81%D1%83%D0%B4%D1%8C%D0%B1%D1%8B");
   });
