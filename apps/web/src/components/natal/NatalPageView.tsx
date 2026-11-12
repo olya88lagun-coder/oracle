@@ -18,6 +18,9 @@ import {
   meaningCoverAlt,
   MEANING_CURRENT_PAGE,
   MEANING_EYEBROW,
+  MEANING_GLOSSARY_LINK,
+  MEANING_GLOSSARY_TERM,
+  meaningGlossaryLead,
   MEANING_HERO_LINK,
   MEANING_NEIGHBORS_TITLE,
   MEANING_NEXT,
@@ -30,6 +33,7 @@ import {
   SIGN_NAMES_GENITIVE,
 } from "@/lib/natal-copy";
 import { natalCoverPath, NATAL_COVER_SIZE } from "@/lib/natal-covers";
+import { GLOSSARY_PATH } from "@/lib/natal-glossary";
 import { houseNeighborPages, neighborPages, sameBodyHousePages, sameBodyPages } from "@/lib/natal-pages";
 import { NATAL_PATH, natalPagePath } from "@/lib/natal-paths";
 import { NatalCalculatorLink } from "./NatalCalculatorLink";
@@ -181,6 +185,13 @@ export function NatalPageView({ page, text, cover = natalCoverPath(page.slug) }:
           <div>
             <h2 id={id("calculate")}>{MEANING_CTA_TITLE}</h2>
             <p>{MEANING_CTA_TEXT}</p>
+            <p>
+              {meaningGlossaryLead(MEANING_GLOSSARY_TERM[page.kind].term)}
+              <Link href={`${GLOSSARY_PATH}#${MEANING_GLOSSARY_TERM[page.kind].anchor}`} prefetch={false}>
+                {MEANING_GLOSSARY_LINK}
+              </Link>
+              .
+            </p>
           </div>
           <NatalCalculatorLink />
         </section>

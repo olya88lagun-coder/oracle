@@ -7,7 +7,8 @@ import { DetailToc } from "@/components/detail/DetailToc";
 import { ImageZoom } from "@/components/detail/ImageZoom";
 import { TaroMatrixBridge } from "@/components/taro/TaroMatrixBridge";
 import { arcanumPath } from "@/lib/arcana-paths";
-import { TARO_AUTHOR_CREDIT, TARO_DAY_PATH, TARO_PATH, taroCardImage, taroCardPath } from "@/lib/taro-paths";
+import { TARO_AUTHOR_CREDIT, TARO_DAY_PATH, TARO_PATH, TARO_SPREADS_PATH, taroCardImage, taroCardPath } from "@/lib/taro-paths";
+import { spreadPath, TARO_SPREADS } from "@/lib/taro-spreads";
 
 // Соседи берутся внутри масти и замыкаются по кругу
 const neighbour = (card: TarotCard, shift: number) => {
@@ -19,6 +20,26 @@ const neighbour = (card: TarotCard, shift: number) => {
 type SectionKey = keyof typeof TAROT_SECTION_TITLES;
 const SECTIONS: readonly SectionKey[] = ["essence", "love", "money", "resource", "distortion", "day", "action", "question"];
 const sectionId = (key: SectionKey) => `razdel-${key}`;
+
+// Расклады, где раздел карты читается в одной из позиций: связывает страницы карт с раскладами
+function SpreadsForSection({ sectionKey }: { sectionKey: SectionKey }) {
+  const uses = TARO_SPREADS.flatMap((spread) => {
+    const position = spread.positions.find((item) => item.source === sectionKey);
+    return position ? [{ spread, position }] : [];
+  });
+  if (uses.length === 0) return null;
+  return (
+    <p className="taro-card-spreads">
+      {uses.length === 1 ? "Этот раздел читается в раскладе " : "Этот раздел читается в раскладах "}
+      {uses.map(({ spread, position }, index) => (
+        <span key={spread.slug}>
+          {index > 0 && ", "}«<Link href={spreadPath(spread)}>{spread.short}</Link>» (позиция «{position.title}»)
+        </span>
+      ))}
+      . <Link href={TARO_SPREADS_PATH}>Все расклады</Link>.
+    </p>
+  );
+}
 const COMBOS_ID = "sochetaniya";
 const COMBOS_TITLE = "Сочетания с другими картами";
 
@@ -100,6 +121,7 @@ export function TaroCardView({ card }: { card: TarotCard }) {
               <section key={key} id={sectionId(key)} className="detail-section" aria-labelledby={`${sectionId(key)}-title`}>
                 <h2 id={`${sectionId(key)}-title`}>{TAROT_SECTION_TITLES[key]}</h2>
                 <SectionBody card={card} sectionKey={key} />
+                <SpreadsForSection sectionKey={key} />
               </section>
             ))}
             {combos.length > 0 && (

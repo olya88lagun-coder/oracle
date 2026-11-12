@@ -157,6 +157,17 @@
   border-top: 1px solid var(--line);
 }
 
+.numerology-related ul {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.numerology-related a {
+  display: inline-block;
+  padding: 12px 0;
+}
+
 .numerology-catalog ul,
 .numerology-siblings ul {
   display: grid;
@@ -207,7 +218,8 @@
 }
 
 .numerology-article,
-.numerology-siblings {
+.numerology-siblings,
+.numerology-related {
   max-width: 740px;
   margin-inline: auto;
 }
