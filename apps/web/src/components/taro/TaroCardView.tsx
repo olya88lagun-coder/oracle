@@ -36,7 +36,7 @@ function SpreadsForSection({ sectionKey }: { sectionKey: SectionKey }) {
           {index > 0 && ", "}«<Link href={spreadPath(spread)}>{spread.short}</Link>» (позиция «{position.title}»)
         </span>
       ))}
-      . <Link href={TARO_SPREADS_PATH}>Все расклады</Link>.
+      .
     </p>
   );
 }
@@ -141,6 +141,9 @@ export function TaroCardView({ card }: { card: TarotCard }) {
               </section>
             )}
           </div>
+          <p className="taro-card-spreads">
+            <Link href={TARO_SPREADS_PATH}>Все расклады</Link>
+          </p>
           <TaroMatrixBridge context="card" id="taro-bridge" />
         </div>
       </div>

@@ -32,4 +32,13 @@ describe("a Taro card page", () => {
     expect(markup.indexOf(TARO_BRIDGE.text.card)).toBeGreaterThan(markup.lastIndexOf("detail-section"));
     expect(markup.match(new RegExp(`>${TARO_BRIDGE.cta}</a>`, "g"))).toHaveLength(1);
   });
+
+  test("has one link to all spreads after the card sections", () => {
+    const card = tarotCardText("mag");
+    if (!card) throw new Error("no card");
+    const markup = renderToStaticMarkup(<TaroCardView card={card} />);
+    const hubLinks = markup.match(/href="\/taro\/rasklady"/g) ?? [];
+    expect(hubLinks).toHaveLength(1);
+    expect(markup.indexOf('href="/taro/rasklady"')).toBeGreaterThan(markup.lastIndexOf("detail-section"));
+  });
 });
