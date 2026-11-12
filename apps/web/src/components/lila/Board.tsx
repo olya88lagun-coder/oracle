@@ -101,11 +101,14 @@ export function Board({ current, trail = [], variant = "full", legend = true }: 
         </figcaption>
       ) : null}
 
-      <ol className="visually-hidden">
-        {CELLS.map((cell) => (
-          <li key={`sr-${cell.number}`}>{cellScreenReaderText(cell.number, onBoard ? safeCurrent : 0)}</li>
-        ))}
-      </ol>
+      {/* На странице клетки место на поле уже описано текстом; список 72 клеток там повторялся бы на каждой странице */}
+      {variant !== "locator" ? (
+        <ol className="visually-hidden">
+          {CELLS.map((cell) => (
+            <li key={`sr-${cell.number}`}>{cellScreenReaderText(cell.number, onBoard ? safeCurrent : 0)}</li>
+          ))}
+        </ol>
+      ) : null}
     </figure>
   );
 }

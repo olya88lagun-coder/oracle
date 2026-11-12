@@ -2,6 +2,7 @@ import { acceptedNumerologyPages, numerologyText } from "@oracle/content/numerol
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NumerologyPageView } from "@/components/numerology/NumerologyPageView";
+import { NumerologyMoreLinks } from "@/components/numerology/NumerologyMoreLinks";
 import { fatePath, NUMEROLOGY_PATH } from "@/lib/numerology";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -44,6 +45,6 @@ export default async function FateNumberPage({ params }: Params) {
   const siblings = acceptedNumerologyPages("fate").filter((page) => page.key !== n).map((page) => ({ name: page.key, href: fatePath(Number(page.key)) }));
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
-    <NumerologyPageView text={text} emblem={n} crumbs={[{ name: "Нумерология", href: NUMEROLOGY_PATH }]} siblings={siblings} footer={{ name: "Рассчитать своё число судьбы", href: NUMEROLOGY_PATH }} />
+    <NumerologyPageView text={text} emblem={n} crumbs={[{ name: "Нумерология", href: NUMEROLOGY_PATH }]} siblings={siblings} footer={{ name: "Рассчитать своё число судьбы", href: NUMEROLOGY_PATH }}><NumerologyMoreLinks current={NUMEROLOGY_PATH} /></NumerologyPageView>
   </>;
 }

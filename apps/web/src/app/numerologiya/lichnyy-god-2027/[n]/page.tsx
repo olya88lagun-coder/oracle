@@ -2,6 +2,7 @@ import { acceptedNumerologyPages, numerologyText } from "@oracle/content/numerol
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NumerologyPageView } from "@/components/numerology/NumerologyPageView";
+import { NumerologyMoreLinks } from "@/components/numerology/NumerologyMoreLinks";
 import { NUMEROLOGY_PATH, PERSONAL_YEAR_PATH, personalYearPath } from "@/lib/numerology";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -45,6 +46,6 @@ export default async function PersonalYearNumberPage({ params }: Params) {
   const siblings = acceptedNumerologyPages("year").filter((page) => page.key !== n).map((page) => ({ name: page.key, href: personalYearPath(Number(page.key)) }));
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
-    <NumerologyPageView text={text} emblem={n} crumbs={[{ name: "Нумерология", href: NUMEROLOGY_PATH }, { name: "Личный год 2027", href: PERSONAL_YEAR_PATH }]} siblings={siblings} footer={{ name: "Рассчитать свой личный год", href: PERSONAL_YEAR_PATH }} />
+    <NumerologyPageView text={text} emblem={n} crumbs={[{ name: "Нумерология", href: NUMEROLOGY_PATH }, { name: "Личный год 2027", href: PERSONAL_YEAR_PATH }]} siblings={siblings} footer={{ name: "Рассчитать свой личный год", href: PERSONAL_YEAR_PATH }}><NumerologyMoreLinks current={PERSONAL_YEAR_PATH} /></NumerologyPageView>
   </>;
 }

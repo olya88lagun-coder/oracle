@@ -302,6 +302,15 @@ export const MEANING_NEIGHBORS_TITLE = "Соседние знаки";
 // Подпись над заголовком страницы значения и ссылка на расчёт в шапке
 export const MEANING_EYEBROW = { planet: "Планета в знаке", ascendant: "Асцендент в знаке", node: "Северный узел в знаке", house: "Планета в доме" } as const;
 export const MEANING_HERO_LINK = "Рассчитать свою карту";
+// Ссылка со страницы значения на нужный термин словаря: якорь и слово в винительном падеже после «Что такое»
+export const MEANING_GLOSSARY_TERM = {
+  planet: { anchor: "znak-zodiaka", term: "знак зодиака" },
+  ascendant: { anchor: "ascendent", term: "асцендент" },
+  node: { anchor: "lunnyj-uzel", term: "лунный узел" },
+  house: { anchor: "dom", term: "дом карты" },
+} as const;
+export const MEANING_GLOSSARY_LINK = "словаре терминов";
+export const meaningGlossaryLead = (term: string): string => `Что такое ${term} и другие слова натальной карты простым языком — в `;
 export const meaningCoverAlt = (name: string): string => `Иллюстрация к странице «${name}»`;
 // Страницы «Северный узел в знаке»: ось узлов и подпись блока «в других знаках»
 export const NODE_OTHER_SIGNS_TITLE = "Северный узел в других знаках";
