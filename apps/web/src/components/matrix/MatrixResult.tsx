@@ -6,6 +6,7 @@ import type { ReactNode, Ref } from "react";
 import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 import { LILA_GAME_PATH } from "@/lib/lila-paths";
 import { KEY_POINTS, pointTitle, positionRows, PURPOSES } from "@/lib/matrix-view";
+import { PosterButton } from "@/components/PosterButton";
 import { MatrixDiagram } from "./MatrixDiagram";
 
 type Props = { matrix: Matrix; dateLabel: string; headingRef?: Ref<HTMLHeadingElement>; actions?: ReactNode; offer?: ReactNode };
@@ -102,6 +103,24 @@ export function MatrixResult({ matrix, dateLabel, headingRef, actions, offer }: 
       </section>
 
       {actions}
+
+      {/* Картинка с тремя ключевыми арканами для сторис: рисуется в браузере, даты рождения на ней нет */}
+      <div className="row matrix-poster">
+        <PosterButton
+          spec={{
+            eyebrow: "Моя матрица судьбы",
+            title: "Личность · Центр · Задача",
+            cards: KEY_POINTS.map(({ point, label }) => {
+              const arcanum = arcanumByNumber(matrix[point]);
+              return { image: arcanumImage(arcanum, "card"), caption: arcanum.name, note: label.toUpperCase() };
+            }),
+            textLabel: "Вопрос для себя",
+            text: center.question,
+            footer: "ТВОЙ ОРАКУЛ · TVOY-ORAKUL.RU",
+            fileName: "moya-matritsa",
+          }}
+        />
+      </div>
 
       <aside className="card matrix-next">
         <span className="tag tag--open">Открыто</span>

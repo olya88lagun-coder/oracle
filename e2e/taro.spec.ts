@@ -66,12 +66,17 @@ test("a drawn card stays for the day, and a new day allows a new draw", async ({
   await expect(page.getByRole("button", { name: /^Карта [123]$/ })).toHaveCount(3);
 });
 
-test("the draw keeps only the day and the card in the browser storage", async ({ page }) => {
+test("the draw keeps only the day, the card and the list of met cards in the browser storage", async ({ page }) => {
   await draw(page);
   const keys = await page.evaluate(() => Object.keys(localStorage).filter((key) => key.startsWith("taro")));
-  expect(keys).toEqual(["taro:day:v1"]);
+  expect(keys.sort()).toEqual(["taro:day:v1", "taro:seen:v1"]);
   const value = JSON.parse((await page.evaluate(() => localStorage.getItem("taro:day:v1"))) ?? "{}");
   expect(Object.keys(value).sort()).toEqual(["card", "day"]);
+  // Колода встреченных карт — только слаги
+  expect(JSON.parse((await page.evaluate(() => localStorage.getItem("taro:seen:v1"))) ?? "[]")).toEqual([value.card]);
+  await expect(page.getByRole("heading", { level: 2, name: "Ваша колода" })).toBeVisible();
+  await expect(page.getByText("Встречено карт: 1 из 78.")).toBeVisible();
+  await expect(page.getByText(/Следующая карта откроется через/)).toBeVisible();
 });
 
 test("the share button copies a link to the card without personal data", async ({ page }) => {
