@@ -87,3 +87,15 @@
   .year-guide { grid-template-columns: 1fr; gap: 32px; padding: 48px 0; }
   .year-method { padding-left: 20px; }
 }
+
+/* Мост в матрицу: матрица человека целиком, три ключевых аркана по названиям и бесплатная кнопка */
+.year-bridge { margin-top: 28px; padding: 24px 20px; border: 1px solid var(--accent-line); border-radius: var(--radius-lg); background: radial-gradient(circle at 100% 0, var(--lavender-glow), transparent 55%), var(--surface); }
+.year-bridge > * { margin: 0; }
+.year-bridge__diagram { min-height: 260px; }
+.year-bridge__diagram .matrix-diagram svg { max-width: 360px; }
+.year-bridge__placeholder { aspect-ratio: 1; max-width: 360px; margin-inline: auto; border: 1px dashed var(--line-strong); border-radius: 50%; }
+.year-bridge__keys { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.year-bridge__keys li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-2); }
+.year-bridge__keys span { color: var(--ink-soft); font-size: 14px; }
+.year-bridge .button { width: 100%; }
+@media (min-width: 900px) { .year-bridge .button { width: auto; } }
