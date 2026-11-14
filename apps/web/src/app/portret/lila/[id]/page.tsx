@@ -11,6 +11,7 @@ import { LilaPdfLink } from "@/components/lila/LilaPdfLink";
 import { MoveHistory } from "@/components/lila/MoveHistory";
 import { DISCLAIMER } from "@/lib/legal";
 import { LILA_GAME_PATH } from "@/lib/lila-paths";
+import { PathPosterButton } from "@/components/lila/PathPosterButton";
 import { movesLabel, openedCells, trailOf } from "@/lib/lila-turn";
 import { toGameView } from "@/lib/lila-view";
 import { getDb } from "@/server/db";
@@ -64,6 +65,11 @@ export default async function LilaHistoryPage({ params }: { params: Promise<{ id
                 Продолжить партию
               </Link>
             )}
+          </div>
+        )}
+        {game.status === "finished" && (
+          <div className="history-actions">
+            <PathPosterButton trail={trailOf(game)} moves={game.movesCount} opened={openedCells(game)} />
           </div>
         )}
         {conclusion && <ConclusionView chapters={conclusion.chapters} />}

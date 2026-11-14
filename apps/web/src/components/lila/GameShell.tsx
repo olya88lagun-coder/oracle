@@ -9,12 +9,13 @@ import { guestApi, importGuestGame, lilaErrorMessage, serverApi, startServerGame
 import { clearGuestGame, guestStart, guestView, readGuestGame, writeGuestGame, type GuestGame } from "@/lib/lila-guest";
 import { LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
 import { clearLilaDraft, readLilaDraft } from "@/lib/lila-draft";
-import { movesLabel, openedCells } from "@/lib/lila-turn";
+import { movesLabel, openedCells, trailOf } from "@/lib/lila-turn";
 import type { GameView } from "@/lib/lila-view";
 import { loginHref } from "@/lib/next-path";
 import { GamePlay } from "./GamePlay";
 import { IntentionForm } from "./IntentionForm";
 import { MoveHistory } from "./MoveHistory";
+import { PathPosterButton } from "./PathPosterButton";
 import { SaveGameBanner } from "./SaveGameBanner";
 
 type Props = { initialGame: GameView | null; signedIn: boolean; images: string[]; guidedEnabled?: boolean; ownerFree?: boolean };
@@ -111,6 +112,9 @@ export function GameShell({ initialGame, signedIn, images, guidedEnabled = false
           <span>{movesLabel(game.movesCount)}</span>
           <span>Открыто клеток · {openedCells(game)} / 72</span>
           <span>{game.mode === "guided" ? "С проводником" : "Без проводника"}</span>
+        </div>
+        <div className="row finished-poster">
+          <PathPosterButton trail={trailOf(game)} moves={game.movesCount} opened={openedCells(game)} />
         </div>
         <div className="finished-history">
           <MoveHistory game={game} />

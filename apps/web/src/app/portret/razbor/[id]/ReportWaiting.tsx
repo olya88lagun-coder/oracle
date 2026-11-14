@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { CHAPTER_IDS, CHAPTER_TITLES } from "@oracle/core";
+import { useEffect, useState, type CSSProperties } from "react";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { PORTRAIT_REPORT_TITLE, REPORT_WAITING_BODY } from "@/lib/natal-copy";
 import { NATAL_PATH } from "@/lib/natal-paths";
@@ -95,6 +96,16 @@ export function ReportWaiting({ purchaseId, initial, center, product = "matrix_r
         <div className="report-waiting__orbit" aria-hidden="true">
           <span>{center?.number ?? 9}</span>
         </div>
+      )}
+      {/* Бегущий блик по главам — «пишется», а не шкала хода: сколько глав готово, страница не знает */}
+      {status === "generating" && !natal && (
+        <ol className="report-waiting__chapters" aria-label="Главы разбора">
+          {CHAPTER_IDS.map((id, index) => (
+            <li key={id} style={{ "--i": index } as CSSProperties}>
+              {CHAPTER_TITLES[id]}
+            </li>
+          ))}
+        </ol>
       )}
       {status === "canceled" && <RetryButton purchaseId={purchaseId} natal={natal} />}
     </section>

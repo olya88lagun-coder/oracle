@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
-import { BOARD_COLUMNS, BOARD_ROWS, CELLS, GOAL_CELL, cellPosition, getCell, isLilaCellNumber, lineForCell, type LilaCellNumber } from "./board-data";
+import { BOARD_CANVAS, BOARD_COLUMNS, BOARD_ROWS, CELLS, GOAL_CELL, cellCenter, cellPosition, getCell, isLilaCellNumber, lineForCell, type LilaCellNumber } from "./board-data";
 
 export type LilaBoardVariant = "full" | "compact" | "locator";
 
@@ -12,19 +12,13 @@ type BoardProps = {
   legend?: boolean;
 };
 
-// Поле нарисовано на холсте 1920×1720: клетки по 200 px и поле 60 px вокруг под рамку (docs/design/codex-brief-lila-board.md).
-// Номера, фишка и след выводятся поверх картинки по тем же координатам
-const CANVAS = { width: 1920, height: 1720, margin: 60, cell: 200 } as const;
+// Холст поля — BOARD_CANVAS в board-data (docs/design/codex-brief-lila-board.md). Номера, фишка и след выводятся поверх картинки по тем же координатам
+const CANVAS = BOARD_CANVAS;
 
 const BASE_SRC = "/lila/board-base.webp";
 const PATHS_SRC = { full: "/lila/board-paths.svg", compact: "/lila/board-paths-compact.svg" } as const;
 
-type Point = { x: number; y: number };
-
-function centerPoint(number: LilaCellNumber): Point {
-  const { col, row } = cellPosition(number);
-  return { x: CANVAS.margin + col * CANVAS.cell + CANVAS.cell / 2, y: CANVAS.margin + row * CANVAS.cell + CANVAS.cell / 2 };
-}
+const centerPoint = cellCenter;
 
 export function Board({ current, trail = [], variant = "full", legend = true }: BoardProps) {
   // До первой шестёрки фишки на поле нет: позиция 0 не должна рисовать её на клетке 1

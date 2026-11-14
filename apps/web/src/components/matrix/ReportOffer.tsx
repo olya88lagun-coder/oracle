@@ -10,7 +10,7 @@ import { arcanumImage, MATRIX_PATH } from "@/lib/arcana-paths";
 import { loginHref } from "@/lib/next-path";
 import { chapterArcanaLabel, EMAIL_ERROR, EMAIL_PATTERN, purchaseErrorCode, purchaseErrorMessage, reportPath, type OfferState } from "@/lib/report-offer";
 import { useOfferViewGoal } from "../useOfferViewGoal";
-import { relationshipLink } from "./matrix-link";
+import { chapterTeaser, QUESTION_TOPICS, type TeaserChapter } from "./chapter-teaser";
 
 // compat — предложение под результатом совместимости: разбор покупается для собственной даты человека, а не для пары.
 // Цели у него свои, чтобы конверсия матрицы не смешивалась с совместимостью
@@ -23,15 +23,19 @@ const PRICE = `${MATRIX_REPORT_PRICE_KOPECKS / 100} ₽`;
 const MATRIX_GOALS: Goals = { view: "report_offer_view", click: "report_offer_click" };
 const COMPAT_GOALS: Goals = { view: "compat_offer_view", click: "compat_offer_click" };
 
-function ChapterList({ matrix }: { matrix: Matrix }) {
+// Главы, кроме выбранной темы, «запечатаны»: тонкий замок у номера. Выбранная глава отмечена — это та, о которой человек хочет прочитать
+function ChapterList({ matrix, topic }: { matrix: Matrix; topic: TeaserChapter }) {
   return (
-    <ol className="report-toc">
+    <ol className="report-toc report-toc--sealed">
       {reportChapters(matrix).map((chapter, index) => (
-        <li key={chapter.id}>
+        <li key={chapter.id} data-chosen={chapter.id === topic ? "true" : undefined}>
           <span className="report-toc__number" aria-hidden="true">
             {index + 1}
           </span>
-          <span className="report-toc__title">{chapter.title}</span>
+          <span className="report-toc__title">
+            {chapter.title}
+            {chapter.id === topic && <span className="report-toc__chosen"> · ваш вопрос</span>}
+          </span>
           <span className="report-toc__arcana">{chapterArcanaLabel(chapter)}</span>
         </li>
       ))}
@@ -133,7 +137,10 @@ function OfferAction({ state, onSaveDate, goals, compat, free }: { state: Props[
 
 export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }: Props) {
   const center = arcanumByNumber(matrix.E);
-  const link = relationshipLink(matrix);
+  // Тема вопроса меняет только то, какую главу показывает превью справа; цена, кнопки и тексты разбора не меняются
+  const [topic, setTopic] = useState<TeaserChapter>("love");
+  const teaser = chapterTeaser(matrix, topic);
+  const chapterNumber = reportChapters(matrix).findIndex((chapter) => chapter.id === topic) + 1;
   const goals = compat ? COMPAT_GOALS : MATRIX_GOALS;
   const ref = useOfferViewGoal(goals.view, !free);
   return (
@@ -155,24 +162,45 @@ export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }:
           </p>
           <p className="muted">Текст готовится автоматически с помощью ИИ на основе описаний арканов вашей матрицы.</p>
         </div>
-        <ChapterList matrix={matrix} />
+        <ChapterList matrix={matrix} topic={topic} />
       </div>
       <div className="stack report-offer__side">
         <Image className="report-offer__art" src={arcanumImage(center, "card")} alt="" width={480} height={480} sizes="(min-width: 960px) 380px, 100vw" unoptimized />
-        <div className="report-offer__sample stack">
-          <p className="eyebrow">Связка ваших арканов · отношения</p>
-          <dl className="matrix-link">
-            {link.points.map((item) => (
-              <div key={item.role} className="matrix-link__point">
-                <dt>
-                  {item.role}: <span className="matrix-link__number">{item.number}</span> {item.name}
-                </dt>
-                <dd>{item.meaning}</dd>
-              </div>
+        <div className="report-offer__topics stack" role="group" aria-labelledby="report-topic-label">
+          <p id="report-topic-label" className="eyebrow">
+            О чём ваш вопрос?
+          </p>
+          <div className="report-topics">
+            {QUESTION_TOPICS.map((item) => (
+              <button key={item.chapter} type="button" className="report-topic" aria-pressed={item.chapter === topic} onClick={() => setTopic(item.chapter)}>
+                {item.label}
+              </button>
             ))}
-          </dl>
-          <p className="matrix-link__text">{link.link}</p>
-          <p className="muted">Число, общее значение, связка. В разборе глава «Отношения» развивает эту связку в целый текст, и так — для всех семи глав.</p>
+          </div>
+        </div>
+        <div className="report-offer__sample report-sealed stack">
+          <p className="eyebrow">Основа главы «{teaser.title}» · ваши арканы</p>
+          {/* key — чтобы при смене темы текст появлялся заново */}
+          <div key={topic} className="report-sealed__text stack">
+            <dl className="matrix-link">
+              {teaser.points.map((item) => (
+                <div key={item.role} className="matrix-link__point">
+                  <dt>
+                    {item.role}: <span className="matrix-link__number">{item.number}</span> {item.name}
+                  </dt>
+                  <dd>{item.meaning}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="matrix-link__text">{teaser.text}</p>
+          </div>
+          <p className="report-sealed__seal">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+              <rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+              <path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" strokeWidth="1.6" />
+            </svg>
+            <span>Дальше разбор развивает это в целый текст — глава {chapterNumber} и ещё шесть.</span>
+          </p>
           <Link className="text-link" href="/matrica-sudby/primer">Посмотреть полный пример и PDF</Link>
         </div>
       </div>

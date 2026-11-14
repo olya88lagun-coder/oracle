@@ -2,10 +2,13 @@ import { CHAPTER_TITLES, reportChapters, SCENARIO_FIELDS, SCENARIO_TITLES, type 
 import { arcanumByNumber } from "@oracle/content";
 import type { StoredChapter } from "@oracle/db";
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 import { DISCLAIMER } from "@/lib/legal";
 import { chapterAnchor, chapterArcanaLabel, formatIsoDate, orderedChapters } from "@/lib/report-offer";
+import { PosterButton } from "@/components/PosterButton";
+import { matrixPosterSpec } from "@/components/matrix/poster-spec";
 import { ReportPdfLink } from "./ReportPdfLink";
 
 type Props = { matrix: Matrix; birthDate: string; chapters: readonly StoredChapter[] } & ({ demo: true; purchaseId?: never } | { demo?: false; purchaseId: string });
@@ -42,11 +45,16 @@ export function ReportView({ matrix, birthDate, chapters, purchaseId, demo = fal
           <p>
             {demo ? <a className="button button--ghost" href="/examples/matrix.pdf" download>Скачать пример PDF</a> : <ReportPdfLink purchaseId={purchaseId!} />}
           </p>
+          {!demo && (
+            <p className="row report-cover__share">
+              <PosterButton spec={matrixPosterSpec(matrix, "Мой разбор матрицы")} />
+            </p>
+          )}
           <nav className="card report-contents" aria-labelledby="report-contents">
             <h2 id="report-contents">Оглавление</h2>
             <ol className="report-toc">
               {toc.map((chapter, index) => (
-                <li key={chapter.id}>
+                <li key={chapter.id} style={{ "--i": index } as CSSProperties}>
                   <span className="report-toc__number" aria-hidden="true">
                     {index + 1}
                   </span>

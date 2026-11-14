@@ -149,3 +149,10 @@ export function isLilaCellNumber(value: number): value is LilaCellNumber {
   return Number.isInteger(value) && value >= 1 && value <= 72;
 }
 
+// Поле нарисовано на холсте 1920×1720: клетки по 200 px и поле 60 px вокруг под рамку. Центр клетки в этих единицах нужен и полю, и картинке «Мой путь»
+export const BOARD_CANVAS = { width: 1920, height: 1720, margin: 60, cell: 200 } as const;
+
+export function cellCenter(number: LilaCellNumber): { x: number; y: number } {
+  const { col, row } = cellPosition(number);
+  return { x: BOARD_CANVAS.margin + col * BOARD_CANVAS.cell + BOARD_CANVAS.cell / 2, y: BOARD_CANVAS.margin + row * BOARD_CANVAS.cell + BOARD_CANVAS.cell / 2 };
+}
