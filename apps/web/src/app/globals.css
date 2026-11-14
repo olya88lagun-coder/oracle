@@ -577,12 +577,13 @@ a.report-toc__title:hover { color: var(--accent); }
 .hero__promise { font-size: 17px; color: var(--ink); }
 .practice-card__cta { width: fit-content; margin-top: 14px; white-space: nowrap; pointer-events: none; }
 /* Связка арканов в блоке продажи: число → общее значение → связка */
-.matrix-link { display: grid; gap: 12px; margin: 0; }
-.matrix-link__point { display: grid; gap: 4px; }
-.matrix-link dt { color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
-.matrix-link__number { font-family: var(--font-display); color: var(--accent); }
-.matrix-link dd { margin: 0; color: var(--ink-soft); font-size: 15px; }
-.matrix-link__text { margin: 0; padding-top: 12px; border-top: 1px solid var(--line); color: var(--ink); }
+/* Список точек связки арканов в блоке продажи (раньше назывался matrix-link и конфликтовал с одноимённой ссылкой ниже) */
+.relation-link { display: grid; gap: 12px; margin: 0; }
+.relation-link__point { display: grid; gap: 4px; }
+.relation-link dt { color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
+.relation-link__number { font-family: var(--font-display); color: var(--accent); }
+.relation-link dd { margin: 0; color: var(--ink-soft); font-size: 15px; }
+.relation-link__text { margin: 0; padding-top: 12px; border-top: 1px solid var(--line); color: var(--ink); }
 
 /* Лила: экраны по макетам Codex (docs/design/mockups/lila-*). Цвета — только переменные из :root */
 /* Вход и справочник */
@@ -5285,8 +5286,6 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 .report-topic:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .report-sealed__text { max-height: 15.5rem; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
 .report-sealed__text > * { margin: 0; }
-/* Класс matrix-link ниже ещё раз описан как ссылка (inline-flex) — для списка точек возвращаем обычную сетку */
-.report-sealed dl.matrix-link { display: grid; grid-template-columns: minmax(0, 1fr); width: auto; min-height: 0; padding: 0; border: 0; }
 .report-sealed__seal { display: flex; align-items: center; gap: 10px; margin: 0; padding: 10px 16px; border: 1px solid var(--accent-line); border-radius: 999px; color: var(--accent); font-size: 14px; line-height: 1.4; }
 .report-sealed__seal svg { flex: none; }
 .report-toc--sealed li:not([data-chosen]) .report-toc__title::after { content: ""; display: inline-block; width: 14px; height: 14px; margin-left: 8px; vertical-align: -2px; background: currentColor; opacity: 0.45;
