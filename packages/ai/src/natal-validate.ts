@@ -17,7 +17,16 @@ const HOWEVER_OPENERS = SENTENCE_START("однако");
 const IMPORTANT_LIMIT = 1;
 const HOWEVER_LIMIT = 2;
 // Последний абзац, который пересказывает главу («Вместе эти элементы создают образ…», «Таким образом…», «В целом…»): читателю он ничего не добавляет
-const RECAP_START = /^(вместе\s+(эти|они|положения)|в\s+целом|таким\s+образом|сочетание\s+(этих|двух|трёх|[а-яё]+\s+и\s+[а-яё]+)|эти\s+(аспекты|элементы|положения|позиции|факторы)\s+(вместе\s+)?(создают|формируют|образуют|показывают))/i;
+// Модель обходит запрет перефразировкой («Эти три элемента — … — формируют…», «Такое сочетание…»), поэтому отбраковка по шаблону не помогала: абзац-итог убираем сами (dropRecap)
+const RECAP_START = /^(?:вместе|в\s+целом|таким\s+образом|сочетание|такое\s+сочетание|ваш[а-яё]*\s+(?:[а-яё]+\s+){0,3}?сочета(?:ет|ют)(?:ся)?|эти\s+(?:[а-яё–-]+\s+){0,4}?(?:элемент|аспект|положени|позици|факт|планет|тем|качеств|точк|дом)[а-яё]*)/i;
+
+// Последний абзац-итог убирается, если остальное укладывается в границы длины главы; иначе остаётся как есть
+export function dropRecap(paragraphs: string[], limits: { minParagraphs: number; minChars: number }): string[] {
+  const last = paragraphs.at(-1);
+  if (!last || !RECAP_START.test(last)) return paragraphs;
+  const rest = paragraphs.slice(0, -1);
+  return rest.length >= limits.minParagraphs && rest.join("").length >= limits.minChars ? rest : paragraphs;
+}
 // Обороты, выдающие род читателя: «делает вас мягким», «быть более эффективным», «вы чувствовал/чувствовала».
 // \b для кириллицы в JS не работает, границы слова задаём через (?<![а-яё]) и (?![а-яё])
 const GENDERED = [
@@ -39,9 +48,10 @@ export function validateNatalChapter(input: NatalChapterInput, raw: string): Nat
     if (!read.ok) return read;
     chapter = { id: input.chapter, source: "ai", scenario: read.scenario };
   } else {
-    const read = readProse(raw, natalProseLimits(input.chapter));
+    const limits = natalProseLimits(input.chapter);
+    const read = readProse(raw, limits);
     if (!read.ok) return read;
-    chapter = { id: input.chapter, source: "ai", paragraphs: read.paragraphs };
+    chapter = { id: input.chapter, source: "ai", paragraphs: dropRecap(read.paragraphs, limits) };
   }
   const text = [...(chapter.paragraphs ?? []), ...Object.values(chapter.scenario ?? {})].join("\n");
   if (findStopPhrases(text).length > 0) return { ok: false, reason: "stop_words" };
@@ -49,7 +59,5 @@ export function validateNatalChapter(input: NatalChapterInput, raw: string): Nat
   if (GENDERED.some((pattern) => pattern.test(text))) return { ok: false, reason: "gendered" };
   if ((text.match(FILLER) ?? []).length > FILLER_LIMIT) return { ok: false, reason: "filler" };
   if ((text.match(IMPORTANT_OPENERS) ?? []).length > IMPORTANT_LIMIT || (text.match(HOWEVER_OPENERS) ?? []).length > HOWEVER_LIMIT) return { ok: false, reason: "filler" };
-  const last = chapter.paragraphs?.at(-1);
-  if (last && RECAP_START.test(last)) return { ok: false, reason: "filler" };
   return { ok: true, chapter };
 }
