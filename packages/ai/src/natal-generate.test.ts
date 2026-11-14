@@ -84,6 +84,7 @@ describe("buildNatalPrompt", () => {
     expect(system).toContain("Не используй слова-связки и обобщения");
     expect(system).toContain("«Таким образом»");
     expect(system).toContain("Не заканчивай главу абзацем-итогом");
+    expect(system).toContain("Не начинай предложения со слова «Важно»");
   });
 
   test("the aspects chapter gets its own wider format and the order to cover every aspect", () => {
@@ -136,6 +137,17 @@ describe("validateNatalChapter", () => {
     expect(validateNatalChapter(core, `${prose(3)}
 
 Важно отметить одно. Следует отметить и другое.`)).toEqual({ ok: false, reason: "filler" });
+  });
+
+  test("rejects «Важно…» sentences from two on, three paragraphs that start with «Однако» and a recap as the last paragraph", () => {
+    expect(validateNatalChapter(core, `${prose(3)}\n\nВажно помнить о границах.`).ok).toBe(true);
+    expect(validateNatalChapter(core, `${prose(3)}\n\nВажно помнить о границах. Важно осознавать усталость.`)).toEqual({ ok: false, reason: "filler" });
+    const however = `${prose(3)}\n\nОднако это не всегда так.\n\nОднако бывает иначе.\n\nОднако стоит присмотреться.`;
+    expect(validateNatalChapter(core, however)).toEqual({ ok: false, reason: "filler" });
+    expect(validateNatalChapter(core, `${prose(3)}\n\nВместе эти элементы создают образ человека, чьё ядро наполнено чувствами.`)).toEqual({ ok: false, reason: "filler" });
+    expect(validateNatalChapter(core, `${prose(3)}\n\nСочетание Венеры и восьмого дома создаёт особую динамику.`)).toEqual({ ok: false, reason: "filler" });
+    // обычное последнее предложение про положение — в порядке
+    expect(validateNatalChapter(core, `${prose(3)}\n\nАсцендент в Раке добавляет мягкости при знакомстве.`).ok).toBe(true);
   });
 
   test("the aspects chapter may be longer than the others, and a short answer is still too short for it", () => {
