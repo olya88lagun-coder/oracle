@@ -5,7 +5,7 @@ import { HowToPlayLila } from "@/components/blog/HowToPlayLila";
 import { LilaIntention } from "@/components/blog/LilaIntention";
 import { LilaSnakesArrows } from "@/components/blog/LilaSnakesArrows";
 import { WhatIsMatrix } from "@/components/blog/WhatIsMatrix";
-import { BLOG_POSTS, blogTopics, countWords, readingMinutesFor, relatedPosts } from "./blog";
+import { BLOG_POSTS, BLOG_TOPIC_LABELS, blogTopics, countWords, readingMinutesFor, relatedPosts } from "./blog";
 
 const BODIES = { "kak-igrat-v-lilu-onlain": HowToPlayLila, "zmei-i-strely-lily": LilaSnakesArrows, "kak-sformulirovat-namerenie-dlya-lily": LilaIntention, "chto-takoe-matritsa-sudby": WhatIsMatrix };
 
@@ -28,7 +28,7 @@ describe("topics and related posts", () => {
   test("every post has a topic and a positive reading time; topic counts add up", () => {
     for (const post of BLOG_POSTS) {
       expect(post.readingMinutes).toBeGreaterThanOrEqual(1);
-      expect(["matrix", "compat", "lila", "taro", "natal"]).toContain(post.topic);
+      expect(BLOG_TOPIC_LABELS).toHaveProperty(post.topic);
     }
     expect(blogTopics().reduce((sum, item) => sum + item.count, 0)).toBe(BLOG_POSTS.length);
   });
