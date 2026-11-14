@@ -15,7 +15,9 @@
     "dev:web": "pnpm --filter @oracle/web dev",
     "dev:worker": "pnpm --filter @oracle/worker dev",
     "test:e2e": "playwright test -c e2e/playwright.config.ts",
-    "content:build": "pnpm --filter @oracle/content build"
+    "content:build": "pnpm --filter @oracle/content build",
+    "report:weekly": "node scripts/weekly-log-report.mjs --ssh",
+    "test:scripts": "node --test scripts/*.test.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
