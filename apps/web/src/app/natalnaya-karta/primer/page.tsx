@@ -5,7 +5,7 @@ import { DEMO_NATAL_CHART_DATA, DEMO_NATAL_DATE, DEMO_NATAL_PLACE, DEMO_NATAL_RE
 
 export const metadata = publicMetadata({
   title: "Пример разбора натальной карты",
-  description: "Демонстрационный разбор на условных данных (Москва, 7 марта 1990, 12:00): девять глав и сценарий с экспериментом на 7 дней. Так выглядит разбор до покупки.",
+  description: "Демонстрационный разбор на условных данных (Москва, 7 марта 1990, 12:25): девять глав и сценарий с экспериментом на 7 дней. Так выглядит разбор до покупки.",
   path: `${NATAL_PATH}/primer`,
   image: SITE_PREVIEW_IMAGE,
 });
