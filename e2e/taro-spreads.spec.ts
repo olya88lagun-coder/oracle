@@ -25,10 +25,10 @@ async function openFirst(page: Page, position: string) {
   await expect(page.getByRole("status").filter({ hasText: /Открыто карт|Расклад готов/ })).toBeVisible();
 }
 
-test("the hub lists five spreads and fits a phone", async ({ page }) => {
+test("the hub lists six spreads and fits a phone", async ({ page }) => {
   await page.goto("/taro/rasklady");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Расклады Таро онлайн");
-  await expect(page.getByRole("link", { name: /^Сделать расклад/ })).toHaveCount(5);
+  await expect(page.getByRole("link", { name: /^Сделать расклад/ })).toHaveCount(6);
   await expect(page.getByRole("link", { name: "Сделать расклад: Расклад на три карты" })).toHaveAttribute("href", "/taro/rasklady/tri-karty");
   await noHorizontalScroll(page);
 });
@@ -91,7 +91,7 @@ test("unknown spreads are a real 404, and the cards in the reading link to their
 test("the tiles under the first screen of /taro lead to the spreads and fit a phone", async ({ page }) => {
   await page.goto("/taro");
   const tiles = page.locator(".taro-spread-tile");
-  await expect(tiles).toHaveCount(5);
+  await expect(tiles).toHaveCount(6);
   await expect(page.getByRole("link", { name: "Сделать расклад: Расклад на отношения" })).toHaveAttribute("href", "/taro/rasklady/otnosheniya");
   await expect(page.getByRole("link", { name: "Все расклады Таро" })).toHaveAttribute("href", "/taro/rasklady");
   await noHorizontalScroll(page);

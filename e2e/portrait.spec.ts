@@ -5,7 +5,7 @@ test("a visitor goes from the home page to the portrait and is invited to sign i
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Иногда нужен не ответ");
   await expect(page.getByText("Скоро", { exact: true })).toHaveCount(0);
-  await expect(page.getByText("Открыто", { exact: true })).toHaveCount(5);
+  await expect(page.getByText("Открыто", { exact: true })).toHaveCount(6);
 
   await page.getByRole("link", { name: "Открыть портрет" }).click();
 
