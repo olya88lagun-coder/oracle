@@ -12,6 +12,7 @@ import { sessionStore } from "@/lib/matrix-save";
 import { prepareMatrixHandoff, yearArcanumPath } from "@/lib/year-arcana";
 import { yearAdvice } from "@/lib/year-arcana-advice";
 import { YearCardActions } from "./YearCardActions";
+import { YearMatrixBridge } from "./YearMatrixBridge";
 
 function YearOffer({ iso }: { iso: string }) {
   const ref = useRef<HTMLHeadingElement>(null);
@@ -60,6 +61,7 @@ export function YearResult({ result, arcanum, iso, day, month }: { result: YearA
           <p className="muted">Твой оракул · символ, не прогноз</p>
         </div>
         <YearCardActions arcanum={arcanum} />
+        <YearMatrixBridge iso={iso} />
       </div>
       <div className="year-reading stack">
         <h3>С какой темой войти в год</h3>
