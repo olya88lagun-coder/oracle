@@ -400,7 +400,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: NATAL_ALT,
     basis: ["natal-method", "natal-house-pages"],
     internalLinks: ["/natalnaya-karta", "/natalnaya-karta/luna-v-4-dome", "/natalnaya-karta/venera-v-7-dome"],
-    status: "draft",
+    status: "published",
   },
   // 104. Сценарий наблюдения: записать все взгляды на часы за день, включая обычное время. Не повторять каталог значений.
   {
