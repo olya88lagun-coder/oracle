@@ -155,6 +155,16 @@ describe("validateNatalChapter", () => {
     expect(validateNatalChapter(core, text).ok).toBe(true);
   });
 
+  test("accepts a scenario whose values end with the stray «}» the model likes to add, and cleans it", () => {
+    const raw = SCENARIO.replace('чего хочется на самом деле."', 'чего хочется на самом деле.}"').replace(/\?"/, '?}"');
+    expect(raw).toContain("?}\"");
+    const result = validateNatalChapter(inputOf("scenario"), raw);
+    expect(result.ok).toBe(true);
+    const scenario = result.ok ? result.chapter.scenario : undefined;
+    expect(scenario?.question.endsWith("?")).toBe(true);
+    expect(Object.values(scenario ?? {}).some((text) => text.includes("}"))).toBe(false);
+  });
+
   test("rejects a scenario that is not JSON, lacks a field or has a question without a question mark", () => {
     const scenario = inputOf("scenario");
     expect(validateNatalChapter(scenario, "просто текст")).toEqual({ ok: false, reason: "not_json" });
