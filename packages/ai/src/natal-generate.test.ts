@@ -95,6 +95,12 @@ describe("buildNatalPrompt", () => {
     expect(natalProseLimits("aspects").maxChars).toBeGreaterThan(natalProseLimits("core").maxChars);
   });
 
+  test("a retry after a too long scenario field says how long a field may be", () => {
+    const hint = buildNatalPrompt(inputOf("scenario"), "length").system;
+    expect(hint).toContain("одно из полей длиннее");
+    expect(buildNatalPrompt(inputOf("core"), "length").system).toContain("выдержи число абзацев");
+  });
+
   test("a retry after filler words says what to remove", () => {
     expect(buildNatalPrompt(inputOf("core"), "filler").system).toContain("слова-связки");
   });
@@ -130,25 +136,64 @@ describe("validateNatalChapter", () => {
 
 Стоит заметить, что отношения требуют внимания.`;
     expect(validateNatalChapter(core, one).ok).toBe(true);
-    const two = `${one}
+    // второй оборот — в середине главы: последний абзац-итог убирается отдельно (dropRecap), а не считается штампом
+    const two = `${prose(3)}
 
-Таким образом, картина складывается.`;
+Стоит заметить, что отношения требуют внимания. Таким образом, картина складывается.
+
+Асцендент в Раке добавляет мягкости при знакомстве.`;
     expect(validateNatalChapter(core, two)).toEqual({ ok: false, reason: "filler" });
     expect(validateNatalChapter(core, `${prose(3)}
 
 Важно отметить одно. Следует отметить и другое.`)).toEqual({ ok: false, reason: "filler" });
   });
 
-  test("rejects «Важно…» sentences from two on, three paragraphs that start with «Однако» and a recap as the last paragraph", () => {
-    expect(validateNatalChapter(core, `${prose(3)}\n\nВажно помнить о границах.`).ok).toBe(true);
-    expect(validateNatalChapter(core, `${prose(3)}\n\nВажно помнить о границах. Важно осознавать усталость.`)).toEqual({ ok: false, reason: "filler" });
-    const however = `${prose(3)}\n\nОднако это не всегда так.\n\nОднако бывает иначе.\n\nОднако стоит присмотреться.`;
+  test("rejects «Важно…» sentences from two on and three paragraphs that start with «Однако»", () => {
+    expect(validateNatalChapter(core, `${prose(3)}
+
+Важно помнить о границах.`).ok).toBe(true);
+    expect(validateNatalChapter(core, `${prose(3)}
+
+Важно помнить о границах. Важно осознавать усталость.`)).toEqual({ ok: false, reason: "filler" });
+    const however = `${prose(3)}
+
+Однако это не всегда так.
+
+Однако бывает иначе.
+
+Однако стоит присмотреться.`;
     expect(validateNatalChapter(core, however)).toEqual({ ok: false, reason: "filler" });
-    expect(validateNatalChapter(core, `${prose(3)}\n\nВместе эти элементы создают образ человека, чьё ядро наполнено чувствами.`)).toEqual({ ok: false, reason: "filler" });
-    expect(validateNatalChapter(core, `${prose(3)}\n\nСочетание Венеры и восьмого дома создаёт особую динамику.`)).toEqual({ ok: false, reason: "filler" });
-    // обычное последнее предложение про положение — в порядке
-    expect(validateNatalChapter(core, `${prose(3)}\n\nАсцендент в Раке добавляет мягкости при знакомстве.`).ok).toBe(true);
   });
+
+  test.each([
+    "Вместе эти элементы создают образ человека, чьё ядро наполнено чувствами.",
+    "Эти три элемента — Солнце, Луна и асцендент — формируют ядро личности.",
+    "Такое сочетание знака и дома делает мышление многогранным.",
+    "Сочетание Венеры и восьмого дома создаёт особую динамику.",
+    "Эти два аспекта Марса работают вместе, формируя стиль действия.",
+    "Ваш подход к любви сочетает в себе независимость и глубину.",
+  ])("drops a recap as the last paragraph when the chapter stays within its limits: %s", (recap) => {
+    const result = validateNatalChapter(core, `${prose(3)}
+
+${recap}`);
+    expect(result.ok && result.chapter.paragraphs).toHaveLength(3);
+    expect(result.ok && result.chapter.paragraphs?.join(" ")).not.toContain(recap);
+  });
+
+  test("keeps the last paragraph when dropping the recap would make the chapter too short, and keeps an ordinary last paragraph", () => {
+    const short = `${prose(1, 2)}
+
+${prose(1, 2)}
+
+${"Эти три элемента формируют ядро личности. ".repeat(7).trim()}`;
+    const kept = validateNatalChapter(core, short);
+    expect(kept.ok && kept.chapter.paragraphs).toHaveLength(3);
+    const ordinary = validateNatalChapter(core, `${prose(3)}
+
+Асцендент в Раке добавляет мягкости при знакомстве.`);
+    expect(ordinary.ok && ordinary.chapter.paragraphs).toHaveLength(4);
+  });
+
 
   test("the aspects chapter may be longer than the others, and a short answer is still too short for it", () => {
     const long = prose(8, 3);

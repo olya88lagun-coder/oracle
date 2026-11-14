@@ -6,7 +6,8 @@ import type { Prompt } from "./writer";
 
 // Границы проверки ответа для глав натального разбора. Материала в них больше, чем в главах матрицы, поэтому и текст длиннее.
 // Модель недобирает объём на 10–20 %, поэтому просим больше, чем требуем
-export const NATAL_PROSE_LIMITS = { minParagraphs: 3, maxParagraphs: 6, minChars: 1000, maxChars: 3200 } as const;
+// minChars ниже просимого: абзац-итог в конце модель дописывает почти всегда, и после того как проверка его убирает (dropRecap), глава должна остаться в границах
+export const NATAL_PROSE_LIMITS = { minParagraphs: 3, maxParagraphs: 6, minChars: 800, maxChars: 3200 } as const;
 const NATAL_ASKED_CHARS = { min: 1500, max: 2500 } as const;
 // Глава об аспектах разбирает каждый аспект карты, их бывает больше десятка: в общие границы она не помещалась, и модель выкидывала часть аспектов
 export const NATAL_ASPECTS_LIMITS = { minParagraphs: 4, maxParagraphs: 10, minChars: 2000, maxChars: 5600 } as const;
@@ -59,8 +60,11 @@ const RETRY_HINTS: Partial<Record<ValidationFailure, string>> = {
   filler: "Прошлый ответ отклонён: в нём были слова-связки («стоит заметить», «таким образом»), предложения с «Важно…», много абзацев с «Однако» или абзац-итог в конце. Перепиши без них: сразу к сути, без вступлений и подведения итога; последний абзац — о последнем положении из входа.",
 };
 
+const SCENARIO_LENGTH_HINT = `Прошлый ответ отклонён: одно из полей длиннее ${SCENARIO_FIELD_MAX_CHARS} знаков. Каждое поле — 1–2 коротких предложения, до ${NATAL_SCENARIO_FIELD_ASKED_CHARS} знаков; не склеивай в поле несколько тем.`;
+
 export function buildNatalPrompt(input: NatalChapterInput, retryAfter?: ValidationFailure): Prompt {
   const answer = input.chapter === "scenario" ? SCENARIO_ANSWER : proseAnswer(input.chapter);
-  const hint = retryAfter ? RETRY_HINTS[retryAfter] : undefined;
+  // Итоговая глава чаще всего отклонялась по длине поля (больше 700 знаков): подсказка про абзацы и знаки главы ей не помогала
+  const hint = retryAfter === "length" && input.chapter === "scenario" ? SCENARIO_LENGTH_HINT : retryAfter ? RETRY_HINTS[retryAfter] : undefined;
   return { system: [...RULES, answer, ...(hint ? [hint] : [])].join("\n\n"), user: JSON.stringify(input) };
 }
