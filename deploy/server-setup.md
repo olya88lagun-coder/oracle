@@ -94,6 +94,22 @@ docker exec food-tracker-bot-caddy-1 caddy validate --config /tmp/Caddyfile --ad
   && docker exec food-tracker-bot-caddy-1 caddy reload --config /tmp/Caddyfile --adapter caddyfile
 ```
 
+**После любой правки `Caddyfile` проверить, что контейнер видит новый файл.** Если файл на хосте кто-то заменил (`scp`, `mv`, редактор), у него новый inode, а контейнер продолжает читать старую копию: `reload` отвечает `config is unchanged`, хотя на хосте всё верно. Сверить размер и inode:
+
+```bash
+stat -c "host inode %i size %s" /opt/food-tracker-bot/Caddyfile
+docker exec food-tracker-bot-caddy-1 stat -c "container inode %i size %s" /etc/caddy/Caddyfile
+```
+
+Размеры должны совпадать. Если нет, записать новый файл прямо в смонтированный файл контейнера (без перезапуска, другие сайты не затрагиваются), проверить и перезагрузить:
+
+```bash
+docker exec -i food-tracker-bot-caddy-1 sh -c "cat > /etc/caddy/Caddyfile" < /opt/food-tracker-bot/Caddyfile
+docker exec food-tracker-bot-caddy-1 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile   && docker exec food-tracker-bot-caddy-1 caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+```
+
+Если `validate` падает, записать обратно содержимое `Caddyfile.bak-*` тем же способом. Журнал заходов сайта (`/data/tvoy-orakul-access.log` в контейнере) пишется через `format filter`: из него удаляются IP, cookie и заголовки авторизации, а из адреса и `Referer` — параметры `code`, `state` и `device_id` (одноразовые коды входа VK ID); `rb_clickid` рекламы VK остаётся. Эти строки в блоке `tvoy-orakul.ru` нужно сохранять при любой правке. Проверка фильтра: `curl -s -o /dev/null "https://$DOMAIN/robots.txt?code=x&state=y&rb_clickid=z"`, затем `docker exec food-tracker-bot-caddy-1 tail -n 3 /data/tvoy-orakul-access.log` — в записи не должно быть `code=` и `state=`.
+
 Сертификат Caddy получает сам при первом запросе. Блока для `www` нет.
 
 ## 8. GitHub
