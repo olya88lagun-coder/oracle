@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "vitest";
 import { CHAPTER_IDS, LILA_CONCLUSION_CHAPTERS, replayLila } from "@oracle/core";
 import { DEMO_CONCLUSION, DEMO_INTENTION, DEMO_MATRIX, DEMO_MOVES, DEMO_REPORT } from "./product-demos";
@@ -6,6 +7,9 @@ import { buildReportPdf } from "./report-pdf";
 import { buildLilaPdf } from "./lila-pdf";
 import { pdfAssetsDir } from "./pdf-assets";
 import { lilaCellByNumber } from "@oracle/content/lila";
+
+// От папки теста, а не от рабочей папки: тест одинаково работает из корня репозитория и из apps/web
+const EXAMPLES = fileURLToPath(new URL("../../public/examples/", import.meta.url));
 
 describe("public product examples", () => {
   test("the matrix example uses all seven chapters with the calculated points", () => {
@@ -29,12 +33,12 @@ describe("public product examples", () => {
     expect(lila.subarray(0, 5).toString()).toBe("%PDF-");
     // Явный локальный экспорт после правок контента; обычный запуск не изменяет файлы.
     if (process.env.EXPORT_PRODUCT_DEMOS === "1") {
-      mkdirSync("apps/web/public/examples", { recursive: true });
-      writeFileSync("apps/web/public/examples/matrix.pdf", report);
-      writeFileSync("apps/web/public/examples/lila.pdf", lila);
+      mkdirSync(EXAMPLES, { recursive: true });
+      writeFileSync(`${EXAMPLES}matrix.pdf`, report);
+      writeFileSync(`${EXAMPLES}lila.pdf`, lila);
     }
     for (const file of ["matrix", "lila"]) {
-      const path = `apps/web/public/examples/${file}.pdf`;
+      const path = `${EXAMPLES}${file}.pdf`;
       expect(existsSync(path)).toBe(true);
       expect(readFileSync(path).subarray(0, 5).toString()).toBe("%PDF-");
     }

@@ -182,17 +182,17 @@ export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }:
           <p className="eyebrow">Основа главы «{teaser.title}» · ваши арканы</p>
           {/* key — чтобы при смене темы текст появлялся заново */}
           <div key={topic} className="report-sealed__text stack">
-            <dl className="matrix-link">
+            <dl className="relation-link">
               {teaser.points.map((item) => (
-                <div key={item.role} className="matrix-link__point">
+                <div key={item.role} className="relation-link__point">
                   <dt>
-                    {item.role}: <span className="matrix-link__number">{item.number}</span> {item.name}
+                    {item.role}: <span className="relation-link__number">{item.number}</span> {item.name}
                   </dt>
                   <dd>{item.meaning}</dd>
                 </div>
               ))}
             </dl>
-            <p className="matrix-link__text">{teaser.text}</p>
+            <p className="relation-link__text">{teaser.text}</p>
           </div>
           <p className="report-sealed__seal">
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
