@@ -252,16 +252,16 @@ body .stack > .matrix-result { margin-top: 56px; }
 /* Числа внутренних точек — светлые и не мельче 14 единиц поля: на телефоне это около 13px */
 .matrix-point--inner text, .matrix-point--line text { fill: var(--ink); font-size: 14px; }
 .matrix-point--line circle { stroke: var(--lavender); }
-/* «Сборка» результата: линии прочерчиваются, числа проявляются, ключевые точки и карточки открываются по очереди, «Задача» последней (~4 с) */
+/* «Сборка» результата за ~1,8 с: три ключевые карточки (бесплатная ценность) видны почти сразу, линии и числа дорисовываются рядом, ключевые точки вспыхивают последними */
 @media (prefers-reduced-motion: no-preference) {
-  .matrix-diagram__ring { animation: fade-in 700ms ease-out backwards; }
-  .matrix-diagram__line { stroke-dasharray: 1; animation: matrix-draw 700ms var(--ease-out) backwards; animation-delay: calc(150ms + var(--i, 0) * 110ms); }
-  .matrix-point { transform-box: fill-box; transform-origin: center; animation: matrix-pop 420ms var(--ease-out) backwards; animation-delay: calc(500ms + var(--i, 0) * 45ms); }
-  .matrix-point--key { animation-name: matrix-key; animation-duration: 800ms; animation-delay: calc(2200ms + var(--k, 0) * 450ms); }
-  .matrix-keys > .matrix-key { animation: reveal 700ms var(--ease-out) backwards; }
-  .matrix-keys > .matrix-key:nth-child(1) { animation-delay: 2300ms; }
-  .matrix-keys > .matrix-key:nth-child(2) { animation-delay: 2750ms; }
-  .matrix-keys > .matrix-key:nth-child(3) { animation-delay: 3200ms; }
+  .matrix-diagram__ring { animation: fade-in 400ms ease-out backwards; }
+  .matrix-diagram__line { stroke-dasharray: 1; animation: matrix-draw 450ms var(--ease-out) backwards; animation-delay: calc(80ms + var(--i, 0) * 50ms); }
+  .matrix-point { transform-box: fill-box; transform-origin: center; animation: matrix-pop 350ms var(--ease-out) backwards; animation-delay: calc(250ms + var(--i, 0) * 20ms); }
+  .matrix-point--key { animation-name: matrix-key; animation-duration: 600ms; animation-delay: calc(900ms + var(--k, 0) * 180ms); }
+  .matrix-keys > .matrix-key { animation: reveal 450ms var(--ease-out) backwards; }
+  .matrix-keys > .matrix-key:nth-child(1) { animation-delay: 60ms; }
+  .matrix-keys > .matrix-key:nth-child(2) { animation-delay: 160ms; }
+  .matrix-keys > .matrix-key:nth-child(3) { animation-delay: 260ms; }
 }
 @keyframes matrix-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes matrix-pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
@@ -5286,6 +5286,9 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 .report-topic:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .report-sealed__text { max-height: 15.5rem; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
 .report-sealed__text > * { margin: 0; }
+.report-sealed__text--example { max-height: 19rem; }
+.report-offer__example { padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.report-offer__example .muted { margin: 0; font-size: 14px; }
 .report-sealed__seal { display: flex; align-items: center; gap: 10px; margin: 0; padding: 10px 16px; border: 1px solid var(--accent-line); border-radius: 999px; color: var(--accent); font-size: 14px; line-height: 1.4; }
 .report-sealed__seal svg { flex: none; }
 .report-toc--sealed li:not([data-chosen]) .report-toc__title::after { content: ""; display: inline-block; width: 14px; height: 14px; margin-left: 8px; vertical-align: -2px; background: currentColor; opacity: 0.45;
