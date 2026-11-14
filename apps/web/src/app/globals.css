@@ -252,6 +252,24 @@ body .stack > .matrix-result { margin-top: 56px; }
 /* Числа внутренних точек — светлые и не мельче 14 единиц поля: на телефоне это около 13px */
 .matrix-point--inner text, .matrix-point--line text { fill: var(--ink); font-size: 14px; }
 .matrix-point--line circle { stroke: var(--lavender); }
+/* «Сборка» результата: линии прочерчиваются, числа проявляются, ключевые точки и карточки открываются по очереди, «Задача» последней (~4 с) */
+@media (prefers-reduced-motion: no-preference) {
+  .matrix-diagram__ring { animation: fade-in 700ms ease-out backwards; }
+  .matrix-diagram__line { stroke-dasharray: 1; animation: matrix-draw 700ms var(--ease-out) backwards; animation-delay: calc(150ms + var(--i, 0) * 110ms); }
+  .matrix-point { transform-box: fill-box; transform-origin: center; animation: matrix-pop 420ms var(--ease-out) backwards; animation-delay: calc(500ms + var(--i, 0) * 45ms); }
+  .matrix-point--key { animation-name: matrix-key; animation-duration: 800ms; animation-delay: calc(2200ms + var(--k, 0) * 450ms); }
+  .matrix-keys > .matrix-key { animation: reveal 700ms var(--ease-out) backwards; }
+  .matrix-keys > .matrix-key:nth-child(1) { animation-delay: 2300ms; }
+  .matrix-keys > .matrix-key:nth-child(2) { animation-delay: 2750ms; }
+  .matrix-keys > .matrix-key:nth-child(3) { animation-delay: 3200ms; }
+}
+@keyframes matrix-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes matrix-pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+@keyframes matrix-key {
+  0% { opacity: 0; transform: scale(0.5); filter: drop-shadow(0 0 0 transparent); }
+  55% { opacity: 1; transform: scale(1.18); filter: drop-shadow(0 0 10px var(--accent)); }
+  100% { opacity: 1; transform: none; filter: drop-shadow(0 0 0 transparent); }
+}
 /* Ruling 1: visible compact «Позиции» list next to the diagram */
 .matrix-positions h3 { font-size: 20px; margin-bottom: 4px; }
 .matrix-positions__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 15px; color: var(--ink-soft); }
@@ -1711,7 +1729,8 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 .taro-picked__meta > * { margin: 0; }
 .taro-picked__meta { min-width: 0; }
 .taro-picked__meta h2 { font-size: clamp(28px, 2.4vw, 34px); overflow-wrap: break-word; }
-.taro-picked__meta p:last-child { color: var(--ink-soft); }
+.taro-picked__meta [role="status"], .taro-picked__meta .taro-next { color: var(--ink-soft); }
+.taro-picked__meta .taro-next { font-size: 14px; }
 .taro-reading { display: grid; gap: 16px; }
 .taro-panel { display: grid; gap: 14px; align-content: start; padding: 24px 20px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: linear-gradient(180deg, var(--surface-2), var(--surface)); }
 .taro-panel > * { margin: 0; }
@@ -3435,6 +3454,58 @@ main:has(> .natal-intro) > .natal-disclaimer { max-width: none; }
   .natal-wheel-explorer > .natal-wheel { transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out); }
 }
 
+/* Колесо рисуется само (только у калькулятора, ~3,5 с): круги прочерчиваются, знаки и дома проявляются, планеты «приходят» по орбите
+   к своим меткам, затем прочерчиваются аспекты — слабые первыми, самые тесные последними. Разметка колеса не меняется, всё через классы.
+   Задержки по номеру элемента: у знаков и планет — nth-of-type, у аспектов — nth-last-child (аспекты отсортированы от тесных к слабым) */
+@media (prefers-reduced-motion: no-preference) {
+  .natal-wheel--interactive .wheel-circle { stroke-dasharray: 2200; animation: wheel-draw 1100ms var(--ease-out) backwards; }
+  .natal-wheel--interactive .wheel-circle--outer { animation-duration: 1500ms; }
+  .natal-wheel--interactive :is(.wheel-tick, .wheel-sector) { animation: wheel-fade 700ms ease-out 500ms backwards; }
+  .natal-wheel--interactive .wheel-sign { animation: wheel-fade 500ms ease-out backwards; }
+  .natal-wheel--interactive .wheel-houses { animation: wheel-fade 800ms ease-out 1000ms backwards; }
+  .natal-wheel--interactive .wheel-centre { animation: wheel-fade 800ms ease-out 1000ms backwards; }
+  .natal-wheel--interactive :is(.wheel-leader, .wheel-position) { animation: wheel-fade 500ms ease-out 1500ms backwards; }
+  .natal-wheel--interactive .wheel-point { transform-origin: 360px 360px; animation: wheel-arrive 1000ms var(--ease-out) backwards; }
+  .natal-wheel--interactive :is(.wheel-angle, .wheel-axis-node) { animation: wheel-fade 600ms ease-out 2300ms backwards; }
+  .natal-wheel--interactive .wheel-aspect { animation: wheel-draw-line 700ms var(--ease-out) 2400ms backwards; }
+  .natal-wheel--interactive .wheel-aspect[data-aspect="sextile"] { animation-name: wheel-fade; }
+  .natal-wheel--interactive .wheel-sign:nth-of-type(1) { animation-delay: 700ms; }
+  .natal-wheel--interactive .wheel-sign:nth-of-type(2) { animation-delay: 760ms; }
+  .natal-wheel--interactive .wheel-sign:nth-of-type(3) { animation-delay: 820ms; }
+  .natal-wheel--interactive .wheel-sign:nth-of-type(4) { animation-delay: 880ms; }
+  .natal-wheel--interactive .wheel-sign:nth-of-type(5) { animation-delay: 940ms; }
+  .natal-wheel--interactive .wheel-sign:nth-of-type(6) { animation-delay: 1000ms; }
+  .natal-wheel--interactive .wheel-sign:nth-of-type(7) { animation-delay: 1060ms; }
+  .natal-wheel--interactive .wheel-sign:nth-of-type(8) { animation-delay: 1120ms; }
+  .natal-wheel--interactive .wheel-sign:nth-of-type(9) { animation-delay: 1180ms; }
+  .natal-wheel--interactive .wheel-sign:nth-of-type(10) { animation-delay: 1240ms; }
+  .natal-wheel--interactive .wheel-sign:nth-of-type(11) { animation-delay: 1300ms; }
+  .natal-wheel--interactive .wheel-sign:nth-of-type(12) { animation-delay: 1360ms; }
+  .natal-wheel--interactive .wheel-point:nth-of-type(1) { animation-delay: 1500ms; }
+  .natal-wheel--interactive .wheel-point:nth-of-type(2) { animation-delay: 1570ms; }
+  .natal-wheel--interactive .wheel-point:nth-of-type(3) { animation-delay: 1640ms; }
+  .natal-wheel--interactive .wheel-point:nth-of-type(4) { animation-delay: 1710ms; }
+  .natal-wheel--interactive .wheel-point:nth-of-type(5) { animation-delay: 1780ms; }
+  .natal-wheel--interactive .wheel-point:nth-of-type(6) { animation-delay: 1850ms; }
+  .natal-wheel--interactive .wheel-point:nth-of-type(7) { animation-delay: 1920ms; }
+  .natal-wheel--interactive .wheel-point:nth-of-type(8) { animation-delay: 1990ms; }
+  .natal-wheel--interactive .wheel-point:nth-of-type(9) { animation-delay: 2060ms; }
+  .natal-wheel--interactive .wheel-point:nth-of-type(n + 10) { animation-delay: 2130ms; }
+  .natal-wheel--interactive .wheel-aspect:nth-last-child(1) { animation-delay: 2400ms; }
+  .natal-wheel--interactive .wheel-aspect:nth-last-child(2) { animation-delay: 2480ms; }
+  .natal-wheel--interactive .wheel-aspect:nth-last-child(3) { animation-delay: 2560ms; }
+  .natal-wheel--interactive .wheel-aspect:nth-last-child(4) { animation-delay: 2640ms; }
+  .natal-wheel--interactive .wheel-aspect:nth-last-child(5) { animation-delay: 2720ms; }
+  .natal-wheel--interactive .wheel-aspect:nth-last-child(6) { animation-delay: 2800ms; }
+  .natal-wheel--interactive .wheel-aspect:nth-last-child(7) { animation-delay: 2880ms; }
+  .natal-wheel--interactive .wheel-aspect:nth-last-child(8) { animation-delay: 2960ms; }
+  .natal-wheel--interactive .wheel-aspect:nth-last-child(n + 9) { animation-delay: 3040ms; }
+}
+@keyframes wheel-draw { from { stroke-dashoffset: 2200; } to { stroke-dashoffset: 0; } }
+@keyframes wheel-draw-line { from { stroke-dasharray: 800; stroke-dashoffset: 800; } to { stroke-dasharray: 800; stroke-dashoffset: 0; } }
+@keyframes wheel-fade { from { opacity: 0; } }
+@keyframes wheel-arrive { from { opacity: 0; transform: rotate(-55deg); } to { transform: none; } }
+
 /* «Главная точка карты» (NatalFocus): две темы, найденные в данных карты. */
 .natal-focus {
   min-width: 0;
@@ -4716,6 +4787,39 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 .taro-choose .taro-pick:focus-visible { scale: 1.06; }
 .taro-choose .taro-pick::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; background: linear-gradient(115deg, transparent 38%, rgba(255, 244, 220, 0.34) 50%, transparent 62%); transform: translateX(-120%); }
 .taro-choose__hint { font-size: 14px; }
+
+/* Выбор карты: выбранная рубашка переворачивается лицом вверх, две другие гаснут (переворот — только при разрешённой анимации; без неё трактовка открывается сразу) */
+.taro-choose .taro-pick[data-flip] { pointer-events: none; animation: none; }
+.taro-choose .taro-pick[data-flip]::after { display: none; }
+.taro-choose .taro-pick[data-flip="gone"] { opacity: 0; scale: 0.9; }
+.taro-choose .taro-pick[data-flip="chosen"] { z-index: 1; overflow: visible; perspective: 900px; scale: 1.1; --tilt: 0deg; --lift: -8px; box-shadow: none; }
+.taro-flip { display: grid; transform-style: preserve-3d; }
+.taro-flip__face { grid-area: 1 / 1; border-radius: 12px; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.taro-flip__face--front { position: relative; overflow: hidden; background: var(--surface); transform: rotateY(180deg); }
+.taro-flip__face--front img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+@media (prefers-reduced-motion: no-preference) {
+  .taro-choose .taro-pick[data-flip] { transition: opacity 500ms ease-out, scale 700ms var(--ease-out), transform 700ms var(--ease-out); }
+  .taro-choose .taro-pick[data-flip="chosen"] { animation: taro-flip-glow 1100ms ease-out both; }
+  .taro-flip { animation: taro-flip 900ms 150ms var(--ease-out) both; }
+}
+@keyframes taro-flip { from { transform: rotateY(0); } to { transform: rotateY(180deg); } }
+@keyframes taro-flip-glow { 0% { box-shadow: 0 0 0 transparent; } 70% { box-shadow: 0 0 56px rgba(203, 166, 118, 0.5); } 100% { box-shadow: 0 0 28px rgba(203, 166, 118, 0.25); } }
+
+/* Колода встреченных карт: 78 ячеек, открытые показывают миниатюру. Хранится в браузере (taro:seen:v1), на сервер не уходит */
+.taro-deck { display: grid; gap: 12px; margin-top: 40px; }
+.taro-deck > * { margin: 0; }
+.taro-deck h2 { font-size: 24px; }
+.taro-deck__count { color: var(--ink-soft); font-size: 14px; }
+.taro-deck__grid { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 3px; max-width: 640px; margin: 0; padding: 0; list-style: none; }
+.taro-deck__cell { aspect-ratio: 4 / 7; overflow: hidden; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+.taro-deck__cell--seen { border-color: var(--accent-line); }
+.taro-deck__cell img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.taro-deck__cell--today { border-color: var(--accent); box-shadow: 0 0 12px rgba(203, 166, 118, 0.45); }
+@media (prefers-reduced-motion: no-preference) {
+  .taro-deck__cell--seen { animation: fade-in 500ms ease-out backwards; }
+  .taro-deck__cell--today { animation: taro-deck-new 1400ms 300ms var(--ease-out) backwards; }
+}
+@keyframes taro-deck-new { from { opacity: 0; transform: scale(0.4); } 60% { opacity: 1; transform: scale(1.35); } to { transform: none; } }
 
 @media (min-width: 900px) {
   .taro-day-hero { grid-template-columns: minmax(0, 0.8fr) minmax(420px, 1fr); }

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { moscowDayKey, pickCardIndex, readDayCard, TARO_DAY_KEY, writeDayCard } from "./taro-day";
+import { addSeenCard, formatUntilNextCard, moscowDayKey, msUntilNextMoscowDay, pickCardIndex, readDayCard, readSeenCards, TARO_DAY_KEY, TARO_SEEN_KEY, writeDayCard } from "./taro-day";
 
 const memory = () => {
   const data = new Map<string, string>();
@@ -10,6 +10,48 @@ describe("moscowDayKey", () => {
   test("changes at midnight Moscow time, not UTC", () => {
     expect(moscowDayKey(new Date("2026-10-05T20:59:59Z"))).toBe("2026-10-05");
     expect(moscowDayKey(new Date("2026-10-05T21:00:00Z"))).toBe("2026-10-06");
+  });
+});
+
+describe("time until the next card", () => {
+  test("counts down to midnight Moscow time", () => {
+    expect(msUntilNextMoscowDay(new Date("2026-10-05T20:59:59Z"))).toBe(1000);
+    expect(msUntilNextMoscowDay(new Date("2026-10-05T21:00:00Z"))).toBe(86_400_000);
+  });
+
+  test("formats hours and minutes, rounding up", () => {
+    expect(formatUntilNextCard(6 * 3_600_000 + 12 * 60_000)).toBe("6 ч 12 мин");
+    expect(formatUntilNextCard(2 * 3_600_000)).toBe("2 ч");
+    expect(formatUntilNextCard(45 * 60_000)).toBe("45 мин");
+    expect(formatUntilNextCard(1000)).toBe("1 мин");
+  });
+});
+
+describe("seen cards storage", () => {
+  test("collects each card once and ignores garbage", () => {
+    const storage = memory();
+    expect(readSeenCards(storage)).toEqual([]);
+    expect(addSeenCard(storage, "mag")).toEqual(["mag"]);
+    expect(addSeenCard(storage, "sila")).toEqual(["mag", "sila"]);
+    expect(addSeenCard(storage, "mag")).toEqual(["mag", "sila"]);
+    storage.setItem(TARO_SEEN_KEY, "не json");
+    expect(readSeenCards(storage)).toEqual([]);
+    storage.setItem(TARO_SEEN_KEY, JSON.stringify(["mag", 7, null]));
+    expect(readSeenCards(storage)).toEqual(["mag"]);
+  });
+
+  test("survives a storage that throws", () => {
+    const broken = {
+      getItem: () => {
+        throw new Error("blocked");
+      },
+      setItem: () => {
+        throw new Error("blocked");
+      },
+    };
+    expect(readSeenCards(broken)).toEqual([]);
+    expect(addSeenCard(broken, "mag")).toEqual(["mag"]);
+    expect(readSeenCards(null)).toEqual([]);
   });
 });
 
