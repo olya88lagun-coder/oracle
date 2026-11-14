@@ -1,11 +1,15 @@
 import { findStopPhrases } from "@oracle/content";
 import type { NatalChapterInput } from "./natal-input";
-import { NATAL_PROSE_LIMITS } from "./natal-prompt";
+import { natalProseLimits } from "./natal-prompt";
 import type { NatalChapter } from "./natal-fallback";
 import { extractJson, readProse, readScenario, type ValidationFailure } from "./validate";
 
 // Модель иногда пишет, что данных о доме нет («информация о положении планет в этом доме отсутствует»): читателю это не нужно
 const MISSING_DATA = /отсутству|нет\s+(данных|информации|сведений)|недостаточно\s+(данных|информации)|(данных|информации|сведений)[^.]{0,40}недостаточно|не\s+(указан|известн)/i;
+// Слова-связки, которыми модель забивает текст: «стоит заметить», «важно отметить», «таким образом». Один раз допустим, два и больше — штамп.
+// Раньше сам промпт подсказывал «стоит заметить» как образец, и эти обороты стояли почти в каждой главе
+const FILLER = /(?<![а-яё])(стоит|следует|важно|интересно|необходимо)\s+(заметить|отметить)(?![а-яё])|(?<![а-яё])таким\s+образом(?![а-яё])/gi;
+const FILLER_LIMIT = 1;
 // Обороты, выдающие род читателя: «делает вас мягким», «быть более эффективным», «вы чувствовал/чувствовала».
 // \b для кириллицы в JS не работает, границы слова задаём через (?<![а-яё]) и (?![а-яё])
 const GENDERED = [
@@ -27,7 +31,7 @@ export function validateNatalChapter(input: NatalChapterInput, raw: string): Nat
     if (!read.ok) return read;
     chapter = { id: input.chapter, source: "ai", scenario: read.scenario };
   } else {
-    const read = readProse(raw, NATAL_PROSE_LIMITS);
+    const read = readProse(raw, natalProseLimits(input.chapter));
     if (!read.ok) return read;
     chapter = { id: input.chapter, source: "ai", paragraphs: read.paragraphs };
   }
@@ -35,5 +39,6 @@ export function validateNatalChapter(input: NatalChapterInput, raw: string): Nat
   if (findStopPhrases(text).length > 0) return { ok: false, reason: "stop_words" };
   if (MISSING_DATA.test(text)) return { ok: false, reason: "missing_data" };
   if (GENDERED.some((pattern) => pattern.test(text))) return { ok: false, reason: "gendered" };
+  if ((text.match(FILLER) ?? []).length > FILLER_LIMIT) return { ok: false, reason: "filler" };
   return { ok: true, chapter };
 }

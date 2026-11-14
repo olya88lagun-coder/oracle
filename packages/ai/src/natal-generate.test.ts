@@ -4,7 +4,7 @@ import { describe, expect, test, vi } from "vitest";
 import { fallbackNatalReport } from "./natal-fallback";
 import { fallbackNatalChapter, generateNatalChapter, generateNatalReport } from "./natal-generate";
 import { buildNatalChapterInputs, type NatalChapterInput } from "./natal-input";
-import { buildNatalPrompt, NATAL_PROSE_LIMITS } from "./natal-prompt";
+import { buildNatalPrompt, NATAL_ASPECTS_LIMITS, NATAL_PROSE_LIMITS, natalProseLimits } from "./natal-prompt";
 import { validateNatalChapter } from "./natal-validate";
 import type { Prompt, ReportWriter } from "./writer";
 
@@ -34,7 +34,8 @@ function fakeWriter(answer: (input: NatalChapterInput) => string | Promise<strin
   };
   return writer;
 }
-const goodAnswer = (input: NatalChapterInput) => (input.chapter === "scenario" ? SCENARIO : prose());
+// Глава об аспектах длиннее остальных: ей нужен ответ побольше
+const goodAnswer = (input: NatalChapterInput) => (input.chapter === "scenario" ? SCENARIO : prose(input.chapter === "aspects" ? 6 : 4));
 const inputOf = (id: string) => buildNatalChapterInputs(chart).find((input) => input.chapter === id)!;
 
 describe("buildNatalChapterInputs", () => {
@@ -76,6 +77,26 @@ describe("buildNatalPrompt", () => {
     expect(system).toContain("«делает вас мягким»");
     expect(buildNatalPrompt(inputOf("scenario")).system).toContain("1–2 коротких предложения");
   });
+
+  test("does not hand the model the filler phrases as an example and forbids them", () => {
+    const { system } = buildNatalPrompt(inputOf("love"));
+    expect(system).not.toContain("«часто», «стоит заметить»");
+    expect(system).toContain("Не используй слова-связки и обобщения");
+    expect(system).toContain("«Таким образом»");
+    expect(system).toContain("Не заканчивай главу абзацем-итогом");
+  });
+
+  test("the aspects chapter gets its own wider format and the order to cover every aspect", () => {
+    const aspects = buildNatalPrompt(inputOf("aspects")).system;
+    expect(aspects).toContain(`${NATAL_ASPECTS_LIMITS.minParagraphs}–${NATAL_ASPECTS_LIMITS.maxParagraphs} абзацев`);
+    expect(aspects).toContain("разбери каждый аспект");
+    expect(buildNatalPrompt(inputOf("core")).system).not.toContain("разбери каждый аспект");
+    expect(natalProseLimits("aspects").maxChars).toBeGreaterThan(natalProseLimits("core").maxChars);
+  });
+
+  test("a retry after filler words says what to remove", () => {
+    expect(buildNatalPrompt(inputOf("core"), "filler").system).toContain("слова-связки");
+  });
 });
 
 describe("validateNatalChapter", () => {
@@ -101,6 +122,27 @@ describe("validateNatalChapter", () => {
     ["a gendered past tense after «вы»", `${prose(3)}\n\nВозможно, вы чувствовала усталость.`, "gendered"],
   ])("rejects a chapter that is %s", (_title, raw, reason) => {
     expect(validateNatalChapter(core, raw)).toEqual({ ok: false, reason });
+  });
+
+  test("rejects the filler phrases from two on, and lets one through", () => {
+    const one = `${prose(3)}
+
+Стоит заметить, что отношения требуют внимания.`;
+    expect(validateNatalChapter(core, one).ok).toBe(true);
+    const two = `${one}
+
+Таким образом, картина складывается.`;
+    expect(validateNatalChapter(core, two)).toEqual({ ok: false, reason: "filler" });
+    expect(validateNatalChapter(core, `${prose(3)}
+
+Важно отметить одно. Следует отметить и другое.`)).toEqual({ ok: false, reason: "filler" });
+  });
+
+  test("the aspects chapter may be longer than the others, and a short answer is still too short for it", () => {
+    const long = prose(8, 3);
+    expect(validateNatalChapter(core, long)).toEqual({ ok: false, reason: "length" });
+    expect(validateNatalChapter(inputOf("aspects"), long).ok).toBe(true);
+    expect(validateNatalChapter(inputOf("aspects"), "Коротко.\n\nЕщё.\n\nИ ещё.")).toEqual({ ok: false, reason: "length" });
   });
 
   test("does not take things for the reader: «стать мощным инструментом», «стать основой»", () => {

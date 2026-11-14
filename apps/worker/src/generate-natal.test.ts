@@ -99,7 +99,8 @@ describe("runGenerateNatal with the AI editor", () => {
     };
     return writer;
   };
-  const good = (chapter: string) => (chapter === "scenario" ? SCENARIO : Array.from({ length: 4 }, () => SENTENCE.repeat(3).trim()).join("\n\n"));
+  // Глава об аспектах длиннее остальных (свои границы в packages/ai/src/natal-prompt.ts): ей нужен ответ побольше
+  const good = (chapter: string) => (chapter === "scenario" ? SCENARIO : Array.from({ length: chapter === "aspects" ? 6 : 4 }, () => SENTENCE.repeat(3).trim()).join("\n\n"));
 
   test("saves the chapters written by the model and sends it no birth data", async () => {
     const { userId } = await seedUser(db, { externalId: "vk-ai1" });

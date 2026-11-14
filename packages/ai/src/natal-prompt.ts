@@ -1,3 +1,4 @@
+import type { NatalChapterId } from "@oracle/core/natal";
 import type { NatalChapterInput } from "./natal-input";
 import { FORBIDDEN_RULE, NEUTRAL_GENDER_RULE, SCENARIO_FIELD_MAX_CHARS } from "./prompt";
 import type { ValidationFailure } from "./validate";
@@ -7,26 +8,37 @@ import type { Prompt } from "./writer";
 // Модель недобирает объём на 10–20 %, поэтому просим больше, чем требуем
 export const NATAL_PROSE_LIMITS = { minParagraphs: 3, maxParagraphs: 6, minChars: 1000, maxChars: 3200 } as const;
 const NATAL_ASKED_CHARS = { min: 1500, max: 2500 } as const;
+// Глава об аспектах разбирает каждый аспект карты, их бывает больше десятка: в общие границы она не помещалась, и модель выкидывала часть аспектов
+export const NATAL_ASPECTS_LIMITS = { minParagraphs: 4, maxParagraphs: 10, minChars: 2000, maxChars: 5600 } as const;
+const NATAL_ASPECTS_ASKED_CHARS = { min: 3000, max: 4500 } as const;
+
+export const natalProseLimits = (chapter: NatalChapterId) => (chapter === "aspects" ? NATAL_ASPECTS_LIMITS : NATAL_PROSE_LIMITS);
+const askedChars = (chapter: NatalChapterId) => (chapter === "aspects" ? NATAL_ASPECTS_ASKED_CHARS : NATAL_ASKED_CHARS);
 const NATAL_SCENARIO_FIELD_ASKED_CHARS = 350;
 
 const RULES = [
   "Ты — редактор сервиса самопознания «Твой оракул». Тебе дают тему главы разбора натальной карты, вступление и готовые тексты о положениях планет в знаках и домах и об аспектах между планетами.",
   "Задача: связать готовые тексты в цельную главу разбора для одного человека. Опирайся только на данные: не добавляй фактов, историй, чисел, значений планет, знаков, домов и аспектов, которых нет во входе. Не упоминай дату, время и место рождения.",
-  "Пиши по-русски, на «вы», как гипотезы для размышления: «может», «часто», «стоит заметить». Это не предсказание и не консультация.",
+  "Пиши по-русски, на «вы», как гипотезы для размышления: «может», «нередко», «часто». Это не предсказание и не консультация.",
   NEUTRAL_GENDER_RULE,
   "Род касается и прилагательных после «вас»: оборот «делает вас …» («сделает вас …») не используй вовсе, а также не пиши «делает вас мягким», «быть более эффективным», «следует быть осторожным», «вы чувствовала». Пиши существительными и безличными оборотами: «в вас проявляется мягкость», «важно беречь силы», «следует проявлять осторожность».",
   "Пиши только о том, что есть во входе. Если о доме, планете или аспекте нет готового текста, не упоминай его совсем: не пиши, что данных нет или информации недостаточно, и не строй догадок о том, чего не видишь.",
   "Не утверждай факты о жизни человека: профессию, занятия, привычки, события, отношения. Описывай тенденции и вопросы: «может проявляться», «нередко», «стоит присмотреться». Избегай «вы обладаете», «вы человек», «вам свойственно».",
+  "Не используй слова-связки и обобщения: «Стоит заметить», «Следует отметить», «Важно отметить», «Интересно отметить», «Таким образом», «В целом». Не начинай больше одного абзаца со слова «Однако». Не заканчивай главу абзацем-итогом, который пересказывает сказанное («сочетание этих факторов…»): закончи на последнем положении из входа или на вопросе для размышления.",
   FORBIDDEN_RULE,
 ];
 
 const NAMING_RULE = "Называй планеты, знаки и дома так, как во входе.";
 
 // Главы модель пишет обычным текстом: в JSON её собственные кавычки ломали разбор ответа
-const PROSE_ANSWER = [
-  `${NAMING_RULE} Ответ — только текст главы: без заголовков, списков, Markdown, JSON и пояснений.`,
-  `Формат: ${NATAL_PROSE_LIMITS.minParagraphs}–${NATAL_PROSE_LIMITS.maxParagraphs} абзацев, между абзацами пустая строка, вместе ${NATAL_ASKED_CHARS.min}–${NATAL_ASKED_CHARS.max} знаков. Поле intro — вступление главы, material — готовые тексты: не копируй их дословно, свяжи в рассказ о том, как положения складываются в одного человека, и выдели то, что стоит заметить.`,
-].join("\n\n");
+const proseAnswer = (chapter: NatalChapterId) => {
+  const limits = natalProseLimits(chapter);
+  const asked = askedChars(chapter);
+  return [
+    `${NAMING_RULE} Ответ — только текст главы: без заголовков, списков, Markdown, JSON и пояснений.`,
+    `Формат: ${limits.minParagraphs}–${limits.maxParagraphs} абзацев, между абзацами пустая строка, вместе ${asked.min}–${asked.max} знаков. Поле intro — вступление главы, material — готовые тексты: не копируй их дословно, свяжи в рассказ о том, как положения складываются в одного человека, и выдели то, что стоит заметить.${chapter === "aspects" ? " В этой главе разбери каждый аспект из material, не пропуская ни одного: на аспект — одно-два предложения о том, как он проявляется и на что стоит обратить внимание." : ""}`,
+  ].join("\n\n");
+};
 
 const SCENARIO_ANSWER = [
   `${NAMING_RULE} Ответ — только JSON-объект по схеме ниже, без пояснений и без Markdown.`,
@@ -44,10 +56,11 @@ const RETRY_HINTS: Partial<Record<ValidationFailure, string>> = {
   stop_words: "Прошлый ответ отклонён: в нём были обороты-предсказания. Пиши только как гипотезы для размышления.",
   schema: "Прошлый ответ отклонён: он не соответствует схеме. Верни только JSON по схеме, без лишних символов внутри строк.",
   not_json: "Прошлый ответ отклонён: это не JSON. Верни только JSON по схеме.",
+  filler: "Прошлый ответ отклонён: в нём были слова-связки («стоит заметить», «важно отметить», «таким образом»). Перепиши без них: сразу к сути, без вступлений и подведения итога.",
 };
 
 export function buildNatalPrompt(input: NatalChapterInput, retryAfter?: ValidationFailure): Prompt {
-  const answer = input.chapter === "scenario" ? SCENARIO_ANSWER : PROSE_ANSWER;
+  const answer = input.chapter === "scenario" ? SCENARIO_ANSWER : proseAnswer(input.chapter);
   const hint = retryAfter ? RETRY_HINTS[retryAfter] : undefined;
   return { system: [...RULES, answer, ...(hint ? [hint] : [])].join("\n\n"), user: JSON.stringify(input) };
 }
