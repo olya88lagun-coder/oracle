@@ -10,7 +10,7 @@ const result = (page: Page) => page.getByRole("region", { name: "Ваша мат
 
 test("the home page leads to the open matrix calculator", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: "Матрица судьбы" }).click();
+  await page.getByRole("link", { name: "Матрица судьбы", exact: true }).click();
 
   await expect(page).toHaveURL(/\/matrica-sudby$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Матрица судьбы по дате рождения");
@@ -97,7 +97,8 @@ test("an arcanum page is indexable and leads to the calculator", async ({ page }
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Сила");
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "index, follow");
-  await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(1);
+  // Статья об аркане и вопросы под ней — два отдельных блока разметки
+  await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(2);
 
   await page.getByRole("link", { name: "Рассчитать свою матрицу" }).first().click();
   await expect(page).toHaveURL(/\/matrica-sudby$/);

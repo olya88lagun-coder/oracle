@@ -49,7 +49,8 @@ test("without a birth time there is no ascendant, no houses and a sign-change wa
   await calculate(page);
   await expect(result(page)).toBeVisible();
   await expect(page.getByText("Асцендент: нужно время рождения").first()).toBeVisible();
-  await expect(page.getByText(/Асцендент в /)).toHaveCount(0);
+  // Ссылки на страницы «Асцендент в <знак>» под калькулятором есть всегда; в самой карте подписи с асцендентом быть не должно
+  await expect(page.locator(".natal-result").getByText(/Асцендент в /)).toHaveCount(0);
   await expect(page.getByRole("columnheader", { name: "Дом" })).toHaveCount(0);
   await expect(page.getByText("В этот день Солнце сменило знак — точный знак зависит от времени рождения.").first()).toBeVisible();
   await expect(page.locator(".natal-aspects__note")).toBeVisible();
