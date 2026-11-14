@@ -95,8 +95,12 @@ export function readProse(raw: string, limits: ProseLimits = PROSE_LIMITS): { ok
   return { ok: true, paragraphs: texts };
 }
 
+// GigaChat ставит лишнюю «}» перед закрывающей кавычкой значения ("…силы?}"): JSON при этом верный, но вопрос не кончался на «?»,
+// и все три попытки итоговой главы отклонялись, так что «Ваш сценарий» всегда уходил в запасной текст
+const withoutStrayBrace = (value: unknown): unknown => (typeof value === "string" ? value.replace(/\s*\}+\s*$/, "") : value);
+
 export function readScenario(value: Record<string, unknown>): { ok: true; scenario: Record<ScenarioField, string> } | { ok: false; reason: ValidationFailure } {
-  const fields = SCENARIO_FIELDS.map((field) => [field, cleanText(value[field])] as const);
+  const fields = SCENARIO_FIELDS.map((field) => [field, cleanText(withoutStrayBrace(value[field]))] as const);
   if (fields.some(([, text]) => text === null)) return { ok: false, reason: "schema" };
   const scenario = Object.fromEntries(fields) as Record<ScenarioField, string>;
   if (!scenario.question.endsWith("?")) return { ok: false, reason: "schema" };
