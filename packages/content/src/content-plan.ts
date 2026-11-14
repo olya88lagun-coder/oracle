@@ -412,7 +412,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: NUMEROLOGY_ALT,
     basis: ["numerology-clock"],
     internalLinks: ["/numerologiya/chasy", "/numerologiya/chasy/11-11", "/numerologiya/chasy/22-22"],
-    status: "draft",
+    status: "published",
   },
   // 62. Сопоставить 11, 22 и 33 на примерах сумм и показать, почему не сводим их к 2, 4 и 6.
   // Отделить число судьбы от числа года и личного года. Не пересказывать три справочные страницы по отдельности.
