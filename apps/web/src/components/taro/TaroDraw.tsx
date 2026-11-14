@@ -72,7 +72,8 @@ export function TaroDraw({ cards, children }: { cards: readonly DrawCard[]; chil
   }, [drawn]);
 
   function pick(index: number) {
-    if (drawn || choice) return;
+    // До гидратации рубашки выглядят обычными (не disabled — иначе они блёклые), но нажатие ничего не делает
+    if (drawn || choice || !ready) return;
     const card = cards[pickCardIndex(cards.length)]!;
     writeDayCard(storage(), new Date(), card.slug);
     setSeen(addSeenCard(storage(), card.slug));
@@ -118,8 +119,7 @@ export function TaroDraw({ cards, children }: { cards: readonly DrawCard[]; chil
                     className="taro-pick"
                     data-flip={choice ? (choice.index === index ? "chosen" : "gone") : undefined}
                     aria-label={`Карта ${index + 1}`}
-                    aria-disabled={choice ? true : undefined}
-                    disabled={!ready}
+                    aria-disabled={choice || !ready ? true : undefined}
                     onClick={() => pick(index)}
                   >
                     {choice?.index === index ? (

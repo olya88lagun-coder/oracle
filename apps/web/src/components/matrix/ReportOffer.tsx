@@ -10,6 +10,7 @@ import { arcanumImage, MATRIX_PATH } from "@/lib/arcana-paths";
 import { loginHref } from "@/lib/next-path";
 import { chapterArcanaLabel, EMAIL_ERROR, EMAIL_PATTERN, purchaseErrorCode, purchaseErrorMessage, reportPath, type OfferState } from "@/lib/report-offer";
 import { useOfferViewGoal } from "../useOfferViewGoal";
+import { REPORT_EXAMPLE_EXCERPTS } from "@/lib/report-example";
 import { chapterTeaser, QUESTION_TOPICS, type TeaserChapter } from "./chapter-teaser";
 
 // compat — предложение под результатом совместимости: разбор покупается для собственной даты человека, а не для пары.
@@ -201,6 +202,16 @@ export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }:
             </svg>
             <span>Дальше разбор развивает это в целый текст — глава {chapterNumber} и ещё шесть.</span>
           </p>
+        </div>
+        {/* Настоящий текст из демонстрационного разбора (первые абзацы главы); пример на вымышленной дате, подписан */}
+        <div className="report-offer__example report-sealed stack">
+          <p className="eyebrow">Так выглядит глава «{teaser.title}» в разборе</p>
+          <div key={`example-${topic}`} className="report-sealed__text report-sealed__text--example stack">
+            {REPORT_EXAMPLE_EXCERPTS[topic].map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+          <p className="muted">Фрагмент примера на вымышленной дате 15.01.1990, это не ваш текст: ваш разбор собирается по вашим арканам.</p>
           <Link className="text-link" href="/matrica-sudby/primer">Посмотреть полный пример и PDF</Link>
         </div>
       </div>
