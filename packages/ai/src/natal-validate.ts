@@ -10,6 +10,14 @@ const MISSING_DATA = /отсутству|нет\s+(данных|информац
 // Раньше сам промпт подсказывал «стоит заметить» как образец, и эти обороты стояли почти в каждой главе
 const FILLER = /(?<![а-яё])(стоит|следует|важно|интересно|необходимо)\s+(заметить|отметить)(?![а-яё])|(?<![а-яё])таким\s+образом(?![а-яё])/gi;
 const FILLER_LIMIT = 1;
+// Предложения, начатые с «Важно» («Важно помнить…», «Важно осознавать…»), и абзацы, начатые с «Однако»: после запрета «стоит заметить» модель стала писать так в каждой главе
+const SENTENCE_START = (word: string) => new RegExp(String.raw`(?:^|[.!?…]\s+|\n)${word}(?![а-яё])`, "gi");
+const IMPORTANT_OPENERS = SENTENCE_START("важно");
+const HOWEVER_OPENERS = SENTENCE_START("однако");
+const IMPORTANT_LIMIT = 1;
+const HOWEVER_LIMIT = 2;
+// Последний абзац, который пересказывает главу («Вместе эти элементы создают образ…», «Таким образом…», «В целом…»): читателю он ничего не добавляет
+const RECAP_START = /^(вместе\s+(эти|они|положения)|в\s+целом|таким\s+образом|сочетание\s+(этих|двух|трёх|[а-яё]+\s+и\s+[а-яё]+)|эти\s+(аспекты|элементы|положения|позиции|факторы)\s+(вместе\s+)?(создают|формируют|образуют|показывают))/i;
 // Обороты, выдающие род читателя: «делает вас мягким», «быть более эффективным», «вы чувствовал/чувствовала».
 // \b для кириллицы в JS не работает, границы слова задаём через (?<![а-яё]) и (?![а-яё])
 const GENDERED = [
@@ -40,5 +48,8 @@ export function validateNatalChapter(input: NatalChapterInput, raw: string): Nat
   if (MISSING_DATA.test(text)) return { ok: false, reason: "missing_data" };
   if (GENDERED.some((pattern) => pattern.test(text))) return { ok: false, reason: "gendered" };
   if ((text.match(FILLER) ?? []).length > FILLER_LIMIT) return { ok: false, reason: "filler" };
+  if ((text.match(IMPORTANT_OPENERS) ?? []).length > IMPORTANT_LIMIT || (text.match(HOWEVER_OPENERS) ?? []).length > HOWEVER_LIMIT) return { ok: false, reason: "filler" };
+  const last = chapter.paragraphs?.at(-1);
+  if (last && RECAP_START.test(last)) return { ok: false, reason: "filler" };
   return { ok: true, chapter };
 }
