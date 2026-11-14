@@ -448,6 +448,15 @@ body.has-cookie-banner { padding-bottom: calc(var(--cookie-banner-height, 220px)
   transform: translate(calc(var(--lila-token-x) * 1cqw - 50%), calc(var(--lila-token-y) * 0.89583cqw - 50%));
   pointer-events: none;
 }
+/* Золотая нить пути: тонкая линия под лавандовым пунктиром; при каждом ходе прочерчивается заново. Круг вокруг фишки мягко расходится */
+.lila-board__thread { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.55; }
+.lila-board__token::after { content: ""; position: absolute; inset: -2px; border: 1.5px solid var(--lila-current); border-radius: 50%; opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .lila-board__thread { stroke-dasharray: 1; animation: lila-thread 1100ms var(--ease-out) backwards; }
+  .lila-board__token::after { animation: lila-ripple 3.2s ease-out infinite; }
+}
+@keyframes lila-thread { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes lila-ripple { 0% { opacity: 0.7; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(1.9); } }
 @media (prefers-reduced-motion: no-preference) {
   .lila-board__cell { transition: background var(--dur-fast) var(--ease-out); }
   .lila-board__cell::after { transition: opacity var(--dur-fast) var(--ease-out); }
@@ -5245,3 +5254,23 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
+
+/* «Живая» сцена: свет за курсором (LivingLight), медленное дыхание картинок первых экранов и появление секций при прокрутке.
+   Всё — только при разрешённой анимации; на телефоне нет света курсора, остаётся дыхание картинок */
+.living-light { position: fixed; top: -260px; left: -260px; z-index: 40; width: 520px; height: 520px; border-radius: 50%; pointer-events: none; opacity: 0; mix-blend-mode: screen; will-change: transform;
+  background: radial-gradient(circle, rgba(203, 166, 118, 0.17) 0%, rgba(185, 164, 232, 0.07) 42%, transparent 70%); transition: opacity 600ms ease-out; }
+.living-light[data-on] { opacity: 1; }
+@media (hover: none), (prefers-reduced-motion: reduce) { .living-light { display: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  :is(.hero__art, .matrix-hero__art, .taro-cat-hero__art, .lila-hero__art, .compat-scene__art) { overflow: clip; }
+  :is(.hero__art, .matrix-hero__art, .taro-cat-hero__art, .lila-hero__art, .compat-scene__art) img { animation: art-breathe 26s ease-in-out infinite alternate; }
+}
+@keyframes art-breathe { from { transform: scale(1) translate3d(0, 0, 0); } to { transform: scale(1.07) translate3d(-1.2%, -0.8%, 0); } }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .home :is(.practice-card, .home-principles__item, .home-blog__card, .card--portrait) { animation: scroll-rise linear backwards; animation-timeline: view(); animation-range: entry 0% entry 42%; }
+    .hero__art { animation: hero-sink linear both; animation-timeline: scroll(root block); animation-range: 0 640px; }
+  }
+}
+@keyframes scroll-rise { from { opacity: 0; translate: 0 36px; } }
+@keyframes hero-sink { to { translate: 0 36px; opacity: 0.55; } }

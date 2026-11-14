@@ -45,6 +45,8 @@ export function Board({ current, trail = [], variant = "full", legend = true }: 
         {variant !== "locator" ? <Image className="lila-board__art" src={PATHS_SRC[variant]} alt="" fill unoptimized sizes="(min-width: 900px) 640px, 100vw" /> : null}
         {safeTrail.length > 1 ? (
           <svg className="lila-board__trail-layer" viewBox={`0 0 ${CANVAS.width} ${CANVAS.height}`} aria-hidden="true" focusable="false">
+            {/* Золотая нить под пунктиром: key по длине следа заново «ткёт» её при каждом ходе (стили — globals.css) */}
+            <path key={safeTrail.length} className="lila-board__thread" d={trailPath(safeTrail)} pathLength={1} />
             <path className="lila-board__trail" d={trailPath(safeTrail)} />
           </svg>
         ) : null}

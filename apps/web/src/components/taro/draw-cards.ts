@@ -10,6 +10,7 @@ export const drawCards = (): DrawCard[] =>
     suitLabel: TAROT_SUIT_LABELS[card.suit],
     image: taroCardImage(card, "card"),
     thumb: taroCardImage(card, "thumb"),
+    large: taroCardImage(card, "page"),
     path: taroCardPath(card),
     day: card.day.join(" "),
     action: card.action,

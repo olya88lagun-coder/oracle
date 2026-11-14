@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { reachGoal } from "@/lib/analytics";
 import { addSeenCard, formatUntilNextCard, msUntilNextMoscowDay, pickCardIndex, readDayCard, readSeenCards, writeDayCard } from "@/lib/taro-day";
+import { PosterButton } from "@/components/PosterButton";
 import { TaroBack } from "./TaroBack";
 import { TaroShare } from "./TaroShare";
 
-export type DrawCard = { slug: string; name: string; suitLabel: string; image: string; thumb: string; path: string; day: string; action: string; question: string };
+export type DrawCard = { slug: string; name: string; suitLabel: string; image: string; thumb: string; large: string; path: string; day: string; action: string; question: string };
 
 // Сколько рубашек показываем на выбор; карта под любой из них выбирается случайно из всей колоды
 export const TARO_PICK_COUNT = 3;
@@ -155,6 +156,17 @@ export function TaroDraw({ cards, children }: { cards: readonly DrawCard[]; chil
                 Значение карты
               </Link>
               <TaroShare card={drawn} />
+              <PosterButton
+                spec={{
+                  eyebrow: "Карта дня",
+                  title: drawn.name,
+                  cards: [{ image: drawn.large, caption: drawn.name }],
+                  textLabel: "Вопрос для себя",
+                  text: drawn.question,
+                  footer: "ТВОЙ ОРАКУЛ · TVOY-ORAKUL.RU",
+                  fileName: `karta-dnya-${drawn.slug}`,
+                }}
+              />
             </div>
           </article>
           <article className="taro-panel taro-panel--question">
