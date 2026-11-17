@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { TAROT_CARDS } from "@oracle/content/tarot";
 import { describe, expect, test } from "vitest";
 import { COMPAT_PATH } from "./compat";
@@ -144,7 +145,8 @@ describe("taro spreads", () => {
   });
 
   test("every listed spread picture exists in three sizes, and a spread without one gets none", () => {
-    const dir = join(process.cwd(), "public");
+    // от файла теста, а не от рабочей папки: CI запускает тесты из корня репозитория
+    const dir = fileURLToPath(new URL("../../public", import.meta.url));
     for (const slug of SPREAD_IMAGE_SLUGS) {
       expect(TARO_SPREADS.map((spread) => spread.slug), slug).toContain(slug);
       for (const size of ["full", "card", "thumb"] as const) expect(existsSync(join(dir, spreadImage(slug, size)!)), `${slug} ${size}`).toBe(true);
