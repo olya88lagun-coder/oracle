@@ -6157,14 +6157,16 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
     padding-block: 18px 36px;
   }
 
-  .moon-hero > :is(h1, .moon-hero__place, .moon-tiles, .moon-next) {
+  .moon-hero > :is(h1, .moon-hero__place, .moon-hero__today) {
     grid-column: 1;
   }
 
   .moon-hero > .moon-disc {
-    grid-area: 1 / 2 / span 4;
+    grid-area: 1 / 2 / span 3;
     width: min(100%, 508px);
   }
+
+  .moon-hero > .moon-strip { grid-area: 4 / 1 / auto / -1; }
 
 }
 
@@ -6185,8 +6187,7 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
     text-align: center;
   }
 
-  .moon-tiles,
-  .moon-next {
+  .moon-hero__today {
     width: min(100%, 600px);
     justify-self: center;
   }
@@ -6213,9 +6214,9 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .moon-disc__relief { animation: moon-relief-arrive 1050ms var(--ease-out) both; }
-  .moon-disc__sweep { animation: moon-orbit-arrive 1450ms var(--ease-out) 180ms both; }
-  .moon-disc > .moon-disc__svg .moon-disc__tick.is-current { animation: moon-phase-settle 540ms ease-out 1480ms both; }
+  .moon-disc__svg[data-intro="true"] .moon-disc__relief { animation: moon-relief-arrive 1050ms var(--ease-out) both; }
+  .moon-disc__svg[data-intro="true"] .moon-disc__sweep { animation: moon-orbit-arrive 1450ms var(--ease-out) 180ms both; }
+  .moon-disc__svg[data-intro="true"] .moon-disc__tick.is-current { animation: moon-phase-settle 540ms ease-out 1480ms both; }
 
   @keyframes moon-relief-arrive {
     from { opacity: 0; }
@@ -6232,4 +6233,91 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
     from { opacity: 0.62; }
     48% { opacity: 1; }
   }
+}
+
+.moon-hero__today { min-width: 0; }
+.moon-hero__today .moon-next { margin-top: 12px; }
+
+.moon-hero__today-label {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.moon-disc__caption time { color: var(--accent-hover); }
+.moon-hero > .moon-strip { padding-bottom: 10px; }
+
+.moon-strip__pick {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  align-items: start;
+  justify-items: center;
+  gap: 5px;
+  width: 100%;
+  height: 100%;
+  min-height: 44px;
+  padding: 6px 0;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.moon-strip__pick:hover { background: var(--surface); }
+.moon-strip__pick[aria-pressed="true"] { background: var(--surface); }
+.moon-strip__pick[aria-pressed="true"] .moon-mini {
+  outline: 1px solid var(--accent-hover);
+  outline-offset: -1px;
+  background: var(--glow);
+}
+
+.moon-strip__pick:focus-visible,
+.moon-strip__range:focus-visible {
+  outline: 2px solid var(--accent-hover);
+  outline-offset: 2px;
+}
+
+.moon-strip__range {
+  display: block;
+  width: calc(100% - 8px);
+  min-height: 44px;
+  margin-inline: 4px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+@media (max-width: 899px) {
+  .moon-hero > .moon-strip { padding-top: 16px; }
+  .moon-hero > .moon-strip h2 { font-size: clamp(22px, 5vw, 30px); margin-bottom: 8px; }
+}
+
+.moon-strip__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+}
+
+.moon-strip__reset {
+  min-height: 44px;
+  padding-inline: 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent-hover);
+  font: 600 14px var(--font-body);
+  cursor: pointer;
+}
+
+.moon-strip__reset[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.moon-strip__reset:focus-visible {
+  outline: 2px solid var(--accent-hover);
+  outline-offset: 2px;
 }

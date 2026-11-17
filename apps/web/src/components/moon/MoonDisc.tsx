@@ -1,14 +1,14 @@
 import { useId } from "react";
-import { discLitPath, PHASES, type PhaseId } from "@oracle/core/moon";
+import { discLitPath, PHASES, type PhaseId } from "@oracle/core/moon/visual";
 
-type Props = { illumination: number; waxing: boolean; phase: PhaseId; size?: "large" | "mini"; showTicks?: boolean };
+type Props = { illumination: number; waxing: boolean; phase: PhaseId; size?: "large" | "mini"; showTicks?: boolean; animateIntro?: boolean };
 
 const LARGE = { box: 400, radius: 150, ticksRadius: 182, tick: 4 } as const;
 const MINI = { box: 100, radius: 44 } as const;
 
 // Путь из @oracle/core/moon задаёт фазу и обрезает текстуру большого диска. Те же сведения доступны текстом рядом.
 // Оформление — Codex (docs/design/codex-brief-luna-today.md)
-export function MoonDisc({ illumination, waxing, phase, size = "large", showTicks = size === "large" }: Props) {
+export function MoonDisc({ illumination, waxing, phase, size = "large", showTicks = size === "large", animateIntro = true }: Props) {
   const scope = useId();
   const discClip = `${scope}-disc`;
   const phaseClip = `${scope}-phase`;
@@ -20,7 +20,7 @@ export function MoonDisc({ illumination, waxing, phase, size = "large", showTick
   const phaseAngle = PHASES.indexOf(phase) * 45 - 90;
   const texture = "/images/moon/moon-surface.webp";
   return (
-    <svg className={mini ? "moon-disc__svg moon-mini" : "moon-disc__svg"} viewBox={`0 0 ${box} ${box}`} aria-hidden="true" focusable="false">
+    <svg className={mini ? "moon-disc__svg moon-mini" : "moon-disc__svg"} viewBox={`0 0 ${box} ${box}`} aria-hidden="true" focusable="false" data-intro={!mini && animateIntro ? "true" : undefined}>
       {!mini && (
         <defs>
           <clipPath id={discClip}><circle cx={center} cy={center} r={radius} /></clipPath>

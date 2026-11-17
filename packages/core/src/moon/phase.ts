@@ -1,9 +1,9 @@
 import * as Astronomy from "astronomy-engine";
 import { eclipticLongitude } from "../natal/bodies";
 import { signOf, type SignId } from "../natal/zodiac";
+import { PHASES, type PhaseId } from "./phase-ids";
 
-export const PHASES = ["new", "waxingCrescent", "firstQuarter", "waxingGibbous", "full", "waningGibbous", "lastQuarter", "waningCrescent"] as const;
-export type PhaseId = (typeof PHASES)[number];
+export { PHASES, type PhaseId } from "./phase-ids";
 
 // Восемь секторов по 45° с центром на каждой фазе: новолуние — [337,5°; 22,5°)
 export function phaseOf(angle: number): PhaseId {
