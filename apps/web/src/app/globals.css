@@ -5758,9 +5758,8 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   --moon-disc-rim: #806951;
   --moon-orbit: rgba(203, 166, 118, 0.28);
   --moon-disc-halo: rgba(203, 166, 118, 0.16);
-  --moon-mask-full: #000;
-  --moon-mask-soft: rgba(0, 0, 0, 0.78);
-  --moon-mask-dim: rgba(0, 0, 0, 0.59);
+  --moon-light-ambient: rgba(165, 143, 199, 0.11);
+  --moon-light-center: #24202b;
 }
 
 .moon-page {
@@ -5819,7 +5818,7 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   margin: 0;
   max-width: 14ch;
   color: var(--ink);
-  font: 300 clamp(40px, 6.2vw, 84px)/1.04 var(--font-display);
+  font: 300 clamp(40px, 5.9vw, 76px)/1.02 var(--font-display);
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
@@ -5849,7 +5848,7 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   overflow: visible;
   background:
     radial-gradient(circle closest-side, transparent 90.6%, var(--moon-orbit) 91%, transparent 91.4%),
-    radial-gradient(circle, var(--glow) 5%, transparent 69%);
+    radial-gradient(circle closest-side, var(--moon-light-center), var(--moon-light-ambient) 64%, transparent 100%);
 }
 
 .moon-page :is(.moon-disc__svg, .moon-mini) .moon-disc__base {
@@ -5861,16 +5860,26 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 }
 
 .moon-disc > .moon-disc__svg .moon-disc__base {
-  filter: drop-shadow(0 0 16px var(--moon-disc-halo));
-  mask-image: radial-gradient(circle at 47% 39%, var(--moon-mask-full) 15%, var(--moon-mask-soft) 75%, var(--moon-mask-dim));
+  filter: drop-shadow(0 0 15px var(--moon-disc-halo));
 }
 
-.moon-disc > .moon-disc__svg .moon-disc__lit {
-  mask-image:
-    radial-gradient(ellipse at 39% 37%, var(--moon-mask-full) 8%, var(--moon-mask-soft) 59%, var(--moon-mask-dim) 100%),
-    radial-gradient(ellipse at 60% 43%, var(--moon-mask-soft), var(--moon-mask-full) 36%),
-    radial-gradient(ellipse at 36% 62%, var(--moon-mask-soft), var(--moon-mask-full) 31%);
-  mask-composite: intersect;
+.moon-disc__earthshine {
+  opacity: 0.22;
+}
+
+.moon-disc__relief {
+  opacity: 1;
+}
+
+.moon-disc__sweep {
+  fill: none;
+  stroke: var(--accent-hover);
+  stroke-linecap: round;
+  stroke-width: 1.3;
+  vector-effect: non-scaling-stroke;
+  transform-origin: center;
+  transform-box: view-box;
+  opacity: 0;
 }
 
 .moon-page :is(.moon-disc__svg, .moon-mini) .moon-disc__rim {
@@ -6024,8 +6033,7 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   color: var(--ink-soft);
   font-size: 14px;
   line-height: 1.35;
-  overflow-wrap: anywhere;
-  hyphens: auto;
+  text-wrap: balance;
 }
 
 .moon-text {
@@ -6133,7 +6141,7 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 
 @media (min-width: 900px) {
   .moon-hero {
-    grid-template-columns: minmax(0, 1fr) minmax(360px, 41%);
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 45%);
     column-gap: clamp(28px, 6vw, 86px);
     padding-block: 18px 36px;
   }
@@ -6144,13 +6152,19 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 
   .moon-hero > .moon-disc {
     grid-area: 1 / 2 / span 4;
-    width: min(100%, 432px);
+    width: min(100%, 508px);
   }
 
+}
+
+@media (min-width: 1200px) {
   .moon-strip__list {
     grid-template-columns: repeat(14, minmax(0, 1fr));
-    grid-auto-columns: auto;
+    gap: 0;
   }
+
+  .moon-strip__day { padding-inline: 0; }
+  .moon-strip__phase { letter-spacing: -0.035em; }
 }
 
 @media (max-width: 899px) {
@@ -6179,7 +6193,7 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   }
 
   .moon-disc {
-    width: min(100%, 282px);
+    width: min(100%, 310px);
   }
 
   .moon-tile {
@@ -6188,20 +6202,23 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .moon-disc > .moon-disc__svg { animation: moon-disc-breathe 10s ease-in-out infinite; }
-  .moon-disc > .moon-disc__svg .moon-disc__lit { animation: moon-disc-reveal 900ms var(--ease-out) both; }
-  .moon-disc > .moon-disc__svg .moon-disc__tick.is-current { animation: moon-tick-warm 1100ms ease-out both; }
+  .moon-disc__relief { animation: moon-relief-arrive 1050ms var(--ease-out) both; }
+  .moon-disc__sweep { animation: moon-orbit-arrive 1450ms var(--ease-out) 180ms both; }
+  .moon-disc > .moon-disc__svg .moon-disc__tick.is-current { animation: moon-phase-settle 540ms ease-out 1480ms both; }
 
-  @keyframes moon-disc-breathe {
-    0%, 100% { transform: scale(0.994); }
-    50% { transform: scale(1.006); }
+  @keyframes moon-relief-arrive {
+    from { opacity: 0; }
   }
 
-  @keyframes moon-disc-reveal {
-    from { opacity: 0.12; }
+  @keyframes moon-orbit-arrive {
+    0% { transform: rotate(-210deg); opacity: 0; }
+    18% { opacity: 0.88; }
+    82% { opacity: 0.95; }
+    100% { transform: rotate(0deg); opacity: 0; }
   }
 
-  @keyframes moon-tick-warm {
-    from { opacity: 0.58; }
+  @keyframes moon-phase-settle {
+    from { opacity: 0.62; }
+    48% { opacity: 1; }
   }
 }
