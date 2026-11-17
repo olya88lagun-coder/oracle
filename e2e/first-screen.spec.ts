@@ -34,6 +34,31 @@ test.describe("first visit with the cookie panel open", () => {
 
 });
 
+test("a date typed on the home page opens the matrix result at once, without the date in the address", async ({ page }) => {
+  await page.goto("/");
+  const date = page.getByRole("textbox", { name: "Дата рождения" });
+  await expect(async () => {
+    await date.fill("1988-11-18");
+    await page.getByRole("link", { name: "Рассчитать матрицу бесплатно" }).click();
+    await expect(page).toHaveURL(/\/matrica-sudby$/, { timeout: 3000 });
+  }).toPass({ timeout: 25_000 });
+  await expect(page.getByRole("heading", { level: 2, name: "Ваша матрица судьбы" })).toBeVisible();
+  expect(page.url()).not.toMatch(/1988/);
+});
+
+test("the home page asks for a valid date and does not leave, but an empty date still opens the calculator", async ({ page }) => {
+  await page.goto("/");
+  await expect(async () => {
+    await page.getByRole("textbox", { name: "Дата рождения" }).fill("1850-01-01");
+    await page.getByRole("link", { name: "Рассчитать матрицу бесплатно" }).click();
+    await expect(page.locator("#home-date-error")).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 25_000 });
+  await expect(page).toHaveURL(/localhost:\d+\/$/);
+  await page.getByRole("textbox", { name: "Дата рождения" }).fill("");
+  await page.getByRole("link", { name: "Рассчитать матрицу бесплатно" }).click();
+  await expect(page).toHaveURL(/\/matrica-sudby$/);
+});
+
 test("the matrix result leads to the Lila game instead of a «soon» stub", async ({ page }) => {
   await page.goto("/matrica-sudby");
   await expect(async () => {

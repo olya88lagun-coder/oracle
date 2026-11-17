@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT, MATRIX_REPORT_PRICE_KOPECKS } from "@oracle/core";
+import { HomeDateStart } from "@/components/HomeDateStart";
 import { YearPromo } from "@/components/year-arcana/YearPromo";
-import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { BLOG_PATH, BLOG_POSTS, blogPath } from "@/lib/blog";
 import { formatRubles } from "@/lib/legal";
 import { HOME_PRINCIPLES, HOME_PRINCIPLES_TITLE } from "@/lib/home-principles";
-import { FREE_MATRIX_CTA, FREE_RESULT_PROMISE, FREE_RESULT_TERMS, PRACTICES } from "@/lib/practices";
+import { FREE_RESULT_PROMISE, FREE_RESULT_TERMS, PRACTICES } from "@/lib/practices";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE, websiteJsonLd } from "@/lib/seo";
 import { salesEnabled } from "@/server/payments-deps";
 
@@ -57,11 +57,7 @@ export default function HomePage() {
             помогаем увидеть, что происходит сейчас.
           </p>
           <div className="hero__cta stack">
-            <p>
-              <Link className="button button--lavender" href={MATRIX_PATH}>
-                {FREE_MATRIX_CTA}
-              </Link>
-            </p>
+            <HomeDateStart />
             <p className="hero__promise">
               {FREE_RESULT_PROMISE}
               <br />

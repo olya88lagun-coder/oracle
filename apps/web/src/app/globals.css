@@ -575,6 +575,7 @@ a.report-toc__title:hover { color: var(--accent); }
 .hero__cta { margin-top: 24px; gap: 12px; }
 .hero__cta > * { margin: 0; }
 .hero__promise { font-size: 17px; color: var(--ink); }
+.hero-date { max-width: 320px; gap: 6px; }
 .practice-card__cta { width: fit-content; margin-top: 14px; white-space: nowrap; pointer-events: none; }
 /* Связка арканов в блоке продажи: число → общее значение → связка */
 /* Список точек связки арканов в блоке продажи (раньше назывался matrix-link и конфликтовал с одноимённой ссылкой ниже) */
@@ -1679,7 +1680,7 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 /* Мобильный первый экран (по аудиту 1 октября): главное действие должно быть видно над панелью cookie.
    Десктопная сцена не меняется */
 @media (max-width: 759px) {
-  .hero__art { height: min(52vw, 210px); }
+  .hero__art { height: min(40vw, 160px); }
   .hero__text { margin-top: -36px; }
   .hero__text > * + * { margin-top: 14px; }
   .hero .lead { font-size: 17px; }
