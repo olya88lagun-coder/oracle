@@ -5,6 +5,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./natal": "./src/natal/index.ts",
+    "./moon": "./src/moon/index.ts",
+    "./moon/visual": "./src/moon/visual.ts",
     "./natal-report": "./src/natal/report.ts"
   },
   "scripts": {

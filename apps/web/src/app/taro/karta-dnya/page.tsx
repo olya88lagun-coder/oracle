@@ -3,6 +3,8 @@ import { drawCards } from "@/components/taro/draw-cards";
 import { TaroDayGuide, taroDayBreadcrumbsJsonLd, taroDayFaqJsonLd } from "@/components/taro/TaroDayGuide";
 import { TaroDraw } from "@/components/taro/TaroDraw";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
+import Link from "next/link";
+import { MOON_PATH } from "@/lib/moon-paths";
 import { TARO_DAY_PATH } from "@/lib/taro-paths";
 
 export const metadata: Metadata = publicMetadata({
@@ -40,6 +42,7 @@ export default function TaroDayPage() {
           </ul>
         </TaroDraw>
         <TaroDayGuide />
+        <p className="taro-moon-link"><Link className="touch-link" href={MOON_PATH}>Луна сегодня: фаза, знак и лунные сутки</Link></p>
       </main>
     </>
   );
