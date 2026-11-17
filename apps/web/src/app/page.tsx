@@ -76,10 +76,9 @@ export default function HomePage() {
           <p className="practices-note">{freePaidLine()}</p>
           <ul className="practice-grid">
             {OPEN.map((practice) => (
-              <li key={practice.slug} className="practice-card">
+              <li key={practice.slug} className="practice-card practice-card--open">
                 <Image className="practice-card__art" src={`/practices/${practice.slug}.webp`} alt="" fill unoptimized sizes="(min-width: 760px) 50vw, 100vw" />
                 <div className="practice-card__body">
-                  <span className={practice.href ? "tag tag--open" : "tag"}>{practice.href ? "Открыто" : "Скоро"}</span>
                   <h3>
                     {practice.href ? (
                       <Link className="practice-card__link" href={practice.href}>

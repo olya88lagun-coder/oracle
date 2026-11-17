@@ -330,6 +330,8 @@ body .stack > .matrix-result { margin-top: 56px; }
 .practice-card h3 { margin: 0; font-size: clamp(24px, 3vw, 30px); }
 .practice-card p { margin: 0; color: var(--ink-soft); font-size: 14px; }
 .tag--open { border-color: var(--accent-line); color: var(--accent); }
+/* Открытая практика отмечена цветом рамки и кнопкой, а не словом «Открыто» (метка осталась только у «Скоро») */
+.practice-card--open { border-color: var(--accent-line); }
 /* Вся карточка кликабельна через растянутую ссылку в заголовке */
 .practice-card__link { color: inherit; text-decoration: none; }
 .practice-card__link::after { content: ""; position: absolute; inset: 0; z-index: 1; }
