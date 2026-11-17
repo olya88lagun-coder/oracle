@@ -1,8 +1,11 @@
 "use client";
 
 import { formatBirthDateRu, type LifeThread } from "@oracle/core";
+import { PosterButton } from "@/components/PosterButton";
 import { PERIOD_POSITIONS, type ThreadCard, type ThreadTexts } from "@/lib/life-thread";
 import { YEAR_NAMES } from "@/lib/life-thread-curve";
+import { reachNumerologyGoal } from "@/lib/numerology";
+import { threadPosterSpec } from "@/lib/poster-thread";
 import { ThreadChart } from "./ThreadChart";
 
 const ROMAN = ["I", "II", "III", "IV"] as const;
@@ -41,6 +44,7 @@ export function ThreadResult({ thread, texts }: { thread: LifeThread; texts: Thr
     </div>
 
     <ThreadChart thread={thread} />
+    <div className="thread-actions" onClickCapture={() => { reachNumerologyGoal("thread_poster"); }}><PosterButton spec={threadPosterSpec(thread)} /></div>
 
     <div className="thread-periods stack">
       <p className="eyebrow">Четыре периода</p>

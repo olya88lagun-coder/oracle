@@ -40,3 +40,9 @@ test("without published texts the cards say the description will appear later an
   expect(html).toContain("Описание появится позже");
   expect(html).not.toContain("<a ");
 });
+
+test("the story picture button is there and its spec carries no date of birth", () => {
+  const html = renderToStaticMarkup(<ThreadResult thread={thread} texts={TEXTS} />);
+  expect(html).toContain("Картинка для сторис");
+  expect(html).not.toContain("1990-07-15");
+});
