@@ -72,7 +72,7 @@
   - `export function moonRises(from: Date, limitDays: number, place?: typeof MOSCOW): Date[]` — все восходы Луны с `from` на `limitDays` суток вперёд, по возрастанию
   - `export function moonSets(from: Date, limitDays: number, place?: typeof MOSCOW): Date[]`
   - `export type LunarDay = { number: number; startsAt: Date; endsAt: Date }`
-  - `export function lunarDayFromRises(at: Date, newMoon: Date, rises: readonly Date[]): LunarDay` — чистая функция: первые сутки начинаются с первого восхода после `newMoon`, каждый следующий восход начинает следующие сутки, `number` не больше 30; `startsAt` — восход, начавший текущие сутки, `endsAt` — следующий восход; если `at` раньше первого восхода после новолуния, это 30-е сутки прежнего месяца
+  - `export function lunarDayFromRises(at: Date, newMoon: Date, rises: readonly Date[]): LunarDay` — чистая функция: 1-е сутки начинаются в момент `newMoon`, 2-е — с первого восхода после него и так далее (восход до новолуния суток не начинает), `number` не больше 30; `startsAt` — момент, начавший текущие сутки (`newMoon` или восход), `endsAt` — следующий восход
   - `export function lunarDay(at: Date, place?: typeof MOSCOW): LunarDay` — собирает `previousNewMoon`, восходы за ~32 суток и вызывает `lunarDayFromRises`
   - `export function moscowDayStart(at: Date): Date` — начало московских суток (UTC, 00:00 по Москве)
 
