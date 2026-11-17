@@ -2,7 +2,7 @@
 
 import type { Matrix } from "@oracle/core";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { nextHero, rollDelay, rollValue, ROLL_MS, type HeroState } from "@/lib/matrix-hero";
+import { nextHero, PASS_LEAD_MS, passSchedule, rollDelay, rollTotal, rollValue, ROLL_MS, type HeroState } from "@/lib/matrix-hero";
 import { DIAGRAM_LINES, DIAGRAM_POINTS, DIAGRAM_SIZE, KEY_POINTS, keyArcana } from "@/lib/matrix-view";
 import { MATRIX_DATE_ID } from "./matrix-ids";
 
@@ -12,7 +12,8 @@ const byPoint = new Map(DIAGRAM_POINTS.map((p) => [p.point, p]));
 const KEY_ORDER: readonly string[] = KEY_POINTS.map(({ point }) => point);
 // Путь блика: Личность → Центр → Задача
 const COMET = ["A", "E", "D"].map((point) => byPoint.get(point as never)!);
-const FLASH_MS = 2400;
+// Первый проход света при загрузке начинается, когда линии и узлы уже нарисованы
+const PASS_INTRO_MS = 900;
 const TILT_DEGREES = 3;
 
 const shownOf = (matrix: Matrix): Shown => Object.fromEntries(DIAGRAM_POINTS.map(({ point }) => [point, matrix[point]]));
@@ -24,7 +25,10 @@ export function MatrixHeroLive({ value }: { value: string }) {
   const [hero, setHero] = useState<HeroState>(() => nextHero(value, new Date(), null));
   const [shown, setShown] = useState<Shown>(() => shownOf(hero.matrix));
   const [phase, setPhase] = useState<"idle" | "rolling">("idle");
-  const [flash, setFlash] = useState(false);
+  // Проход света: «wait» — ждём остановки чисел, «run» — свет идёт, «done»/«idle» — готово (до скрипта всё уже тёплое)
+  const [pass, setPass] = useState<"idle" | "wait" | "run" | "done">("idle");
+  // Сколько ключевых точек уже согрето светом (Личность, Центр, Задача); их подписи теплеют вместе с узлами
+  const [lit, setLit] = useState(3);
   const [run, setRun] = useState(0);
   const [visible, setVisible] = useState(true);
   const figureRef = useRef<HTMLElement>(null);
@@ -34,13 +38,31 @@ export function MatrixHeroLive({ value }: { value: string }) {
   // Дата, пришедшая из портрета, браузера или с главной, появляется без «прокрутки»: прокручиваем только то, что человек ввёл сам
   const typedRef = useRef(false);
   const frameRef = useRef(0);
-  const flashTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const passTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const first = useRef(true);
 
-  const flashKeys = () => {
-    clearTimeout(flashTimer.current);
-    setFlash(true);
-    flashTimer.current = setTimeout(() => setFlash(false), FLASH_MS);
+  const clearPass = () => {
+    passTimers.current.forEach(clearTimeout);
+    passTimers.current = [];
+  };
+  const finishPass = () => {
+    clearPass();
+    setLit(3);
+    setPass("done");
+  };
+  // Один проход света Личность → Центр → Задача через `delay` мс: узел и его подпись теплеют в момент касания
+  const startPass = (delay: number) => {
+    clearPass();
+    setLit(0);
+    setPass("wait");
+    passSchedule(delay).litAt.forEach((at, index) => {
+      passTimers.current.push(
+        setTimeout(() => {
+          setLit(index + 1);
+          setPass(index === 2 ? "done" : "run");
+        }, at),
+      );
+    });
   };
 
   useEffect(() => {
@@ -66,12 +88,12 @@ export function MatrixHeroLive({ value }: { value: string }) {
     });
     if (figure) observer?.observe(figure);
     document.addEventListener("visibilitychange", update);
-    if (motionAllowed()) flashKeys();
+    if (motionAllowed()) startPass(PASS_INTRO_MS);
     return () => {
       observer?.disconnect();
       document.removeEventListener("visibilitychange", update);
       cancelAnimationFrame(frameRef.current);
-      clearTimeout(flashTimer.current);
+      clearPass();
     };
   }, []);
 
@@ -93,14 +115,22 @@ export function MatrixHeroLive({ value }: { value: string }) {
       setShown(to);
       setPhase("idle");
     };
-    if (!motionAllowed() || !typedRef.current || !visibleRef.current) {
+    if (!motionAllowed() || !visibleRef.current) {
       settle();
+      finishPass();
       return;
     }
-    flashKeys();
+    // Дата без ввода (с главной, из портрета): числа сразу на месте, свет проходит один раз
+    if (!typedRef.current) {
+      settle();
+      startPass(PASS_INTRO_MS);
+      return;
+    }
     setPhase("rolling");
     const start = performance.now();
-    const total = ROLL_MS + rollDelay(DIAGRAM_POINTS.length - 1);
+    const total = rollTotal(DIAGRAM_POINTS.length);
+    // Свет пойдёт, когда последнее число встало на место
+    startPass(total + PASS_LEAD_MS);
     const tick = (now: number) => {
       const elapsed = now - start;
       if (elapsed >= total) {
@@ -145,7 +175,7 @@ export function MatrixHeroLive({ value }: { value: string }) {
   }, []);
 
   return (
-    <figure ref={figureRef} className="matrix-live" aria-hidden="true" data-state={hero.kind} data-phase={phase} data-visible={visible ? "true" : "false"} data-run={run}>
+    <figure ref={figureRef} className="matrix-live" aria-hidden="true" data-state={hero.kind} data-phase={phase} data-pass={pass} data-lit={lit} data-visible={visible ? "true" : "false"} data-run={run}>
       <figcaption className="matrix-live__caption">{hero.caption}</figcaption>
       <svg className="matrix-live__svg" viewBox={`0 0 ${DIAGRAM_SIZE} ${DIAGRAM_SIZE}`} focusable="false">
         <defs>
@@ -164,7 +194,7 @@ export function MatrixHeroLive({ value }: { value: string }) {
         })}
         <polyline className="matrix-live__comet" points={COMET.map((p) => `${p.x},${p.y}`).join(" ")} pathLength={1} />
         {DIAGRAM_POINTS.map(({ point, x, y, r, tier }, index) => (
-          <g key={point} data-point={point} className={`matrix-live__point matrix-live__point--${tier}${flash && tier === "key" ? " is-flash" : ""}`} style={{ "--i": index, "--k": Math.max(0, KEY_ORDER.indexOf(point)) } as CSSProperties}>
+          <g key={point} data-point={point} className={`matrix-live__point matrix-live__point--${tier}${tier === "key" && KEY_ORDER.indexOf(point) < lit ? " is-lit" : ""}`} style={{ "--i": index, "--k": Math.max(0, KEY_ORDER.indexOf(point)) } as CSSProperties}>
             <circle cx={x} cy={y} r={r} />
             <text x={x} y={y} textAnchor="middle" dominantBaseline="central">
               {shown[point]}
@@ -173,8 +203,8 @@ export function MatrixHeroLive({ value }: { value: string }) {
         ))}
       </svg>
       <ul className="matrix-live__keys">
-        {keyArcana(hero.matrix).map((key) => (
-          <li key={key.point} className="matrix-live__key">
+        {keyArcana(hero.matrix).map((key, index) => (
+          <li key={key.point} className={`matrix-live__key${index < lit ? " is-lit" : ""}`}>
             <span className="matrix-live__key-label">{key.label}</span> <span className="matrix-live__key-name">{key.name}</span>
           </li>
         ))}

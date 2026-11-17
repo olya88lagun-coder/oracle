@@ -5641,20 +5641,22 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
     animation: matrix-live-arrive 380ms var(--ease-out) backwards;
     animation-delay: calc(180ms + var(--i, 0) * 17ms);
   }
-  .matrix-live__comet {
-    stroke-dasharray: 0.15 1.15;
-    animation: matrix-live-comet 7s linear 1300ms infinite;
+  /* Один проход света Личность → Центр → Задача, когда числа встали (data-pass="run" ставит код); 1200 мс = PASS_MS в lib/matrix-hero.ts */
+  .matrix-live__comet { stroke-dasharray: 0.15 1.15; }
+  .matrix-live[data-pass="run"] .matrix-live__comet { animation: matrix-live-pass 1200ms linear forwards; }
+  /* Узел и подпись теплеют в момент касания (is-lit ставит код); пока свет не дошёл, они остаются сдержанными */
+  .matrix-live__point--key circle { transition: stroke 380ms ease-out, filter 380ms ease-out; }
+  .matrix-live__key-name { transition: opacity 380ms ease-out; }
+  .matrix-live:is([data-pass="wait"], [data-pass="run"]) .matrix-live__point--key:not(.is-lit) circle {
+    stroke: var(--matrix-live-bronze);
+    filter: none;
   }
-  .matrix-live__point--key.is-flash circle {
-    animation: matrix-live-flash 820ms ease-in-out;
-    animation-delay: calc(680ms + var(--k, 0) * 265ms);
-  }
+  .matrix-live:is([data-pass="wait"], [data-pass="run"]) .matrix-live__key:not(.is-lit) .matrix-live__key-name { opacity: 0.28; }
   .matrix-live[data-phase="rolling"] .matrix-live__point:not([data-point="E"]) circle {
     fill: var(--surface-3);
     stroke: var(--accent);
   }
-  .matrix-live[data-visible="false"] :is(.matrix-live__svg, .matrix-live__line, .matrix-live__comet, .matrix-live__point),
-  .matrix-live[data-visible="false"] .matrix-live__point--key.is-flash circle {
+  .matrix-live[data-visible="false"] :is(.matrix-live__svg, .matrix-live__line, .matrix-live__comet, .matrix-live__point) {
     animation-play-state: paused;
   }
 
@@ -5665,12 +5667,9 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
     0%, 100% { transform: scale(0.994); }
     50% { transform: scale(1.006); }
   }
-  @keyframes matrix-live-comet {
-    0% { opacity: 0; stroke-dashoffset: 0.15; }
-    5%, 23% { opacity: 0.86; }
-    29%, 100% { opacity: 0; stroke-dashoffset: -1; }
-  }
-  @keyframes matrix-live-flash {
-    50% { filter: drop-shadow(0 0 9px var(--accent)); }
+  @keyframes matrix-live-pass {
+    from { opacity: 0; stroke-dashoffset: 0.075; }
+    8%, 90% { opacity: 0.9; }
+    to { opacity: 0; stroke-dashoffset: -0.925; }
   }
 }

@@ -30,3 +30,17 @@ export function rollValue(from: number, to: number, progress: number): number {
 export function rollDelay(index: number): number {
   return Math.min(index * 12, 336);
 }
+
+// Длина всей «прокрутки»: ROLL_MS плюс задержка последнего узла
+export function rollTotal(pointCount: number): number {
+  return ROLL_MS + rollDelay(pointCount - 1);
+}
+
+// Один проход света Личность → Центр → Задача после остановки чисел: свет идёт PASS_MS, точки теплеют в моменты касания
+export const PASS_MS = 1200;
+// Пауза между «числа встали» и «пошёл свет»
+export const PASS_LEAD_MS = 150;
+
+export function passSchedule(delay: number): { litAt: [number, number, number] } {
+  return { litAt: [delay, delay + PASS_MS / 2, delay + PASS_MS] };
+}

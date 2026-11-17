@@ -1,6 +1,6 @@
 import { calculateMatrix, parseBirthDate } from "@oracle/core";
 import { describe, expect, test } from "vitest";
-import { HERO_EXAMPLE_DATE, nextHero, rollDelay, rollValue } from "./matrix-hero";
+import { HERO_EXAMPLE_DATE, nextHero, PASS_LEAD_MS, PASS_MS, passSchedule, rollDelay, rollTotal, rollValue, ROLL_MS } from "./matrix-hero";
 
 const TODAY = new Date("2026-11-17T12:00:00Z");
 
@@ -57,5 +57,26 @@ describe("nextHero", () => {
     const previous = nextHero("1990-03-07", TODAY, null);
     expect(nextHero("1850-01-01", TODAY, previous)).toBe(previous);
     expect(nextHero("", TODAY, previous)).toBe(previous);
+  });
+});
+
+describe("rollTotal", () => {
+  test("is the roll length plus the last node's wave delay", () => {
+    expect(rollTotal(28)).toBe(ROLL_MS + rollDelay(27));
+    expect(rollTotal(1)).toBe(ROLL_MS);
+  });
+});
+
+describe("passSchedule", () => {
+  test("lights Личность at the start, Центр in the middle and Задача at the end of one pass", () => {
+    expect(passSchedule(1000)).toEqual({ litAt: [1000, 1000 + PASS_MS / 2, 1000 + PASS_MS] });
+  });
+
+  test("a pass takes about a second, and the light starts a beat after the numbers stop", () => {
+    expect(PASS_MS).toBeGreaterThanOrEqual(1000);
+    expect(PASS_MS).toBeLessThanOrEqual(1400);
+    expect(PASS_LEAD_MS).toBeGreaterThan(0);
+    // Вся реакция (прокрутка и проход) около двух секунд
+    expect(rollTotal(28) + PASS_LEAD_MS + PASS_MS).toBeLessThanOrEqual(2600);
   });
 });
