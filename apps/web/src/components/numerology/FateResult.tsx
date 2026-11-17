@@ -6,6 +6,7 @@ import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { sessionStore } from "@/lib/matrix-save";
 import { reachNumerologyGoal } from "@/lib/numerology";
 import { prepareMatrixHandoff } from "@/lib/year-arcana";
+import { FateCircle } from "./FateCircle";
 
 export type FateSummary = { text: string; href: string };
 
@@ -22,6 +23,7 @@ export function FateResult({ iso, result, summary }: { iso: string; result: Fate
       <p className="eyebrow">Ваше число судьбы</p>
       <h2 id="fate-result-title" tabIndex={-1}>Число судьбы <span className={master ? "fate-value fate-value--master" : "fate-value"}>{result.value}</span></h2>
       <p className="year-calculation muted"><span>{dateDigits(iso).join(" + ")} = {result.sum}{result.steps.length > 1 && ";"}</span>{result.steps.length > 1 && <>{" "}<span>{result.steps.join(" → ")}</span></>}</p>
+      <FateCircle value={result.value} />
     </div>
     <div className="stack year-reading">
       {summary
