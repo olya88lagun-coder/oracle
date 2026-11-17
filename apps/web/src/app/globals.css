@@ -4631,6 +4631,12 @@ main:has(> .natal-intro):not(:has(> .natal-quick))::after {
 .lila-hero > .scene__intro { position: relative; width: min(var(--practice-hero-copy), var(--practice-hero-container)); max-width: none; margin-left: calc((100% - var(--practice-hero-container)) / 2); padding-block: 48px; }
 .lila-hero > .lila-hero__art { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; border: 0; border-radius: 0; aspect-ratio: auto; object-fit: cover; object-position: 74% 62%; }
 
+/* Лила: пробный бросок ближе к первому экрану на телефоне (hero ниже, ссылка «Попробовать бросок» ведёт к пробе): каркас Claude, оформление — Codex (docs/design/codex-backlog-oracle-2.md, этап 5) */
+@media (max-width: 759px) {
+  .lila-hero > .scene__intro { padding-block: 24px; }
+  #try { scroll-margin-top: 16px; }
+}
+
 /* Две строки grid объединяют уже существующие intro и форму, без новой обёртки в TSX.
    Псевдоэлемент задаёт общую минимальную высоту; дополнительное место остаётся под формой. */
 .compat-scene > .compat-scene__content { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: max-content minmax(0, 1fr); padding-top: 0; }
@@ -6853,10 +6859,3 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 .matrix-point.is-pickable { cursor: pointer; }
 .matrix-point.is-selected circle { stroke-width: 3; }
 .matrix-key.is-selected { border-color: var(--accent); }
-
-/* Лила: пробный бросок ближе к первому экрану на телефоне (hero ниже, ссылка «Попробовать бросок» ведёт к пробе): каркас Claude, оформление — Codex (docs/design/codex-backlog-oracle-2.md, этап 5) */
-@media (max-width: 759px) {
-  .lila-hero > .scene__intro { padding-block: 24px; }
-  #try { scroll-margin-top: 16px; }
-}
-
