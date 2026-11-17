@@ -5866,11 +5866,11 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   background: radial-gradient(circle closest-side, transparent 90.6%, var(--moon-orbit) 91%, transparent 91.4%);
 }
 
-.moon-page :is(.moon-disc__svg, .moon-mini) .moon-disc__base {
+:is(.moon-page, .moon-month) :is(.moon-disc__svg, .moon-mini) .moon-disc__base {
   fill: var(--moon-disc-shadow);
 }
 
-.moon-page :is(.moon-disc__svg, .moon-mini) .moon-disc__lit {
+:is(.moon-page, .moon-month) :is(.moon-disc__svg, .moon-mini) .moon-disc__lit {
   fill: var(--moon-disc-ivory);
 }
 
@@ -5893,7 +5893,7 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   opacity: 0;
 }
 
-.moon-page :is(.moon-disc__svg, .moon-mini) .moon-disc__rim {
+:is(.moon-page, .moon-month) :is(.moon-disc__svg, .moon-mini) .moon-disc__rim {
   fill: none;
   stroke: var(--moon-disc-rim);
   stroke-width: 1;
@@ -6320,4 +6320,64 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 .moon-strip__reset:focus-visible {
   outline: 2px solid var(--accent-hover);
   outline-offset: 2px;
+}
+
+/* Лунный календарь: каркас, оформление — Codex (docs/design/codex-brief-lunar-calendar.md) */
+.moon-month { width: min(100% - 32px, 1040px); margin-inline: auto; padding-block: 24px 64px; }
+.moon-month__head { display: grid; gap: 8px; margin-block: 16px; text-align: center; }
+.moon-month__head h1 { font-size: clamp(30px, 6vw, 52px); line-height: 1.1; }
+.moon-month__intro { max-width: 46em; margin-inline: auto; color: var(--ink-soft); }
+.moon-month__nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 16px; }
+.moon-month__prev, .moon-month__next { display: inline-flex; align-items: center; min-height: 44px; }
+.moon-month__list { display: flex; gap: 4px 12px; flex: 1 0 100%; margin: 0; padding: 0 0 8px; overflow-x: auto; list-style: none; }
+.moon-month__list a { display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap; color: var(--ink-soft); }
+.moon-month__list a[aria-current="page"] { color: var(--accent); }
+.moon-curve { margin: 0 0 16px; }
+.moon-curve__svg { display: block; width: 100%; height: auto; }
+.moon-curve__line { stroke: var(--accent); stroke-width: 1.5; }
+.moon-curve__area { fill: var(--surface-3); opacity: 0.5; stroke: none; }
+.moon-curve__event { fill: var(--accent); }
+.moon-curve__event[data-kind="new"] { fill: var(--bg); stroke: var(--accent); }
+.moon-curve__now { stroke: var(--ink-soft); stroke-width: 1; display: none; }
+.moon-month[data-has-today] .moon-curve__now { display: inline; transform: translateX(calc(var(--today, 0) * 720px)); }
+.moon-curve figcaption { color: var(--ink-faint); font-size: 14px; text-align: center; }
+.moon-month__explorer { display: grid; gap: 16px; }
+.moon-month__panel { display: grid; justify-items: center; gap: 12px; text-align: center; }
+.moon-month__panel .moon-disc__svg { width: min(100%, 240px); }
+.moon-month__details { display: grid; gap: 8px; width: 100%; max-width: 420px; margin: 0; text-align: left; }
+.moon-month__details div { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; padding-block: 4px; border-top: 1px solid var(--line); }
+.moon-month__details dt { color: var(--ink-faint); font-size: 14px; }
+.moon-month__details dd { margin: 0; }
+.moon-month__events ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.moon-event { display: grid; gap: 2px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); color: var(--ink); text-align: left; cursor: pointer; }
+.moon-event__time { color: var(--ink-soft); font-size: 14px; }
+.moon-month__grid { width: 100%; border-collapse: separate; border-spacing: 3px; table-layout: fixed; }
+.moon-month__grid th { padding: 4px 0; color: var(--ink-faint); font-size: 14px; font-weight: 400; }
+.moon-month__cell { padding: 0; border-radius: var(--radius-lg); background: color-mix(in srgb, var(--accent) calc(var(--lit, 0) * 18%), var(--surface)); }
+.moon-month__cell.is-empty { background: none; }
+.moon-month__cell.is-today { outline: 1px solid var(--accent); }
+.moon-month__pick { display: grid; justify-items: center; gap: 2px; width: 100%; min-height: 56px; padding: 4px 2px; border: 1px solid transparent; border-radius: inherit; background: none; color: var(--ink); cursor: pointer; }
+.moon-month__pick[aria-pressed="true"] { border-color: var(--accent); }
+.moon-month__date { font-size: 14px; }
+.moon-month__pick .moon-mini { width: 28px; height: 28px; }
+.moon-month__lunar, .moon-month__sign { font-size: 14px; color: var(--ink-soft); }
+@media (max-width: 599px) {
+  .moon-month__lunar, .moon-month__sign { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+.moon-ribbon { position: relative; margin-top: 24px; }
+.moon-ribbon__list { display: flex; margin: 0; padding: 0; list-style: none; }
+.moon-ribbon__seg { flex: calc(var(--to) - var(--from)) 1 0; display: grid; min-width: 0; padding: 6px 4px; border-inline-start: 1px solid var(--line); overflow: hidden; font-size: 14px; }
+.moon-ribbon__time { color: var(--ink-faint); font-size: 14px; white-space: nowrap; }
+.moon-ribbon__now { display: none; position: absolute; top: 40px; bottom: 0; left: calc(var(--today, 0) * 100%); width: 1px; background: var(--accent); }
+.moon-month[data-has-today] .moon-ribbon__now { display: block; }
+.moon-days { margin-top: 24px; }
+.moon-days__scroll { overflow-x: auto; }
+.moon-days__table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.moon-days__table th, .moon-days__table td { padding: 8px; border-top: 1px solid var(--line); text-align: left; white-space: nowrap; }
+.moon-month .moon-links, .moon-month .moon-faq { margin-top: 24px; }
+@media (min-width: 900px) {
+  .moon-month__explorer { grid-template-columns: minmax(0, 1fr) 280px; grid-template-areas: "events panel" "calendar panel"; align-items: start; }
+  .moon-month__panel { grid-area: panel; position: sticky; top: 24px; }
+  .moon-month__events { grid-area: events; }
+  .moon-month__calendar { grid-area: calendar; }
 }

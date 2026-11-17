@@ -59,7 +59,7 @@ export function MoonMonthExplorer({ weeks, days, events, initialIndex }: { weeks
           </figcaption>
         </figure>
         <dl className="moon-month__details">
-          <div><dt>Лунные сутки</dt><dd>{day.lunarNumber}-е{day.lunarChange ? `, затем ${day.lunarChange}` : ""}</dd></div>
+          <div><dt>Лунные сутки</dt><dd>{day.lunarNumber}-е{day.lunarChange ? `, ${day.lunarChange}` : ""}</dd></div>
           <div><dt>Знак Луны</dt><dd>{day.signName}</dd></div>
           <div><dt>Восход и заход</dt><dd>{day.riseSet}</dd></div>
         </dl>

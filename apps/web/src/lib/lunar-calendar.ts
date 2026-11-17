@@ -127,7 +127,7 @@ export function buildMonthPage(year: number, month: number, now: Date): MonthPag
   const end = new Date(Date.UTC(month === 12 ? year + 1 : year, month === 12 ? 0 : month, 1) - 3 * 3_600_000);
 
   const cells = data.days.map((day): CalendarDay => {
-    const change = day.lunarDay.changeAt && day.lunarDay.changeTo ? `${day.lunarDay.changeTo}-е сутки с ${clock(day.lunarDay.changeAt)}` : null;
+    const change = day.lunarDay.changeAt && day.lunarDay.changeTo ? `с ${clock(day.lunarDay.changeAt)} — ${day.lunarDay.changeTo}-е` : null;
     return {
       date: day.date,
       day: day.day,

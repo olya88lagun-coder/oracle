@@ -29,7 +29,6 @@
   - `section.moon-month__events` — `ul > li > button.moon-event[data-kind]` с `.moon-event__name` («Новолуние») и `.moon-event__time` («9 ноября, 10:02»). Бывает два полнолуния в месяце.
   - `section.moon-month__calendar` → `table.moon-month__grid`: `caption`, `thead` с семью `th` (Пн…Вс), `tbody > tr > td.moon-month__cell`. У ячейки `data-date`, `data-phase` (`new`, `waxingCrescent`, `firstQuarter`, `waxingGibbous`, `full`, `waningGibbous`, `lastQuarter`, `waningCrescent`), `data-weekday` (0 = понедельник), `style="--lit: 0…1; --i: порядок"`. Пустые (дни соседних месяцев) — `td.moon-month__cell.is-empty`. Внутри кнопка `button.moon-month__pick[aria-pressed]` с `.moon-month__date` (число), `svg.moon-mini`, `.moon-month__lunar` («9 л. с.»), `.moon-month__sign` («Рыбы»). Сегодняшняя — `.is-today`.
 - `section.moon-ribbon` — `ol.moon-ribbon__list > li.moon-ribbon__seg` (`style="--from: 0…1; --to: 0…1"`, внутри `.moon-ribbon__sign` и `.moon-ribbon__time`) и `span.moon-ribbon__now`.
-- `section.moon-signs` — тот же список текстом (`ol > li.moon-sign-run`): оставьте его для скринридеров (визуально можно скрыть через `visually-hidden`, если лента его полностью заменяет).
 - `section.moon-days` — `table.moon-days__table` (Дата, Фаза, Лунные сутки, Знак Луны, Восход и заход), строки `tr.moon-days__row[data-date]`.
 - `section.moon-faq` (`details`), `section.moon-links`, `p.moon-disclaimer`.
 

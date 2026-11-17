@@ -115,7 +115,7 @@ describe("buildMonthPage(2026, 11)", () => {
     const day17 = page.cells[16]!;
     expect(day17).toMatchObject({ date: "2026-11-17", day: 17, phaseName: "Первая четверть", signName: "Водолей", lunarNumber: 8 });
     expect(day17.label).toBe("17 ноября");
-    expect(day17.lunarChange).toMatch(/^9-е сутки с 13:5[0-6]$/);
+    expect(day17.lunarChange).toMatch(/^с 13:5[0-6] — 9-е$/);
     expect(day17.riseSet).toMatch(/^13:5[0-6] \/ (23:3[6-9]|23:4[0-2])$/);
   });
 
