@@ -425,7 +425,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: NUMEROLOGY_ALT,
     basis: ["numerology-fate"],
     internalLinks: ["/numerologiya", "/numerologiya/chislo-sudby/11", "/numerologiya/chislo-sudby/22", "/numerologiya/chislo-sudby/33"],
-    status: "draft",
+    status: "published",
   },
   // 57; «как читать квадрат пифагора» — 14. Разобрать готовый результат от ячеек к линиям на одном примере.
   // Не повторять формулу с лендинга, каталог ячеек или справочник линий. Пустая ячейка не оценивает человека.
