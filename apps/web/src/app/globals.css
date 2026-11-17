@@ -6844,12 +6844,216 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   @keyframes moon-calendar-cell-in { from { opacity: 0; transform: translateY(6px); } }
 }
 
-/* Выбор ключевой позиции на схеме (MatrixFocus): каркас Claude, оформление — Codex (docs/design/codex-brief-oracle-2.md, этап 1) */
-.matrix-focus__tabs { display: flex; flex-wrap: wrap; gap: 8px; }
-.matrix-focus__tab { min-height: 44px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 999px; background: transparent; color: var(--ink-soft); font: inherit; cursor: pointer; }
-.matrix-focus__tab[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
-.matrix-focus__name { margin: 0; font-family: var(--font-display); font-size: 24px; }
-.matrix-focus__number { color: var(--accent); }
-.matrix-point.is-pickable { cursor: pointer; }
-.matrix-point.is-selected circle { stroke-width: 3; }
-.matrix-key.is-selected { border-color: var(--accent); }
+/* Выбор ключевой позиции — «Ночной атлас», этап 1. */
+.matrix-focus.card {
+  min-width: 0;
+  gap: clamp(16px, 2.5vw, 24px);
+  padding: clamp(14px, 2.5vw, 26px);
+  border: 1px solid color-mix(in srgb, var(--accent) 46%, var(--line));
+  border-radius: 16px;
+  background: linear-gradient(145deg, var(--surface-3), var(--surface) 65%);
+  box-shadow: none;
+}
+
+.matrix-focus__tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+.matrix-focus__tab {
+  position: relative;
+  min-width: 0;
+  min-height: 44px;
+  padding: 6px 2px 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-soft);
+  font: 600 14px/1.2 var(--font-body);
+  cursor: pointer;
+}
+
+.matrix-focus__tab[aria-pressed="true"] {
+  border-color: var(--line-strong);
+  background: var(--surface-3);
+  color: var(--ink);
+}
+
+.matrix-focus__tab[aria-pressed="true"]::after {
+  position: absolute;
+  inset: auto 0 3px;
+  width: 18px;
+  height: 2px;
+  margin-inline: auto;
+  border-radius: 2px;
+  background: var(--accent);
+  content: "";
+}
+
+.matrix-focus :is(.matrix-focus__tab, a):focus-visible {
+  outline: 2px solid var(--accent-hover);
+  outline-offset: 2px;
+}
+
+.matrix-focus__body {
+  gap: 8px;
+  min-width: 0;
+}
+
+.matrix-focus__body > .eyebrow {
+  margin: 0;
+  color: var(--accent);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+}
+
+.matrix-focus__name {
+  margin: 0;
+  color: var(--ink);
+  font: 400 clamp(26px, 3.5vw, 38px)/1.11 var(--font-display);
+  text-wrap: balance;
+}
+
+.matrix-focus__number {
+  margin-inline-end: 0.12em;
+  color: var(--matrix-live-gold);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.matrix-focus__body > p:not([class]) {
+  max-width: 50ch;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: clamp(15px, 2vw, 16px);
+  line-height: 1.6;
+}
+
+.matrix-focus__body > a {
+  justify-self: start;
+  max-width: 100%;
+  font-size: 14px;
+  text-wrap: pretty;
+}
+
+.matrix-result__top > .matrix-diagram:has(.matrix-point.is-pickable) {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  justify-self: center;
+  width: min(100%, 550px);
+  min-width: 0;
+  aspect-ratio: 1;
+}
+
+.matrix-result__top > .matrix-diagram:has(.matrix-point.is-pickable)::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--accent);
+  mask: url("/images/matrix/matrix-age-scale.svg") center / 100% 100% no-repeat;
+  pointer-events: none;
+  content: "";
+}
+
+.matrix-result__top > .matrix-diagram:has(.matrix-point.is-pickable) > svg {
+  width: 82%;
+  max-width: none;
+}
+
+.matrix-result__top > .matrix-diagram .matrix-point.is-pickable {
+  cursor: pointer;
+}
+
+.matrix-result__top > .matrix-diagram .matrix-point.is-pickable:not(.is-selected) > circle {
+  fill: var(--surface-3);
+  stroke: color-mix(in srgb, var(--accent) 68%, var(--line));
+  filter: none;
+}
+
+.matrix-result__top > .matrix-diagram .matrix-point.is-pickable:not(.is-selected) > circle + text {
+  fill: var(--ink);
+}
+
+.matrix-result__top > .matrix-diagram .matrix-point.is-pickable.is-selected > circle {
+  fill: var(--matrix-live-gold);
+  stroke: var(--accent-hover);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 5px var(--matrix-live-halo));
+}
+
+.matrix-result__top > .matrix-diagram .matrix-point.is-pickable.is-selected > text {
+  fill: var(--accent-ink);
+  font-weight: 700;
+}
+
+.matrix-result__side .matrix-key.is-selected {
+  border-color: var(--accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .matrix-focus__tab:hover:not([aria-pressed="true"]) {
+    background: var(--surface-2);
+    color: var(--ink);
+  }
+
+  .matrix-result__top > .matrix-diagram .matrix-point.is-pickable:not(.is-selected):hover > circle {
+    stroke: var(--accent-hover);
+    stroke-width: 2;
+  }
+}
+
+@media (max-width: 759px) {
+  .matrix-result__top {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .matrix-result__top > .matrix-diagram :is(.matrix-point--inner, .matrix-point--line) text {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 360px) {
+  .matrix-result__side .matrix-keys {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .matrix-result__side .matrix-key__head > div {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .matrix-result__side .matrix-key h3 {
+    font-size: 22px;
+  }
+
+  .matrix-library {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .matrix-focus__tab {
+    transition: color 200ms var(--ease-out), background-color 200ms var(--ease-out), border-color 200ms var(--ease-out);
+  }
+
+  /* React обновляет содержимое панели на месте. Имена запускают проявление при каждом выборе. */
+  .matrix-focus:has(.matrix-focus__tab:nth-child(1)[aria-pressed="true"]) { --matrix-focus-in: matrix-focus-from-left; }
+  .matrix-focus:has(.matrix-focus__tab:nth-child(2)[aria-pressed="true"]) { --matrix-focus-in: matrix-focus-from-center; }
+  .matrix-focus:has(.matrix-focus__tab:nth-child(3)[aria-pressed="true"]) { --matrix-focus-in: matrix-focus-from-right; }
+  .matrix-focus__body { animation: var(--matrix-focus-in, none) 200ms var(--ease-out); }
+
+  @keyframes matrix-focus-from-left { from { opacity: 0.78; transform: translateX(-3px); } }
+  @keyframes matrix-focus-from-center { from { opacity: 0.78; transform: translateY(3px); } }
+  @keyframes matrix-focus-from-right { from { opacity: 0.78; transform: translateX(3px); } }
+}
+
+/* Портрет аркана в ключевом узле схемы (MatrixDiagram, только личный результат): каркас Claude, оформление — Codex */
+.matrix-point__art { opacity: 0.4; pointer-events: none; }
+.matrix-point.is-selected .matrix-point__art { opacity: 0.55; }

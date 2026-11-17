@@ -1,5 +1,7 @@
 import type { Matrix, MatrixPoint } from "@oracle/core";
 import type { CSSProperties } from "react";
+import { arcanumByNumber } from "@oracle/content";
+import { arcanumImage } from "@/lib/arcana-paths";
 import { DIAGRAM_LINES, DIAGRAM_POINTS, DIAGRAM_SIZE, KEY_POINTS, pointRows, pointTitle } from "@/lib/matrix-view";
 
 const byPoint = new Map(DIAGRAM_POINTS.map((p) => [p.point, p]));
@@ -30,6 +32,15 @@ export function MatrixDiagram({ matrix, selected, onSelect }: Props) {
           >
             <title>{pointTitle(point, matrix[point])}</title>
             <circle cx={x} cy={y} r={r} />
+            {/* Портрет аркана в ключевом узле — только на личном результате (там, где узлы выбираются); число остаётся поверх */}
+            {onSelect && KEY_ORDER.includes(point) && (
+              <>
+                <clipPath id={`matrix-art-${point}`}>
+                  <circle cx={x} cy={y} r={r - 1} />
+                </clipPath>
+                <image className="matrix-point__art" href={arcanumImage(arcanumByNumber(matrix[point]), "thumb")} x={x - r} y={y - r} width={r * 2} height={r * 2} preserveAspectRatio="xMidYMid slice" clipPath={`url(#matrix-art-${point})`} />
+              </>
+            )}
             <text x={x} y={y} textAnchor="middle" dominantBaseline="central">
               {matrix[point]}
             </text>
