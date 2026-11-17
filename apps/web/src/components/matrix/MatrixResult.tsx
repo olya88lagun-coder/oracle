@@ -1,19 +1,23 @@
+"use client";
+
 import type { Matrix } from "@oracle/core";
 import { arcanumByNumber, SECTION_TITLES } from "@oracle/content";
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode, Ref } from "react";
+import { useState, type ReactNode, type Ref } from "react";
 import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 import { LILA_GAME_PATH } from "@/lib/lila-paths";
 import { KEY_POINTS, pointTitle, positionRows, PURPOSES } from "@/lib/matrix-view";
 import { PosterButton } from "@/components/PosterButton";
 import { matrixPosterSpec } from "./poster-spec";
 import { MatrixDiagram } from "./MatrixDiagram";
+import { FIRST_KEY_POINT, isKeyPoint, MatrixFocus } from "./MatrixFocus";
 
 type Props = { matrix: Matrix; dateLabel: string; headingRef?: Ref<HTMLHeadingElement>; actions?: ReactNode; offer?: ReactNode };
 
 export function MatrixResult({ matrix, dateLabel, headingRef, actions, offer }: Props) {
   const center = arcanumByNumber(matrix.E);
+  const [selected, setSelected] = useState(FIRST_KEY_POINT);
   return (
     <section className="matrix-result stack" aria-labelledby="matrix-result-title">
       <p className="eyebrow eyebrow--line">Ваша матрица · {dateLabel}</p>
@@ -22,8 +26,9 @@ export function MatrixResult({ matrix, dateLabel, headingRef, actions, offer }: 
       </h2>
 
       <div className="matrix-result__top">
-        <MatrixDiagram matrix={matrix} />
+        <MatrixDiagram matrix={matrix} selected={selected} onSelect={(point) => isKeyPoint(point) && setSelected(point)} />
         <div className="matrix-result__side stack">
+          <MatrixFocus matrix={matrix} selected={selected} onSelect={setSelected} />
           {/* Ruling 1: a visible compact list of positions next to the diagram (A–E plus the love/money line) */}
           <div className="matrix-positions card stack">
             <h3>Позиции</h3>
@@ -38,7 +43,7 @@ export function MatrixResult({ matrix, dateLabel, headingRef, actions, offer }: 
             {KEY_POINTS.map(({ point, key, label }) => {
               const arcanum = arcanumByNumber(matrix[point]);
               return (
-                <li key={point} className="card matrix-key stack">
+                <li key={point} className={`card matrix-key stack${point === selected ? " is-selected" : ""}`}>
                   <div className="matrix-key__art">
                     <Image src={arcanumImage(arcanum, "card")} alt="" fill unoptimized sizes="(min-width: 1200px) 220px, (min-width: 900px) 45vw, 100vw" />
                   </div>

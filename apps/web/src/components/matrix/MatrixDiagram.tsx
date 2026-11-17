@@ -1,4 +1,4 @@
-import type { Matrix } from "@oracle/core";
+import type { Matrix, MatrixPoint } from "@oracle/core";
 import type { CSSProperties } from "react";
 import { DIAGRAM_LINES, DIAGRAM_POINTS, DIAGRAM_SIZE, KEY_POINTS, pointRows, pointTitle } from "@/lib/matrix-view";
 
@@ -6,7 +6,10 @@ const byPoint = new Map(DIAGRAM_POINTS.map((p) => [p.point, p]));
 // Порядок вспышки ключевых точек совпадает с порядком карточек: Личность, Центр, Задача — «Задача» последняя
 const KEY_ORDER: readonly string[] = KEY_POINTS.map(({ point }) => point);
 
-export function MatrixDiagram({ matrix }: { matrix: Matrix }) {
+type Props = { matrix: Matrix; selected?: MatrixPoint; onSelect?: (point: MatrixPoint) => void };
+
+// selected/onSelect — необязательная подсветка выбранной точки и выбор нажатием на узел; для клавиатуры и скринридеров есть отдельные кнопки (MatrixFocus)
+export function MatrixDiagram({ matrix, selected, onSelect }: Props) {
   return (
     <figure className="matrix-diagram">
       <svg viewBox={`0 0 ${DIAGRAM_SIZE} ${DIAGRAM_SIZE}`} role="img" aria-labelledby="matrix-diagram-title">
@@ -19,7 +22,12 @@ export function MatrixDiagram({ matrix }: { matrix: Matrix }) {
           return <line key={`${from}-${to}`} className="matrix-diagram__line" x1={a.x} y1={a.y} x2={b.x} y2={b.y} pathLength={1} style={{ "--i": index } as CSSProperties} />;
         })}
         {DIAGRAM_POINTS.map(({ point, x, y, r, tier }, index) => (
-          <g key={point} className={`matrix-point matrix-point--${tier}`} style={{ "--i": index, "--k": KEY_ORDER.indexOf(point) } as CSSProperties}>
+          <g
+            key={point}
+            className={`matrix-point matrix-point--${tier}${point === selected ? " is-selected" : ""}${onSelect && KEY_ORDER.includes(point) ? " is-pickable" : ""}`}
+            style={{ "--i": index, "--k": KEY_ORDER.indexOf(point) } as CSSProperties}
+            onClick={onSelect && KEY_ORDER.includes(point) ? () => onSelect(point) : undefined}
+          >
             <title>{pointTitle(point, matrix[point])}</title>
             <circle cx={x} cy={y} r={r} />
             <text x={x} y={y} textAnchor="middle" dominantBaseline="central">

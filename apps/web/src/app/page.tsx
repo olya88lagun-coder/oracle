@@ -63,6 +63,9 @@ export default function HomePage() {
               <br />
               <span className="muted">{FREE_RESULT_TERMS}</span>
             </p>
+            <a className="matrix-link hero__all" href="#practices">
+              Все практики
+            </a>
           </div>
         </div>
       </section>
@@ -73,10 +76,9 @@ export default function HomePage() {
           <p className="practices-note">{freePaidLine()}</p>
           <ul className="practice-grid">
             {OPEN.map((practice) => (
-              <li key={practice.slug} className="practice-card">
+              <li key={practice.slug} className="practice-card practice-card--open">
                 <Image className="practice-card__art" src={`/practices/${practice.slug}.webp`} alt="" fill unoptimized sizes="(min-width: 760px) 50vw, 100vw" />
                 <div className="practice-card__body">
-                  <span className={practice.href ? "tag tag--open" : "tag"}>{practice.href ? "Открыто" : "Скоро"}</span>
                   <h3>
                     {practice.href ? (
                       <Link className="practice-card__link" href={practice.href}>

@@ -330,6 +330,8 @@ body .stack > .matrix-result { margin-top: 56px; }
 .practice-card h3 { margin: 0; font-size: clamp(24px, 3vw, 30px); }
 .practice-card p { margin: 0; color: var(--ink-soft); font-size: 14px; }
 .tag--open { border-color: var(--accent-line); color: var(--accent); }
+/* Открытая практика отмечена цветом рамки и кнопкой, а не словом «Открыто» (метка осталась только у «Скоро») */
+.practice-card--open { border-color: var(--accent-line); }
 /* Вся карточка кликабельна через растянутую ссылку в заголовке */
 .practice-card__link { color: inherit; text-decoration: none; }
 .practice-card__link::after { content: ""; position: absolute; inset: 0; z-index: 1; }
@@ -6859,3 +6861,13 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 .taro-spread-card__art { overflow: hidden; border-radius: var(--radius); aspect-ratio: 3 / 2; background: var(--bg); }
 .taro-spread-card__art img, .taro-spread-hero__art img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .taro-spread-hero__art { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); aspect-ratio: 2 / 1; background: var(--bg); }
+
+/* Выбор ключевой позиции на схеме (MatrixFocus): каркас Claude, оформление — Codex (docs/design/codex-brief-oracle-2.md, этап 1) */
+.matrix-focus__tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.matrix-focus__tab { min-height: 44px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 999px; background: transparent; color: var(--ink-soft); font: inherit; cursor: pointer; }
+.matrix-focus__tab[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.matrix-focus__name { margin: 0; font-family: var(--font-display); font-size: 24px; }
+.matrix-focus__number { color: var(--accent); }
+.matrix-point.is-pickable { cursor: pointer; }
+.matrix-point.is-selected circle { stroke-width: 3; }
+.matrix-key.is-selected { border-color: var(--accent); }
