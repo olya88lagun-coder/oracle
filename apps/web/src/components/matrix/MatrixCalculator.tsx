@@ -35,6 +35,7 @@ import {
 } from "@/lib/matrix-save";
 import { FREE_RESULT_PROMISE } from "@/lib/practices";
 import { offerState, type PaidReport } from "@/lib/report-offer";
+import { MatrixHeroLive } from "./MatrixHeroLive";
 import { MATRIX_DATE_ID, MATRIX_FORM_ID } from "./matrix-ids";
 import { MatrixResult } from "./MatrixResult";
 import { ReportOffer } from "./ReportOffer";
@@ -165,12 +166,13 @@ export function MatrixCalculator({
         <picture className="matrix-hero__art">
           <source
             media="(max-width: 700px)"
-            srcSet="/images/matrix/matrix-stone-mobile.webp"
+            srcSet="/images/matrix/matrix-stone-clean-mobile.webp"
           />
-          {/* Декоративный кадр: пустой alt. Первый экран страницы, поэтому грузится с приоритетом */}
+          {/* Декоративный кадр: пустой alt. Чистый камень без узора: узор рисует живая диаграмма. Первый экран страницы, поэтому грузится с приоритетом.
+              Старый камень с узором остаётся только картинкой превью ссылок (matrix-stone.webp) */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/images/matrix/matrix-stone.webp"
+            src="/images/matrix/matrix-stone-clean.webp"
             alt=""
             width={1536}
             height={1024}
@@ -180,6 +182,7 @@ export function MatrixCalculator({
         <div className="matrix-wrap matrix-hero__inner">
           <div className="matrix-hero__copy">
             {intro}
+            <MatrixHeroLive value={value} />
             <form
               id={MATRIX_FORM_ID}
               className="matrix-form"

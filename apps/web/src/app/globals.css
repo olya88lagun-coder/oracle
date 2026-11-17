@@ -5343,3 +5343,334 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 @media (prefers-reduced-motion: reduce) { .book__page--under { display: none; } }
 @keyframes book-out { 70% { opacity: 1; } 100% { opacity: 0; transform: rotateY(-105deg); } }
 @keyframes book-in { from { opacity: 0; transform: rotateY(-105deg); } 30% { opacity: 1; } }
+
+/* Живая матрица — оформление (Codex; колонка диаграммы на телефоне сужена до 54vw: «Справедливость» не помещалась в подписи) */
+:root {
+  --matrix-live-gold: #efd3a2;
+  --matrix-live-bronze: #8b6b4a;
+  --matrix-live-node: #211913;
+  --matrix-live-halo: rgba(203, 166, 118, 0.28);
+}
+
+.matrix-hero:has(.matrix-live),
+.matrix-hero__inner:has(.matrix-live) {
+  min-height: 0;
+}
+
+.matrix-hero__inner:has(.matrix-live) {
+  padding-block: 36px 48px;
+}
+
+.matrix-hero:has(.matrix-live)::after,
+.matrix-hero:has(.matrix-live) .matrix-hero__art {
+  height: 100%;
+}
+
+.matrix-hero:has(.matrix-live)::after {
+  background:
+    linear-gradient(90deg, var(--practice-hero-shade-start), var(--practice-hero-shade-edge)),
+    linear-gradient(0deg, var(--bg), var(--scrim-clear) 36%);
+}
+
+.matrix-hero:has(.matrix-live) .matrix-hero__art img {
+  opacity: 0.58;
+  animation: none;
+}
+
+.matrix-hero__copy:has(> .matrix-live) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  max-width: none;
+}
+
+.matrix-hero__copy:has(> .matrix-live) > .matrix-intro {
+  gap: 0;
+}
+
+.matrix-hero__copy:has(> .matrix-live) > .matrix-intro h1 {
+  min-height: 0;
+  font-size: clamp(44px, 6vw, 76px);
+}
+
+.matrix-hero__copy:has(> .matrix-live) > .matrix-intro h1 span {
+  display: block;
+  margin-top: 0.22em;
+  color: var(--matrix-live-gold);
+  font-size: 0.62em;
+  letter-spacing: 0;
+}
+
+.matrix-hero__copy:has(> .matrix-live) > .matrix-form {
+  max-width: 520px;
+  margin: 0;
+}
+
+.matrix-hero__copy:has(> .matrix-live) .matrix-form > .field {
+  max-width: none;
+}
+
+.matrix-hero__copy:has(> .matrix-live) .matrix-form__row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.matrix-live {
+  display: grid;
+  justify-items: center;
+  align-self: center;
+  gap: 8px;
+  width: min(100%, 460px);
+  margin: 0;
+  justify-self: center;
+  text-align: center;
+}
+
+.matrix-live__caption {
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.matrix-live[data-state="date"] .matrix-live__caption {
+  color: var(--matrix-live-gold);
+}
+
+.matrix-live__svg {
+  display: block;
+  width: min(100%, 420px);
+  height: auto;
+  aspect-ratio: 1;
+  overflow: visible;
+  background: radial-gradient(circle, var(--glow) 4%, var(--scrim-clear) 69%);
+}
+
+.matrix-live__ring,
+.matrix-live__line,
+.matrix-live__comet {
+  fill: none;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.matrix-live__ring {
+  stroke: url(#matrix-live-metal) var(--matrix-live-bronze);
+}
+
+.matrix-live__line {
+  /* Ромб чуть светлее внутренних диагоналей. */
+  --matrix-line-bronze: clamp(0%, calc(var(--i, 0) * 8%), 72%);
+  stroke: var(--accent);
+  stroke: url(#matrix-live-metal) color-mix(in srgb, var(--line-strong) var(--matrix-line-bronze), var(--accent));
+}
+
+.matrix-live__comet {
+  stroke: var(--matrix-live-gold);
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+.matrix-live__point circle {
+  fill: var(--matrix-live-node);
+  stroke: var(--matrix-live-bronze);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.matrix-live__point text {
+  fill: var(--ink);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.matrix-live__point--family text { font-size: 19px; }
+.matrix-live__point--main text { font-size: 23px; }
+
+.matrix-live__point--key circle {
+  fill: var(--surface-3);
+  stroke: var(--matrix-live-gold);
+  stroke-width: 1.25;
+  filter: drop-shadow(0 0 5px var(--matrix-live-halo));
+}
+
+.matrix-live__point--key text {
+  fill: var(--matrix-live-gold);
+  font-size: 25px;
+}
+
+.matrix-live__point[data-point="E"] circle {
+  fill: var(--matrix-live-gold);
+}
+
+.matrix-live__point[data-point="E"] text {
+  fill: var(--accent-ink);
+}
+
+.matrix-live__keys {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  margin: 0;
+  padding: 10px 0 0;
+  border-top: 1px solid var(--accent-line);
+  list-style: none;
+}
+
+.matrix-live__key {
+  min-width: 0;
+  padding-inline: 6px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.matrix-live__key + .matrix-live__key {
+  border-inline-start: 1px solid var(--accent-line);
+}
+
+.matrix-live__key-label,
+.matrix-live__key-name {
+  display: block;
+}
+
+.matrix-live__key-label {
+  color: var(--ink-soft);
+}
+
+.matrix-live__key-name {
+  color: var(--matrix-live-gold);
+  font-weight: 600;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 900px) {
+  .matrix-hero__inner:has(.matrix-live) { padding-block: 54px 64px; }
+  .matrix-hero__copy:has(> .matrix-live) {
+    grid-template-columns: minmax(0, 1fr) minmax(380px, 42%);
+    grid-template-rows: minmax(0, auto) minmax(0, auto);
+    column-gap: clamp(24px, 5vw, 76px);
+  }
+  .matrix-hero__copy:has(> .matrix-live) > .matrix-intro { grid-area: 1 / 1; align-self: end; }
+  .matrix-hero__copy:has(> .matrix-live) > .matrix-form { grid-area: 2 / 1; align-self: start; }
+  .matrix-hero__copy > .matrix-live { grid-area: 1 / 2 / 3; }
+}
+
+@media (max-width: 899px) {
+  .matrix-live { width: min(100%, 360px); }
+  .matrix-hero__copy:has(> .matrix-live) > :is(.matrix-intro, .matrix-form) {
+    width: min(100%, 520px);
+    justify-self: center;
+  }
+  .matrix-hero:has(.matrix-live)::after {
+    background: linear-gradient(0deg, var(--bg), var(--practice-hero-shade-middle) 78%, var(--practice-hero-shade-start));
+  }
+  .matrix-hero:has(.matrix-live) .matrix-hero__art img { object-position: 65% 40%; }
+}
+
+@media (max-width: 599px) {
+  .matrix-hero__inner:has(.matrix-live) { padding-block: 16px 28px; }
+  .matrix-hero__copy:has(> .matrix-live) { gap: 10px; }
+  .matrix-hero__copy:has(> .matrix-live) > .matrix-intro h1 { font-size: clamp(30px, 8.7vw, 44px); }
+  body .matrix-hero__copy:has(> .matrix-live) > .matrix-intro > .lead {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .matrix-live {
+    grid-template-columns: min(54vw, 220px) minmax(0, 1fr);
+    align-items: center;
+    gap: 4px 8px;
+    width: min(100%, 440px);
+  }
+  .matrix-live__caption { grid-column: 1 / -1; }
+  .matrix-live__svg { width: 100%; }
+  .matrix-live__keys {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0 0 0 8px;
+    border-top: 0;
+    border-inline-start: 1px solid var(--accent-line);
+    text-align: start;
+  }
+  .matrix-live__key { padding: 7px 0; }
+  .matrix-live__key + .matrix-live__key {
+    border-inline-start: 0;
+    border-top: 1px solid var(--accent-line);
+  }
+  .matrix-live__key-name { text-wrap: pretty; }
+  .matrix-live__point--key text { font-size: 27px; }
+  .matrix-hero__copy:has(> .matrix-live) .matrix-form .field { gap: 4px; }
+  .matrix-hero__copy:has(> .matrix-live) .matrix-form__row { gap: 8px; }
+  .matrix-hero__copy:has(> .matrix-live) .matrix-form input { min-height: 44px; padding: 7px 8px; }
+  .matrix-hero__copy:has(> .matrix-live) .matrix-form .button {
+    min-height: 44px;
+    padding: 7px 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 599px) and (max-height: 760px) {
+  .matrix-live { grid-template-columns: min(54vw, 220px) minmax(0, 1fr); }
+}
+
+@media (max-width: 340px) {
+  .matrix-live { grid-template-columns: min(55vw, 184px) minmax(0, 1fr); }
+  .matrix-hero__copy:has(> .matrix-live) .matrix-form__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .matrix-live[data-visible="true"] {
+    transform: perspective(900px)
+      rotateX(calc(var(--tilt-y, 0) * -1deg))
+      rotateY(calc(var(--tilt-x, 0) * 1deg));
+    transition: transform 120ms ease-out;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .matrix-live__svg { animation: matrix-live-breathe 9s ease-in-out infinite; }
+  .matrix-live__line {
+    stroke-dasharray: 1;
+    animation: matrix-draw 490ms var(--ease-out) backwards;
+    animation-delay: calc(45ms + var(--i, 0) * 30ms);
+  }
+  .matrix-live__point {
+    animation: matrix-live-arrive 380ms var(--ease-out) backwards;
+    animation-delay: calc(180ms + var(--i, 0) * 17ms);
+  }
+  .matrix-live__comet {
+    stroke-dasharray: 0.15 1.15;
+    animation: matrix-live-comet 7s linear 1300ms infinite;
+  }
+  .matrix-live__point--key.is-flash circle {
+    animation: matrix-live-flash 820ms ease-in-out;
+    animation-delay: calc(680ms + var(--k, 0) * 265ms);
+  }
+  .matrix-live[data-phase="rolling"] .matrix-live__point:not([data-point="E"]) circle {
+    fill: var(--surface-3);
+    stroke: var(--accent);
+  }
+  .matrix-live[data-visible="false"] :is(.matrix-live__svg, .matrix-live__line, .matrix-live__comet, .matrix-live__point),
+  .matrix-live[data-visible="false"] .matrix-live__point--key.is-flash circle {
+    animation-play-state: paused;
+  }
+
+  @keyframes matrix-live-arrive {
+    from { opacity: 0; }
+  }
+  @keyframes matrix-live-breathe {
+    0%, 100% { transform: scale(0.994); }
+    50% { transform: scale(1.006); }
+  }
+  @keyframes matrix-live-comet {
+    0% { opacity: 0; stroke-dashoffset: 0.15; }
+    5%, 23% { opacity: 0.86; }
+    29%, 100% { opacity: 0; stroke-dashoffset: -1; }
+  }
+  @keyframes matrix-live-flash {
+    50% { filter: drop-shadow(0 0 9px var(--accent)); }
+  }
+}
