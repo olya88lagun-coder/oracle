@@ -54,7 +54,9 @@ test.describe("with reduced motion", () => {
     await typeDate(page, "1990-03-07");
     await expect(live(page)).toHaveAttribute("data-phase", "idle");
     await expect(node(page, "E")).toHaveText("4");
-    await expect(live(page).locator(".is-flash")).toHaveCount(0);
+    // Без движения результат уже собран: все три точки тёплые, света в пути нет
+    await expect(live(page)).toHaveAttribute("data-lit", "3");
+    await expect(live(page)).toHaveAttribute("data-pass", "done");
   });
 });
 
@@ -80,4 +82,30 @@ test("a date handed over from the home page shows on the diagram at once, withou
   }, { timeout: 10_000 }).not.toBe("waiting");
   expect(phaseAtArrival).toBe("idle");
   await expect(node(page, "E")).toHaveText("4");
+});
+
+test("after the numbers stop, one light pass warms the three key points in order and then holds the result", async ({ page }) => {
+  await page.goto("/matrica-sudby");
+  // Ждём первый (вводный) проход, чтобы он не смешался с проходом после ввода
+  await expect(live(page)).toHaveAttribute("data-pass", "done", { timeout: 8000 });
+  // Журнал смен фазы чисел и числа согретых точек; пишет сама страница, чтобы не пропустить быстрые смены
+  await page.evaluate(() => {
+    const figure = document.querySelector(".matrix-live") as HTMLElement;
+    const log: string[] = [];
+    (window as unknown as { __log: string[] }).__log = log;
+    new MutationObserver(() => log.push(`${figure.dataset.phase}:${figure.dataset.lit}:${figure.dataset.pass}`)).observe(figure, { attributes: true, attributeFilter: ["data-phase", "data-lit", "data-pass"] });
+  });
+  await typeDate(page, "1990-03-07");
+  await expect(live(page)).toHaveAttribute("data-pass", "done", { timeout: 8000 });
+  await expect(live(page)).toHaveAttribute("data-lit", "3");
+  const log = await page.evaluate(() => (window as unknown as { __log: string[] }).__log);
+  const litOrder = log.map((entry) => entry.split(":")[1]).filter((value, index, all) => value !== all[index - 1]);
+  // Согрев идёт по порядку: сброс, Личность, Центр, Задача
+  expect(litOrder.join(",")).toMatch(/0,1,2,3$/);
+  // Первый свет пошёл уже после остановки чисел
+  const firstLight = log.find((entry) => entry.split(":")[1] === "1");
+  expect(firstLight?.startsWith("idle:")).toBe(true);
+  // Названия остаются видимыми и яркими в конце
+  await expect(page.locator(".matrix-live__key.is-lit")).toHaveCount(3);
+  await expect(page.locator(".matrix-live__caption")).toHaveText("Ваша матрица · 7 марта 1990");
 });

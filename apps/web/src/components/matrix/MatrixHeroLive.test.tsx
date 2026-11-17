@@ -10,7 +10,16 @@ describe("MatrixHeroLive", () => {
     expect(html).toContain("Пример · вымышленная дата");
     expect(html.match(/data-point="/g)).toHaveLength(28);
     for (const label of ["Личность", "Центр", "Задача"]) expect(html).toContain(label);
-    expect(html.match(/matrix-live__key"/g)).toHaveLength(3);
+    expect(html.match(/class="matrix-live__key( is-lit)?"/g)).toHaveLength(3);
+  });
+
+  test("without script everything is already lit: names bright, nodes warm, no pass running", () => {
+    const html = renderToStaticMarkup(<MatrixHeroLive value="" />);
+    expect(html).toContain('data-pass="idle"');
+    expect(html).toContain('data-lit="3"');
+    expect(html.match(/matrix-live__key is-lit"/g)).toHaveLength(3);
+    expect(html.match(/matrix-live__point--key is-lit"/g)).toHaveLength(3);
+    expect(html).not.toContain("is-flash");
   });
 
   test("defines the metal gradient that the stylesheet strokes the lines with", () => {
