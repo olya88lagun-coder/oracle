@@ -438,7 +438,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: NUMEROLOGY_ALT,
     basis: ["numerology-square"],
     internalLinks: ["/numerologiya/kvadrat-pifagora", "/numerologiya/kvadrat-pifagora/1", "/numerologiya/kvadrat-pifagora/linii"],
-    status: "draft",
+    status: "published",
   },
 
   // 862. Сравнить два инструмента на одной условной паре: совпадения ячеек в квадрате и общий аркан в матрице.
