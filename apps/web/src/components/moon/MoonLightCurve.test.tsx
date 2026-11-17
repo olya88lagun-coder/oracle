@@ -21,6 +21,18 @@ describe("MoonLightCurve", () => {
     expect(html).toContain("moon-curve__now");
   });
 
+  test("draws the key dates as HTML dots placed by percent, so a stretched curve cannot turn them into ovals", () => {
+    expect(html).not.toContain("<circle");
+    const positions = [...html.matchAll(/class="moon-curve__event"[^>]*style="left:([\d.]+)%;top:([\d.]+)%"/g)].map((match) => [Number(match[1]), Number(match[2])] as const);
+    expect(positions).toHaveLength(4);
+    for (const [left, top] of positions) {
+      expect(left).toBeGreaterThanOrEqual(0);
+      expect(left).toBeLessThanOrEqual(100);
+      expect(top).toBeGreaterThanOrEqual(0);
+      expect(top).toBeLessThanOrEqual(100);
+    }
+  });
+
   test("has a caption", () => {
     expect(html).toContain("<figcaption");
   });

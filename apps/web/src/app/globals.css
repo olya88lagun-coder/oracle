@@ -6456,15 +6456,31 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   mask-image: linear-gradient(to right, var(--moon-calendar-curve-mask-dim), var(--moon-calendar-curve-mask-full));
 }
 
-.moon-curve__event {
-  fill: var(--accent);
-  stroke: var(--accent-hover);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
+/* Отметки главных фаз — HTML-точки поверх растянутого SVG: так они остаются круглыми на любой ширине */
+.moon-curve__plot { position: relative; }
+
+.moon-curve__events {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
 }
 
-.moon-curve__event[data-kind="new"] { fill: var(--surface); }
-.moon-curve__event[data-kind="full"] { fill: var(--moon-disc-ivory); }
+.moon-curve__event {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--accent-hover);
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.moon-curve__event[data-kind="new"] { background: var(--surface); }
+.moon-curve__event[data-kind="full"] { background: var(--moon-disc-ivory); }
 
 .moon-curve__now,
 .moon-ribbon__now { display: none; }
@@ -6795,9 +6811,10 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 
 @media (prefers-reduced-motion: no-preference) {
   .moon-month__panel { animation: moon-calendar-panel-in 440ms var(--ease-out) both; }
+  /* Линия раскрывается слева направо. Не через stroke-dasharray: при растянутом SVG (preserveAspectRatio="none") и non-scaling-stroke
+     единица pathLength расходится с экранными пикселями, и видна только часть линии */
   .moon-curve__line {
-    stroke-dasharray: 1;
-    animation: moon-calendar-trace 1.2s var(--ease-out) both;
+    animation: moon-calendar-reveal 1.2s var(--ease-out) both;
   }
 
   .moon-curve__event { animation: moon-calendar-panel-in 150ms ease-out calc(210ms + var(--event-order, 0) * 200ms) both; }
@@ -6821,6 +6838,6 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   .moon-month__panel .moon-disc__svg[data-intro="true"] .moon-disc__tick.is-current { animation-duration: 350ms; animation-delay: 850ms; }
 
   @keyframes moon-calendar-panel-in { from { opacity: 0; } }
-  @keyframes moon-calendar-trace { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes moon-calendar-reveal { from { clip-path: inset(-6px 100% -6px -6px); } to { clip-path: inset(-6px -6px -6px -6px); } }
   @keyframes moon-calendar-cell-in { from { opacity: 0; transform: translateY(6px); } }
 }
