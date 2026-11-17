@@ -148,6 +148,14 @@ export function MatrixHeroLive({ value }: { value: string }) {
     <figure ref={figureRef} className="matrix-live" aria-hidden="true" data-state={hero.kind} data-phase={phase} data-visible={visible ? "true" : "false"} data-run={run}>
       <figcaption className="matrix-live__caption">{hero.caption}</figcaption>
       <svg className="matrix-live__svg" viewBox={`0 0 ${DIAGRAM_SIZE} ${DIAGRAM_SIZE}`} focusable="false">
+        <defs>
+          {/* Металл линий и кольца: от тёмной бронзы к светлому золоту; цвета из переменных, на них опирается оформление */}
+          <linearGradient id="matrix-live-metal" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" style={{ stopColor: "var(--line-strong)" }} />
+            <stop offset="55%" style={{ stopColor: "var(--accent)" }} />
+            <stop offset="100%" style={{ stopColor: "var(--accent-hover)" }} />
+          </linearGradient>
+        </defs>
         <circle className="matrix-live__ring" cx={DIAGRAM_SIZE / 2} cy={DIAGRAM_SIZE / 2} r={DIAGRAM_SIZE / 2 - 18} />
         {DIAGRAM_LINES.map(([from, to], index) => {
           const a = byPoint.get(from)!;

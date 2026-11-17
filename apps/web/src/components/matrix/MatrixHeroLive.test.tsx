@@ -13,6 +13,11 @@ describe("MatrixHeroLive", () => {
     expect(html.match(/matrix-live__key"/g)).toHaveLength(3);
   });
 
+  test("defines the metal gradient that the stylesheet strokes the lines with", () => {
+    const html = renderToStaticMarkup(<MatrixHeroLive value="" />);
+    expect(html).toContain('<linearGradient id="matrix-live-metal"');
+  });
+
   test("shows the visitor's matrix for a valid date", () => {
     const html = renderToStaticMarkup(<MatrixHeroLive value="1990-03-07" />);
     expect(html).toContain('data-state="date"');
