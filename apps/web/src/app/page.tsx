@@ -63,6 +63,9 @@ export default function HomePage() {
               <br />
               <span className="muted">{FREE_RESULT_TERMS}</span>
             </p>
+            <a className="matrix-link hero__all" href="#practices">
+              Все практики
+            </a>
           </div>
         </div>
       </section>
