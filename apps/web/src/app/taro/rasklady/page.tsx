@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { SpreadGlyph } from "@/components/taro/SpreadGlyph";
+import { SpreadPicker } from "@/components/taro/SpreadPicker";
 import { breadcrumbsJsonLd, faqPageJsonLd, TaroFaqSection } from "@/components/taro/TaroFaqSection";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { countLabel } from "@/lib/taro-catalog";
@@ -10,7 +11,7 @@ import { SPREADS_HUB_FAQ, spreadPath, TARO_SPREADS } from "@/lib/taro-spreads";
 
 export const metadata: Metadata = publicMetadata({
   title: "Расклады Таро онлайн бесплатно — гадание без регистрации",
-  description: "Бесплатные расклады Таро онлайн: на три карты, отношения, выбор, дело и деньги, на сегодня. Без регистрации, не прогноз.",
+  description: "Бесплатные расклады Таро онлайн: на три карты, отношения, выбор, работу, конфликт, самопознание, на сегодня. Без регистрации, не прогноз.",
   path: TARO_SPREADS_PATH,
   image: SITE_PREVIEW_IMAGE,
 });
@@ -31,6 +32,7 @@ export default function TaroSpreadsPage() {
           <p className="lead">Выберите тему, вытяните карты и прочитайте, что каждая из них говорит в своей позиции. Это повод задать себе вопрос, а не прогноз.</p>
           <p className="muted">Бесплатно и без регистрации. Вопрос и карты остаются в вашем браузере.</p>
         </header>
+        <SpreadPicker />
         <ul className="taro-spreads">
           {TARO_SPREADS.map((spread) => (
             <li key={spread.slug}>

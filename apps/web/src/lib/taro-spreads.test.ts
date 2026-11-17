@@ -5,7 +5,7 @@ import { LILA_PATH } from "./lila-paths";
 import { MATRIX_PATH } from "./arcana-paths";
 import { NATAL_PATH } from "./natal-paths";
 import { YEAR_PATH } from "./year-arcana";
-import { pickDistinctIndexes, positionReading, SPREADS_HUB_FAQ, spreadFromParam, spreadPath, TARO_SPREADS, type SpreadSource } from "./taro-spreads";
+import { FEATURED_SPREADS, pickDistinctIndexes, positionReading, SPREADS_HUB_FAQ, spreadFromParam, spreadPath, TARO_SPREADS, type SpreadSource } from "./taro-spreads";
 
 const SOURCES: readonly SpreadSource[] = ["essence", "love", "money", "resource", "distortion", "day", "action", "question"];
 const PROMISES = /точн(ый|ое|ого) (прогноз|ответ)|гарантир|узнаете будущее|предскажет|покажет, что будет/i;
@@ -15,8 +15,9 @@ const allCopy = () => [
 ];
 
 describe("taro spreads", () => {
-  test("has six spreads with unique slugs and from three to five positions each", () => {
-    expect(TARO_SPREADS.map((spread) => spread.slug)).toEqual(["tri-karty", "otnosheniya", "vybor", "delo-i-dengi", "na-segodnya", "novyy-god"]);
+  test("has twelve spreads (six main, six more) with unique slugs and from three to five positions each", () => {
+    expect(TARO_SPREADS.map((spread) => spread.slug)).toEqual(["tri-karty", "otnosheniya", "vybor", "delo-i-dengi", "na-segodnya", "novyy-god", "samopoznanie", "konflikt", "smena-raboty", "roditeli", "novolunie", "polnolunie"]);
+    expect(FEATURED_SPREADS.map((spread) => spread.slug)).toEqual(TARO_SPREADS.slice(0, 6).map((spread) => spread.slug));
     expect(new Set(TARO_SPREADS.map((spread) => spread.slug)).size).toBe(TARO_SPREADS.length);
     for (const spread of TARO_SPREADS) {
       expect(spread.positions.length).toBeGreaterThanOrEqual(3);
@@ -60,7 +61,8 @@ describe("taro spreads", () => {
   });
 
   test("every spread has a short name for the tiles on /taro", () => {
-    expect(TARO_SPREADS.map((spread) => spread.short)).toEqual(["Три карты", "Отношения", "Выбор из двух", "Дело и деньги", "На сегодня", "Новый год"]);
+    expect(TARO_SPREADS.slice(0, 6).map((spread) => spread.short)).toEqual(["Три карты", "Отношения", "Выбор из двух", "Дело и деньги", "На сегодня", "Новый год"]);
+    expect(new Set(TARO_SPREADS.map((spread) => spread.short)).size).toBe(TARO_SPREADS.length);
     for (const spread of TARO_SPREADS) expect(spread.short.length).toBeLessThanOrEqual(24);
   });
 

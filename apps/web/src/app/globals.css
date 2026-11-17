@@ -6841,3 +6841,15 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   @keyframes moon-calendar-reveal { from { clip-path: inset(-6px 100% -6px -6px); } to { clip-path: inset(-6px -6px -6px -6px); } }
   @keyframes moon-calendar-cell-in { from { opacity: 0; transform: translateY(6px); } }
 }
+
+/* Подбор расклада по вопросу (SpreadPicker): каркас Claude, оформление — Codex (docs/design/codex-brief-oracle-2.md, этап 2) */
+.spread-picker { display: grid; gap: 14px; }
+.spread-picker__form { display: flex; flex-wrap: wrap; gap: 10px; }
+.spread-picker__input { flex: 1 1 260px; min-height: 48px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: var(--radius-md, 12px); background: var(--surface-2); color: var(--ink); font: inherit; }
+.spread-picker__examples { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.spread-picker__chip { min-height: 44px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 999px; background: transparent; color: var(--ink-soft); font: inherit; cursor: pointer; }
+.spread-picker__chip:hover { border-color: var(--accent); color: var(--accent); }
+.spread-picker__note { margin: 0; color: var(--ink-soft); }
+.spread-picker__picks { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.spread-picker__pick { display: grid; gap: 4px; padding: 14px 16px; border: 1px solid var(--accent-line); border-radius: var(--radius-md, 12px); color: inherit; text-decoration: none; }
+.spread-picker__pick:hover { border-color: var(--accent); }

@@ -4,6 +4,7 @@ import { COMPAT_PATH } from "./compat";
 import { LILA_PATH } from "./lila-paths";
 import { NATAL_PATH } from "./natal-paths";
 import { pickCardIndex } from "./taro-day";
+import { EXTRA_SPREADS } from "./taro-spreads-extra";
 import { TARO_SPREADS_PATH } from "./taro-paths";
 import { YEAR_PATH } from "./year-arcana";
 
@@ -31,7 +32,8 @@ export type Spread = {
 export type SpreadNext = { readonly href: string; readonly title: string; readonly text: string; readonly label: string };
 export type PositionText = { readonly list: boolean; readonly lines: readonly string[] };
 
-export const TARO_SPREADS: readonly Spread[] = [
+// Основные расклады: именно они стоят плитками на /taro; остальные лежат на хабе /taro/rasklady
+export const FEATURED_SPREADS: readonly Spread[] = [
   {
     slug: "tri-karty",
     name: "Расклад на три карты",
@@ -331,6 +333,8 @@ export const TARO_SPREADS: readonly Spread[] = [
     next: { href: YEAR_PATH, title: "Аркан на 2027 год", text: "Рассчитайте личный аркан на 2027 год по дате рождения: символ, три практических совета и вопрос для себя. Бесплатно.", label: "Узнать аркан на 2027 год" },
   },
 ];
+
+export const TARO_SPREADS: readonly Spread[] = [...FEATURED_SPREADS, ...EXTRA_SPREADS];
 
 export const SPREADS_HUB_FAQ: readonly FaqItem[] = [
   {

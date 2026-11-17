@@ -61,7 +61,7 @@ describe("paths", () => {
 
   test("the tarot spreads hub and every spread page are public", () => {
     expect(PUBLIC_PATHS).toEqual(expect.arrayContaining(["/taro/rasklady", "/taro/rasklady/tri-karty", "/taro/rasklady/na-segodnya", "/taro/rasklady/novyy-god"]));
-    expect(PUBLIC_PATHS.filter((path) => path.startsWith("/taro/rasklady/"))).toHaveLength(6);
+    expect(PUBLIC_PATHS.filter((path) => path.startsWith("/taro/rasklady/"))).toHaveLength(12);
   });
 
   test("the compatibility calculator is public", () => {
