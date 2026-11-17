@@ -11,6 +11,12 @@ test("the Moon today page shows the disc, the tiles and a 14-day strip", async (
   await expect(page.locator(".moon-next")).toContainText("Ближайшая смена");
 });
 
+test("the Moon today page describes the day: the phase, the lunar day and the sign, each with a question for oneself", async ({ page }) => {
+  await page.goto("/luna-segodnya");
+  await expect(page.locator(".moon-text__block")).toHaveCount(3);
+  await expect(page.locator(".moon-text__question").first()).toContainText("?");
+});
+
 test("the Moon today page leads to the card of the day and the natal chart", async ({ page }) => {
   await page.goto("/luna-segodnya");
   await expect(page.getByRole("link", { name: "Вытянуть карту дня" })).toHaveAttribute("href", "/taro/karta-dnya");

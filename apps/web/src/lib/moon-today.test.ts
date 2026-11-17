@@ -43,8 +43,11 @@ describe("buildMoonToday", () => {
     expect(today.links).toEqual({ cardOfDay: "/taro/karta-dnya", natal: "/natalnaya-karta" });
   });
 
-  test("hides the texts until the owner accepts them", () => {
-    expect(buildMoonToday(NOON_MOSCOW).texts).toEqual({ phase: null, day: null });
+  test("carries the accepted texts for today's phase and lunar day", () => {
+    const { texts } = buildMoonToday(NOON_MOSCOW);
+    expect(texts.phase?.title).toBe("Первая четверть");
+    expect(texts.day?.day).toBe(8);
+    expect(texts.day?.symbol).toBe("Феникс");
   });
 
   test("the page path is /luna-segodnya", () => {

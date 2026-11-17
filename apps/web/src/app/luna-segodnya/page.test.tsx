@@ -47,9 +47,11 @@ test("links to the card of the day, the natal chart and the Moon's sign page", (
   expect(markup).toMatch(/href="\/natalnaya-karta\/luna-v-[a-z]+"/);
 });
 
-test("hides the text blocks and leaves no empty placeholders until the texts are accepted", () => {
+test("shows the three accepted text blocks: the phase, the lunar day and the Moon's sign, with a question for oneself", () => {
   const markup = html();
-  expect(markup).not.toContain("moon-text");
+  expect(markup).toContain("moon-text");
+  expect(markup.match(/class="moon-text__block"/g)).toHaveLength(3);
+  expect(markup).toContain("moon-text__question");
   expect(markup).not.toContain("<h3></h3>");
 });
 

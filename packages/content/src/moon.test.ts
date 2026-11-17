@@ -38,9 +38,10 @@ describe("moon texts", () => {
     expect(FORBIDDEN_MOON_WORDS).toEqual(expect.arrayContaining(["благоприятн", "стрижк", "свидани", "лучше не"]));
   });
 
-  test("texts stay hidden until the owner accepts them", () => {
-    expect(MOON_TEXTS_ACCEPTED).toBe(false);
-    expect(lunarDayText(8)).toBeUndefined();
-    expect(phaseText("full")).toBeUndefined();
+  test("the owner accepted the texts on 17 Nov 2026, so they are shown", () => {
+    expect(MOON_TEXTS_ACCEPTED).toBe(true);
+    expect(lunarDayText(8)?.symbol).toBe("Феникс");
+    expect(lunarDayText(31)).toBeUndefined();
+    expect(phaseText("full")?.title).toBe("Полнолуние");
   });
 });
