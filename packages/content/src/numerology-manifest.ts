@@ -3,7 +3,7 @@ import { CLOCK_TIMES, FATE_NUMBERS } from "@oracle/core";
 // Манифест страниц нумерологии: 12 чисел судьбы, 9 значений личного года 2027, 37 одинаковых времён на часах.
 // Тексты лежат в packages/content/numerology/<kind>-<key>.md; здесь — список страниц и партии на приёмку.
 
-export type NumerologyKind = "fate" | "year" | "clock" | "square" | "pair";
+export type NumerologyKind = "fate" | "year" | "clock" | "square" | "pair" | "thread" | "period";
 export type NumerologyPageRef = { readonly kind: NumerologyKind; readonly key: string; readonly batch: number };
 
 const CLOCK_BATCH_SIZE = 15;
@@ -16,6 +16,9 @@ export const NUMEROLOGY_PAGES: readonly NumerologyPageRef[] = [
   ...["1", "2", "3", "4", "5", "6", "7", "8", "9", "linii"].map((key, i) => ({ kind: "square" as const, key, batch: i < 5 ? 6 : 7 })),
   // Совместимость по квадрату Пифагора — партия 8 (спека 2026-11-09-pythagoras-compat-design.md)
   { kind: "pair", key: "sovmestimost", batch: 8 },
+  // «Нить» (график судьбы) — партия 9: девять карточек «год N в вашей жизни» и девять карточек «период с числом N» (спека 2026-11-18-life-thread-design.md)
+  ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({ kind: "thread" as const, key: String(n), batch: 9 })),
+  ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => ({ kind: "period" as const, key: String(n), batch: 9 })),
 ];
 
 // Партии, которые владелица приняла: пока партия не принята, её страницы закрыты (404, нет в карте сайта, нет ссылок).
