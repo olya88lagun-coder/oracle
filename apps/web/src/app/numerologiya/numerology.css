@@ -880,3 +880,15 @@
 
 /* Хаб: ссылки на другие расчёты — ровным столбиком, каждая в своей строке */
 .numerology-more { display: grid; gap: 4px; margin: 8px 0 0; padding: 0; list-style: none; }
+
+/* Круг цифр 1–9 под числом судьбы (FateCircle): каркас Claude, оформление — Codex (docs/design/codex-backlog-oracle-2.md, этап 5) */
+.numerology-page .fate-circle { display: block; width: min(100%, 240px); margin: 14px auto 0; }
+.numerology-page .fate-circle__ring { fill: none; stroke: var(--line-strong); stroke-width: 1; }
+.numerology-page .fate-circle__spoke { stroke: var(--line); stroke-width: 1; }
+.numerology-page .fate-circle__spoke.is-active { stroke: var(--accent); stroke-width: 1.5; }
+.numerology-page .fate-circle__node circle { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1; }
+.numerology-page .fate-circle__node text { fill: var(--ink-soft); font: 500 15px var(--font-body); }
+.numerology-page .fate-circle__node.is-active circle { fill: var(--accent); stroke: var(--accent-hover); }
+.numerology-page .fate-circle__node.is-active text { fill: var(--accent-ink); font-weight: 700; font-size: 18px; }
+.numerology-page .fate-circle__core { fill: var(--accent); }
+
