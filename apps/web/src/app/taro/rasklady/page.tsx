@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { SpreadGlyph } from "@/components/taro/SpreadGlyph";
@@ -7,7 +8,7 @@ import { breadcrumbsJsonLd, faqPageJsonLd, TaroFaqSection } from "@/components/t
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { countLabel } from "@/lib/taro-catalog";
 import { TARO_DAY_PATH, TARO_PATH, TARO_SPREADS_PATH } from "@/lib/taro-paths";
-import { SPREADS_HUB_FAQ, spreadPath, TARO_SPREADS } from "@/lib/taro-spreads";
+import { SPREADS_HUB_FAQ, spreadImage, spreadPath, TARO_SPREADS } from "@/lib/taro-spreads";
 
 export const metadata: Metadata = publicMetadata({
   title: "Расклады Таро онлайн бесплатно — гадание без регистрации",
@@ -37,6 +38,11 @@ export default function TaroSpreadsPage() {
           {TARO_SPREADS.map((spread) => (
             <li key={spread.slug}>
               <article className="taro-panel taro-spread-card">
+                {spreadImage(spread.slug) && (
+                  <div className="taro-spread-card__art">
+                    <Image src={spreadImage(spread.slug)!} alt="" width={480} height={320} unoptimized sizes="(min-width: 1080px) 33vw, (min-width: 760px) 50vw, 100vw" />
+                  </div>
+                )}
                 <div className="taro-spread-card__diagram">
                   <SpreadGlyph slug={spread.slug} />
                   <p className="eyebrow">{countLabel(spread.positions.length)}</p>

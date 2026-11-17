@@ -6853,3 +6853,9 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 .spread-picker__picks { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .spread-picker__pick { display: grid; gap: 4px; padding: 14px 16px; border: 1px solid var(--accent-line); border-radius: var(--radius-md, 12px); color: inherit; text-decoration: none; }
 .spread-picker__pick:hover { border-color: var(--accent); }
+
+/* Картинки раскладов (apps/web/public/taro/rasklady): каркас Claude, кадрирование и оформление — Codex (docs/design/codex-brief-oracle-2.md, этап 2) */
+.taro-spread-card:has(.taro-spread-card__art) { grid-template-rows: auto auto auto auto 1fr auto; }
+.taro-spread-card__art { overflow: hidden; border-radius: var(--radius); aspect-ratio: 3 / 2; background: var(--bg); }
+.taro-spread-card__art img, .taro-spread-hero__art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.taro-spread-hero__art { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-lg); aspect-ratio: 2 / 1; background: var(--bg); }

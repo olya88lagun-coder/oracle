@@ -368,6 +368,15 @@ export const SPREADS_HUB_FAQ: readonly FaqItem[] = [
   },
 ];
 
+// Картинки раскладов: apps/web/public/taro/rasklady/<слаг>.webp (960 px), -480 и -160. У «Конфликта» картинки пока нет (печать с полумесяцем и звездой
+// читалась как религиозный символ, нужна замена), поэтому он не в списке: карточка показывается без картинки.
+export const SPREAD_IMAGE_SLUGS: readonly string[] = ["tri-karty", "otnosheniya", "vybor", "delo-i-dengi", "na-segodnya", "novyy-god", "samopoznanie", "smena-raboty", "roditeli", "novolunie", "polnolunie"];
+export type SpreadImageSize = "full" | "card" | "thumb";
+export function spreadImage(slug: string, size: SpreadImageSize = "card"): string | null {
+  if (!SPREAD_IMAGE_SLUGS.includes(slug)) return null;
+  return `/taro/rasklady/${slug}${size === "full" ? "" : size === "card" ? "-480" : "-160"}.webp`;
+}
+
 export const spreadPath = (spread: Pick<Spread, "slug">): string => `${TARO_SPREADS_PATH}/${spread.slug}`;
 export const spreadFromParam = (param: string): Spread | null => TARO_SPREADS.find((spread) => spread.slug === param) ?? null;
 

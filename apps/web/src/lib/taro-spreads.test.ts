@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { TAROT_CARDS } from "@oracle/content/tarot";
 import { describe, expect, test } from "vitest";
 import { COMPAT_PATH } from "./compat";
@@ -5,7 +7,7 @@ import { LILA_PATH } from "./lila-paths";
 import { MATRIX_PATH } from "./arcana-paths";
 import { NATAL_PATH } from "./natal-paths";
 import { YEAR_PATH } from "./year-arcana";
-import { FEATURED_SPREADS, pickDistinctIndexes, positionReading, SPREADS_HUB_FAQ, spreadFromParam, spreadPath, TARO_SPREADS, type SpreadSource } from "./taro-spreads";
+import { FEATURED_SPREADS, pickDistinctIndexes, SPREAD_IMAGE_SLUGS, spreadImage, positionReading, SPREADS_HUB_FAQ, spreadFromParam, spreadPath, TARO_SPREADS, type SpreadSource } from "./taro-spreads";
 
 const SOURCES: readonly SpreadSource[] = ["essence", "love", "money", "resource", "distortion", "day", "action", "question"];
 const PROMISES = /точн(ый|ое|ого) (прогноз|ответ)|гарантир|узнаете будущее|предскажет|покажет, что будет/i;
@@ -139,6 +141,16 @@ describe("taro spreads", () => {
     expect(spread.next.label).toContain("аркан");
     // сезонный расклад не привязан к году в названии и адресе: он остаётся рабочим и после 2027
     expect(`${spread.slug} ${spread.name} ${spread.title} ${spread.short}`).not.toMatch(/20\d\d/);
+  });
+
+  test("every listed spread picture exists in three sizes, and a spread without one gets none", () => {
+    const dir = join(process.cwd(), "public");
+    for (const slug of SPREAD_IMAGE_SLUGS) {
+      expect(TARO_SPREADS.map((spread) => spread.slug), slug).toContain(slug);
+      for (const size of ["full", "card", "thumb"] as const) expect(existsSync(join(dir, spreadImage(slug, size)!)), `${slug} ${size}`).toBe(true);
+    }
+    expect(spreadImage("konflikt")).toBeNull();
+    expect(spreadImage("tri-karty", "card")).toBe("/taro/rasklady/tri-karty-480.webp");
   });
 
   test("no copy promises a prediction", () => {
