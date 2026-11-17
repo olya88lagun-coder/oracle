@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArcanaIndex } from "@/components/ArcanaIndex";
+import { ArcanumExample } from "@/components/ArcanumExample";
 import { ArcanumSection } from "@/components/ArcanumSection";
 import { ArcanumSectionsExpander } from "@/components/ArcanumSectionsExpander";
 import { CalculatorLink } from "@/components/CalculatorLink";
@@ -82,7 +83,7 @@ export default async function ArcanumPage({ params }: Params) {
     "@type": "FAQPage",
     mainEntity: faq.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })),
   };
-  const toc = SECTIONS.map((key) => ({ id: sectionId(key), title: PAGE_SECTION_TITLES[key] }));
+  const toc = [...SECTIONS.map((key) => ({ id: sectionId(key), title: PAGE_SECTION_TITLES[key] })), { id: "arcanum-example", title: "Учебный пример" }];
 
   return (
     <main className="detail-page arcanum-page">
@@ -133,6 +134,9 @@ export default async function ArcanumPage({ params }: Params) {
                 <SectionBody arcanum={arcanum} sectionKey={key} />
               </ArcanumSection>
             ))}
+            <ArcanumSection id="arcanum-example" title="Учебный пример: как получается аркан" className="detail-section">
+              <ArcanumExample arcanum={arcanum} />
+            </ArcanumSection>
           </div>
 
           <section className="stack detail-faq" aria-labelledby="arcanum-faq">

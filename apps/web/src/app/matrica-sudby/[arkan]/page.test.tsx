@@ -23,4 +23,13 @@ describe("/matrica-sudby/[arkan]", () => {
     const faq = JSON.parse([...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map((match) => match[1]!).find((json) => json.includes("FAQPage"))!);
     expect(faq.mainEntity.map((item: { name: string }) => item.name)).toEqual(questions);
   });
+
+  test("every arcanum page ends its sections with a worked example, and the contents list links to it", async () => {
+    for (const arcanum of ARCANA) {
+      const html = renderToStaticMarkup(await Page(params(arcanumParam(arcanum))));
+      expect(html, arcanum.slug).toContain('id="arcanum-example"');
+      expect(html, arcanum.slug).toContain('href="#arcanum-example"');
+      expect(html, arcanum.slug).toContain(`День рождения ${arcanum.number} — это уже аркан ${arcanum.number}`);
+    }
+  });
 });

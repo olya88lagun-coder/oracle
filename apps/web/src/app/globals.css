@@ -6853,3 +6853,9 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 .matrix-point.is-pickable { cursor: pointer; }
 .matrix-point.is-selected circle { stroke-width: 3; }
 .matrix-key.is-selected { border-color: var(--accent); }
+
+/* Учебный пример на странице аркана (ArcanumExample): каркас Claude, оформление — Codex (docs/design/codex-backlog-oracle-2.md, этап 4) */
+.arcanum-example__steps { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.arcanum-example__steps li { display: grid; gap: 2px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.arcanum-example__label { color: var(--accent); font-size: 14px; letter-spacing: 0.04em; }
+.arcanum-example__formula { color: var(--ink); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
