@@ -6,7 +6,7 @@ import type { MonthPage } from "@/lib/lunar-calendar";
 export function MoonLightCurve({ curve, width, height }: { curve: MonthPage["curve"]; width: number; height: number }) {
   return (
     <figure className="moon-curve">
-      <svg className="moon-curve__svg" viewBox={`0 0 ${width} ${height}`} data-width={width} data-height={height} aria-hidden="true" focusable="false">
+      <svg className="moon-curve__svg" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" data-width={width} data-height={height} aria-hidden="true" focusable="false">
         <path className="moon-curve__area" d={curve.area} />
         <path className="moon-curve__line" d={curve.line} pathLength={1} fill="none" />
         <g className="moon-curve__events">
