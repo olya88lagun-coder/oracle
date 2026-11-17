@@ -1,6 +1,6 @@
 import type { ThreadYear } from "@oracle/core";
 import { expect, test } from "vitest";
-import { curveLevels, smoothPath, threadWindow, THREAD_LEVELS, YEAR_NAMES } from "./life-thread-curve";
+import { clearsHoverOnLeave, curveLevels, labelEvery, nowPillBelow, smoothPath, threadWindow, THREAD_LEVELS, YEAR_NAMES } from "./life-thread-curve";
 
 const years = (from: number, to: number): ThreadYear[] => Array.from({ length: to - from + 1 }, (_, i) => ({ year: from + i, value: 1, start: "", end: "" }));
 
@@ -43,4 +43,23 @@ test("smoothPath: two points give one curve segment, one point gives only a move
   const one = smoothPath([{ x: 3, y: 4 }]);
   expect(one.startsWith("M")).toBe(true);
   expect(one).not.toContain("C");
+});
+
+test("year labels are spaced by the room they have: 44 px per label at least, in steps of 5 years in the whole-life view", () => {
+  expect(labelEvery("window", false, 50)).toBe(3);
+  expect(labelEvery("window", true, 17)).toBe(4);
+  expect(labelEvery("all", false, 10)).toBe(10);
+  expect(labelEvery("all", true, 3.8)).toBe(15);
+  expect(labelEvery("all", true, 2.5)).toBe(20);
+});
+
+test("the «you are here» pill goes below the point, and above it when the point is near the year labels", () => {
+  expect(nowPillBelow(200, 292.6)).toBe(true);
+  expect(nowPillBelow(280, 292.6)).toBe(false);
+});
+
+test("a finger lifted from the chart keeps the tooltip; a mouse leaving the chart clears it", () => {
+  expect(clearsHoverOnLeave("mouse")).toBe(true);
+  expect(clearsHoverOnLeave("touch")).toBe(false);
+  expect(clearsHoverOnLeave("pen")).toBe(false);
 });

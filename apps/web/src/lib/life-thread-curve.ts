@@ -45,3 +45,15 @@ export function smoothPath(points: readonly Point[]): string {
   }
   return path;
 }
+
+// Подписи лет: в «окне» через 3–4 года; в «всей жизни» шаг кратен 5 и даёт подписи не теснее 44 px
+export function labelEvery(mode: "window" | "all", narrow: boolean, step: number): number {
+  if (mode === "window") return narrow ? 4 : 3;
+  return Math.max(10, Math.ceil(44 / Math.max(step, 0.1) / 5) * 5);
+}
+
+// Плашка «Вы здесь» стоит под точкой; у нижнего края (годы 2–3 цикла) она закрыла бы подписи лет, тогда уходит над точкой
+export const nowPillBelow = (nowY: number, bottom: number): boolean => nowY <= bottom - 40;
+
+// Палец, оторванный от экрана, тоже «уходит» с картинки: подсказку по касанию оставляем, убирает её только мышь
+export const clearsHoverOnLeave = (pointerType: string): boolean => pointerType === "mouse";

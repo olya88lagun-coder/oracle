@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { DATE_ERROR } from "./matrix-save";
-import { PERIOD_POSITIONS, THREAD_FAQ, THREAD_PATH, threadOutcome } from "./life-thread";
+import { localToday, PERIOD_POSITIONS, THREAD_FAQ, THREAD_PATH, threadOutcome } from "./life-thread";
 
 const TODAY = new Date("2026-11-18T12:00:00Z");
 
@@ -30,4 +30,12 @@ test("the FAQ has six questions and the answer about prediction starts with «Н
   const prediction = THREAD_FAQ.find((item) => item.question.includes("предсказание"));
   expect(prediction?.answer.startsWith("Нет.")).toBe(true);
   for (const item of THREAD_FAQ) if (item !== prediction) expect(item.answer.toLowerCase()).not.toContain("предсказ");
+});
+
+test("localToday turns the visitor's local calendar day into the same UTC day, so a morning birthday in any time zone counts", () => {
+  const morning = new Date(2026, 6, 15, 1, 30);
+  const today = localToday(morning);
+  expect([today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()]).toEqual([2026, 6, 15]);
+  const outcome = threadOutcome("1990-07-15", today);
+  expect(outcome.ok && outcome.thread.currentYear).toBe(2026);
 });

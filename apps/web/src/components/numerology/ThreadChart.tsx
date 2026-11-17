@@ -2,7 +2,7 @@
 
 import type { LifeThread, ThreadPeriod } from "@oracle/core";
 import { useEffect, useId, useLayoutEffect, useRef, useState, type PointerEvent } from "react";
-import { curveLevels, smoothPath, threadWindow, YEAR_NAMES } from "@/lib/life-thread-curve";
+import { clearsHoverOnLeave, curveLevels, labelEvery as labelStep, nowPillBelow, smoothPath, threadWindow, YEAR_NAMES } from "@/lib/life-thread-curve";
 
 // Нить личных годов (эталон — docs/design/mockups/thread/thread-premium.html). Цвета только через переменные;
 // размер в пикселях экрана: ширина viewBox равна ширине блока, поэтому подписи на телефоне не мельче 14 px.
@@ -56,7 +56,8 @@ export function ThreadChart({ thread, initialMode = "window" }: { thread: LifeTh
   const nowPoint = points[nowIndex] ?? { x: g.x0, y: g.bottom };
   const nowValue = years[nowIndex]?.value ?? 1;
   const bands = visibleBands(thread.periods, firstYear, lastYear);
-  const labelEvery = mode === "all" ? 10 : g.narrow ? 4 : 3;
+  const labelEvery = labelStep(mode, g.narrow, step);
+  const pillOffset = nowPillBelow(nowPoint.y, g.bottom) ? 42 : -42;
   const nowFraction = (nowPoint.x - g.x0) / Math.max(1, g.x1 - g.x0);
   const geometry = useRef({ x0: g.x0, x1: g.x1 });
   geometry.current = { x0: g.x0, x1: g.x1 };
@@ -215,7 +216,7 @@ export function ThreadChart({ thread, initialMode = "window" }: { thread: LifeTh
         <circle className="thread-halo" cx={nowPoint.x} cy={nowPoint.y} r="34" fill={`url(#${uid}halo)`} />
         <circle cx={nowPoint.x} cy={nowPoint.y} r="10" className="thread-now__ring" />
         <circle cx={nowPoint.x} cy={nowPoint.y} r="3.6" className="thread-now__dot" />
-        <g transform={`translate(${clamp(nowPoint.x, 84, g.width - 84)},${nowPoint.y + 42})`}>
+        <g transform={`translate(${clamp(nowPoint.x, 84, g.width - 84)},${nowPoint.y + pillOffset})`}>
           <rect x="-80" y="-15" width="160" height="30" rx="15" className="thread-now__pill" />
           <text y="5" className="thread-now__text" textAnchor="middle">{`Вы здесь · год ${nowValue}`}</text>
         </g>
@@ -232,7 +233,7 @@ export function ThreadChart({ thread, initialMode = "window" }: { thread: LifeTh
           <text y="-11" className="thread-tip__name" textAnchor="middle">{YEAR_NAMES[hovered.value]}</text>
         </g>
       </g>}
-      <rect x="0" y="0" width={g.width} height={g.height} fill="transparent" onPointerMove={scrub} onPointerDown={scrub} onPointerLeave={() => setHover(null)} />
+      <rect x="0" y="0" width={g.width} height={g.height} fill="transparent" onPointerMove={scrub} onPointerDown={scrub} onPointerLeave={(event) => { if (clearsHoverOnLeave(event.pointerType)) setHover(null); }} />
     </svg>
     <div className="thread-controls">
       <button className="button button--ghost thread-toggle" type="button" aria-pressed={mode === "all"} onClick={() => setMode(mode === "all" ? "window" : "all")}>Вся жизнь</button>

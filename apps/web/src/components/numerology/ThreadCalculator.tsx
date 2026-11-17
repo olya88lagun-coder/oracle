@@ -2,7 +2,7 @@
 
 import { useRef, useState, type FormEvent } from "react";
 import { reachNumerologyGoal } from "@/lib/numerology";
-import { threadOutcome, type ThreadOutcome, type ThreadTexts } from "@/lib/life-thread";
+import { localToday, threadOutcome, type ThreadOutcome, type ThreadTexts } from "@/lib/life-thread";
 import { ThreadResult } from "./ThreadResult";
 
 export function ThreadCalculator({ texts }: { texts: ThreadTexts }) {
@@ -10,7 +10,7 @@ export function ThreadCalculator({ texts }: { texts: ThreadTexts }) {
   const [outcome, setOutcome] = useState<ThreadOutcome | null>(null);
   function calculate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const next = threadOutcome(input.current?.value ?? "", new Date());
+    const next = threadOutcome(input.current?.value ?? "", localToday(new Date()));
     setOutcome(next);
     if (next.ok) reachNumerologyGoal("thread_calculated");
     else input.current?.focus();

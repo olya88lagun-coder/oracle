@@ -218,6 +218,16 @@ describe("numerology texts on disk", () => {
     expect(NUMEROLOGY_MIN_BODY[text.kind]).toBeGreaterThan(0);
   });
 
+  test("every period card has its own «Как пройти границу» and no copy-pasted opening", () => {
+    const periods = files.map(([name, source]) => ({ name, text: parseNumerologyPage(source, `${name}.md`) })).filter((item) => item.text.kind === "period");
+    expect(periods).toHaveLength(9);
+    const boundary = periods.map((item) => item.text.sections.find((s) => s.title === "Как пройти границу")?.paragraphs.join("|"));
+    expect(new Set(boundary).size).toBe(9);
+    for (const { name, text } of periods) {
+      expect(JSON.stringify(text.sections), name).not.toContain("не привязан к возрасту");
+    }
+  });
+
   test("only accepted batches are published", () => {
     for (const page of NUMEROLOGY_PAGES) {
       if (!NUMEROLOGY_ACCEPTED_BATCHES.has(page.batch)) expect(numerologyText(page.kind, page.key)).toBeUndefined();

@@ -5,6 +5,9 @@ import { NUMEROLOGY_PATH } from "./numerology";
 // «Нить» — график судьбы по дате рождения (docs/superpowers/specs/2026-11-18-life-thread-design.md)
 export const THREAD_PATH = `${NUMEROLOGY_PATH}/grafik-sudby`;
 
+// Календарный день посетителя как «сегодня» в UTC: утром в день рождения год уже новый, в каком бы часовом поясе человек ни был
+export const localToday = (now: Date): Date => new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+
 export type ThreadOutcome = { ok: true; iso: string; thread: LifeThread } | { ok: false; error: string };
 
 export function threadOutcome(iso: string, today: Date): ThreadOutcome {
