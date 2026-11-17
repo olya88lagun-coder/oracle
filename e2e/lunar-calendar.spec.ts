@@ -63,6 +63,25 @@ test("the switcher leads to the next month and the entry address leads to the cu
   await expect(page).toHaveURL(/\/lunnyy-kalendar\/[a-z]+-\d{4}$/);
 });
 
+test("on the page of the current month today is marked in the grid, in the table and on the curve and ribbon", async ({ page }) => {
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Moscow" });
+  await page.goto("/lunnyy-kalendar");
+  await expect(page).toHaveURL(/\/lunnyy-kalendar\/[a-z]+-\d{4}$/);
+  await expect(page.locator(".moon-month")).toHaveAttribute("data-has-today", "true");
+  await expect(page.locator(`td.moon-month__cell.is-today[data-date="${today}"]`)).toHaveCount(1);
+  await expect(page.locator(`tr.moon-days__row.is-today[data-date="${today}"]`)).toHaveCount(1);
+  await expect(page.locator(`tr.moon-days__row.is-today[data-date="${today}"]`)).toHaveAttribute("aria-current", "date");
+  await expect(page.locator(".moon-days__row.is-today")).toHaveCount(1);
+});
+
+test("the ribbon shows a glyph and a name for each sign", async ({ page }) => {
+  await page.goto(MONTH);
+  const segments = page.locator(".moon-ribbon__seg");
+  expect(await segments.count()).toBeGreaterThanOrEqual(11);
+  await expect(page.locator(".moon-ribbon__glyph")).toHaveCount(await segments.count());
+  await expect(page.locator(".moon-ribbon__sign").first()).not.toBeEmpty();
+});
+
 test("a month outside the window is a real 404", async ({ page }) => {
   const response = await page.goto("/lunnyy-kalendar/yanvar-2020");
   expect(response?.status()).toBe(404);

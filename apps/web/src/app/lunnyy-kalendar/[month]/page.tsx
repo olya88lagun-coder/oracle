@@ -7,6 +7,7 @@ import { MoonMonthDays } from "@/components/moon/MoonMonthDays";
 import { MoonMonthExplorer } from "@/components/moon/MoonMonthExplorer";
 import { MoonSignRibbon } from "@/components/moon/MoonSignRibbon";
 import { MoonTodayMark } from "@/components/moon/MoonTodayMark";
+import { NatalSprite } from "@/components/natal/NatalSprite";
 import { DISCLAIMER } from "@/lib/legal";
 import { buildMonthPage, CURVE_HEIGHT, CURVE_WIDTH, isInWindow, MONTH_NAMES, monthWindow } from "@/lib/lunar-calendar";
 import { lunarMonthPath, parseMonthSlug } from "@/lib/lunar-calendar-paths";
@@ -66,6 +67,7 @@ export default async function LunarMonthPage({ params }: Params) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }} />
       <main className="moon-month">
+        <NatalSprite />
         <MoonTodayMark year={year} month={month} />
         <nav aria-label="Хлебные крошки" className="moon-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href={MOON_PATH}>Луна сегодня</Link><span aria-hidden="true">/</span><span>{page.title}</span></nav>
         <header className="moon-month__head">

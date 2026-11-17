@@ -32,6 +32,12 @@ describe("the November 2026 page", () => {
     expect(count(html, /class="moon-days__row"/g)).toBe(30);
   });
 
+  test("carries the natal glyph sprite once, so the glyphs of the ribbon can be drawn", async () => {
+    const html = await render();
+    expect(count(html, /class="natal-sprite"/g)).toBe(1);
+    expect(count(html, /moon-ribbon__glyph/g)).toBeGreaterThanOrEqual(11);
+  });
+
   test("the ribbon segments run from 0 to 1 in a row", async () => {
     const html = await render();
     const pairs = [...html.matchAll(/--from:\s*([\d.]+);\s*--to:\s*([\d.]+)/g)].map((match) => [Number(match[1]), Number(match[2])] as const);
