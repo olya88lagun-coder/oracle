@@ -64,3 +64,20 @@ test("there is no horizontal scroll at 375 px", async ({ page }) => {
   await expect(live(page)).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
+
+test("a date handed over from the home page shows on the diagram at once, without rolling", async ({ page }) => {
+  await page.goto("/");
+  await expect(async () => {
+    await page.getByRole("textbox", { name: "Дата рождения" }).fill("1990-03-07");
+    await page.getByRole("link", { name: "Рассчитать матрицу бесплатно" }).click();
+    await expect(page).toHaveURL(/\/matrica-sudby$/, { timeout: 3000 });
+  }).toPass({ timeout: 25_000 });
+  // Первое состояние «date» уже без прокрутки: фаза читается в тот же момент, что и состояние
+  let phaseAtArrival = "";
+  await expect.poll(async () => {
+    phaseAtArrival = await live(page).evaluate((el) => (el.getAttribute("data-state") === "date" ? (el.getAttribute("data-phase") ?? "") : "waiting"));
+    return phaseAtArrival;
+  }, { timeout: 10_000 }).not.toBe("waiting");
+  expect(phaseAtArrival).toBe("idle");
+  await expect(node(page, "E")).toHaveText("4");
+});

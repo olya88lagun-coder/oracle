@@ -53,21 +53,23 @@ export function MatrixHeroLive({ value }: { value: string }) {
 
   useEffect(() => {
     const figure = figureRef.current;
-    const onVisibility = () => {
-      visibleRef.current = visibleRef.current && document.visibilityState === "visible";
+    // Диаграмма «живая», только пока она на экране и вкладка открыта; обе причины считаем отдельно, иначе возврат во вкладку не включит её снова
+    let onScreen = true;
+    const update = () => {
+      visibleRef.current = onScreen && document.visibilityState === "visible";
       setVisible(visibleRef.current);
     };
     const observer = typeof IntersectionObserver === "undefined" || !figure ? null : new IntersectionObserver(([entry]) => {
       if (!entry) return;
-      visibleRef.current = entry.isIntersecting && document.visibilityState === "visible";
-      setVisible(visibleRef.current);
+      onScreen = entry.isIntersecting;
+      update();
     });
     if (figure) observer?.observe(figure);
-    document.addEventListener("visibilitychange", onVisibility);
+    document.addEventListener("visibilitychange", update);
     if (motionAllowed()) flashKeys();
     return () => {
       observer?.disconnect();
-      document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener("visibilitychange", update);
       cancelAnimationFrame(frameRef.current);
       clearTimeout(flashTimer.current);
     };
