@@ -5750,3 +5750,37 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
     to { opacity: 0; stroke-dashoffset: -0.925; }
   }
 }
+
+/* Луна сегодня: каркас, оформление — Codex (docs/design/codex-brief-luna-today.md) */
+.moon-page { width: min(100% - 32px, 960px); margin-inline: auto; padding-block: 24px 64px; }
+.moon-breadcrumb { display: flex; gap: 8px; margin-bottom: 16px; color: var(--ink-faint); font-size: 14px; }
+.moon-hero { display: grid; justify-items: center; gap: 16px; text-align: center; }
+.moon-hero h1 { font-size: clamp(32px, 7vw, 56px); line-height: 1.1; }
+.moon-hero__place { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.moon-disc { display: grid; justify-items: center; gap: 8px; margin: 0; }
+.moon-disc__svg { display: block; width: min(100%, 320px); height: auto; }
+.moon-disc__base { fill: var(--surface-3); }
+.moon-disc__lit { fill: var(--ink); }
+.moon-disc__rim { fill: none; stroke: var(--line-strong); }
+.moon-disc__tick { fill: var(--line-strong); }
+.moon-disc__tick.is-current { fill: var(--accent); }
+.moon-disc__caption { color: var(--ink-soft); font-size: 14px; }
+.moon-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; margin: 0; padding: 0; list-style: none; }
+.moon-tile { display: grid; gap: 4px; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); text-align: left; }
+.moon-tile__label { color: var(--ink-faint); font-size: 14px; }
+.moon-tile__value { color: var(--ink); font-size: 20px; }
+.moon-tile__note { color: var(--ink-soft); font-size: 14px; }
+.moon-next { margin: 0; color: var(--accent); }
+.moon-strip { margin-top: 32px; }
+.moon-strip__list { display: flex; gap: 8px; margin: 0; padding: 0 0 8px; overflow-x: auto; list-style: none; }
+.moon-strip__day { display: grid; flex: none; justify-items: center; gap: 4px; width: 84px; font-size: 14px; }
+.moon-strip__day.is-today time { color: var(--accent); }
+.moon-mini { width: 56px; height: 56px; }
+.moon-strip__phase { color: var(--ink-faint); font-size: 14px; text-align: center; }
+.moon-text, .moon-links, .moon-faq { margin-top: 32px; }
+.moon-text__block { margin-top: 16px; }
+.moon-text__question { color: var(--accent); }
+.moon-faq details { padding-block: 8px; border-top: 1px solid var(--line); }
+.moon-faq summary { min-height: 44px; cursor: pointer; }
+.moon-disclaimer { margin-top: 32px; color: var(--ink-faint); font-size: 14px; }
+@media (min-width: 900px) { .moon-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
