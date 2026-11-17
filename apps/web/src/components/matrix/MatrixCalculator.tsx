@@ -35,6 +35,7 @@ import {
 } from "@/lib/matrix-save";
 import { FREE_RESULT_PROMISE } from "@/lib/practices";
 import { offerState, type PaidReport } from "@/lib/report-offer";
+import { MatrixHeroLive } from "./MatrixHeroLive";
 import { MATRIX_DATE_ID, MATRIX_FORM_ID } from "./matrix-ids";
 import { MatrixResult } from "./MatrixResult";
 import { ReportOffer } from "./ReportOffer";
@@ -180,6 +181,7 @@ export function MatrixCalculator({
         <div className="matrix-wrap matrix-hero__inner">
           <div className="matrix-hero__copy">
             {intro}
+            <MatrixHeroLive value={value} />
             <form
               id={MATRIX_FORM_ID}
               className="matrix-form"

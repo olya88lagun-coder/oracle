@@ -5343,3 +5343,17 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 @media (prefers-reduced-motion: reduce) { .book__page--under { display: none; } }
 @keyframes book-out { 70% { opacity: 1; } 100% { opacity: 0; transform: rotateY(-105deg); } }
 @keyframes book-in { from { opacity: 0; transform: rotateY(-105deg); } 30% { opacity: 1; } }
+
+/* Живая матрица (MatrixHeroLive): каркас, оформление — Codex (docs/design/codex-brief-matrix-live-hero.md) */
+.matrix-live { width: min(100%, 360px); margin: 8px auto 0; }
+.matrix-live__caption { margin: 0 0 8px; color: var(--ink-faint); font-size: 14px; text-align: center; }
+.matrix-live__svg { display: block; width: 100%; height: auto; }
+.matrix-live__ring { fill: none; stroke: var(--line); stroke-dasharray: 3 5; }
+.matrix-live__line { stroke: var(--line-strong); stroke-width: 1; }
+.matrix-live__comet { fill: none; stroke: none; }
+.matrix-live__point circle { fill: var(--surface); stroke: var(--line-strong); }
+.matrix-live__point--key circle { stroke: var(--accent); }
+.matrix-live__point text { fill: var(--ink); font-size: 12px; }
+.matrix-live__point--key text { font-size: 18px; }
+.matrix-live__keys { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; margin: 8px 0 0; padding: 0; list-style: none; font-size: 14px; }
+.matrix-live__key-label { color: var(--accent-soft); }
