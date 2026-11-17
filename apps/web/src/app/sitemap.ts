@@ -4,6 +4,7 @@ import { BLOG_PATH, BLOG_POSTS, blogPath } from "@/lib/blog";
 import { COMPAT_PATH } from "@/lib/compat";
 import { DOCUMENT_PATHS } from "@/lib/legal";
 import { LILA_PATH } from "@/lib/lila-paths";
+import { LUNAR_CALENDAR_PATH } from "@/lib/lunar-calendar-paths";
 import { MOON_PATH } from "@/lib/moon-paths";
 import { GLOSSARY_PATH } from "@/lib/natal-glossary";
 import { NATAL_PATH } from "@/lib/natal-paths";
@@ -22,6 +23,7 @@ const priorityOf = (path: string): number => {
   if (path === "/") return 1;
   if (PRACTICE_PATHS.has(path)) return 0.8;
   if (path === BLOG_PATH || path.startsWith(`${BLOG_PATH}/`)) return 0.6;
+  if (path.startsWith(`${LUNAR_CALENDAR_PATH}/`)) return 0.6;
   return REFERENCE_PATHS.has(path) ? 0.3 : 0.5;
 };
 

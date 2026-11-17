@@ -12,6 +12,7 @@ import { GLOSSARY_PATH } from "./natal-glossary";
 import { NATAL_PATH, natalPagePath } from "./natal-paths";
 import { QUICK_PAGES, QUICK_VARIANTS } from "./natal-quick-pages";
 import { DOCUMENT_PATHS } from "./legal";
+import { lunarMonthPath, monthWindow } from "./lunar-calendar-paths";
 import { MOON_PATH } from "./moon-paths";
 import { TARO_DAY_PATH, TARO_PATH, TARO_SPREADS_PATH, taroCardPath } from "./taro-paths";
 import { spreadPath, TARO_SPREADS } from "./taro-spreads";
@@ -28,7 +29,7 @@ export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", 
 export const ROBOTS_DISALLOW: readonly string[] = ["/api/", "/admin"];
 
 // Практики и их справочники; следующие планы добавят свои
-export const PUBLIC_PATHS: string[] = ["/", "/arkan-2027", NUMEROLOGY_PATH, ...acceptedFatePaths(), PERSONAL_YEAR_PATH, ...acceptedPersonalYearPaths(), CLOCK_PATH, ...acceptedClockPaths(), PYTHAGORAS_PATH, ...acceptedSquarePaths(), ...acceptedPairPaths(), ...ARCANA.map(yearArcanumPath), MATRIX_PATH, ARCANA_HUB_PATH, COMPAT_PATH, ...ARCANA.map(compatArcanumPath), ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, TARO_SPREADS_PATH, ...TARO_SPREADS.map(spreadPath), ...TAROT_DECK.map(taroCardPath), MOON_PATH, NATAL_PATH, ...QUICK_VARIANTS.map((variant) => QUICK_PAGES[variant].path), `${NATAL_PATH}/primer`, GLOSSARY_PATH, ...acceptedNatalPages().map(natalPagePath), ...acceptedHousePages().map(natalPagePath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), "/metodika", "/matrica-sudby/primer", "/lila/primer", ...DOCUMENT_PATHS];
+export const PUBLIC_PATHS: string[] = ["/", "/arkan-2027", NUMEROLOGY_PATH, ...acceptedFatePaths(), PERSONAL_YEAR_PATH, ...acceptedPersonalYearPaths(), CLOCK_PATH, ...acceptedClockPaths(), PYTHAGORAS_PATH, ...acceptedSquarePaths(), ...acceptedPairPaths(), ...ARCANA.map(yearArcanumPath), MATRIX_PATH, ARCANA_HUB_PATH, COMPAT_PATH, ...ARCANA.map(compatArcanumPath), ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, TARO_SPREADS_PATH, ...TARO_SPREADS.map(spreadPath), ...TAROT_DECK.map(taroCardPath), MOON_PATH, ...monthWindow(new Date()).map(({ year, month }) => lunarMonthPath(year, month)), NATAL_PATH, ...QUICK_VARIANTS.map((variant) => QUICK_PAGES[variant].path), `${NATAL_PATH}/primer`, GLOSSARY_PATH, ...acceptedNatalPages().map(natalPagePath), ...acceptedHousePages().map(natalPagePath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), "/metodika", "/matrica-sudby/primer", "/lila/primer", ...DOCUMENT_PATHS];
 
 type PreviewImage = { url: string; alt: string; width?: number; height?: number };
 

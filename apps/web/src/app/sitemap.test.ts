@@ -1,5 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { BLOG_POSTS, blogPath } from "@/lib/blog";
+import { monthWindow } from "@/lib/lunar-calendar-paths";
+import { lunarMonthPath } from "@/lib/lunar-calendar-paths";
 import { PUBLIC_PATHS } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import sitemap from "./sitemap";
@@ -26,5 +28,12 @@ describe("sitemap.xml", () => {
     for (const post of BLOG_POSTS) expect(entry(blogPath(post))?.lastModified, post.slug).toEqual(new Date(post.updated ?? post.published));
     expect(entry("/lila")?.lastModified).toBeUndefined();
     expect(entry("/")?.lastModified).toBeUndefined();
+  });
+
+  test("lists every month page of the lunar calendar with the priority of reference pages, but not the entry that redirects", () => {
+    const window = monthWindow(new Date());
+    expect(window).toHaveLength(15);
+    for (const { year, month } of window) expect(entry(lunarMonthPath(year, month))?.priority, `${year}-${month}`).toBe(0.6);
+    expect(entry("/lunnyy-kalendar")).toBeUndefined();
   });
 });

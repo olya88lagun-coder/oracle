@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MoonExplorer, type MoonView } from "@/components/moon/MoonExplorer";
 import type { MoonSnapshot } from "@oracle/core/moon";
 import { DISCLAIMER } from "@/lib/legal";
+import { currentMonthPath } from "@/lib/lunar-calendar-paths";
 import { buildMoonToday, MOON_FAQ, MOON_PATH, PHASE_NAMES } from "@/lib/moon-today";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -73,6 +74,7 @@ export default function MoonTodayPage() {
         <section className="moon-links" aria-labelledby="moon-links-title">
           <h2 id="moon-links-title">Продолжить</h2>
           <ul>
+            <li><Link className="touch-link" href={currentMonthPath(new Date())}>Лунный календарь на месяц</Link></li>
             <li><Link className="touch-link" href={today.links.cardOfDay}>Вытянуть карту дня</Link></li>
             <li><Link className="touch-link" href={today.links.natal}>Какая Луна в вашей натальной карте</Link></li>
             {today.signSummary && <li><Link className="touch-link" href={today.signSummary.href}>Значение: Луна {today.signName}</Link></li>}

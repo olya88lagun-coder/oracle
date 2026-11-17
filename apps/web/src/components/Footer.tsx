@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CookieSettingsButton } from "./CookieSettingsButton";
 import { DISCLAIMER } from "@/lib/legal";
+import { LUNAR_CALENDAR_PATH } from "@/lib/lunar-calendar-paths";
 import { MOON_PATH } from "@/lib/moon-paths";
 import { SECTIONS } from "@/lib/sections";
 import { SOCIAL_LINKS } from "@/lib/site";
@@ -33,6 +34,7 @@ export function Footer() {
           ))}
           {/* Не в SECTIONS: этот список общий с шапкой, а там уже семь разделов */}
           <Link href={MOON_PATH}>Луна сегодня</Link>
+          <Link href={LUNAR_CALENDAR_PATH}>Лунный календарь</Link>
         </nav>
         <nav aria-label="О проекте">
           {MORE.map((link) => (
