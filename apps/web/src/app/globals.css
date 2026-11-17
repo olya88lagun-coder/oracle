@@ -6841,3 +6841,13 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   @keyframes moon-calendar-reveal { from { clip-path: inset(-6px 100% -6px -6px); } to { clip-path: inset(-6px -6px -6px -6px); } }
   @keyframes moon-calendar-cell-in { from { opacity: 0; transform: translateY(6px); } }
 }
+
+/* Выбор ключевой позиции на схеме (MatrixFocus): каркас Claude, оформление — Codex (docs/design/codex-brief-oracle-2.md, этап 1) */
+.matrix-focus__tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.matrix-focus__tab { min-height: 44px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 999px; background: transparent; color: var(--ink-soft); font: inherit; cursor: pointer; }
+.matrix-focus__tab[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+.matrix-focus__name { margin: 0; font-family: var(--font-display); font-size: 24px; }
+.matrix-focus__number { color: var(--accent); }
+.matrix-point.is-pickable { cursor: pointer; }
+.matrix-point.is-selected circle { stroke-width: 3; }
+.matrix-key.is-selected { border-color: var(--accent); }
