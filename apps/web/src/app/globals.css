@@ -5357,3 +5357,9 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 .matrix-live__point--key text { font-size: 18px; }
 .matrix-live__keys { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; margin: 8px 0 0; padding: 0; list-style: none; font-size: 14px; }
 .matrix-live__key-label { color: var(--accent-soft); }
+/* Телефон: над кнопкой диаграмме места нет (запас до cookie-панели ~85 px), поэтому она под формой */
+@media (max-width: 759px) {
+  .matrix-hero__copy { display: flex; flex-direction: column; }
+  .matrix-form { order: 1; }
+  .matrix-live { order: 2; }
+}

@@ -20,6 +20,13 @@ test.describe("first visit with the cookie panel open", () => {
     await visibleAboveCookie(page, button!.y + button!.height);
   });
 
+  test("the matrix button on /matrica-sudby is visible above the cookie panel on a short phone", async ({ page }) => {
+    await page.setViewportSize(SHORT_PHONE);
+    await page.goto("/matrica-sudby");
+    const button = await page.getByRole("button", { name: "Рассчитать матрицу" }).boundingBox();
+    await visibleAboveCookie(page, button!.y + button!.height);
+  });
+
   test("all three cards of the card of the day are visible above the cookie panel on a short phone", async ({ page }) => {
     await page.setViewportSize(SHORT_PHONE);
     await page.goto("/taro/karta-dnya");
