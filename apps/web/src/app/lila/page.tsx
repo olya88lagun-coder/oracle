@@ -47,16 +47,18 @@ export default function LilaPage() {
             <Link className="button" href={LILA_GAME_PATH}>
               Играть
             </Link>
-            <a className="button button--ghost" href="#how">
-              Как это устроено
+            <a className="button button--ghost" href="#try">
+              Попробовать бросок
             </a>
           </p>
-          <p className="muted">Без регистрации · партия сохраняется в вашем браузере</p>
+          <p className="muted">
+            Без регистрации · партия сохраняется в вашем браузере · <a href="#how">Как это устроено</a>
+          </p>
         </div>
         <Image className="lila-hero__art" src="/practices/lila.webp" alt="" width={1200} height={675} unoptimized priority />
       </div>
 
-      <section className="card stack" aria-labelledby="try-title">
+      <section className="card stack" id="try" aria-labelledby="try-title">
         <h2 id="try-title">Попробуйте первый бросок</h2>
         <p>В игру входят с шестёркой. Бросьте кубик здесь, чтобы почувствовать начало пути: проба ничего не сохраняет.</p>
         <LilaTryDice />

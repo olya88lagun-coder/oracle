@@ -17,7 +17,7 @@
 | Вход | `apps/web/src/app/login/` |
 | Шапка, подвал, cookie-баннер | `apps/web/src/components/` (`Header` и `HeaderNav` — навигация и меню на телефоне, `Footer`, `Analytics` — там же баннер); список разделов шапки и подвала — `apps/web/src/lib/sections.ts` |
 | Список практик на главной | `apps/web/src/lib/practices.ts` |
-| Лила: вход и справочник | `apps/web/src/app/lila/page.tsx` |
+| Лила: вход и справочник | `apps/web/src/app/lila/page.tsx` (в первом экране рядом с «Играть» стоит кнопка «Попробовать бросок» — якорь `#try` на блок пробного броска `LilaTryDice`; «Как это устроено» — ссылкой в строке под кнопками) |
 | Лила: игра | `apps/web/src/app/lila/igra/`, `apps/web/src/components/lila/` (`GameShell` — три состояния: выбор намерения, партия, история завершённой; `GamePlay` — вкладки «Ход / Поле / История», кубик `DiceControls`, ход `TurnPanel`, увеличение поля `BoardZoom`; поле — `Board`, фишки до первой шестёрки нет). Иконки — `apps/web/src/components/Icon.tsx` |
 | Лила: страницы клеток | `apps/web/src/app/lila/kletki/[cell]/page.tsx` (общая вёрстка страниц значений с аркана и карты Таро — `apps/web/src/components/detail/`: увеличение картинки, оглавление, переход к соседним) |
 | Лила: история партии | `apps/web/src/app/portret/lila/[id]/page.tsx` |
