@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { buildMonthPage, isInWindow, lightCurve, MONTH_NAMES, monthWindow, ribbonSegments } from "./lunar-calendar";
+import { buildMonthPage, isInWindow, lightCurve, MONTH_NAMES, monthFaq, monthWindow, ribbonSegments } from "./lunar-calendar";
 import { LUNAR_CALENDAR_PATH, lunarMonthPath, MONTH_SLUGS, moscowDate, parseMonthSlug } from "./lunar-calendar-paths";
 
 const NOW = new Date("2026-11-17T09:00:00Z"); // 12:00 по Москве
@@ -155,5 +155,20 @@ describe("buildMonthPage(2026, 11)", () => {
 
   test("keeps the FAQ empty until the texts of the owner are accepted", () => {
     expect(page.faq).toEqual([]);
+  });
+});
+
+describe("monthFaq", () => {
+  test("answers with the real dates of the month in the Moscow time", () => {
+    const faq = monthFaq(2026, 11);
+    expect(faq.map((item) => item.question)).toEqual(["Когда новолуние в ноябре 2026?", "Когда полнолуние в ноябре 2026?", "Какие фазы Луны в ноябре 2026?", "Как читать лунный календарь?"]);
+    expect(faq[0]!.answer).toMatch(/9 ноября, 10:0\d/);
+    expect(faq[1]!.answer).toMatch(/24 ноября, 17:5\d/);
+  });
+
+  test("names both full moons of May 2026", () => {
+    const answer = monthFaq(2026, 5)[1]!.answer;
+    expect(answer).toMatch(/1 мая, 20:2\d/);
+    expect(answer).toMatch(/31 мая, 11:4\d/);
   });
 });

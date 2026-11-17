@@ -1,3 +1,4 @@
+import { MONTH_FAQ_TEMPLATES, MOON_CALENDAR_TEXTS_ACCEPTED, type MonthFacts, type PhaseKind } from "@oracle/content/moon-calendar";
 import { daysInMonth, moonMonth, type MoonEvent, type SignRun } from "@oracle/core/moon";
 import type { PhaseId } from "@oracle/core/moon/visual";
 import type { SignId } from "@oracle/core/natal";
@@ -98,6 +99,24 @@ export type MonthPage = {
 export const CURVE_WIDTH = 720;
 export const CURVE_HEIGHT = 160;
 
+const MONTH_LOCATIVE: readonly string[] = ["январе", "феврале", "марте", "апреле", "мае", "июне", "июле", "августе", "сентябре", "октябре", "ноябре", "декабре"];
+
+function toCalendarEvents(events: readonly MoonEvent[]): CalendarEvent[] {
+  return events.map((event) => {
+    const date = moscowDate(event.at);
+    return { kind: event.kind, name: EVENT_NAMES[event.kind], label: `${dayMonthFormat.format(event.at)}, ${clock(event.at)}`, date, dayIndex: Number(date.slice(8)) - 1 };
+  });
+}
+
+// Вопросы с настоящими датами месяца; метки времени — по Москве
+function faqFromEvents(year: number, month: number, events: readonly CalendarEvent[]): { question: string; answer: string }[] {
+  const group = (kind: PhaseKind) => events.filter((event) => event.kind === kind).map((event) => event.label);
+  const facts: MonthFacts = { month: MONTH_NAMES[month - 1]!, monthLocative: MONTH_LOCATIVE[month - 1]!, year, events: { new: group("new"), firstQuarter: group("firstQuarter"), full: group("full"), lastQuarter: group("lastQuarter") } };
+  return MONTH_FAQ_TEMPLATES.map((template) => ({ question: template.question(facts.monthLocative, year), answer: template.answer(facts) }));
+}
+
+export const monthFaq = (year: number, month: number): { question: string; answer: string }[] => faqFromEvents(year, month, toCalendarEvents(moonMonth(year, month).events));
+
 const monthLabel = ({ year, month }: YearMonth): string => `${capital(MONTH_NAMES[month - 1]!)} ${year}`;
 
 // Данные страницы месяца: сетка по неделям с понедельника, события, смены знаков, кривая света, лента знаков и строки таблицы
@@ -129,10 +148,7 @@ export function buildMonthPage(year: number, month: number, now: Date): MonthPag
   while (slots.length % 7 !== 0) slots.push(null);
   const weeks = Array.from({ length: slots.length / 7 }, (_, row) => slots.slice(row * 7, row * 7 + 7));
 
-  const events = data.events.map((event): CalendarEvent => {
-    const date = moscowDate(event.at);
-    return { kind: event.kind, name: EVENT_NAMES[event.kind], label: `${dayMonthFormat.format(event.at)}, ${clock(event.at)}`, date, dayIndex: Number(date.slice(8)) - 1 };
-  });
+  const events = toCalendarEvents(data.events);
 
   const curve = lightCurve(cells.map((cell) => ({ date: cell.date, illumination: cell.illumination })), CURVE_WIDTH, CURVE_HEIGHT);
   const span = end.getTime() - start.getTime();
@@ -162,7 +178,7 @@ export function buildMonthPage(year: number, month: number, now: Date): MonthPag
     prev: neighbour(here - 1),
     next: neighbour(here + 1),
     months: window.map((item) => ({ label: monthLabel(item), href: lunarMonthPath(item.year, item.month), current: index(item) === here })),
-    // Вопросы с датами месяца появятся вместе с принятыми текстами (Task 4)
-    faq: [],
+    // Вопросы показываются только после того, как владелица приняла тексты
+    faq: MOON_CALENDAR_TEXTS_ACCEPTED ? faqFromEvents(year, month, events) : [],
   };
 }
