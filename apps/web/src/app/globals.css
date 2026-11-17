@@ -5830,6 +5830,8 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 }
 
 .moon-disc {
+  position: relative;
+  isolation: isolate;
   display: grid;
   justify-items: center;
   gap: 6px;
@@ -5841,14 +5843,27 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   text-align: center;
 }
 
+.moon-disc::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  aspect-ratio: 1;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    circle closest-side,
+    var(--moon-light-center) 30%,
+    var(--moon-light-ambient) 72%,
+    transparent 98%
+  );
+}
+
 .moon-disc > .moon-disc__svg {
   display: block;
   width: 100%;
   height: auto;
   overflow: visible;
-  background:
-    radial-gradient(circle closest-side, transparent 90.6%, var(--moon-orbit) 91%, transparent 91.4%),
-    radial-gradient(circle closest-side, var(--moon-light-center), var(--moon-light-ambient) 64%, transparent 100%);
+  background: radial-gradient(circle closest-side, transparent 90.6%, var(--moon-orbit) 91%, transparent 91.4%);
 }
 
 .moon-page :is(.moon-disc__svg, .moon-mini) .moon-disc__base {
@@ -5857,10 +5872,6 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 
 .moon-page :is(.moon-disc__svg, .moon-mini) .moon-disc__lit {
   fill: var(--moon-disc-ivory);
-}
-
-.moon-disc > .moon-disc__svg .moon-disc__base {
-  filter: drop-shadow(0 0 15px var(--moon-disc-halo));
 }
 
 .moon-disc__earthshine {
