@@ -5344,7 +5344,7 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 @keyframes book-out { 70% { opacity: 1; } 100% { opacity: 0; transform: rotateY(-105deg); } }
 @keyframes book-in { from { opacity: 0; transform: rotateY(-105deg); } 30% { opacity: 1; } }
 
-/* Живая матрица — оформление */
+/* Живая матрица — оформление (Codex; колонка диаграммы на телефоне сужена до 54vw: «Справедливость» не помещалась в подписи) */
 :root {
   --matrix-live-gold: #efd3a2;
   --matrix-live-bronze: #8b6b4a;
@@ -5579,7 +5579,7 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
     line-height: 1.4;
   }
   .matrix-live {
-    grid-template-columns: min(61vw, 250px) minmax(0, 1fr);
+    grid-template-columns: min(54vw, 220px) minmax(0, 1fr);
     align-items: center;
     gap: 4px 8px;
     width: min(100%, 440px);
@@ -5611,7 +5611,7 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 }
 
 @media (max-width: 599px) and (max-height: 760px) {
-  .matrix-live { grid-template-columns: min(60vw, 232px) minmax(0, 1fr); }
+  .matrix-live { grid-template-columns: min(54vw, 220px) minmax(0, 1fr); }
 }
 
 @media (max-width: 340px) {

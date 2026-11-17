@@ -166,12 +166,13 @@ export function MatrixCalculator({
         <picture className="matrix-hero__art">
           <source
             media="(max-width: 700px)"
-            srcSet="/images/matrix/matrix-stone-mobile.webp"
+            srcSet="/images/matrix/matrix-stone-clean-mobile.webp"
           />
-          {/* Декоративный кадр: пустой alt. Первый экран страницы, поэтому грузится с приоритетом */}
+          {/* Декоративный кадр: пустой alt. Чистый камень без узора: узор рисует живая диаграмма. Первый экран страницы, поэтому грузится с приоритетом.
+              Старый камень с узором остаётся только картинкой превью ссылок (matrix-stone.webp) */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/images/matrix/matrix-stone.webp"
+            src="/images/matrix/matrix-stone-clean.webp"
             alt=""
             width={1536}
             height={1024}
