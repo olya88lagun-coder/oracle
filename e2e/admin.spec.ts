@@ -72,6 +72,11 @@ test("the receipts page counts what is waiting, says for how long and copies the
 });
 
 test("the owner gets the report and the Lila guide for free, without an e-mail, and they are not listed as receipts", async ({ browser }) => {
+  // Владелица одна и та же в локальной базе: после прошлого прогона у неё уже есть разбор и партия, а тест ждёт чистый кабинет — стираем данные и входим заново
+  const previous = await signIn(browser, OWNER_NAME);
+  expect((await previous.page.request.post("/api/me/delete", { headers: { origin: BASE_URL } })).ok()).toBe(true);
+  await previous.context.close();
+
   const { context, page } = await signIn(browser, OWNER_NAME);
   await saveDate(page, "1985-06-15");
 

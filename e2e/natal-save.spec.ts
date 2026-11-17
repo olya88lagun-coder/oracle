@@ -9,10 +9,18 @@ const SAVE_STATUS = ".natal-save__status";
 const PORTRAIT_LINE = ".portrait-natal__data";
 
 async function calculateMoscow(page: Page) {
-  await page.getByRole("textbox", { name: "Дата рождения" }).fill("1990-03-07");
-  await page.getByLabel("Время рождения", { exact: true }).fill("12:00");
-  await page.getByRole("combobox", { name: "Место рождения" }).fill("Москва");
-  await page.getByRole("option").first().click();
+  const date = page.getByRole("textbox", { name: "Дата рождения" });
+  // Поля, заполненные до того, как страница ожила (гидрация), сбрасываются: заполняем повторно, пока значения не удержатся
+  await expect(async () => {
+    await date.fill("1990-03-07");
+    await page.getByLabel("Время рождения", { exact: true }).fill("12:00");
+    const city = page.getByRole("combobox", { name: "Место рождения" });
+    if ((await city.inputValue()) !== "Москва") {
+      await city.fill("Москва");
+      await page.getByRole("option").first().click({ timeout: 4000 });
+    }
+    await expect(date).toHaveValue("1990-03-07", { timeout: 1000 });
+  }).toPass({ timeout: 25_000 });
   await page.getByRole("button", { name: "Рассчитать карту" }).click();
   await expect(page.getByRole("heading", { name: "Ваша натальная карта" })).toBeVisible();
 }
