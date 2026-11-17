@@ -2,7 +2,9 @@ import { MONTH_FAQ_TEMPLATES, MOON_CALENDAR_TEXTS_ACCEPTED, type MonthFacts, typ
 import { daysInMonth, moonMonth, type MoonEvent, type SignRun } from "@oracle/core/moon";
 import type { PhaseId } from "@oracle/core/moon/visual";
 import type { SignId } from "@oracle/core/natal";
-import { lunarMonthPath, moscowDate } from "./lunar-calendar-paths";
+import { isInWindow, lunarMonthPath, monthFromIndex, monthIndex, monthWindow, moscowDate, type YearMonth } from "./lunar-calendar-paths";
+
+export { isInWindow, monthWindow };
 import { PHASE_NAMES } from "./moon-today";
 
 export const MONTH_NAMES: readonly string[] = ["январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"];
@@ -24,24 +26,6 @@ const shortFormat = format({ day: "numeric", month: "short" });
 const capital = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
 const clock = (date: Date): string => clockFormat.format(date);
 const shortLabel = (date: Date): string => `${shortFormat.format(date).replace(/\.$/, "")}, ${clock(date)}`;
-
-type YearMonth = { year: number; month: number };
-const index = ({ year, month }: YearMonth): number => year * 12 + month - 1;
-const fromIndex = (value: number): YearMonth => ({ year: Math.floor(value / 12), month: (value % 12) + 1 });
-
-// Текущий месяц по Москве
-function currentMonth(now: Date): YearMonth {
-  const [year, month] = moscowDate(now).split("-").map(Number) as [number, number];
-  return { year, month };
-}
-
-// Предыдущий, текущий и 13 следующих месяцев по Москве
-export function monthWindow(now: Date): YearMonth[] {
-  const current = index(currentMonth(now));
-  return Array.from({ length: 15 }, (_, offset) => fromIndex(current - 1 + offset));
-}
-
-export const isInWindow = (year: number, month: number, now: Date): boolean => monthWindow(now).some((item) => item.year === year && item.month === month);
 
 // Кривая освещённости по дням: одна точка в середине суточного слота, 0 внизу и 1 вверху. area замкнута по нижнему краю
 export function lightCurve(days: readonly { date: string; illumination: number }[], width: number, height: number): { line: string; area: string; points: { date: string; x: number; y: number }[] } {
@@ -161,8 +145,8 @@ export function buildMonthPage(year: number, month: number, now: Date): MonthPag
   });
 
   const window = monthWindow(now);
-  const here = index({ year, month });
-  const neighbour = (value: number) => (window.some((item) => index(item) === value) ? { label: monthLabel(fromIndex(value)), href: lunarMonthPath(fromIndex(value).year, fromIndex(value).month) } : null);
+  const here = monthIndex({ year, month });
+  const neighbour = (value: number) => (window.some((item) => monthIndex(item) === value) ? { label: monthLabel(monthFromIndex(value)), href: lunarMonthPath(monthFromIndex(value).year, monthFromIndex(value).month) } : null);
 
   return {
     year,
@@ -177,7 +161,7 @@ export function buildMonthPage(year: number, month: number, now: Date): MonthPag
     rows,
     prev: neighbour(here - 1),
     next: neighbour(here + 1),
-    months: window.map((item) => ({ label: monthLabel(item), href: lunarMonthPath(item.year, item.month), current: index(item) === here })),
+    months: window.map((item) => ({ label: monthLabel(item), href: lunarMonthPath(item.year, item.month), current: monthIndex(item) === here })),
     // Вопросы показываются только после того, как владелица приняла тексты
     faq: MOON_CALENDAR_TEXTS_ACCEPTED ? faqFromEvents(year, month, events) : [],
   };

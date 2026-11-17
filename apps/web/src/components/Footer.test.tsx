@@ -6,3 +6,8 @@ test("the footer links to the Moon today page without adding it to the header se
   const html = renderToStaticMarkup(<Footer />);
   expect(html).toMatch(/<a href="\/luna-segodnya">Луна сегодня<\/a>/);
 });
+
+test("the footer links to the lunar calendar entry, which leads to the current month", () => {
+  const html = renderToStaticMarkup(<Footer />);
+  expect(html).toMatch(/<a href="\/lunnyy-kalendar">Лунный календарь<\/a>/);
+});

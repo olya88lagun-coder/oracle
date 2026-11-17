@@ -16,3 +16,23 @@ const moscowDay = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Moscow", 
 
 // Календарный день по Москве вида YYYY-MM-DD
 export const moscowDate = (now: Date): string => moscowDay.format(now);
+
+export type YearMonth = { year: number; month: number };
+export const monthIndex = ({ year, month }: YearMonth): number => year * 12 + month - 1;
+export const monthFromIndex = (value: number): YearMonth => ({ year: Math.floor(value / 12), month: (value % 12) + 1 });
+
+// Текущий месяц по Москве
+export function currentMonth(now: Date): YearMonth {
+  const [year, month] = moscowDate(now).split("-").map(Number) as [number, number];
+  return { year, month };
+}
+
+// Предыдущий, текущий и 13 следующих месяцев по Москве: на столько месяцев есть страницы календаря
+export function monthWindow(now: Date): YearMonth[] {
+  const current = monthIndex(currentMonth(now));
+  return Array.from({ length: 15 }, (_, offset) => monthFromIndex(current - 1 + offset));
+}
+
+export const isInWindow = (year: number, month: number, now: Date): boolean => monthWindow(now).some((item) => item.year === year && item.month === month);
+
+export const currentMonthPath = (now: Date): string => lunarMonthPath(currentMonth(now).year, currentMonth(now).month);

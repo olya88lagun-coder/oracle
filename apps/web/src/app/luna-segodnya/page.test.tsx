@@ -60,3 +60,8 @@ test("the visible text has no forbidden word and carries the disclaimer", () => 
   for (const word of FORBIDDEN_MOON_WORDS) expect(text, word).not.toContain(word);
   expect(text).toContain("самопознания");
 });
+
+test("links to the lunar calendar page of the current month", () => {
+  const markup = html();
+  expect(markup).toMatch(/<a [^>]*href="\/lunnyy-kalendar\/[a-z]+-\d{4}"[^>]*>Лунный календарь на месяц<\/a>/);
+});
