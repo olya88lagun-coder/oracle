@@ -6853,3 +6853,13 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 .matrix-point.is-pickable { cursor: pointer; }
 .matrix-point.is-selected circle { stroke-width: 3; }
 .matrix-key.is-selected { border-color: var(--accent); }
+
+/* События месяца (MoonMonthEvents): каркас Claude, оформление — Codex (docs/design/codex-backlog-oracle-2.md, этап 5) */
+.moon-events { display: grid; gap: 12px; }
+.moon-events__note { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.moon-events__list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.moon-events__item { display: grid; grid-template-columns: minmax(9.5em, auto) 1fr; gap: 6px 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.moon-events__item--phase { border-color: var(--accent-line); }
+.moon-events__item time { color: var(--accent); font-variant-numeric: tabular-nums; }
+@media (max-width: 520px) { .moon-events__item { grid-template-columns: 1fr; } }
+

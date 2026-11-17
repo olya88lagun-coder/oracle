@@ -60,6 +60,9 @@ export type CalendarDay = {
   signName: string;
   riseSet: string;
 };
+// Событие ленты «События месяца»: главная фаза или переход Луны в другой знак; at — миллисекунды, по ним лента упорядочена
+export type TimelineItem = { kind: MoonEvent["kind"] | "sign"; title: string; label: string; date: string; at: number };
+
 export type CalendarEvent = { kind: MoonEvent["kind"]; name: string; label: string; date: string; dayIndex: number };
 export type DayRow = { date: string; label: string; phaseName: string; percent: number; lunar: string; signName: string; riseSet: string };
 
@@ -70,6 +73,7 @@ export type MonthPage = {
   cells: CalendarDay[];
   weeks: (number | null)[][];
   events: CalendarEvent[];
+  timeline: TimelineItem[];
   signRuns: { signName: string; label: string }[];
   ribbon: RibbonSegment[];
   curve: { line: string; area: string; points: { date: string; x: number; y: number }[]; events: { kind: MoonEvent["kind"]; x: number; y: number }[] };
@@ -97,6 +101,14 @@ function faqFromEvents(year: number, month: number, events: readonly CalendarEve
   const group = (kind: PhaseKind) => events.filter((event) => event.kind === kind).map((event) => event.label);
   const facts: MonthFacts = { month: MONTH_NAMES[month - 1]!, monthLocative: MONTH_LOCATIVE[month - 1]!, year, events: { new: group("new"), firstQuarter: group("firstQuarter"), full: group("full"), lastQuarter: group("lastQuarter") } };
   return MONTH_FAQ_TEMPLATES.map((template) => ({ question: template.question(facts.monthLocative, year), answer: template.answer(facts) }));
+}
+
+// Главные фазы и переходы в новый знак по порядку времени. Начало месяца (знак, в котором Луна уже стоит) в ленту не входит: это не событие месяца
+export function monthTimeline(events: readonly MoonEvent[], signRuns: readonly SignRun[]): TimelineItem[] {
+  const label = (at: Date) => `${dayMonthFormat.format(at)}, ${clock(at)}`;
+  const phases = events.map((event): TimelineItem => ({ kind: event.kind, title: EVENT_NAMES[event.kind], label: label(event.at), date: moscowDate(event.at), at: event.at.getTime() }));
+  const signs = signRuns.slice(1).map((run): TimelineItem => ({ kind: "sign", title: `Луна входит в знак: ${SIGN_NAMES[run.sign]}`, label: label(run.from), date: moscowDate(run.from), at: run.from.getTime() }));
+  return [...phases, ...signs].sort((a, b) => a.at - b.at);
 }
 
 export const monthFaq = (year: number, month: number): { question: string; answer: string }[] => faqFromEvents(year, month, toCalendarEvents(moonMonth(year, month).events));
@@ -155,6 +167,7 @@ export function buildMonthPage(year: number, month: number, now: Date): MonthPag
     cells,
     weeks,
     events,
+    timeline: monthTimeline(data.events, data.signRuns),
     signRuns: data.signRuns.map((run) => ({ signName: SIGN_NAMES[run.sign], label: `${shortLabel(run.from)} — ${shortLabel(run.to)}` })),
     ribbon: ribbonSegments(data.signRuns, start, end),
     curve: { ...curve, events: markers },

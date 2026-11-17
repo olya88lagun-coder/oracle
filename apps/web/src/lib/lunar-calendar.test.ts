@@ -126,6 +126,16 @@ describe("buildMonthPage(2026, 11)", () => {
     expect(page.events[3]!.label).toMatch(/^24 ноября, 17:5[2-5]$/);
   });
 
+  test("the timeline puts the phases and every move into a new sign in time order, without the sign the month starts in", () => {
+    const signs = page.timeline.filter((item) => item.kind === "sign");
+    expect(signs).toHaveLength(page.signRuns.length - 1);
+    expect(page.timeline.filter((item) => item.kind !== "sign").map((item) => item.title)).toEqual(["Последняя четверть", "Новолуние", "Первая четверть", "Полнолуние"]);
+    expect(page.timeline.map((item) => item.at)).toEqual([...page.timeline.map((item) => item.at)].sort((a, b) => a - b));
+    for (const item of signs) expect(item.title).toMatch(/^Луна входит в знак: [А-ЯЁ]/);
+    for (const item of page.timeline) expect(item.date).toMatch(/^2026-1[01]-\d\d$|^2026-11-\d\d$/);
+    expect(page.timeline.find((item) => item.title === "Новолуние")!.label).toMatch(/^9 ноября, 10:0[0-4]$/);
+  });
+
   test("has the curve with event markers on it, sign runs, a ribbon and a row for every day", () => {
     expect(page.curve.points).toHaveLength(30);
     expect(page.curve.events).toHaveLength(4);
