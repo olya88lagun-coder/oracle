@@ -5436,6 +5436,11 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   color: var(--matrix-live-gold);
 }
 
+.matrix-result__top > .matrix-diagram svg {
+  overflow: visible;
+  background: radial-gradient(circle, var(--glow) 4%, var(--scrim-clear) 69%);
+}
+
 .matrix-live__svg {
   display: block;
   width: min(100%, 420px);
@@ -5447,17 +5452,21 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 
 .matrix-live__ring,
 .matrix-live__line,
-.matrix-live__comet {
+.matrix-live__comet,
+.matrix-result__top > .matrix-diagram :is(.matrix-diagram__ring, .matrix-diagram__line) {
   fill: none;
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-.matrix-live__ring {
+.matrix-live__ring,
+.matrix-result__top > .matrix-diagram .matrix-diagram__ring {
   stroke: url(#matrix-live-metal) var(--matrix-live-bronze);
+  stroke-dasharray: none;
 }
 
-.matrix-live__line {
+.matrix-live__line,
+.matrix-result__top > .matrix-diagram .matrix-diagram__line {
   /* Ромб чуть светлее внутренних диагоналей. */
   --matrix-line-bronze: clamp(0%, calc(var(--i, 0) * 8%), 72%);
   stroke: var(--accent);
@@ -5470,14 +5479,16 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   opacity: 0;
 }
 
-.matrix-live__point circle {
+.matrix-live__point circle,
+.matrix-result__top > .matrix-diagram .matrix-point circle {
   fill: var(--matrix-live-node);
   stroke: var(--matrix-live-bronze);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }
 
-.matrix-live__point text {
+.matrix-live__point text,
+.matrix-result__top > .matrix-diagram .matrix-point text {
   fill: var(--ink);
   font-family: var(--font-body);
   font-size: 13px;
@@ -5485,26 +5496,38 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   font-variant-numeric: tabular-nums;
 }
 
-.matrix-live__point--family text { font-size: 19px; }
-.matrix-live__point--main text { font-size: 23px; }
+/* В результате сохраняем размер чисел во внутренних узлах. */
+.matrix-result__top > .matrix-diagram :is(.matrix-point--inner, .matrix-point--line) text {
+  font-size: 14px;
+}
 
-.matrix-live__point--key circle {
+.matrix-live__point--family text,
+.matrix-result__top > .matrix-diagram .matrix-point--family text { font-size: 19px; }
+.matrix-live__point--main text,
+.matrix-result__top > .matrix-diagram .matrix-point--main text { font-size: 23px; }
+
+.matrix-live__point--key circle,
+.matrix-result__top > .matrix-diagram .matrix-point--key circle {
   fill: var(--surface-3);
   stroke: var(--matrix-live-gold);
   stroke-width: 1.25;
   filter: drop-shadow(0 0 5px var(--matrix-live-halo));
 }
 
-.matrix-live__point--key text {
+.matrix-live__point--key text,
+.matrix-result__top > .matrix-diagram .matrix-point--key text {
   fill: var(--matrix-live-gold);
   font-size: 25px;
 }
 
-.matrix-live__point[data-point="E"] circle {
+/* В SVG результата центр — ключевой узел в координатах (200, 200). */
+.matrix-live__point[data-point="E"] circle,
+.matrix-result__top > .matrix-diagram .matrix-point--key > circle[cx="200"][cy="200"] {
   fill: var(--matrix-live-gold);
 }
 
-.matrix-live__point[data-point="E"] text {
+.matrix-live__point[data-point="E"] text,
+.matrix-result__top > .matrix-diagram .matrix-point--key > circle[cx="200"][cy="200"] + text {
   fill: var(--accent-ink);
 }
 
@@ -5545,7 +5568,7 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   overflow-wrap: anywhere;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 760px) {
   .matrix-hero__inner:has(.matrix-live) { padding-block: 54px 64px; }
   .matrix-hero__copy:has(> .matrix-live) {
     grid-template-columns: minmax(0, 1fr) minmax(380px, 42%);
@@ -5557,8 +5580,51 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   .matrix-hero__copy > .matrix-live { grid-area: 1 / 2 / 3; }
 }
 
-@media (max-width: 899px) {
-  .matrix-live { width: min(100%, 360px); }
+@media (760px <= width < 1000px) {
+  .matrix-hero__inner:has(.matrix-live) { padding-block: 36px 48px; }
+  .matrix-hero__copy:has(> .matrix-live) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 44%);
+    column-gap: 24px;
+  }
+  .matrix-hero__copy:has(> .matrix-live) > .matrix-intro h1 {
+    font-size: clamp(40px, 5.35vw, 54px);
+  }
+}
+
+@media (760px <= width < 1000px) {
+  .matrix-live__keys {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+    text-align: start;
+  }
+  .matrix-live__key {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 8px;
+    padding-inline: 0;
+  }
+  .matrix-live__key + .matrix-live__key { border-inline-start: 0; }
+  .matrix-live__key-name { text-wrap: pretty; }
+}
+
+@media (600px <= width < 760px) {
+  .matrix-hero__inner:has(.matrix-live) { padding-block: 22px 32px; }
+  .matrix-hero__copy:has(> .matrix-live) { gap: 12px; }
+  .matrix-hero__copy:has(> .matrix-live) > .matrix-intro h1 { font-size: clamp(38px, 6vw, 44px); }
+  body .matrix-hero__copy:has(> .matrix-live) > .matrix-intro > .lead {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .matrix-live {
+    grid-template-columns: minmax(0, 1fr) minmax(145px, 0.55fr);
+    align-items: center;
+    column-gap: 16px;
+    width: min(100%, 395px);
+  }
+}
+
+@media (width < 760px) {
   .matrix-hero__copy:has(> .matrix-live) > :is(.matrix-intro, .matrix-form) {
     width: min(100%, 520px);
     justify-self: center;
@@ -5569,7 +5635,11 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   .matrix-hero:has(.matrix-live) .matrix-hero__art img { object-position: 65% 40%; }
 }
 
-@media (max-width: 599px) {
+@media (600px <= width < 760px) and (height <= 800px) {
+  .matrix-live { width: min(100%, 375px); }
+}
+
+@media (width < 600px) {
   .matrix-hero__inner:has(.matrix-live) { padding-block: 16px 28px; }
   .matrix-hero__copy:has(> .matrix-live) { gap: 10px; }
   .matrix-hero__copy:has(> .matrix-live) > .matrix-intro h1 { font-size: clamp(30px, 8.7vw, 44px); }
@@ -5579,11 +5649,23 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
     line-height: 1.4;
   }
   .matrix-live {
-    grid-template-columns: min(54vw, 220px) minmax(0, 1fr);
+    grid-template-columns: min(54vw, 220px, calc(100% - 146px)) minmax(0, 1fr);
     align-items: center;
     gap: 4px 8px;
     width: min(100%, 440px);
   }
+  .matrix-live__point--key text { font-size: 27px; }
+  .matrix-hero__copy:has(> .matrix-live) .matrix-form .field { gap: 4px; }
+  .matrix-hero__copy:has(> .matrix-live) .matrix-form__row { gap: 8px; }
+  .matrix-hero__copy:has(> .matrix-live) .matrix-form input { min-height: 44px; padding: 7px 8px; }
+  .matrix-hero__copy:has(> .matrix-live) .matrix-form .button {
+    min-height: 44px;
+    padding: 7px 12px;
+    font-size: 14px;
+  }
+}
+
+@media (width < 760px) {
   .matrix-live__caption { grid-column: 1 / -1; }
   .matrix-live__svg { width: 100%; }
   .matrix-live__keys {
@@ -5599,23 +5681,18 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
     border-top: 1px solid var(--accent-line);
   }
   .matrix-live__key-name { text-wrap: pretty; }
-  .matrix-live__point--key text { font-size: 27px; }
-  .matrix-hero__copy:has(> .matrix-live) .matrix-form .field { gap: 4px; }
-  .matrix-hero__copy:has(> .matrix-live) .matrix-form__row { gap: 8px; }
-  .matrix-hero__copy:has(> .matrix-live) .matrix-form input { min-height: 44px; padding: 7px 8px; }
-  .matrix-hero__copy:has(> .matrix-live) .matrix-form .button {
-    min-height: 44px;
-    padding: 7px 12px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 599px) and (max-height: 760px) {
-  .matrix-live { grid-template-columns: min(54vw, 220px) minmax(0, 1fr); }
 }
 
 @media (max-width: 340px) {
-  .matrix-live { grid-template-columns: min(55vw, 184px) minmax(0, 1fr); }
+  .matrix-hero__copy:has(> .matrix-live) .matrix-form .button {
+    padding-inline: 9px;
+  }
+  .matrix-hero__copy:has(> .matrix-live) .matrix-form input {
+    padding-inline: 6px;
+  }
+}
+
+@media (width < 320px) {
   .matrix-hero__copy:has(> .matrix-live) .matrix-form__row {
     grid-template-columns: minmax(0, 1fr);
   }
