@@ -1,0 +1,186 @@
+/* «Нить» (график судьбы): сцена, картинка и результат. Цвета — переменные из globals.css; свои два оттенка заведены здесь переменными */
+.thread-page {
+  --thread-glint: #F6E3BF;
+  --thread-lavender-soft: #E3D8FA;
+}
+
+.thread-page.numerology-landing::before {
+  height: min(var(--numerology-scene-height), 720px);
+  background:
+    radial-gradient(ellipse 70% 60% at 78% -10%, color-mix(in srgb, var(--lavender) 18%, transparent), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 18% 100%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+    linear-gradient(0deg, var(--bg), var(--scrim-clear) 40%);
+}
+
+.thread-hero {
+  padding-block: 24px 36px;
+}
+
+.thread-hero__copy {
+  max-width: 640px;
+}
+
+.thread-hero h1 {
+  font-size: clamp(40px, 6vw, 72px);
+}
+
+.thread-hero h1 span {
+  display: block;
+  color: var(--accent);
+}
+
+.thread-hero .year-form {
+  max-width: 420px;
+  margin-top: 24px;
+}
+
+.thread-hero .year-form .muted {
+  font-size: 14px;
+}
+
+.thread-result {
+  display: grid;
+  gap: 40px;
+  padding-block: 8px 56px;
+}
+
+.thread-now,
+.thread-period {
+  border: 1px solid var(--line-strong);
+  border-radius: 24px;
+  padding: clamp(20px, 3vw, 32px);
+  background: linear-gradient(var(--surface-3), var(--surface));
+}
+
+.thread-now__year {
+  margin: 0;
+  font-size: 18px;
+}
+
+.thread-card h3 {
+  margin-top: 8px;
+  font-size: 20px;
+}
+
+.thread-chart {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 8px 0 4px;
+  background:
+    radial-gradient(ellipse 70% 60% at 78% -10%, color-mix(in srgb, var(--lavender) 16%, transparent), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 18% 110%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+    var(--bg);
+}
+
+.thread-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: inherit;
+  touch-action: pan-y;
+  cursor: crosshair;
+}
+
+.thread-band__edge { stroke: var(--accent); stroke-opacity: 0.16; }
+.thread-band__label { fill: var(--ink-faint); font-size: 14px; letter-spacing: 0.16em; text-transform: uppercase; }
+.thread-grid { stroke: var(--line); stroke-dasharray: 2 6; }
+.thread-axis { fill: var(--ink-faint); font-size: 14px; }
+.thread-tick { stroke: var(--line-strong); }
+.thread-year { fill: var(--ink-faint); font-size: 14px; }
+.thread-year--now { fill: var(--lavender); font-weight: 600; }
+.thread-peak__ring { fill: var(--bg); stroke: var(--thread-glint); stroke-width: 1.5; }
+.thread-peak__label { fill: var(--ink); font-size: 14px; }
+.thread-now__ring { fill: var(--bg); stroke: var(--lavender); stroke-width: 1.6; }
+.thread-now__dot { fill: var(--thread-lavender-soft); }
+.thread-now__pill { fill: var(--lavender-ink); stroke: var(--lavender); stroke-opacity: 0.5; }
+.thread-now__text { fill: var(--thread-lavender-soft); font-size: 14px; font-weight: 600; }
+.thread-tip__line { stroke: var(--thread-glint); stroke-opacity: 0.35; }
+.thread-tip__dot { fill: var(--thread-glint); }
+.thread-tip__box { fill: var(--surface-2); stroke: var(--line-strong); }
+.thread-tip__year { fill: var(--ink); font-size: 14px; font-weight: 600; }
+.thread-tip__name { fill: var(--ink-soft); font-size: 14px; }
+
+.thread-controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 12px 8px;
+}
+
+.thread-table summary {
+  min-height: 44px;
+  padding: 12px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.thread-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.thread-table th,
+.thread-table td {
+  padding: 10px 12px;
+  border-top: 1px solid var(--line);
+  text-align: left;
+  font-weight: 400;
+}
+
+.thread-table thead th {
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+
+.thread-table tr[aria-current="date"] th,
+.thread-table tr[aria-current="date"] td {
+  color: var(--lavender);
+  font-weight: 600;
+}
+
+.thread-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.thread-periods__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.thread-period h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.thread-period__more summary {
+  min-height: 44px;
+  padding-block: 10px;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.thread-formula {
+  max-width: 640px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .thread-halo {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: thread-breathe 4.5s ease-in-out infinite;
+  }
+
+  @keyframes thread-breathe {
+    0%, 100% { transform: scale(0.85); opacity: 0.55; }
+    50% { transform: scale(1.25); opacity: 1; }
+  }
+}

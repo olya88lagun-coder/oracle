@@ -10,6 +10,7 @@ import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import "../../arkan-2027/year.css";
 import "../numerology.css";
+import "./thread.css";
 
 export const metadata: Metadata = publicMetadata({
   title: "График судьбы по дате рождения",

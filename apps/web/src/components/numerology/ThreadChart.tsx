@@ -187,17 +187,16 @@ export function ThreadChart({ thread, initialMode = "window" }: { thread: LifeTh
         return <g key={band.index} className="thread-band">
           <rect x={a} y={g.bandTop} width={Math.max(0, z - a)} height={g.tickY - g.bandTop} fill={`url(#${uid}band)`} />
           <line x1={a} y1={g.bandTop} x2={a} y2={g.tickY} className="thread-band__edge" />
-          {z - a >= 96 && <text x={(a + z) / 2} y={g.bandTop + 20} className="thread-band__label" textAnchor="middle">{label}</text>}
+          {z - a >= label.length * 10 && <text x={(a + z) / 2} y={g.bandTop + 20} className="thread-band__label" textAnchor="middle">{label}</text>}
         </g>;
       })}
 
       {[g.top, (g.top + g.bottom) / 2, g.bottom].map((y) => <line key={y} x1={g.x0} y1={y} x2={g.x1} y2={y} className="thread-grid" />)}
-      <text x={g.x0 - 6} y={g.top + 4} className="thread-axis" textAnchor="end">высоко</text>
-      <text x={g.x0 - 6} y={g.bottom + 4} className="thread-axis" textAnchor="end">тихо</text>
+      {!g.narrow && <><text x={g.x0 + 6} y={g.top - 8} className="thread-axis">высоко</text><text x={g.x0 + 6} y={g.bottom - 8} className="thread-axis">тихо</text></>}
 
       {years.map((item, i) => <g key={item.year}>
         <line x1={px(item.year)} y1={g.tickY - 6} x2={px(item.year)} y2={g.tickY} className="thread-tick" />
-        {(i % labelEvery === 0 || item.year === thread.currentYear) && <text x={px(item.year)} y={g.tickY + 20} className={item.year === thread.currentYear ? "thread-year thread-year--now" : "thread-year"} textAnchor="middle">{item.year}</text>}
+        {((i % labelEvery === 0 && Math.abs(item.year - thread.currentYear) >= Math.ceil(labelEvery / 2)) || item.year === thread.currentYear) && <text x={px(item.year)} y={g.tickY + 20} className={item.year === thread.currentYear ? "thread-year thread-year--now" : "thread-year"} textAnchor="middle">{item.year}</text>}
       </g>)}
 
       <g clipPath={`url(#${uid}reveal)`}>
