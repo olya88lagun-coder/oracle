@@ -6,6 +6,7 @@ import { TaroGuide, taroFaqJsonLd } from "@/components/taro/TaroGuide";
 import { TaroSpreadsPromo } from "@/components/taro/TaroSpreadsPromo";
 import { YearPromo } from "@/components/year-arcana/YearPromo";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
+import { MOON_PATH } from "@/lib/moon-paths";
 import { TARO_DAY_PATH, TARO_PATH, TARO_SPREADS_PATH } from "@/lib/taro-paths";
 
 export const metadata: Metadata = publicMetadata({
@@ -71,6 +72,12 @@ export default function TaroPage() {
       <div className="matrix-wrap">
         <YearPromo context="taro" id="taro-year" />
       </div>
+
+      <p className="matrix-wrap taro-moon-link">
+        <Link className="touch-link" href={MOON_PATH}>
+          Луна сегодня: фаза, знак и лунные сутки
+        </Link>
+      </p>
 
       <section className="matrix-wrap matrix-cta" aria-labelledby="taro-cta">
         <div>

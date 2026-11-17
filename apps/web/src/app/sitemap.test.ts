@@ -15,7 +15,7 @@ describe("sitemap.xml", () => {
 
   test("priorities tell the page kinds apart: home, practices, articles, ordinary pages and reference pages", () => {
     expect(entry("/")?.priority).toBe(1);
-    for (const path of ["/matrica-sudby", "/sovmestimost", "/lila", "/taro", "/taro/karta-dnya", "/natalnaya-karta"]) expect(entry(path)?.priority, path).toBe(0.8);
+    for (const path of ["/matrica-sudby", "/sovmestimost", "/lila", "/taro", "/taro/karta-dnya", "/natalnaya-karta", "/luna-segodnya"]) expect(entry(path)?.priority, path).toBe(0.8);
     expect(entry("/blog")?.priority).toBe(0.6);
     for (const post of BLOG_POSTS) expect(entry(blogPath(post))?.priority, post.slug).toBe(0.6);
     expect(entry("/matrica-sudby/arkan-1-mag")?.priority).toBe(0.5);

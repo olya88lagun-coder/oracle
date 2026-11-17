@@ -2,10 +2,11 @@ import { lunarDayText, phaseText, type LunarDayText, type PhaseText } from "@ora
 import { NATAL_KEY_SUMMARIES } from "@oracle/content/natal-keys";
 import { lunarDay, moonRises, moonSets, moonSnapshot, moscowDayStart, nextMoonEvent, type MoonEvent, type MoonSnapshot, type PhaseId } from "@oracle/core/moon";
 import type { SignId } from "@oracle/core/natal";
+import { MOON_PATH } from "./moon-paths";
 import { NATAL_PATH, natalPagePath } from "./natal-paths";
 import { TARO_DAY_PATH } from "./taro-paths";
 
-export const MOON_PATH = "/luna-segodnya";
+export { MOON_PATH };
 
 export const PHASE_NAMES: Record<PhaseId, string> = {
   new: "Новолуние",
