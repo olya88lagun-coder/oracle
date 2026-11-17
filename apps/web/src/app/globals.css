@@ -5751,36 +5751,457 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
   }
 }
 
-/* Луна сегодня: каркас, оформление — Codex (docs/design/codex-brief-luna-today.md) */
-.moon-page { width: min(100% - 32px, 960px); margin-inline: auto; padding-block: 24px 64px; }
-.moon-breadcrumb { display: flex; gap: 8px; margin-bottom: 16px; color: var(--ink-faint); font-size: 14px; }
-.moon-hero { display: grid; justify-items: center; gap: 16px; text-align: center; }
-.moon-hero h1 { font-size: clamp(32px, 7vw, 56px); line-height: 1.1; }
-.moon-hero__place { margin: 0; color: var(--ink-soft); font-size: 14px; }
-.moon-disc { display: grid; justify-items: center; gap: 8px; margin: 0; }
-.moon-disc__svg { display: block; width: min(100%, 320px); height: auto; }
-.moon-disc__base { fill: var(--surface-3); }
-.moon-disc__lit { fill: var(--ink); }
-.moon-disc__rim { fill: none; stroke: var(--line-strong); }
-.moon-disc__tick { fill: var(--line-strong); }
-.moon-disc__tick.is-current { fill: var(--accent); }
-.moon-disc__caption { color: var(--ink-soft); font-size: 14px; }
-.moon-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; margin: 0; padding: 0; list-style: none; }
-.moon-tile { display: grid; gap: 4px; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); text-align: left; }
-.moon-tile__label { color: var(--ink-faint); font-size: 14px; }
-.moon-tile__value { color: var(--ink); font-size: 20px; }
-.moon-tile__note { color: var(--ink-soft); font-size: 14px; }
-.moon-next { margin: 0; color: var(--accent); }
-.moon-strip { margin-top: 32px; }
-.moon-strip__list { display: flex; gap: 8px; margin: 0; padding: 0 0 8px; overflow-x: auto; list-style: none; }
-.moon-strip__day { display: grid; flex: none; justify-items: center; gap: 4px; width: 84px; font-size: 14px; }
-.moon-strip__day.is-today time { color: var(--accent); }
-.moon-mini { width: 56px; height: 56px; }
-.moon-strip__phase { color: var(--ink-faint); font-size: 14px; text-align: center; }
-.moon-text, .moon-links, .moon-faq { margin-top: 32px; }
-.moon-text__block { margin-top: 16px; }
-.moon-text__question { color: var(--accent); }
-.moon-faq details { padding-block: 8px; border-top: 1px solid var(--line); }
-.moon-faq summary { min-height: 44px; cursor: pointer; }
-.moon-disclaimer { margin-top: 32px; color: var(--ink-faint); font-size: 14px; }
-@media (min-width: 900px) { .moon-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+/* Луна сегодня — оформление */
+:root {
+  --moon-disc-ivory: #efe0c5;
+  --moon-disc-shadow: #292530;
+  --moon-disc-rim: #806951;
+  --moon-orbit: rgba(203, 166, 118, 0.28);
+  --moon-disc-halo: rgba(203, 166, 118, 0.16);
+  --moon-mask-full: #000;
+  --moon-mask-soft: rgba(0, 0, 0, 0.78);
+  --moon-mask-dim: rgba(0, 0, 0, 0.59);
+}
+
+.moon-page {
+  width: min(1240px, calc(100% - 48px));
+  min-width: 0;
+  margin-inline: auto;
+  padding-block: 24px 52px;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.moon-page :is(a, summary):focus-visible,
+.moon-strip__list:focus-visible {
+  outline: 2px solid var(--accent-hover);
+  outline-offset: 3px;
+}
+
+.moon-page a {
+  color: var(--accent-hover);
+  text-underline-offset: 0.2em;
+}
+
+.moon-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 10px;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.moon-breadcrumb :is(ol, ul) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.moon-breadcrumb a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.moon-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  padding-block: 10px 25px;
+}
+
+.moon-hero h1 {
+  margin: 0;
+  max-width: 14ch;
+  color: var(--ink);
+  font: 300 clamp(40px, 6.2vw, 84px)/1.04 var(--font-display);
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.moon-hero__place {
+  margin: 0;
+  color: var(--accent-hover);
+  font-size: 14px;
+}
+
+.moon-disc {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: min(100%, 410px);
+  min-width: 0;
+  margin: 0;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+}
+
+.moon-disc > .moon-disc__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  background:
+    radial-gradient(circle closest-side, transparent 90.6%, var(--moon-orbit) 91%, transparent 91.4%),
+    radial-gradient(circle, var(--glow) 5%, transparent 69%);
+}
+
+.moon-page :is(.moon-disc__svg, .moon-mini) .moon-disc__base {
+  fill: var(--moon-disc-shadow);
+}
+
+.moon-page :is(.moon-disc__svg, .moon-mini) .moon-disc__lit {
+  fill: var(--moon-disc-ivory);
+}
+
+.moon-disc > .moon-disc__svg .moon-disc__base {
+  filter: drop-shadow(0 0 16px var(--moon-disc-halo));
+  mask-image: radial-gradient(circle at 47% 39%, var(--moon-mask-full) 15%, var(--moon-mask-soft) 75%, var(--moon-mask-dim));
+}
+
+.moon-disc > .moon-disc__svg .moon-disc__lit {
+  mask-image:
+    radial-gradient(ellipse at 39% 37%, var(--moon-mask-full) 8%, var(--moon-mask-soft) 59%, var(--moon-mask-dim) 100%),
+    radial-gradient(ellipse at 60% 43%, var(--moon-mask-soft), var(--moon-mask-full) 36%),
+    radial-gradient(ellipse at 36% 62%, var(--moon-mask-soft), var(--moon-mask-full) 31%);
+  mask-composite: intersect;
+}
+
+.moon-page :is(.moon-disc__svg, .moon-mini) .moon-disc__rim {
+  fill: none;
+  stroke: var(--moon-disc-rim);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.moon-page .moon-disc__tick {
+  fill: var(--moon-disc-rim);
+  stroke: var(--moon-disc-rim);
+}
+
+.moon-page .moon-disc__tick.is-current {
+  fill: var(--accent-hover);
+  stroke: var(--accent-hover);
+  filter: drop-shadow(0 0 4px var(--moon-disc-halo));
+}
+
+.moon-disc__caption {
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.moon-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 8px 0 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--line);
+  list-style: none;
+}
+
+.moon-tile {
+  min-width: 0;
+  padding: 14px 16px;
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+
+.moon-tile__label,
+.moon-tile__note {
+  display: block;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.moon-tile__value {
+  display: block;
+  margin-block: 3px;
+  color: var(--ink);
+  font: 600 clamp(16px, 2vw, 21px)/1.25 var(--font-body);
+  font-variant-numeric: tabular-nums;
+}
+
+.moon-tile[data-kind="phase"] .moon-tile__value {
+  color: var(--accent-hover);
+}
+
+.moon-next {
+  margin: 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.moon-next strong {
+  color: var(--accent-hover);
+  font-weight: 600;
+}
+
+.moon-page h2,
+.moon-text__block h3 {
+  color: var(--ink);
+  font-family: var(--font-display);
+  line-height: 1.15;
+  font-weight: 400;
+  text-wrap: balance;
+}
+
+.moon-page h2 {
+  margin: 0 0 18px;
+  font-size: clamp(28px, 4vw, 44px);
+  letter-spacing: -0.02em;
+}
+
+.moon-page :is(.moon-strip, .moon-text, .moon-links, .moon-faq) {
+  min-width: 0;
+  padding-block: 25px;
+  border-top: 1px solid var(--line);
+}
+
+.moon-strip__list {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(94px, 1fr);
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 4px 3px 10px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-color: var(--line-strong) var(--surface);
+  list-style: none;
+}
+
+.moon-strip__day {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 8px 3px;
+  text-align: center;
+}
+
+.moon-strip__day .moon-mini {
+  display: block;
+  box-sizing: content-box;
+  width: 29px;
+  height: 29px;
+  padding: 4px;
+  border-radius: 50%;
+}
+
+.moon-strip__day.is-today .moon-mini {
+  outline: 1px solid var(--accent-hover);
+  outline-offset: -1px;
+  background: var(--glow);
+}
+
+.moon-strip__day time {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.moon-strip__day.is-today time {
+  color: var(--accent-hover);
+}
+
+.moon-strip__phase {
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.moon-text {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.moon-text > h2 {
+  grid-column: 1 / -1;
+  margin-bottom: 4px;
+}
+
+.moon-text__block {
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.moon-text__block h3 {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+
+.moon-text__block p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.moon-text__block .moon-text__question {
+  margin-top: 14px;
+  padding-inline-start: 12px;
+  border-inline-start: 1px solid var(--accent);
+  color: var(--accent-hover);
+}
+
+.moon-links :is(ul, ol) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.moon-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 7px 13px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+.moon-links a:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.moon-faq details {
+  border-top: 1px solid var(--line);
+}
+
+.moon-faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  padding: 10px 0;
+  color: var(--ink);
+  cursor: pointer;
+  font: 400 20px/1.35 var(--font-display);
+  list-style: none;
+}
+
+.moon-faq summary::-webkit-details-marker { display: none; }
+.moon-faq summary::after { content: "+"; color: var(--accent); font-family: var(--font-body); }
+.moon-faq details[open] summary::after { content: "−"; }
+
+.moon-faq p {
+  max-width: 75ch;
+  margin: 0;
+  padding-bottom: 14px;
+  color: var(--ink-soft);
+}
+
+.moon-disclaimer {
+  margin: 0;
+  padding-block-start: 18px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+@media (min-width: 720px) {
+  .moon-text {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .moon-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 41%);
+    column-gap: clamp(28px, 6vw, 86px);
+    padding-block: 18px 36px;
+  }
+
+  .moon-hero > :is(h1, .moon-hero__place, .moon-tiles, .moon-next) {
+    grid-column: 1;
+  }
+
+  .moon-hero > .moon-disc {
+    grid-area: 1 / 2 / span 4;
+    width: min(100%, 432px);
+  }
+
+  .moon-strip__list {
+    grid-template-columns: repeat(14, minmax(0, 1fr));
+    grid-auto-columns: auto;
+  }
+}
+
+@media (max-width: 899px) {
+  .moon-hero h1,
+  .moon-hero__place {
+    justify-self: center;
+    text-align: center;
+  }
+
+  .moon-tiles,
+  .moon-next {
+    width: min(100%, 600px);
+    justify-self: center;
+  }
+}
+
+@media (max-width: 599px) {
+  .moon-page {
+    width: calc(100% - 32px);
+    padding-top: 10px;
+  }
+
+  .moon-hero {
+    gap: 8px;
+    padding-block: 6px 20px;
+  }
+
+  .moon-disc {
+    width: min(100%, 282px);
+  }
+
+  .moon-tile {
+    padding: 11px 10px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .moon-disc > .moon-disc__svg { animation: moon-disc-breathe 10s ease-in-out infinite; }
+  .moon-disc > .moon-disc__svg .moon-disc__lit { animation: moon-disc-reveal 900ms var(--ease-out) both; }
+  .moon-disc > .moon-disc__svg .moon-disc__tick.is-current { animation: moon-tick-warm 1100ms ease-out both; }
+
+  @keyframes moon-disc-breathe {
+    0%, 100% { transform: scale(0.994); }
+    50% { transform: scale(1.006); }
+  }
+
+  @keyframes moon-disc-reveal {
+    from { opacity: 0.12; }
+  }
+
+  @keyframes moon-tick-warm {
+    from { opacity: 0.58; }
+  }
+}
