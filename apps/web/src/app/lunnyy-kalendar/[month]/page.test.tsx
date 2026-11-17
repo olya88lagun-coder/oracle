@@ -58,13 +58,15 @@ describe("the November 2026 page", () => {
     expect(count(html, /class="moon-month__next"/g)).toBe(1);
   });
 
-  test("has breadcrumbs in JSON-LD, but no FAQ and no intro until the owner accepts the texts", async () => {
+  test("has the accepted intro and four questions with real dates, and breadcrumbs and FAQ in JSON-LD", async () => {
     const html = await render();
     const json = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ?? "";
     expect(json).toContain("BreadcrumbList");
-    expect(json).not.toContain("FAQPage");
-    expect(html).not.toContain("moon-faq");
-    expect(html).not.toContain("moon-month__intro");
+    expect(json).toContain("FAQPage");
+    expect(html).toContain("moon-month__intro");
+    expect(count(html, /<details/g)).toBe(4);
+    expect(html).toContain("Когда полнолуние в ноябре 2026?");
+    expect(html).toMatch(/24 ноября, 17:5\d/);
   });
 
   test("has links onward, the disclaimer and no forbidden words", async () => {

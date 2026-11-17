@@ -74,6 +74,14 @@ test("on the page of the current month today is marked in the grid, in the table
   await expect(page.locator(".moon-days__row.is-today")).toHaveCount(1);
 });
 
+test("the page has the intro and four questions with the real dates of the month", async ({ page }) => {
+  await page.goto(MONTH);
+  await expect(page.locator(".moon-month__intro")).toBeVisible();
+  await expect(page.locator(".moon-faq details")).toHaveCount(4);
+  await page.getByText("Когда полнолуние в ноябре 2026?").click();
+  await expect(page.locator(".moon-faq")).toContainText("24 ноября");
+});
+
 test("the ribbon shows a glyph and a name for each sign", async ({ page }) => {
   await page.goto(MONTH);
   const segments = page.locator(".moon-ribbon__seg");

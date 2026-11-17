@@ -69,8 +69,8 @@ describe("intro and checks", () => {
     expect(findViolations([{ id: "x", fields: ["благоприятный день для стрижки"] }]).length).toBeGreaterThan(0);
   });
 
-  test("the intro stays hidden until the owner accepts the texts", () => {
-    expect(MOON_CALENDAR_TEXTS_ACCEPTED).toBe(false);
-    expect(monthIntro()).toBeUndefined();
+  test("the owner accepted the texts on 17 Nov 2026, so the intro is shown", () => {
+    expect(MOON_CALENDAR_TEXTS_ACCEPTED).toBe(true);
+    expect(monthIntro()).toBe(MONTH_INTRO);
   });
 });

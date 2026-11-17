@@ -153,8 +153,10 @@ describe("buildMonthPage(2026, 11)", () => {
     expect(buildMonthPage(2027, 12, NOW).next).toBeNull();
   });
 
-  test("keeps the FAQ empty until the texts of the owner are accepted", () => {
-    expect(page.faq).toEqual([]);
+  test("carries the accepted FAQ with the dates of the month", () => {
+    expect(page.faq).toHaveLength(4);
+    expect(page.faq[0]!.question).toBe("Когда новолуние в ноябре 2026?");
+    expect(page.faq[1]!.answer).toMatch(/24 ноября, 17:5\d/);
   });
 });
 
