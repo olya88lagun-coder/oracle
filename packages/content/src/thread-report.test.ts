@@ -109,6 +109,12 @@ describe("сборщик глав разбора нити (15.07.1990, сего�
     expect(blocks[0]?.paragraphs.join()).toContain("пока прошлого мало");
   });
 
+  test("родился два года назад: вступление не врёт про четыре года, блоков столько, сколько годов", () => {
+    const { blocks } = chapterOf("2024-05-01", "past");
+    expect(blocks.filter((b) => b.heading)).toHaveLength(2);
+    expect(blocks[0]?.paragraphs.join()).not.toContain("Четыре");
+  });
+
   test("родился в 1900: не падает, главы не пустые", () => {
     const chapters = buildThreadReport(thread("1900-01-01"), fixture);
     expect(chapters.every((c) => c.blocks.length > 0)).toBe(true);
