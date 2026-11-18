@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, test } from "vitest";
-import { createPurchase, createTestDb, getNatalReport, getReport, purchases, saveReport, seedUser, type Database, type StoredChapter, type StoredNatalChapter } from "./testing";
+import { createPurchase, createTestDb, getNatalReport, getReport, getThreadReport, purchases, saveReport, seedUser, type Database, type StoredChapter, type StoredNatalChapter, type StoredThreadChapter } from "./testing";
 
 let db: Database;
 
@@ -56,5 +56,16 @@ describe("natal reports", () => {
     expect(await saveReport(db, { purchaseId: id, chapters })).toEqual({ created: true });
     expect((await getNatalReport(db, id))?.chapters).toEqual(chapters);
     expect(await getNatalReport(db, "not-a-uuid")).toBeNull();
+  });
+});
+
+describe("thread reports", () => {
+  test("are stored in the same table and read back with blocks", async () => {
+    const id = await purchaseId();
+    const chapters: StoredThreadChapter[] = [{ id: "now", source: "fallback", blocks: [{ paragraphs: ["Вступление."] }, { heading: "2026 · год 5", paragraphs: ["Год."] }] }];
+
+    expect(await saveReport(db, { purchaseId: id, chapters })).toEqual({ created: true });
+    expect((await getThreadReport(db, id))?.chapters).toEqual(chapters);
+    expect(await getThreadReport(db, "not-a-uuid")).toBeNull();
   });
 });

@@ -1,10 +1,11 @@
 import { calculateMatrix, parseBirthDate } from "@oracle/core";
 import { arcanumByNumber } from "@oracle/content";
-import { getNatalReport, getPurchase, getReport } from "@oracle/db";
+import { getNatalReport, getPurchase, getReport, getThreadReport } from "@oracle/db";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { NatalReportView } from "@/components/report/NatalReportView";
 import { ReportView } from "@/components/report/ReportView";
+import { ThreadReportView } from "@/components/report/ThreadReportView";
 import { arcanumImage } from "@/lib/arcana-paths";
 import { reportPath } from "@/lib/report-offer";
 import { getDb } from "@/server/db";
@@ -24,6 +25,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   if (!view) notFound();
   if (view.duplicateOf) redirect(reportPath(view.duplicateOf));
   if (view.product === "natal_report") return NatalReport({ view });
+  if (view.product === "thread_report") return ThreadReport({ view });
   const birthDate = parseBirthDate(view.birthDate, new Date());
   if (!birthDate) notFound();
   const matrix = calculateMatrix(birthDate);
@@ -62,6 +64,25 @@ async function NatalReport({ view }: { view: PurchaseView }) {
     <main className="page page--wide">
       <ReportGoals purchaseId={view.id} paid opened product="natal_report" />
       <NatalReportView chapters={report.chapters} date={view.birthDate} placeName={purchase?.natalInput?.placeName ?? null} chartData={natalReportChart(purchase?.natalInput)} />
+    </main>
+  );
+}
+
+// Разбор нити: ожидание без картинки, готовый разбор — шесть глав. Дата берётся из покупки
+async function ThreadReport({ view }: { view: PurchaseView }) {
+  const report = view.status === "ready" ? await getThreadReport(getDb(), view.id) : null;
+  if (!report) {
+    const initial = view.status === "ready" ? "generating" : view.status;
+    return (
+      <main className="page stack">
+        <ReportWaiting purchaseId={view.id} initial={initial} product="thread_report" />
+      </main>
+    );
+  }
+  return (
+    <main className="page page--wide">
+      <ReportGoals purchaseId={view.id} paid opened product="thread_report" />
+      <ThreadReportView chapters={report.chapters} birthDate={view.birthDate} today={report.createdAt} />
     </main>
   );
 }

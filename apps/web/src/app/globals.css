@@ -1028,6 +1028,7 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 .home-year__copy p:not(.eyebrow) { max-width: 640px; color: var(--ink-soft); line-height: 1.7; }
 .home-year .button { width: 100%; text-align: center; }
 @media (min-width: 760px) { .home-year { grid-template-columns: minmax(0, 1fr) auto; gap: 32px; padding: 28px 32px; } .home-year .button { width: auto; } }
+.home-thread__art { width: 100%; max-width: 220px; height: 44px; filter: drop-shadow(0 0 6px var(--accent-line)); }
 @media (prefers-reduced-motion: reduce) { .home-blog__art img { transition: none; } .home-blog__card:hover .home-blog__art img { transform: none; } }
 
 /* Блог: редакционный каталог и читательский шаблон статьи (пакет Codex «blog editorial premium») */

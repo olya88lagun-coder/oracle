@@ -1,4 +1,4 @@
-import { LILA_SESSION_PRODUCT, MATRIX_REPORT_PRODUCT, NATAL_REPORT_PRODUCT, type Product } from "@oracle/core";
+import { LILA_SESSION_PRODUCT, MATRIX_REPORT_PRODUCT, NATAL_REPORT_PRODUCT, THREAD_REPORT_PRODUCT, type Product } from "@oracle/core";
 import { getPurchase } from "@oracle/db";
 import { NextResponse, type NextRequest } from "next/server";
 import { getDb } from "@/server/db";
@@ -6,7 +6,7 @@ import { loginDeps } from "@/server/deps";
 import { isSameOrigin, SESSION_COOKIE } from "@/server/http";
 import { getCurrentUser } from "@/server/login-service";
 import { paymentsDeps, salesEnabled } from "@/server/payments-deps";
-import { retryPurchase, startLilaPurchase, startNatalPurchase, startPurchase, type StartPurchaseError } from "@/server/payments-service";
+import { retryPurchase, startLilaPurchase, startNatalPurchase, startPurchase, startThreadPurchase, type StartPurchaseError } from "@/server/payments-service";
 import { clientKeyFromHeaders, purchaseLimiter } from "@/server/rate-limit";
 
 const STATUS: Record<StartPurchaseError, number> = {
@@ -22,7 +22,8 @@ const STATUS: Record<StartPurchaseError, number> = {
 
 // Тело: { email } — новая покупка даты из портрета, { retry: id } — «Попробовать снова» после отмены;
 // { product: "lila_session", email, intention } — сессия Лилы с проводником (для повтора — { retry, product });
-// { product: "natal_report", email, birth } — натальный разбор по данным рождения из тела запроса
+// { product: "natal_report", email, birth } — натальный разбор по данным рождения из тела запроса;
+// { product: "thread_report", email, birth: "ГГГГ-ММ-ДД" } — «Разбор нити» по дате из тела запроса
 export async function POST(request: NextRequest) {
   // Продукт определяет, какой переключатель проверять, поэтому тело читается до проверки флага
   const body: unknown = await request.json().catch(() => null);
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
   const retried = typeof retry === "string" ? await getPurchase(getDb(), retry) : null;
   const requested = retried?.product ?? product;
   const lila = requested === LILA_SESSION_PRODUCT;
-  const sold: Product = lila ? LILA_SESSION_PRODUCT : requested === NATAL_REPORT_PRODUCT ? NATAL_REPORT_PRODUCT : MATRIX_REPORT_PRODUCT;
+  const sold: Product = lila ? LILA_SESSION_PRODUCT : requested === NATAL_REPORT_PRODUCT || requested === THREAD_REPORT_PRODUCT ? requested : MATRIX_REPORT_PRODUCT;
   const deps = paymentsDeps();
   if (!salesEnabled(sold) || !deps) return NextResponse.json({ ok: false, error: "not_found" }, { status: 404 });
   const login = loginDeps();
@@ -48,7 +49,9 @@ export async function POST(request: NextRequest) {
         ? await startLilaPurchase(deps, { userId: user.id, email, intention })
         : sold === NATAL_REPORT_PRODUCT
           ? await startNatalPurchase(deps, { userId: user.id, email, birth })
-          : await startPurchase(deps, { userId: user.id, email });
+          : sold === THREAD_REPORT_PRODUCT
+            ? await startThreadPurchase(deps, { userId: user.id, email, birth })
+            : await startPurchase(deps, { userId: user.id, email });
   if (!outcome.ok) return NextResponse.json(outcome, { status: STATUS[outcome.error] });
   return NextResponse.json(outcome);
 }

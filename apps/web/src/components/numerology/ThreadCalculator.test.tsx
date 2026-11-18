@@ -13,3 +13,8 @@ test("the first screen has one h1, the labelled date field, the button and the p
   expect(html).not.toContain("Где вы сейчас");
   expect(html).not.toContain('role="alert"');
 });
+
+test("the first screen does not show the offer block (it belongs to a result)", () => {
+  const html = renderToStaticMarkup(<ThreadCalculator texts={{ years: {}, periods: {} }} offer={{ signedIn: true, owner: false }} />);
+  expect(html).not.toContain("Разбор нити");
+});

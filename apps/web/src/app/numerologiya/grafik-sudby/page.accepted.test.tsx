@@ -7,6 +7,11 @@ import { acceptedThreadPaths } from "@/lib/numerology-pages";
 import { PUBLIC_PATHS } from "@/lib/seo";
 import Page, { metadata } from "./page";
 
+// Страница читает вошедшего и флаги продажи: в тестах гость без продажи
+vi.mock("@/server/viewer", () => ({ currentUser: async () => null }));
+vi.mock("@/server/owner", () => ({ isOwnerUser: async () => false }));
+vi.mock("@/server/payments-deps", () => ({ salesEnabled: () => false }));
+
 vi.mock("@oracle/content/numerology", async (importOriginal) => (await import("./thread-fixtures")).mockThreadAccepted(importOriginal as never));
 
 test("with batch 9 accepted the page, the site map and the hub all open", () => {
@@ -25,8 +30,8 @@ test("metadata answers «график судьбы по дате рождени�
   expect(metadata.alternates?.canonical).toBe(THREAD_PATH);
 });
 
-test("one h1, JSON-LD with the app, the FAQ and the breadcrumbs, and a link to the personal year", () => {
-  const html = renderToStaticMarkup(Page());
+test("one h1, JSON-LD with the app, the FAQ and the breadcrumbs, and a link to the personal year", async () => {
+  const html = renderToStaticMarkup(await Page());
   expect((html.match(/<h1/g) ?? []).length).toBe(1);
   const json = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ?? "";
   const graph = JSON.parse(json.replace(/</g, "<"))["@graph"] as { "@type": string; mainEntity?: { name: string }[] }[];

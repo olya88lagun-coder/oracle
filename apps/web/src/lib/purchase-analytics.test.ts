@@ -22,6 +22,7 @@ describe("purchase payload", () => {
   test.each([
     ["matrix_report", "Разбор матрицы судьбы", "report_paid"],
     ["natal_report", "Разбор натальной карты", "natal_paid"],
+    ["thread_report", "Разбор нити", "thread_paid"],
     ["lila_session", "Лила с проводником", "lila_paid"],
   ] as const)("sends actual RUB revenue and anonymous static product for %s", (product, name, goal) => {
     const ym = vi.fn();
