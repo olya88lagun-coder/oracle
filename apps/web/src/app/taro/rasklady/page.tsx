@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { SpreadGlyph } from "@/components/taro/SpreadGlyph";
+import { SpreadPicker } from "@/components/taro/SpreadPicker";
 import { breadcrumbsJsonLd, faqPageJsonLd, TaroFaqSection } from "@/components/taro/TaroFaqSection";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { countLabel } from "@/lib/taro-catalog";
 import { TARO_DAY_PATH, TARO_PATH, TARO_SPREADS_PATH } from "@/lib/taro-paths";
-import { SPREADS_HUB_FAQ, spreadPath, TARO_SPREADS } from "@/lib/taro-spreads";
+import { SPREADS_HUB_FAQ, spreadImage, spreadPath, TARO_SPREADS } from "@/lib/taro-spreads";
 
 export const metadata: Metadata = publicMetadata({
   title: "Расклады Таро онлайн бесплатно — гадание без регистрации",
-  description: "Бесплатные расклады Таро онлайн: на три карты, отношения, выбор, дело и деньги, на сегодня. Без регистрации, не прогноз.",
+  description: "Бесплатные расклады Таро онлайн: на три карты, отношения, выбор, работу, конфликт, самопознание, на сегодня. Без регистрации, не прогноз.",
   path: TARO_SPREADS_PATH,
   image: SITE_PREVIEW_IMAGE,
 });
@@ -31,10 +33,16 @@ export default function TaroSpreadsPage() {
           <p className="lead">Выберите тему, вытяните карты и прочитайте, что каждая из них говорит в своей позиции. Это повод задать себе вопрос, а не прогноз.</p>
           <p className="muted">Бесплатно и без регистрации. Вопрос и карты остаются в вашем браузере.</p>
         </header>
+        <SpreadPicker />
         <ul className="taro-spreads">
           {TARO_SPREADS.map((spread) => (
             <li key={spread.slug}>
               <article className="taro-panel taro-spread-card">
+                {spreadImage(spread.slug) && (
+                  <div className="taro-spread-card__art">
+                    <Image src={spreadImage(spread.slug)!} alt="" width={480} height={320} unoptimized sizes="(min-width: 1080px) 33vw, (min-width: 760px) 50vw, 100vw" />
+                  </div>
+                )}
                 <div className="taro-spread-card__diagram">
                   <SpreadGlyph slug={spread.slug} />
                   <p className="eyebrow">{countLabel(spread.positions.length)}</p>

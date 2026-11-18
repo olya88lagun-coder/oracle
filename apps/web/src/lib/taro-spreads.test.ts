@@ -1,3 +1,6 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { TAROT_CARDS } from "@oracle/content/tarot";
 import { describe, expect, test } from "vitest";
 import { COMPAT_PATH } from "./compat";
@@ -5,7 +8,7 @@ import { LILA_PATH } from "./lila-paths";
 import { MATRIX_PATH } from "./arcana-paths";
 import { NATAL_PATH } from "./natal-paths";
 import { YEAR_PATH } from "./year-arcana";
-import { pickDistinctIndexes, positionReading, SPREADS_HUB_FAQ, spreadFromParam, spreadPath, TARO_SPREADS, type SpreadSource } from "./taro-spreads";
+import { FEATURED_SPREADS, pickDistinctIndexes, SPREAD_IMAGE_SLUGS, spreadImage, positionReading, SPREADS_HUB_FAQ, spreadFromParam, spreadPath, TARO_SPREADS, type SpreadSource } from "./taro-spreads";
 
 const SOURCES: readonly SpreadSource[] = ["essence", "love", "money", "resource", "distortion", "day", "action", "question"];
 const PROMISES = /точн(ый|ое|ого) (прогноз|ответ)|гарантир|узнаете будущее|предскажет|покажет, что будет/i;
@@ -15,8 +18,9 @@ const allCopy = () => [
 ];
 
 describe("taro spreads", () => {
-  test("has six spreads with unique slugs and from three to five positions each", () => {
-    expect(TARO_SPREADS.map((spread) => spread.slug)).toEqual(["tri-karty", "otnosheniya", "vybor", "delo-i-dengi", "na-segodnya", "novyy-god"]);
+  test("has twelve spreads (six main, six more) with unique slugs and from three to five positions each", () => {
+    expect(TARO_SPREADS.map((spread) => spread.slug)).toEqual(["tri-karty", "otnosheniya", "vybor", "delo-i-dengi", "na-segodnya", "novyy-god", "samopoznanie", "konflikt", "smena-raboty", "roditeli", "novolunie", "polnolunie"]);
+    expect(FEATURED_SPREADS.map((spread) => spread.slug)).toEqual(TARO_SPREADS.slice(0, 6).map((spread) => spread.slug));
     expect(new Set(TARO_SPREADS.map((spread) => spread.slug)).size).toBe(TARO_SPREADS.length);
     for (const spread of TARO_SPREADS) {
       expect(spread.positions.length).toBeGreaterThanOrEqual(3);
@@ -60,7 +64,8 @@ describe("taro spreads", () => {
   });
 
   test("every spread has a short name for the tiles on /taro", () => {
-    expect(TARO_SPREADS.map((spread) => spread.short)).toEqual(["Три карты", "Отношения", "Выбор из двух", "Дело и деньги", "На сегодня", "Новый год"]);
+    expect(TARO_SPREADS.slice(0, 6).map((spread) => spread.short)).toEqual(["Три карты", "Отношения", "Выбор из двух", "Дело и деньги", "На сегодня", "Новый год"]);
+    expect(new Set(TARO_SPREADS.map((spread) => spread.short)).size).toBe(TARO_SPREADS.length);
     for (const spread of TARO_SPREADS) expect(spread.short.length).toBeLessThanOrEqual(24);
   });
 
@@ -137,6 +142,17 @@ describe("taro spreads", () => {
     expect(spread.next.label).toContain("аркан");
     // сезонный расклад не привязан к году в названии и адресе: он остаётся рабочим и после 2027
     expect(`${spread.slug} ${spread.name} ${spread.title} ${spread.short}`).not.toMatch(/20\d\d/);
+  });
+
+  test("every listed spread picture exists in three sizes, and a spread without one gets none", () => {
+    // от файла теста, а не от рабочей папки: CI запускает тесты из корня репозитория
+    const dir = fileURLToPath(new URL("../../public", import.meta.url));
+    for (const slug of SPREAD_IMAGE_SLUGS) {
+      expect(TARO_SPREADS.map((spread) => spread.slug), slug).toContain(slug);
+      for (const size of ["full", "card", "thumb"] as const) expect(existsSync(join(dir, spreadImage(slug, size)!)), `${slug} ${size}`).toBe(true);
+    }
+    expect(spreadImage("konflikt")).toBeNull();
+    expect(spreadImage("tri-karty", "card")).toBe("/taro/rasklady/tri-karty-480.webp");
   });
 
   test("no copy promises a prediction", () => {

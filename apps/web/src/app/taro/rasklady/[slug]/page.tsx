@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SpreadPlay } from "@/components/taro/SpreadPlay";
@@ -6,7 +7,7 @@ import { spreadDeck } from "@/components/taro/spread-cards";
 import { breadcrumbsJsonLd, faqPageJsonLd, TaroFaqSection } from "@/components/taro/TaroFaqSection";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { TARO_DAY_PATH, TARO_PATH, TARO_SPREADS_PATH } from "@/lib/taro-paths";
-import { spreadFromParam, spreadPath, TARO_SPREADS } from "@/lib/taro-spreads";
+import { spreadFromParam, spreadImage, spreadPath, TARO_SPREADS } from "@/lib/taro-spreads";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -40,6 +41,11 @@ export default async function TaroSpreadPage({ params }: Params) {
           <p className="eyebrow eyebrow--line">Расклад Таро</p>
           <h1 className="display">{spread.name}</h1>
           <p className="lead">{spread.lead}</p>
+          {spreadImage(spread.slug, "full") && (
+            <div className="taro-spread-hero__art">
+              <Image src={spreadImage(spread.slug, "full")!} alt="" width={960} height={640} priority unoptimized sizes="(min-width: 900px) 800px, 100vw" />
+            </div>
+          )}
         </header>
         <SpreadPlay positions={spread.positions} cards={spreadDeck(spread)} next={spread.next} />
         <section aria-labelledby="spread-guide" className="taro-spread-info taro-spread-guide">

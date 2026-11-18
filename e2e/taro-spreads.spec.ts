@@ -25,10 +25,10 @@ async function openFirst(page: Page, position: string) {
   await expect(page.getByRole("status").filter({ hasText: /Открыто карт|Расклад готов/ })).toBeVisible();
 }
 
-test("the hub lists six spreads and fits a phone", async ({ page }) => {
+test("the hub lists all twelve spreads and fits a phone", async ({ page }) => {
   await page.goto("/taro/rasklady");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Расклады Таро онлайн");
-  await expect(page.getByRole("link", { name: /^Сделать расклад/ })).toHaveCount(6);
+  await expect(page.getByRole("link", { name: /^Сделать расклад/ })).toHaveCount(12);
   await expect(page.getByRole("link", { name: "Сделать расклад: Расклад на три карты" })).toHaveAttribute("href", "/taro/rasklady/tri-karty");
   await noHorizontalScroll(page);
 });
