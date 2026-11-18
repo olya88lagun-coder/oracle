@@ -4,7 +4,7 @@ import { THREAD_REPORT_PRICE_KOPECKS } from "@oracle/core";
 import Link from "next/link";
 import { useId, useRef, useState, type FormEvent } from "react";
 import { checkoutParams, reachGoal, reachGoalThenNavigate } from "@/lib/analytics";
-import { THREAD_PATH } from "@/lib/life-thread";
+import { THREAD_PATH, THREAD_PRIMER_PATH } from "@/lib/life-thread";
 import { REFUND_DAYS } from "@/lib/legal";
 import { sessionStore } from "@/lib/matrix-save";
 import { loginHref } from "@/lib/next-path";
@@ -14,6 +14,7 @@ import {
   THREAD_OFFER_CHAPTERS,
   THREAD_OFFER_DATA_NOTE,
   THREAD_OFFER_EMAIL_LABEL,
+  THREAD_OFFER_EXAMPLE,
   THREAD_OFFER_FREE_BUY,
   THREAD_OFFER_FREE_NOTE,
   THREAD_OFFER_LEAD,
@@ -91,6 +92,7 @@ export function ThreadReportOffer({ iso, signedIn, owner }: Props) {
       <h3 ref={headingRef} id={`${id}-title`} className="thread-offer__title">{THREAD_OFFER_TITLE} — <span className="nowrap">{PRICE}</span></h3>
       <p className="lead">{THREAD_OFFER_LEAD}</p>
       <ol className="thread-offer__chapters">{THREAD_OFFER_CHAPTERS.map((chapter) => <li key={chapter}>{chapter}</li>)}</ol>
+      <p><Link className="matrix-link" href={THREAD_PRIMER_PATH}>{THREAD_OFFER_EXAMPLE}</Link></p>
       {signedIn ? (
         <BuyForm iso={iso} free={owner} inputId={`${id}-email`} />
       ) : (
