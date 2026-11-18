@@ -6,14 +6,16 @@ import { useRouter } from "next/navigation";
 import { CHAPTER_IDS, CHAPTER_TITLES } from "@oracle/core";
 import { useEffect, useState, type CSSProperties } from "react";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
+import { THREAD_PATH } from "@/lib/life-thread";
 import { PORTRAIT_REPORT_TITLE, REPORT_WAITING_BODY } from "@/lib/natal-copy";
 import { NATAL_PATH } from "@/lib/natal-paths";
 import { purchaseErrorMessage, reportPath } from "@/lib/report-offer";
+import { THREAD_BACK_LABEL, THREAD_REPORT_TITLE, THREAD_WAITING_BODY } from "@/lib/thread-copy";
 import { ReportGoals } from "./ReportGoals";
 
 type Status = "pending" | "generating" | "canceled";
 // center — аркан центра матрицы для картинки ожидания; у натального разбора его нет
-type Props = { purchaseId: string; initial: Status; center?: { number: number; image: string }; product?: "matrix_report" | "natal_report" };
+type Props = { purchaseId: string; initial: Status; center?: { number: number; image: string }; product?: "matrix_report" | "natal_report" | "thread_report" };
 
 const POLL_MS = 3000;
 
@@ -26,7 +28,7 @@ const TEXT: Record<Status, { title: string; body: string }> = {
   canceled: { title: "Оплата не прошла", body: "Деньги не списаны. Можно попробовать ещё раз." },
 };
 
-function RetryButton({ purchaseId, natal = false }: { purchaseId: string; natal?: boolean }) {
+function RetryButton({ purchaseId, natal = false, thread = false }: { purchaseId: string; natal?: boolean; thread?: boolean }) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   async function retry() {
@@ -54,7 +56,7 @@ function RetryButton({ purchaseId, natal = false }: { purchaseId: string; natal?
         </p>
       )}
       <p>
-        <Link href={natal ? NATAL_PATH : MATRIX_PATH}>{natal ? "Вернуться к карте" : "Вернуться к матрице"}</Link>
+        <Link href={thread ? THREAD_PATH : natal ? NATAL_PATH : MATRIX_PATH}>{thread ? THREAD_BACK_LABEL : natal ? "Вернуться к карте" : "Вернуться к матрице"}</Link>
       </p>
     </>
   );
@@ -62,6 +64,7 @@ function RetryButton({ purchaseId, natal = false }: { purchaseId: string; natal?
 
 export function ReportWaiting({ purchaseId, initial, center, product = "matrix_report" }: Props) {
   const natal = product === "natal_report";
+  const thread = product === "thread_report";
   const router = useRouter();
   const [status, setStatus] = useState<Status>(initial);
 
@@ -81,11 +84,11 @@ export function ReportWaiting({ purchaseId, initial, center, product = "matrix_r
     return () => clearInterval(timer);
   }, [purchaseId, status, router]);
 
-  const text = natal && status === "generating" ? { ...TEXT.generating, body: REPORT_WAITING_BODY } : TEXT[status];
+  const text = (natal || thread) && status === "generating" ? { ...TEXT.generating, body: thread ? THREAD_WAITING_BODY : REPORT_WAITING_BODY } : TEXT[status];
   return (
     <section className={natal ? "card stack report-waiting report-waiting--natal" : "card stack report-waiting"}>
       <ReportGoals purchaseId={purchaseId} paid={status === "generating"} product={product} />
-      <p className="eyebrow">{natal ? PORTRAIT_REPORT_TITLE : "Разбор матрицы судьбы"}</p>
+      <p className="eyebrow">{thread ? THREAD_REPORT_TITLE : natal ? PORTRAIT_REPORT_TITLE : "Разбор матрицы судьбы"}</p>
       <h1 className="report-waiting__title">{text.title}</h1>
       <p role={status === "canceled" ? "alert" : "status"} className={status === "canceled" ? "error" : "lead"}>
         {text.body}
@@ -98,7 +101,7 @@ export function ReportWaiting({ purchaseId, initial, center, product = "matrix_r
         </div>
       )}
       {/* Бегущий блик по главам — «пишется», а не шкала хода: сколько глав готово, страница не знает */}
-      {status === "generating" && !natal && (
+      {status === "generating" && !natal && !thread && (
         <ol className="report-waiting__chapters" aria-label="Главы разбора">
           {CHAPTER_IDS.map((id, index) => (
             <li key={id} style={{ "--i": index } as CSSProperties}>
@@ -107,7 +110,7 @@ export function ReportWaiting({ purchaseId, initial, center, product = "matrix_r
           ))}
         </ol>
       )}
-      {status === "canceled" && <RetryButton purchaseId={purchaseId} natal={natal} />}
+      {status === "canceled" && <RetryButton purchaseId={purchaseId} natal={natal} thread={thread} />}
     </section>
   );
 }

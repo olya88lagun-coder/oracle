@@ -184,3 +184,10 @@
     50% { transform: scale(1.25); opacity: 1; }
   }
 }
+
+/* Страница разбора нити (/portret/razbor/<id>): оглавление и главы; цвета — переменные globals.css, без движения */
+.thread-report__chapter { scroll-margin-top: 16px; }
+.thread-report__block { min-width: 0; }
+.thread-report__block h3 { margin: 8px 0 0; font-size: 18px; color: var(--accent); }
+.thread-report__toc-link, .thread-report__back { display: inline-flex; align-items: center; min-height: 44px; }
+.thread-report .report-text { overflow-wrap: anywhere; }
