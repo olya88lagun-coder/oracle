@@ -17,10 +17,10 @@ async function zoomAndClose(page: Page) {
   await expect(opener).toBeFocused();
 }
 
-test("an arcanum page has ten sections, a contents list, a zoomable picture and neighbours", async ({ page }) => {
+test("an arcanum page has ten reading sections and the worked example, a contents list, a zoomable picture and neighbours", async ({ page }) => {
   await page.goto("/matrica-sudby/arkan-6-vlyublennye");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Влюблённые");
-  await expect(page.locator("details.arcanum-section")).toHaveCount(10);
+  await expect(page.locator("details.arcanum-section")).toHaveCount(11);
   await expect(page.getByRole("navigation", { name: "На этой странице" })).toBeAttached();
   await expect(page.getByRole("navigation", { name: "Соседние арканы" }).getByRole("link")).toHaveCount(2);
   await zoomAndClose(page);
