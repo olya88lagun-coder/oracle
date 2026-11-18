@@ -1,13 +1,21 @@
 import { THREAD_REPORT_PRICE_KOPECKS } from "@oracle/core";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
-import { THREAD_OFFER_TITLE } from "@/lib/thread-copy";
+import { THREAD_PRIMER_PATH } from "@/lib/life-thread";
+import { THREAD_OFFER_EXAMPLE, THREAD_OFFER_TITLE } from "@/lib/thread-copy";
 import { ThreadReportOffer } from "./ThreadReportOffer";
 
 const text = (markup: string) => markup.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 const render = (p: { signedIn: boolean; owner?: boolean }) => renderToStaticMarkup(<ThreadReportOffer iso="1990-03-07" signedIn={p.signedIn} owner={p.owner ?? false} />);
 
 describe("ThreadReportOffer", () => {
+  test("links the example report once, for a guest, a buyer and the owner", () => {
+    for (const view of [render({ signedIn: false }), render({ signedIn: true }), render({ signedIn: true, owner: true })]) {
+      expect(view.match(new RegExp(`href="${THREAD_PRIMER_PATH}"`, "g"))).toHaveLength(1);
+      expect(text(view)).toContain(THREAD_OFFER_EXAMPLE);
+    }
+  });
+
   test("the heading carries the price from the core constant", () => {
     expect(THREAD_REPORT_PRICE_KOPECKS).toBe(49_000);
     expect(text(render({ signedIn: false }))).toContain(`${THREAD_OFFER_TITLE} — 490 ₽`);

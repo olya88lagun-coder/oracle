@@ -25,3 +25,4 @@ export const THREAD_OFFER_BUY = "Купить разбор";
 export const THREAD_OFFER_LOGIN_BUY = "Войти и купить разбор";
 export const THREAD_OFFER_FREE_BUY = "Получить разбор бесплатно";
 export const THREAD_OFFER_EMAIL_LABEL = "E-mail для чека";
+export const THREAD_OFFER_EXAMPLE = "Посмотреть пример разбора";

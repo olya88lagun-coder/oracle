@@ -7,16 +7,24 @@ import { NatalReportView } from "@/components/report/NatalReportView";
 import { ReportView } from "@/components/report/ReportView";
 import { ThreadReportView } from "@/components/report/ThreadReportView";
 import { arcanumImage } from "@/lib/arcana-paths";
+import { reportPageMetadata } from "@/lib/portrait-report-title";
 import { reportPath } from "@/lib/report-offer";
 import { getDb } from "@/server/db";
 import { natalReportChart } from "@/server/natal-report-chart";
 import { purchaseViewDeps } from "@/server/payments-deps";
 import { getPurchaseView, type PurchaseView } from "@/server/payments-service";
-import { requireUser } from "@/server/viewer";
+import { currentUser, requireUser } from "@/server/viewer";
 import { ReportGoals } from "./ReportGoals";
 import { ReportWaiting } from "./ReportWaiting";
 
-export const metadata: Metadata = { title: "Разбор матрицы судьбы", robots: { index: false, follow: false } };
+// Вкладка называется по купленному продукту; гостю и чужой покупке — общее название, страница всё равно уйдёт на вход или 404
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const user = await currentUser();
+  if (!user) return reportPageMetadata(undefined);
+  const { id } = await params;
+  const view = await getPurchaseView(purchaseViewDeps(), { purchaseId: id, userId: user.id });
+  return reportPageMetadata(view?.product);
+}
 
 export default async function ReportPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await requireUser();
