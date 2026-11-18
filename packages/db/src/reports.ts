@@ -1,4 +1,4 @@
-import type { ChapterId, ScenarioField } from "@oracle/core";
+import type { ChapterId, ScenarioField, ThreadChapterId } from "@oracle/core";
 import type { NatalChapterId } from "@oracle/core/natal";
 import { eq } from "drizzle-orm";
 import { reports } from "./schema";
@@ -16,9 +16,12 @@ export type StoredReport = { chapters: StoredChapter[]; createdAt: Date };
 // Глава натального разбора: те же поля, но свои идентификаторы глав
 export type StoredNatalChapter = Omit<StoredChapter, "id"> & { id: NatalChapterId };
 export type StoredNatalReport = { chapters: StoredNatalChapter[]; createdAt: Date };
+// Глава разбора нити: блоки с необязательным заголовком, без ИИ (всегда сборка из готовых текстов)
+export type StoredThreadChapter = { id: ThreadChapterId; source: "fallback"; blocks: { heading?: string; paragraphs: string[] }[] };
+export type StoredThreadReport = { chapters: StoredThreadChapter[]; createdAt: Date };
 
 // Воркер может взять одну задачу дважды: сохранится только первый разбор
-export async function saveReport(db: Database, p: { purchaseId: string; chapters: readonly (StoredChapter | StoredNatalChapter)[] }): Promise<{ created: boolean }> {
+export async function saveReport(db: Database, p: { purchaseId: string; chapters: readonly (StoredChapter | StoredNatalChapter | StoredThreadChapter)[] }): Promise<{ created: boolean }> {
   const inserted = await db
     .insert(reports)
     .values({ purchaseId: p.purchaseId, chapters: p.chapters })
@@ -37,4 +40,10 @@ export async function getReport(db: Database, purchaseId: string): Promise<Store
 export async function getNatalReport(db: Database, purchaseId: string): Promise<StoredNatalReport | null> {
   const report = await getReport(db, purchaseId);
   return report ? { chapters: report.chapters as unknown as StoredNatalChapter[], createdAt: report.createdAt } : null;
+}
+
+// Разбор нити жизни: та же таблица, главы читаются со своим типом
+export async function getThreadReport(db: Database, purchaseId: string): Promise<StoredThreadReport | null> {
+  const report = await getReport(db, purchaseId);
+  return report ? { chapters: report.chapters as unknown as StoredThreadChapter[], createdAt: report.createdAt } : null;
 }
