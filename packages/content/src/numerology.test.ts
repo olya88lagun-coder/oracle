@@ -91,7 +91,7 @@ ${filler(12)}
 
 describe("numerology manifest", () => {
   test("12 fate, 9 year, 37 clock, 10 square and 1 pair pages in batches 12/9/15/15/7/5/5/1", () => {
-    expect(NUMEROLOGY_PAGES).toHaveLength(87);
+    expect(NUMEROLOGY_PAGES).toHaveLength(114);
     const sizes = [1, 2, 3, 4, 5, 6, 7, 8].map((batch) => NUMEROLOGY_PAGES.filter((page) => page.batch === batch).length);
     expect(sizes).toEqual([12, 9, 15, 15, 7, 5, 5, 1]);
     expect(NUMEROLOGY_PAGES.filter((page) => page.kind === "pair")).toEqual([{ kind: "pair", key: "sovmestimost", batch: 8 }]);
@@ -139,6 +139,55 @@ ${titles.map((title) => `## ${title}\n\n${filler(5)}`).join("\n\n")}
   test("a thread page needs at least 1800 characters", () => {
     const short = sample("thread", THREAD_TITLES).replace(/Абзац \d+[^\n]*\n\n?/g, "Коротко.\n\n");
     expect(() => parseNumerologyPage(short, "thread-5.md")).toThrow(/1800/);
+  });
+});
+
+describe("month, past and rules pages (batch 10)", () => {
+  const TITLES = {
+    month: ["Тема месяца", "Как его провести"],
+    past: ["Если вспомнить этот год", "Вопросы себе"],
+    rules: ["Три правила", "Вопрос на год"],
+  } as const;
+  type Kind = keyof typeof TITLES;
+  const bodyOf = (kind: Kind, paragraphs: number) =>
+    TITLES[kind].map((title) => `## ${title}\n\n${kind === "rules" && title === "Три правила" ? "- Первое правило.\n- Второе правило.\n- Третье правило." : filler(paragraphs)}`).join("\n\n");
+  const sample = (kind: Kind, body = bodyOf(kind, 8)) => `---
+kind: ${kind}
+key: 5
+title: Страница нити номер пять — значение
+description: Что означает этап нити с числом пять в вашей жизни: тема, опора, осторожность и вопрос для себя. Символическое прочтение без прогнозов.
+batch: 10
+---
+
+${body}
+`;
+
+  test("batch 10 has nine pages of each kind, keys 1–9, and stays closed until accepted", () => {
+    const batch = NUMEROLOGY_PAGES.filter((page) => page.batch === 10);
+    expect(batch).toHaveLength(27);
+    for (const kind of ["month", "past", "rules"] as const) {
+      expect(batch.filter((page) => page.kind === kind).map((page) => page.key)).toEqual(["1", "2", "3", "4", "5", "6", "7", "8", "9"]);
+      if (!NUMEROLOGY_ACCEPTED_BATCHES.has(10)) expect(acceptedNumerologyPages(kind)).toEqual([]);
+    }
+  });
+
+  test("each kind parses with its own sections and rejects the others", () => {
+    for (const kind of ["month", "past", "rules"] as const) {
+      expect(parseNumerologyPage(sample(kind), `${kind}-5.md`).sections.map((s) => s.title)).toEqual(TITLES[kind]);
+      const other = kind === "month" ? "past" : "month";
+      expect(() => parseNumerologyPage(sample(kind, bodyOf(other, 8)), `${kind}-5.md`)).toThrow(/разделы по порядку/);
+    }
+  });
+
+  test("rules needs exactly three rules", () => {
+    const two = sample("rules").replace("- Третье правило.", "");
+    expect(() => parseNumerologyPage(two, "rules-5.md")).toThrow(/ровно три пункта/);
+  });
+
+  test("short texts are rejected: 900 for month and past, 600 for rules", () => {
+    expect(() => parseNumerologyPage(sample("month", bodyOf("month", 1)), "month-5.md")).toThrow(/900/);
+    expect(() => parseNumerologyPage(sample("past", bodyOf("past", 1)), "past-5.md")).toThrow(/900/);
+    expect(() => parseNumerologyPage(sample("rules", bodyOf("rules", 1)), "rules-5.md")).toThrow(/600/);
   });
 });
 
