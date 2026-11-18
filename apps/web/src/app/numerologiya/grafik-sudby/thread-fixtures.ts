@@ -16,6 +16,17 @@ function fixture(real: typeof Content, kind: "thread" | "period", key: string): 
   };
 }
 
+// Мок @oracle/content/numerology: партия 9 не принята (нить закрыта), остальное — как на самом деле
+export async function mockThreadClosed(importOriginal: () => Promise<typeof Content>): Promise<typeof Content> {
+  const real = await importOriginal();
+  const isThread = (kind: string): boolean => kind === "thread" || kind === "period";
+  return {
+    ...real,
+    numerologyText: (kind, key) => (isThread(kind) ? undefined : real.numerologyText(kind, key)),
+    acceptedNumerologyPages: (kind) => (isThread(kind) ? [] : real.acceptedNumerologyPages(kind)),
+  };
+}
+
 // Мок @oracle/content/numerology: партия 9 принята, остальное — как на самом деле
 export async function mockThreadAccepted(importOriginal: () => Promise<typeof Content>): Promise<typeof Content> {
   const real = await importOriginal();
