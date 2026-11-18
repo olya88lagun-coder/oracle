@@ -7,6 +7,10 @@ import { YEAR_NAMES } from "@/lib/life-thread-curve";
 import { reachNumerologyGoal } from "@/lib/numerology";
 import { threadPosterSpec } from "@/lib/poster-thread";
 import { ThreadChart } from "./ThreadChart";
+import { ThreadReportOffer } from "./ThreadReportOffer";
+
+// offer — только когда продажа включена (флаг, шлюз, принятая партия 10); без него результат прежний. iso — дата, для которой считается разбор
+export type ThreadOffer = { signedIn: boolean; owner: boolean };
 
 const ROMAN = ["I", "II", "III", "IV"] as const;
 const digitSum = (n: number): number => String(n).split("").reduce((sum, digit) => sum + Number(digit), 0);
@@ -29,7 +33,7 @@ function CardSections({ card }: { card: ThreadCard }) {
   </div>)}</>;
 }
 
-export function ThreadResult({ thread, texts }: { thread: LifeThread; texts: ThreadTexts }) {
+export function ThreadResult({ thread, texts, iso, offer }: { thread: LifeThread; texts: ThreadTexts; iso?: string; offer?: ThreadOffer }) {
   const current = thread.years.find((item) => item.year === thread.currentYear) ?? thread.years[0];
   const yearCard = current ? texts.years[current.value] : undefined;
   const digits = current ? `${thread.birth.day}${String(thread.birth.month).padStart(2, "0")}${thread.currentYear}`.split("") : [];
@@ -65,6 +69,8 @@ export function ThreadResult({ thread, texts }: { thread: LifeThread; texts: Thr
         })}
       </ol>
     </div>
+
+    {offer && iso && <ThreadReportOffer iso={iso} signedIn={offer.signedIn} owner={offer.owner} />}
 
     {current && <div className="thread-formula stack">
       <h3>Открытая формула</h3>

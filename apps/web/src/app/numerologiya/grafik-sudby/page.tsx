@@ -1,3 +1,4 @@
+import { THREAD_REPORT_PRODUCT } from "@oracle/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -8,6 +9,9 @@ import { NUMEROLOGY_PATH, PERSONAL_YEAR_PATH } from "@/lib/numerology";
 import { acceptedThreadPaths, acceptedThreadTexts } from "@/lib/numerology-pages";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
+import { isOwnerUser } from "@/server/owner";
+import { salesEnabled } from "@/server/payments-deps";
+import { currentUser } from "@/server/viewer";
 import "../../arkan-2027/year.css";
 import "../numerology.css";
 import "./thread.css";
@@ -18,10 +22,15 @@ export const metadata: Metadata = publicMetadata({
   path: THREAD_PATH,
 });
 
-// Страница закрыта (настоящий 404), пока владелица не приняла партию текстов 9
-export default function ThreadPage() {
+// Страница закрыта (настоящий 404), пока владелица не приняла партию текстов 9.
+// Зависит от входа (как натальная): блок продажи знает, вошёл ли человек и владелица ли он; сама нить считается в браузере
+export default async function ThreadPage() {
   if (!acceptedThreadPaths().length) notFound();
   const texts = acceptedThreadTexts();
+  // Вошедшего читаем всегда (как натальная): флаги окружения известны только при запросе, а не при сборке, поэтому страница динамическая
+  const user = await currentUser();
+  // salesEnabled — флаг PAID_THREAD, шлюз и принятая партия 10; иначе блока нет
+  const offer = salesEnabled(THREAD_REPORT_PRODUCT) ? { signedIn: Boolean(user), owner: user ? await isOwnerUser(user.id) : false } : undefined;
   const data = {
     "@context": "https://schema.org",
     "@graph": [
@@ -38,7 +47,7 @@ export default function ThreadPage() {
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }} />
     <main className="year-page numerology-page numerology-landing thread-page">
       <nav aria-label="Хлебные крошки" className="year-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href={NUMEROLOGY_PATH}>Нумерология</Link><span aria-hidden="true">/</span><span>График судьбы</span></nav>
-      <ThreadCalculator texts={texts} />
+      <ThreadCalculator texts={texts} offer={offer} />
       <section className="year-guide" aria-labelledby="thread-guide-title">
         <div className="stack"><p className="eyebrow">Как читать нить</p><h2 id="thread-guide-title">Не прогноз.<br />Ритм жизни.</h2><p>В нумерологии годы идут девятилетними циклами: старт, терпение, самовыражение, фундамент, перемены, забота, осмысление, урожай, завершение. Нить складывает все ваши годы в одну линию, чтобы увидеть ритм: когда виден результат, а когда идёт тихая работа внутри.</p><p>Это символическая тема, а не предсказание событий: тихий год не хуже яркого, у каждого своя задача.</p></div>
         <div className="year-method stack"><h3>Открытая формула</h3><p>Цифры дня и месяца рождения плюс цифры года, сумма сворачивается до 1–9. Год считается от дня рождения до следующего.</p><p>Четыре периода жизни считаются по числам дня, месяца и года рождения; границы падают на день рождения.</p><p>Другие расчёты по той же дате: <Link href={PERSONAL_YEAR_PATH}>личный год 2027</Link> и <Link href={MATRIX_PATH}>матрица судьбы</Link>.</p></div>

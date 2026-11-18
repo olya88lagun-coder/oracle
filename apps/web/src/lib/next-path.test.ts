@@ -23,12 +23,13 @@ describe("loginHref", () => {
     expect(loginHref("/matrica-sudby")).toBe("/login?next=%2Fmatrica-sudby");
     expect(loginHref("/lila/igra")).toBe("/login?next=%2Flila%2Figra");
     expect(loginHref("/natalnaya-karta")).toBe("/login?next=%2Fnatalnaya-karta");
+    expect(loginHref("/numerologiya/grafik-sudby")).toBe("/login?next=%2Fnumerologiya%2Fgrafik-sudby");
     expect(loginHref("https://evil.example")).toBe("/login");
   });
 });
 
 describe("SAFE_NEXT_PATHS", () => {
   test("is the exact allow-list of bare internal paths", () => {
-    expect([...SAFE_NEXT_PATHS]).toEqual(["/portret", "/matrica-sudby", "/lila/igra", "/natalnaya-karta"]);
+    expect([...SAFE_NEXT_PATHS]).toEqual(["/portret", "/matrica-sudby", "/lila/igra", "/natalnaya-karta", "/numerologiya/grafik-sudby"]);
   });
 });

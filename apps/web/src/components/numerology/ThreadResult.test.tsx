@@ -46,3 +46,11 @@ test("the story picture button is there and its spec carries no date of birth", 
   expect(html).toContain("Картинка для сторис");
   expect(html).not.toContain("1990-07-15");
 });
+
+test("the offer block is absent without the offer prop and stands after the periods with it", () => {
+  const plain = renderToStaticMarkup(<ThreadResult thread={thread} texts={TEXTS} iso="1990-07-15" />);
+  expect(plain).not.toContain("Разбор нити");
+  const html = renderToStaticMarkup(<ThreadResult thread={thread} texts={TEXTS} iso="1990-07-15" offer={{ signedIn: false, owner: false }} />);
+  expect(html).toContain("Разбор нити — ");
+  expect(html.indexOf("Разбор нити — ")).toBeGreaterThan(html.indexOf("Большие отрезки жизни"));
+});
