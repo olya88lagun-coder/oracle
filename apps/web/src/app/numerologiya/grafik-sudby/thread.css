@@ -1,5 +1,6 @@
 /* «Нить» (график судьбы): сцена, картинка и результат. Цвета — переменные из globals.css; свои два оттенка заведены здесь переменными */
-.thread-page {
+.thread-page,
+.thread-report {
   --thread-glint: #F6E3BF;
   --thread-lavender-soft: #E3D8FA;
 }
@@ -183,4 +184,42 @@
     0%, 100% { transform: scale(0.85); opacity: 0.55; }
     50% { transform: scale(1.25); opacity: 1; }
   }
+}
+
+/* Страница разбора нити (/portret/razbor/<id>): оглавление и главы; цвета — переменные globals.css, без движения */
+.thread-report__chapter { scroll-margin-top: 16px; }
+.thread-report__block { min-width: 0; }
+.thread-report__block h3 { margin: 8px 0 0; font-size: 18px; color: var(--accent); }
+.thread-report__toc-link, .thread-report__back { display: inline-flex; align-items: center; min-height: 44px; }
+.thread-report .report-text { overflow-wrap: anywhere; }
+
+/* Блок продажи «Разбора нити»: свой, без натальных .natal-offer; цвета — переменные из globals.css */
+.thread-offer {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.thread-offer > *, .thread-offer .thread-offer__form > * { min-width: 0; margin: 0; }
+.thread-offer .thread-offer__title { max-width: 22ch; font-size: clamp(28px, 3.8vw, 40px); line-height: 1.16; text-wrap: pretty; }
+.thread-offer .lead { color: var(--ink-soft); font-size: 16px; line-height: 1.55; }
+.thread-offer__chapters { display: grid; gap: 6px; padding-left: 22px; font-size: 16px; line-height: 1.5; }
+.thread-offer .thread-offer__cta, .thread-offer .thread-offer__form > .button { width: 100%; min-height: 56px; padding: 12px 16px; font-size: 16px; line-height: 1.5; }
+.thread-offer .thread-offer__form { display: grid; gap: 10px; }
+.thread-offer .field { gap: 6px; }
+.thread-offer label { color: var(--ink); font-size: 14px; }
+.thread-offer .input { min-height: 48px; border-color: var(--natal-field-line); font-size: 16px; }
+.thread-offer .muted { color: var(--ink-soft); font-size: 14px; line-height: 1.5; }
+.thread-offer > .muted { padding-left: 12px; border-left: 2px solid var(--accent-line); color: var(--ink); }
+.thread-offer > .thread-offer__refund { border-left-color: var(--good); color: var(--ink-soft); }
+.thread-offer .error { padding: 10px 12px; border: 1px solid var(--danger); border-radius: var(--radius); color: var(--danger); font-size: 14px; }
+
+/* На широком экране блок продажи не растягивается на всю ширину: строки короче, кнопка по размеру слов */
+@media (min-width: 900px) {
+  .thread-offer { padding: 28px 32px; }
+  .thread-offer > :not(.thread-offer__title) { max-width: 64ch; }
+  .thread-offer .thread-offer__cta, .thread-offer .thread-offer__form > .button { width: auto; min-width: 320px; justify-self: start; }
 }

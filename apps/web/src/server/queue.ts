@@ -3,7 +3,9 @@ import {
   conclusionJobKey,
   GENERATE_JOB_OPTIONS,
   GENERATE_NATAL_JOB_OPTIONS,
+  GENERATE_THREAD_JOB_OPTIONS,
   generateNatalReportJobKey,
+  generateThreadReportJobKey,
   generateReportJobKey,
   GUIDE_JOB_OPTIONS,
   guideMoveJobKey,
@@ -15,6 +17,7 @@ import {
   type ConclusionJob,
   type GenerateNatalReportJob,
   type GenerateReportJob,
+  type GenerateThreadReportJob,
   type GuideMoveJob,
   type ReceiptsReminderJob,
 } from "@oracle/core";
@@ -56,6 +59,16 @@ export async function enqueueGenerateNatal(job: GenerateNatalReportJob): Promise
   } catch (error) {
     // Оплата уже зафиксирована; страница ожидания поставит задачу заново
     console.error("enqueue natal generate failed", { purchaseId: job.purchaseId, error: String(error) });
+  }
+}
+
+export async function enqueueGenerateThread(job: GenerateThreadReportJob): Promise<void> {
+  try {
+    const boss = await queue();
+    await boss.send(QUEUES.generateThreadReport, job, { ...GENERATE_THREAD_JOB_OPTIONS, id: jobIdFor(generateThreadReportJobKey(job)) });
+  } catch (error) {
+    // Оплата уже зафиксирована; страница ожидания поставит задачу заново
+    console.error("enqueue thread generate failed", { purchaseId: job.purchaseId, error: String(error) });
   }
 }
 

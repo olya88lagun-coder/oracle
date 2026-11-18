@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { calculateLifeThread, foldToNine, personalYearOf } from "./life-thread";
+import { calculateLifeThread, foldToNine, personalMonthsOf, personalYearOf } from "./life-thread";
 
 const TODAY = new Date("2026-11-18T12:00:00Z");
 const BIRTH = { year: 1990, month: 7, day: 15 };
@@ -57,4 +57,54 @@ test("an impossible date, a future date and a non-string give null", () => {
   expect(calculateLifeThread("1990-02-31", TODAY)).toBeNull();
   expect(calculateLifeThread("2030-01-01", TODAY)).toBeNull();
   expect(calculateLifeThread(undefined as never, TODAY)).toBeNull();
+});
+
+const monthsFor = (value: string, year: number) => {
+  const thread = calculateLifeThread(value, TODAY);
+  const item = thread?.years.find((entry) => entry.year === year);
+  if (!thread || !item) throw new Error("no thread year");
+  const next = thread.years.find((entry) => entry.year === year + 1);
+  return { months: personalMonthsOf(thread.birth, item), next };
+};
+
+const dayAfter = (isoDate: string): string => new Date(Date.parse(isoDate) + 86_400_000).toISOString().slice(0, 10);
+
+// Цепочка без дыр: start следующего = end предыдущего + день, 12-й кончается перед следующим личным годом
+const expectChain = (value: string, year: number) => {
+  const { months, next } = monthsFor(value, year);
+  expect(months).toHaveLength(12);
+  expect(months.map((item) => item.index)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  for (let i = 1; i < 12; i++) expect(months[i]?.start).toBe(dayAfter(months[i - 1]?.end ?? ""));
+  expect(dayAfter(months[11]?.end ?? "")).toBe(next?.start);
+};
+
+test("personal months of 15.07.1990 in 2026 (value 5): 12 segments, first 3, second 4, last ends 2027-07-14", () => {
+  const { months } = monthsFor("1990-07-15", 2026);
+  expect(months[0]).toEqual({ index: 1, value: 3, start: "2026-07-15", end: "2026-08-14" });
+  expect(months[1]).toMatchObject({ value: 4, start: "2026-08-15" });
+  expect(months[11]?.end).toBe("2027-07-14");
+  expectChain("1990-07-15", 2026);
+});
+
+test("personal months of 31.01.1991 in 2026: February segment starts on the 28th, March on the 31st, no gaps", () => {
+  const { months } = monthsFor("1991-01-31", 2026);
+  expect(months[1]?.start).toBe("2026-02-28");
+  expect(months[2]?.start).toBe("2026-03-31");
+  expectChain("1991-01-31", 2026);
+});
+
+test("personal months of 29.02.1992: 2027 starts on 1 March, the chain holds in leap and non-leap years", () => {
+  expect(monthsFor("1992-02-29", 2027).months[0]?.start).toBe("2027-03-01");
+  for (const year of [2026, 2027, 2028]) expectChain("1992-02-29", year);
+});
+
+test("29.02 birth, non-leap year: segments start on the 1st of 12 distinct calendar months, the last ends on 28 February", () => {
+  const { months } = monthsFor("1992-02-29", 2027);
+  expect(months.map((item) => item.start.slice(5))).toEqual(["03-01", "04-01", "05-01", "06-01", "07-01", "08-01", "09-01", "10-01", "11-01", "12-01", "01-01", "02-01"]);
+  expect(new Set(months.map((item) => item.start.slice(5, 7))).size).toBe(12);
+  expect(months[11]?.end).toBe("2028-02-28");
+});
+
+test("personal months chain holds for 30th and 1st births across years", () => {
+  for (const value of ["1990-01-30", "1990-12-31", "1990-01-01"]) for (const year of [2026, 2027, 2028]) expectChain(value, year);
 });

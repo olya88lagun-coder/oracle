@@ -10,9 +10,12 @@ export const NUMEROLOGY_SECTION_TITLES: Readonly<Record<Exclude<NumerologyKind, 
   clock: ["Коротко", "Из каких чисел", "Вопрос для себя", "Частые вопросы"],
   thread: ["Тема года", "На что опереться", "Где осторожнее", "Вопрос для себя"],
   period: ["Сила периода", "Трудность периода", "Как пройти границу", "Вопрос для себя"],
+  month: ["Тема месяца", "Как его провести"],
+  past: ["Если вспомнить этот год", "Вопросы себе"],
+  rules: ["Три правила", "Вопрос на год"],
 };
 
-export const NUMEROLOGY_MIN_BODY: Readonly<Record<NumerologyKind, number>> = { fate: 4000, year: 4000, clock: 2500, square: 4500, pair: 18000, thread: 1800, period: 1800 };
+export const NUMEROLOGY_MIN_BODY: Readonly<Record<NumerologyKind, number>> = { fate: 4000, year: 4000, clock: 2500, square: 4500, pair: 18000, thread: 1800, period: 1800, month: 900, past: 900, rules: 600 };
 const SQUARE_LINES_MIN_BODY = 5000;
 
 // Названия линий квадрата Пифагора на сайте (спека 2026-11-08-pythagoras-square-design.md)
@@ -46,6 +49,8 @@ export function pairSectionTitles(): readonly string[] {
   return ["Как считается совместимость по квадрату", "Как читать сравнение", ...cells, ...lines, FAQ_TITLE];
 }
 const ADVICE_TITLE = "Три совета";
+// В текстах вида rules те же ровно три пункта называются «Три правила»
+const RULES_TITLE = "Три правила";
 
 export type NumerologySection = { readonly title: string; readonly paragraphs: readonly string[]; readonly items: readonly string[] };
 export type NumerologyText = {
@@ -60,7 +65,7 @@ export type NumerologyText = {
 
 export class NumerologyFormatError extends Error {}
 
-const KINDS: readonly NumerologyKind[] = ["fate", "year", "clock", "square", "pair", "thread", "period"];
+const KINDS: readonly NumerologyKind[] = ["fate", "year", "clock", "square", "pair", "thread", "period", "month", "past", "rules"];
 const KEY = /^(\d{1,2}|\d{2}-\d{2}|linii|sovmestimost)$/;
 
 const blocks = (text: string): string[] =>
@@ -104,7 +109,7 @@ export function parseNumerologyPage(source: string, file: string): NumerologyTex
   if (!match) return fail("нет шапки между строками ---");
   const fields = new Map((match[1] ?? "").split("\n").map((line) => [line.slice(0, line.indexOf(":")).trim(), line.slice(line.indexOf(":") + 1).trim()] as const));
   const kind = fields.get("kind") as NumerologyKind;
-  if (!KINDS.includes(kind)) fail("kind — fate, year, clock, square, pair, thread или period");
+  if (!KINDS.includes(kind)) fail("kind — fate, year, clock, square, pair, thread, period, month, past или rules");
   const key = fields.get("key") ?? "";
   if (!KEY.test(key)) fail("key — число или время «чч-мм»");
   const title = fields.get("title") ?? "";
@@ -133,7 +138,9 @@ export function parseNumerologyPage(source: string, file: string): NumerologyTex
     if (title === FAQ_TITLE) faq = faqOf(text, fail);
     else sections.push(section(title, text));
   });
-  const advice = sections.find((s) => s.title === ADVICE_TITLE);
-  if (advice && advice.items.length !== 3) fail(`«${ADVICE_TITLE}» — ровно три пункта «- »`);
+  for (const adviceTitle of [ADVICE_TITLE, RULES_TITLE]) {
+    const advice = sections.find((s) => s.title === adviceTitle);
+    if (advice && advice.items.length !== 3) fail(`«${adviceTitle}» — ровно три пункта «- »`);
+  }
   return { kind, key, title, description, batch, sections, faq };
 }

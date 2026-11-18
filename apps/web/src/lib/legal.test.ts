@@ -58,3 +58,10 @@ describe("legal constants", () => {
     expect(formatRubles(29_000)).toBe("290 ₽");
   });
 });
+
+describe("thread report in the data list", () => {
+  test("says the thread report goes to no text service", () => {
+    const what = DATA_RECIPIENTS.find((recipient) => recipient.name.startsWith("GigaChat"))?.what ?? "";
+    expect(what).toMatch(/«Разбор нити» собирается на нашем сервере из готовых текстов и никому не передаётся/);
+  });
+});

@@ -8,3 +8,4 @@ export * from "./compatibility";
 export * from "./receipts";
 export * from "./numerology";
 export * from "./life-thread";
+export * from "./thread-report";

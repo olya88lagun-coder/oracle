@@ -2,10 +2,12 @@ import type { Matrix, MatrixPoint } from "./matrix";
 
 export const MATRIX_REPORT_PRODUCT = "matrix_report";
 export const NATAL_REPORT_PRODUCT = "natal_report";
-export type Product = typeof MATRIX_REPORT_PRODUCT | typeof NATAL_REPORT_PRODUCT | "lila_session";
+export const THREAD_REPORT_PRODUCT = "thread_report";
+export type Product = typeof MATRIX_REPORT_PRODUCT | typeof NATAL_REPORT_PRODUCT | typeof THREAD_REPORT_PRODUCT | "lila_session";
 // Единственное место с ценой: блок продажи, оферта и платёж читают её отсюда
 export const MATRIX_REPORT_PRICE_KOPECKS = 39_000;
 export const NATAL_REPORT_PRICE_KOPECKS = 49_000;
+export const THREAD_REPORT_PRICE_KOPECKS = 49_000;
 // Срок возврата за натальный разбор (решение владелицы 2026-10-20): блок продажи и оферта читают его отсюда, как цену
 export const NATAL_REPORT_REFUND_DAYS = 14;
 
@@ -62,14 +64,22 @@ export function reportChapters(matrix: Matrix): ReportChapter[] {
   return CHAPTER_IDS.map((id) => ({ id, title: CHAPTER_TITLES[id], arcana: CHAPTER_POINTS[id].map((point) => matrix[point]) }));
 }
 
-export const QUEUES = { generateReport: "generate-report", generateNatalReport: "generate-natal-report" } as const;
+export const QUEUES = {
+  generateReport: "generate-report",
+  generateNatalReport: "generate-natal-report",
+  generateThreadReport: "generate-thread-report",
+} as const;
 export type GenerateReportJob = { purchaseId: string };
 export type GenerateNatalReportJob = { purchaseId: string };
+export type GenerateThreadReportJob = { purchaseId: string };
 // Внутри задачи до трёх попыток модели на каждую из семи глав и сборка из блоков; повтор pg-boss — только на случай сбоя базы
 export const GENERATE_JOB_OPTIONS = { retryLimit: 2, retryDelay: 30, retryBackoff: true, expireInSeconds: 1500 } as const;
 
 // Натальный разбор: девять глав по три попытки модели; задаче нужно больше времени, чем у матрицы
 export const GENERATE_NATAL_JOB_OPTIONS = { ...GENERATE_JOB_OPTIONS, expireInSeconds: 2100 } as const;
+
+// Разбор нити собирается без ИИ из готовых текстов, поэтому задаче хватает пяти минут
+export const GENERATE_THREAD_JOB_OPTIONS = { ...GENERATE_JOB_OPTIONS, expireInSeconds: 300 } as const;
 
 export function generateReportJobKey(job: GenerateReportJob): string {
   return `generate-report:${job.purchaseId}`;
@@ -77,4 +87,8 @@ export function generateReportJobKey(job: GenerateReportJob): string {
 
 export function generateNatalReportJobKey(job: GenerateNatalReportJob): string {
   return `generate-natal-report:${job.purchaseId}`;
+}
+
+export function generateThreadReportJobKey(job: GenerateThreadReportJob): string {
+  return `generate-thread-report:${job.purchaseId}`;
 }
