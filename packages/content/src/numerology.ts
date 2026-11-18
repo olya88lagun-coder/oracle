@@ -8,9 +8,11 @@ export const NUMEROLOGY_SECTION_TITLES: Readonly<Record<Exclude<NumerologyKind, 
   fate: ["Суть", "Сильные стороны", "Сложности", "Отношения", "Дело", "Вопрос для себя"],
   year: ["Тема года", "На что опереться", "Где осторожнее", "Вопрос для себя", "Три совета"],
   clock: ["Коротко", "Из каких чисел", "Вопрос для себя", "Частые вопросы"],
+  thread: ["Тема года", "На что опереться", "Где осторожнее", "Вопрос для себя"],
+  period: ["Сила периода", "Трудность периода", "Как пройти границу", "Вопрос для себя"],
 };
 
-export const NUMEROLOGY_MIN_BODY: Readonly<Record<NumerologyKind, number>> = { fate: 4000, year: 4000, clock: 2500, square: 4500, pair: 18000 };
+export const NUMEROLOGY_MIN_BODY: Readonly<Record<NumerologyKind, number>> = { fate: 4000, year: 4000, clock: 2500, square: 4500, pair: 18000, thread: 1800, period: 1800 };
 const SQUARE_LINES_MIN_BODY = 5000;
 
 // Названия линий квадрата Пифагора на сайте (спека 2026-11-08-pythagoras-square-design.md)
@@ -58,7 +60,7 @@ export type NumerologyText = {
 
 export class NumerologyFormatError extends Error {}
 
-const KINDS: readonly NumerologyKind[] = ["fate", "year", "clock", "square", "pair"];
+const KINDS: readonly NumerologyKind[] = ["fate", "year", "clock", "square", "pair", "thread", "period"];
 const KEY = /^(\d{1,2}|\d{2}-\d{2}|linii|sovmestimost)$/;
 
 const blocks = (text: string): string[] =>
@@ -102,7 +104,7 @@ export function parseNumerologyPage(source: string, file: string): NumerologyTex
   if (!match) return fail("нет шапки между строками ---");
   const fields = new Map((match[1] ?? "").split("\n").map((line) => [line.slice(0, line.indexOf(":")).trim(), line.slice(line.indexOf(":") + 1).trim()] as const));
   const kind = fields.get("kind") as NumerologyKind;
-  if (!KINDS.includes(kind)) fail("kind — fate, year, clock, square или pair");
+  if (!KINDS.includes(kind)) fail("kind — fate, year, clock, square, pair, thread или period");
   const key = fields.get("key") ?? "";
   if (!KEY.test(key)) fail("key — число или время «чч-мм»");
   const title = fields.get("title") ?? "";

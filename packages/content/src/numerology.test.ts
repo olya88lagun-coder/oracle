@@ -91,12 +91,54 @@ ${filler(12)}
 
 describe("numerology manifest", () => {
   test("12 fate, 9 year, 37 clock, 10 square and 1 pair pages in batches 12/9/15/15/7/5/5/1", () => {
-    expect(NUMEROLOGY_PAGES).toHaveLength(69);
+    expect(NUMEROLOGY_PAGES).toHaveLength(87);
     const sizes = [1, 2, 3, 4, 5, 6, 7, 8].map((batch) => NUMEROLOGY_PAGES.filter((page) => page.batch === batch).length);
     expect(sizes).toEqual([12, 9, 15, 15, 7, 5, 5, 1]);
     expect(NUMEROLOGY_PAGES.filter((page) => page.kind === "pair")).toEqual([{ kind: "pair", key: "sovmestimost", batch: 8 }]);
     expect(NUMEROLOGY_PAGES.filter((page) => page.kind === "square").map((page) => `${page.key}:${page.batch}`)).toEqual(["1:6", "2:6", "3:6", "4:6", "5:6", "6:7", "7:7", "8:7", "9:7", "linii:7"]);
     expect(numerologyFile({ kind: "clock", key: "11-11" })).toBe("clock-11-11.md");
+  });
+});
+
+describe("thread and period pages (batch 9)", () => {
+  const sample = (kind: "thread" | "period", titles: readonly string[]) => `---
+kind: ${kind}
+key: 5
+title: Страница нити номер пять — значение
+description: Что означает этап нити с числом пять в вашей жизни: тема, опора, осторожность и вопрос для себя. Символическое прочтение без прогнозов.
+batch: 9
+---
+
+${titles.map((title) => `## ${title}\n\n${filler(5)}`).join("\n\n")}
+`;
+  const THREAD_TITLES = ["Тема года", "На что опереться", "Где осторожнее", "Вопрос для себя"];
+  const PERIOD_TITLES = ["Сила периода", "Трудность периода", "Как пройти границу", "Вопрос для себя"];
+
+  test("batch 9 has nine thread and nine period pages, keys 1–9, and stays closed until accepted", () => {
+    const batch = NUMEROLOGY_PAGES.filter((page) => page.batch === 9);
+    expect(batch).toHaveLength(18);
+    for (const kind of ["thread", "period"] as const) {
+      expect(batch.filter((page) => page.kind === kind).map((page) => page.key)).toEqual(["1", "2", "3", "4", "5", "6", "7", "8", "9"]);
+    }
+    if (!NUMEROLOGY_ACCEPTED_BATCHES.has(9)) {
+      expect(acceptedNumerologyPages("thread")).toEqual([]);
+      expect(acceptedNumerologyPages("period")).toEqual([]);
+    }
+  });
+
+  test("a thread page and a period page parse with their own sections", () => {
+    expect(parseNumerologyPage(sample("thread", THREAD_TITLES), "thread-5.md").sections.map((s) => s.title)).toEqual(THREAD_TITLES);
+    expect(parseNumerologyPage(sample("period", PERIOD_TITLES), "period-5.md").sections.map((s) => s.title)).toEqual(PERIOD_TITLES);
+  });
+
+  test("thread sections do not fit a period page and the other way round", () => {
+    expect(() => parseNumerologyPage(sample("thread", PERIOD_TITLES), "thread-5.md")).toThrow(/разделы по порядку/);
+    expect(() => parseNumerologyPage(sample("period", THREAD_TITLES), "period-5.md")).toThrow(/разделы по порядку/);
+  });
+
+  test("a thread page needs at least 1800 characters", () => {
+    const short = sample("thread", THREAD_TITLES).replace(/Абзац \d+[^\n]*\n\n?/g, "Коротко.\n\n");
+    expect(() => parseNumerologyPage(short, "thread-5.md")).toThrow(/1800/);
   });
 });
 
@@ -174,6 +216,16 @@ describe("numerology texts on disk", () => {
     expect(findStopPhrases(source)).toEqual([]);
     expect(source.toLowerCase()).not.toContain("карм");
     expect(NUMEROLOGY_MIN_BODY[text.kind]).toBeGreaterThan(0);
+  });
+
+  test("every period card has its own «Как пройти границу» and no copy-pasted opening", () => {
+    const periods = files.map(([name, source]) => ({ name, text: parseNumerologyPage(source, `${name}.md`) })).filter((item) => item.text.kind === "period");
+    expect(periods).toHaveLength(9);
+    const boundary = periods.map((item) => item.text.sections.find((s) => s.title === "Как пройти границу")?.paragraphs.join("|"));
+    expect(new Set(boundary).size).toBe(9);
+    for (const { name, text } of periods) {
+      expect(JSON.stringify(text.sections), name).not.toContain("не привязан к возрасту");
+    }
   });
 
   test("only accepted batches are published", () => {

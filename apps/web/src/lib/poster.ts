@@ -1,3 +1,5 @@
+import { smoothPath } from "./life-thread-curve";
+
 // Картинка для сторис (1080×1920), которую браузер рисует сам: ни дата рождения, ни другие личные данные на неё не попадают,
 // на сервер ничего не уходит. Размеры и цвета повторяют тёмную сцену сайта (docs/design/visual-direction.md)
 
@@ -254,6 +256,96 @@ export async function renderPathPoster(spec: PathPosterSpec, fonts: { serif: str
   ctx.fillStyle = COLORS.soft;
   ctx.font = `400 40px ${fonts.serif}`;
   ctx.fillText(`Ходов: ${spec.moves} · открыто клеток: ${spec.opened} из ${spec.total}`, width / 2, y + 20);
+
+  paintFooter(ctx, spec.footer, fonts);
+  return new Promise((resolve, reject) => canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("toBlob"))), "image/png"));
+}
+
+// «Нить личных годов»: золотая нить по годам и кольцо «вы здесь». Даты рождения на картинке нет — только годы, номер и название текущего года.
+// Точки лежат в коробке 1000×300 (см. lib/poster-thread.ts)
+export type ThreadPosterSpec = { thread: "thread"; points: readonly { x: number; y: number }[]; nowIndex: number; yearLabels: readonly { x: number; text: string }[]; nowLabel: string; footer: string; fileName: string };
+
+export async function renderThreadPoster(spec: ThreadPosterSpec, fonts: { serif: string; sans: string }): Promise<Blob> {
+  const { width, height } = POSTER_SIZE;
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("canvas");
+  await document.fonts.ready;
+
+  paintFrame(ctx, "Нить личных годов", fonts);
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = COLORS.ink;
+  ctx.font = `300 84px ${fonts.serif}`;
+  let y = 400;
+  for (const line of wrapLines((t) => ctx.measureText(t).width, "Вся жизнь — одной нитью", width - 200)) {
+    ctx.fillText(line, width / 2, y);
+    y += 100;
+  }
+
+  const left = 90;
+  const top = 700;
+  const boxWidth = 900;
+  const boxHeight = 520;
+  const at = (point: { x: number; y: number }) => ({ x: left + (point.x / 1000) * boxWidth, y: top + (point.y / 300) * boxHeight });
+  const mapped = spec.points.map(at);
+  const line = new Path2D(smoothPath(mapped));
+
+  const first = mapped[0];
+  const last = mapped.at(-1);
+  if (first && last) {
+    const area = new Path2D(smoothPath(mapped));
+    area.lineTo(last.x, top + boxHeight + 30);
+    area.lineTo(first.x, top + boxHeight + 30);
+    area.closePath();
+    const fill = ctx.createLinearGradient(0, top, 0, top + boxHeight + 30);
+    fill.addColorStop(0, "rgba(203, 166, 118, 0.26)");
+    fill.addColorStop(1, "rgba(203, 166, 118, 0)");
+    ctx.fillStyle = fill;
+    ctx.fill(area);
+  }
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = "rgba(203, 166, 118, 0.35)";
+  ctx.lineWidth = 22;
+  ctx.stroke(line);
+  ctx.strokeStyle = "#CBA676";
+  ctx.lineWidth = 6;
+  ctx.shadowColor = "rgba(203, 166, 118, 0.8)";
+  ctx.shadowBlur = 18;
+  ctx.stroke(line);
+  ctx.restore();
+
+  const now = mapped[spec.nowIndex];
+  if (now) {
+    const halo = ctx.createRadialGradient(now.x, now.y, 4, now.x, now.y, 70);
+    halo.addColorStop(0, "rgba(185, 164, 232, 0.6)");
+    halo.addColorStop(1, "rgba(185, 164, 232, 0)");
+    ctx.fillStyle = halo;
+    ctx.fillRect(now.x - 70, now.y - 70, 140, 140);
+    ctx.beginPath();
+    ctx.arc(now.x, now.y, 24, 0, Math.PI * 2);
+    ctx.fillStyle = COLORS.bg;
+    ctx.fill();
+    ctx.strokeStyle = "#B9A4E8";
+    ctx.lineWidth = 5;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(now.x, now.y, 8, 0, Math.PI * 2);
+    ctx.fillStyle = "#E3D8FA";
+    ctx.fill();
+  }
+
+  ctx.fillStyle = COLORS.soft;
+  ctx.font = `400 32px ${fonts.sans}`;
+  for (const label of spec.yearLabels) ctx.fillText(label.text, left + (label.x / 1000) * boxWidth, top + boxHeight + 90);
+
+  ctx.fillStyle = COLORS.ink;
+  ctx.font = `300 64px ${fonts.serif}`;
+  ctx.fillText(spec.nowLabel, width / 2, top + boxHeight + 240);
 
   paintFooter(ctx, spec.footer, fonts);
   return new Promise((resolve, reject) => canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("toBlob"))), "image/png"));

@@ -27,7 +27,7 @@ export function personalYearOutcome(iso: string, today: Date): PersonalYearOutco
 export const CLOCK_PATH = `${NUMEROLOGY_PATH}/chasy`;
 export const clockPath = (slug: string): string => `${CLOCK_PATH}/${slug}`;
 
-type NumerologyGoal = Extract<Goal, `numerology_${string}` | `personal_year_${string}` | `pythagoras_${string}`>;
+type NumerologyGoal = Extract<Goal, `numerology_${string}` | `personal_year_${string}` | `pythagoras_${string}` | `thread_${string}`>;
 
 // Как у аркана года: клики до согласия и готовности счётчика не досылаем
 export function reachNumerologyGoal(goal: NumerologyGoal): boolean {

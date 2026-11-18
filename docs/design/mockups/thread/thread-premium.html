@@ -1,0 +1,189 @@
+<h2>Нить — премиальная версия</h2>
+<p class="subtitle">Нить рисуется при загрузке, дальше фиолетовая «вы здесь», за ней будущее уходит в дымку. Наведите курсор на линию: покажет год и его тему.</p>
+
+<style>
+#hero{position:relative;overflow:hidden;border-radius:24px;border:1px solid #2A2430;background:
+  radial-gradient(ellipse 70% 60% at 78% -10%,#2a1d33 0%,rgba(42,29,51,0) 70%),
+  radial-gradient(ellipse 60% 40% at 18% 110%,rgba(203,166,118,.16) 0%,rgba(203,166,118,0) 70%),
+  #0A090E;padding:28px 20px 12px;color:#F1E9DF;font-family:Manrope,system-ui,sans-serif}
+#hero .eyebrow{font-size:12px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:#A99F96;display:flex;align-items:center;gap:12px}
+#hero .eyebrow::before{content:"";width:36px;height:1px;background:linear-gradient(90deg,transparent,#CBA676)}
+#hero h1{font-family:"Noto Serif Display",Georgia,serif;font-weight:300;font-size:clamp(30px,5vw,52px);line-height:1.05;margin:14px 0 4px;color:#F1E9DF}
+#hero h1 em{font-style:normal;color:#CBA676}
+#hero .lead{color:#B9AFA5;font-size:15px;margin:0 0 6px;max-width:520px}
+#hero svg{display:block;width:100%;height:auto;touch-action:pan-y;cursor:crosshair}
+#hero .halo{transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion:no-preference){
+  #hero .halo{animation:breathe 4.5s ease-in-out infinite}
+  @keyframes breathe{0%,100%{transform:scale(.85);opacity:.55}50%{transform:scale(1.25);opacity:1}}
+}
+</style>
+
+<div id="hero">
+  <p class="eyebrow">График судьбы по дате рождения</p>
+  <h1>Вся жизнь —<br><em>одной нитью</em></h1>
+  <p class="lead">Пример на вымышленной дате 15.07.1990. Подъёмы, тихие годы и точка «вы здесь».</p>
+  <div id="chart"></div>
+</div>
+
+<script>
+(function(){
+  var NAMES={1:'старт',2:'терпение',3:'самовыражение',4:'фундамент',5:'перемены',6:'забота',7:'осмысление',8:'урожай',9:'завершение'};
+  var years=[],v=[];
+  for(var y=2017;y<=2035;y++){
+    var s=13+String(y).split('').reduce(function(a,d){return a+ +d},0);
+    while(s>9)s=String(s).split('').reduce(function(a,d){return a+ +d},0);
+    years.push(y);v.push(s);
+  }
+  var NOW=2026,ni=years.indexOf(NOW);
+  var W=1000,H=450,x0=50,x1=950,top=130,bot=345,tickY=392,bandTop=62;
+  var step=(x1-x0)/(years.length-1);
+  var px=function(i){return x0+i*step};
+  // символическая «высота» года: не номер, а характер этапа (8 — урожай, 2 — самый тихий)
+  var LEVEL={1:.42,2:.08,3:.5,4:.22,5:.62,6:.4,7:.18,8:1,9:.66};
+  // уровень любого года (с запасом по краям), затем двойное сглаживание: линия течёт, без резких рывков
+  var lvl=function(y){var s=13+String(y).split('').reduce(function(a,d){return a+ +d},0);while(s>9)s=String(s).split('').reduce(function(a,d){return a+ +d},0);return LEVEL[s]};
+  var s1=function(y){return (lvl(y-1)+2*lvl(y)+lvl(y+1))/4};
+  var s2=function(y){return (s1(y-1)+2*s1(y)+s1(y+1))/4};
+  var raw=years.map(s2),mn=Math.min.apply(null,raw),mx=Math.max.apply(null,raw);
+  var Yv=raw.map(function(r){return bot-(r-mn)/(mx-mn)*(bot-top)});
+  var py=function(i){return Yv[i]};
+  var P=years.map(function(_,i){return [px(i),py(i)]});
+
+  // гладкая кривая Catmull-Rom → Безье
+  var d='M'+P[0][0]+','+P[0][1];
+  for(var i=0;i<P.length-1;i++){
+    var p0=P[Math.max(0,i-1)],p1=P[i],p2=P[i+1],p3=P[Math.min(P.length-1,i+2)];
+    var c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6];
+    var c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+    d+=' C'+c1[0].toFixed(1)+','+c1[1].toFixed(1)+' '+c2[0].toFixed(1)+','+c2[1].toFixed(1)+' '+p2[0].toFixed(1)+','+p2[1].toFixed(1);
+  }
+  var area=d+' L'+x1+','+tickY-0+' L'+x0+','+(tickY-0)+' Z';
+  area=d+' L'+x1+','+(bot+30)+' L'+x0+','+(bot+30)+' Z';
+
+  var nowX=px(ni),nowY=py(ni);
+  var bands=[[0,3,'I'],[3,8,'II'],[8,13,'III'],[13,18,'IV']];
+
+  var h='<svg id="svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Линия жизни по годам. Пример: личные годы 2017–2035.">';
+  h+='<defs>'
+   +'<linearGradient id="thr" gradientUnits="userSpaceOnUse" x1="'+x0+'" y1="0" x2="'+x1+'" y2="0">'
+     +'<stop offset="0" stop-color="#8a6f4e" stop-opacity=".55"/>'
+     +'<stop offset="'+((nowX-x0)/(x1-x0)-.2)+'" stop-color="#CBA676"/>'
+     +'<stop offset="'+((nowX-x0)/(x1-x0))+'" stop-color="#F6E3BF"/>'
+     +'<stop offset="'+((nowX-x0)/(x1-x0)+.22)+'" stop-color="#CBA676" stop-opacity=".55"/>'
+     +'<stop offset="1" stop-color="#CBA676" stop-opacity=".08"/>'
+   +'</linearGradient>'
+   +'<linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CBA676" stop-opacity=".22"/><stop offset="1" stop-color="#CBA676" stop-opacity="0"/></linearGradient>'
+   +'<linearGradient id="fillx" gradientUnits="userSpaceOnUse" x1="'+x0+'" y1="0" x2="'+x1+'" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".7"/><stop offset="'+((nowX-x0)/(x1-x0))+'" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+   +'<mask id="fm"><rect x="0" y="0" width="'+W+'" height="'+H+'" fill="url(#fillx)"/></mask>'
+   +'<radialGradient id="halo"><stop offset="0" stop-color="#B9A4E8" stop-opacity=".9"/><stop offset=".4" stop-color="#B9A4E8" stop-opacity=".25"/><stop offset="1" stop-color="#B9A4E8" stop-opacity="0"/></radialGradient>'
+   +'<radialGradient id="head"><stop offset="0" stop-color="#FFF6E2"/><stop offset=".35" stop-color="#F6E3BF" stop-opacity=".9"/><stop offset="1" stop-color="#CBA676" stop-opacity="0"/></radialGradient>'
+   +'<linearGradient id="band" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CBA676" stop-opacity=".09"/><stop offset="1" stop-color="#CBA676" stop-opacity="0"/></linearGradient>'
+   +'<linearGradient id="mist" gradientUnits="userSpaceOnUse" x1="'+(nowX+60)+'" y1="0" x2="'+x1+'" y2="0"><stop offset="0" stop-color="#0A090E" stop-opacity="0"/><stop offset="1" stop-color="#0A090E" stop-opacity=".5"/></linearGradient>'
+   +'<filter id="blur" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="7"/></filter>'
+   +'<filter id="blur2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5"/></filter>'
+   +'<clipPath id="reveal"><rect id="revealRect" x="0" y="0" width="0" height="'+H+'"/></clipPath>'
+   +'</defs>';
+
+  // периоды
+  bands.forEach(function(b,j){
+    var a=px(b[0]),z=px(b[1]);
+    h+='<rect x="'+a+'" y="'+bandTop+'" width="'+(z-a)+'" height="'+(tickY-bandTop)+'" fill="url(#band)"/>';
+    h+='<line x1="'+a+'" y1="'+bandTop+'" x2="'+a+'" y2="'+tickY+'" stroke="#CBA676" stroke-opacity=".16"/>';
+    h+='<text x="'+((a+z)/2)+'" y="'+(bandTop+20)+'" fill="#8F877F" font-size="11" letter-spacing="3" text-anchor="middle">'+b[2]+' ПЕРИОД</text>';
+  });
+  h+='<line x1="'+px(18)+'" y1="'+bandTop+'" x2="'+px(18)+'" y2="'+tickY+'" stroke="#CBA676" stroke-opacity=".16"/>';
+
+  // сетка уровней
+  [top,(top+bot)/2,bot].forEach(function(yy){
+    h+='<line x1="'+x0+'" y1="'+yy+'" x2="'+x1+'" y2="'+yy+'" stroke="#2A2430" stroke-dasharray="2 6"/>';
+  });
+  h+='<text x="'+(x0-8)+'" y="'+(top+4)+'" fill="#8F877F" font-size="10" text-anchor="end">высоко</text>';
+  h+='<text x="'+(x0-8)+'" y="'+(bot+4)+'" fill="#8F877F" font-size="10" text-anchor="end">тихо</text>';
+
+  // годовые засечки
+  years.forEach(function(y,i){
+    h+='<line x1="'+px(i)+'" y1="'+(tickY-6)+'" x2="'+px(i)+'" y2="'+tickY+'" stroke="#5C4A38"/>';
+    if(i%3===0||y===NOW)h+='<text x="'+px(i)+'" y="'+(tickY+20)+'" fill="'+(y===NOW?'#B9A4E8':'#8F877F')+'" font-size="12" text-anchor="middle">'+y+'</text>';
+  });
+
+  // нить
+  h+='<g clip-path="url(#reveal)">'
+    +'<path d="'+area+'" fill="url(#fill)" mask="url(#fm)"/>'
+    +'<path d="'+d+'" fill="none" stroke="url(#thr)" stroke-width="9" stroke-linecap="round" filter="url(#blur)" opacity=".75"/>'
+    +'<path id="thread" d="'+d+'" fill="none" stroke="url(#thr)" stroke-width="2.4" stroke-linecap="round"/>'
+    +'</g>';
+  h+='<rect x="'+(nowX+60)+'" y="'+bandTop+'" width="'+(x1-nowX-60+10)+'" height="'+(tickY-bandTop)+'" fill="url(#mist)" pointer-events="none"/>';
+
+  // вершины (личный год 8)
+  var peaks='';
+  years.forEach(function(y,i){
+    if(v[i]!==8)return;
+    peaks+='<g class="peak" opacity="0"><line x1="'+px(i)+'" y1="'+(py(i)-10)+'" x2="'+px(i)+'" y2="'+(bandTop+34)+'" stroke="#CBA676" stroke-opacity=".35" stroke-dasharray="1 4"/>'
+      +'<circle cx="'+px(i)+'" cy="'+py(i)+'" r="5" fill="#0A090E" stroke="#F6E3BF" stroke-width="1.5"/>'
+      +'<text x="'+px(i)+'" y="'+(bandTop+50)+'" fill="#F1E9DF" font-size="12" text-anchor="middle">'+y+' · урожай</text></g>';
+  });
+  h+=peaks;
+
+  // «вы здесь»
+  h+='<g id="now" opacity="0">'
+    +'<circle class="halo" cx="'+nowX+'" cy="'+nowY+'" r="34" fill="url(#halo)"/>'
+    +'<circle cx="'+nowX+'" cy="'+nowY+'" r="10" fill="#0A090E" stroke="#B9A4E8" stroke-width="1.6"/>'
+    +'<circle cx="'+nowX+'" cy="'+nowY+'" r="3.6" fill="#E3D8FA"/>'
+    +'<g transform="translate('+nowX+','+(nowY+40)+')"><rect x="-74" y="-14" width="148" height="28" rx="14" fill="#16111F" stroke="#B9A4E8" stroke-opacity=".5"/>'
+    +'<text y="5" fill="#E3D8FA" font-size="12" font-weight="600" text-anchor="middle">Вы здесь · год '+v[ni]+'</text></g></g>';
+
+  // ведущий огонёк
+  h+='<circle id="head" r="16" fill="url(#head)" opacity="0"/>';
+
+  // подсказка при наведении
+  h+='<g id="tip" opacity="0" pointer-events="none">'
+    +'<line id="tipLine" y1="'+bandTop+'" y2="'+tickY+'" stroke="#F6E3BF" stroke-opacity=".35"/>'
+    +'<circle id="tipDot" r="5" fill="#F6E3BF"/>'
+    +'<g id="tipBox"><rect x="-70" y="-44" width="140" height="40" rx="12" fill="#17141D" stroke="#5C4A38"/>'
+    +'<text id="tipY" y="-27" fill="#F1E9DF" font-size="13" font-weight="600" text-anchor="middle"></text>'
+    +'<text id="tipN" y="-11" fill="#B9AFA5" font-size="12" text-anchor="middle"></text></g></g>';
+
+  h+='<rect id="hit" x="0" y="0" width="'+W+'" height="'+H+'" fill="transparent"/>';
+  h+='</svg>';
+  document.getElementById('chart').innerHTML=h;
+
+  var svg=document.getElementById('svg'),path=document.getElementById('thread'),L=path.getTotalLength();
+  function yAt(x){var lo=0,hi=L;for(var k=0;k<22;k++){var m=(lo+hi)/2,p=path.getPointAtLength(m);if(p.x<x)lo=m;else hi=m;}return path.getPointAtLength(hi).y;}
+  var rr=document.getElementById('revealRect'),head=document.getElementById('head');
+  var peaksEls=svg.querySelectorAll('.peak'),nowEl=document.getElementById('now');
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function finish(){rr.setAttribute('width',W);head.setAttribute('opacity',0);nowEl.setAttribute('opacity',1);peaksEls.forEach(function(e){e.setAttribute('opacity',1)});}
+  if(reduce){finish();}
+  else{
+    var t0=null,DUR=3400;
+    (function frame(ts){
+      if(t0===null)t0=ts;
+      var p=Math.min(1,(ts-t0)/DUR),e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2,x=x0+e*(x1-x0);
+      rr.setAttribute('width',x+12);
+      head.setAttribute('cx',x);head.setAttribute('cy',yAt(x));head.setAttribute('opacity',p<1?1:0);
+      peaksEls.forEach(function(el,j){var m=el.querySelector('circle');var cx=+m.getAttribute('cx');if(x>cx)el.setAttribute('opacity',1);});
+      if(x>nowX)nowEl.setAttribute('opacity',Math.min(1,(x-nowX)/60));
+      if(p<1)requestAnimationFrame(frame);else finish();
+    })(performance.now());
+  }
+
+  // наведение
+  var tip=document.getElementById('tip');
+  function scrub(ev){
+    var r=svg.getBoundingClientRect(),x=(ev.clientX-r.left)/r.width*W;
+    var i=Math.round((x-x0)/step);i=Math.max(0,Math.min(years.length-1,i));
+    var X=px(i),Y=py(i);
+    document.getElementById('tipLine').setAttribute('x1',X);document.getElementById('tipLine').setAttribute('x2',X);
+    var dot=document.getElementById('tipDot');dot.setAttribute('cx',X);dot.setAttribute('cy',Y);
+    var bx=Math.max(80,Math.min(W-80,X));
+    var box=document.getElementById('tipBox');box.setAttribute('transform','translate('+bx+','+(Y-14)+')');
+    document.getElementById('tipY').textContent=years[i]+' · год '+v[i];
+    document.getElementById('tipN').textContent=NAMES[v[i]];
+    tip.setAttribute('opacity',1);
+  }
+  svg.addEventListener('pointermove',scrub);
+  svg.addEventListener('pointerdown',scrub);
+  svg.addEventListener('pointerleave',function(){tip.setAttribute('opacity',0)});
+})();
+</script>

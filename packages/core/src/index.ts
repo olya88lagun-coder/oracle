@@ -7,3 +7,4 @@ export * from "./lila-session";
 export * from "./compatibility";
 export * from "./receipts";
 export * from "./numerology";
+export * from "./life-thread";
