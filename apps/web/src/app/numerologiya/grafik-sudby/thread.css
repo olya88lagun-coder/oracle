@@ -1,5 +1,6 @@
 /* «Нить» (график судьбы): сцена, картинка и результат. Цвета — переменные из globals.css; свои два оттенка заведены здесь переменными */
-.thread-page {
+.thread-page,
+.thread-report {
   --thread-glint: #F6E3BF;
   --thread-lavender-soft: #E3D8FA;
 }
