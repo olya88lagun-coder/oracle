@@ -47,4 +47,11 @@ describe("ThreadReportView", () => {
     const bad = renderToStaticMarkup(<ThreadReportView chapters={chapters} birthDate="nope" />);
     expect(bad).not.toContain("thread-chart");
   });
+
+  test("the chart's current year follows `today`, not the real clock", () => {
+    const label = (today: Date) => renderToStaticMarkup(<ThreadReportView chapters={chapters} birthDate="1990-07-15" today={today} />).match(/Вы здесь · год (\d)/)?.[1];
+    // личный год 15.07.1990: 2026 → 5, 2027 → 6; разбор куплен в 2026, смотреть его можно позже
+    expect(label(new Date("2026-11-18T12:00:00Z"))).toBe("5");
+    expect(label(new Date("2027-11-18T12:00:00Z"))).toBe("6");
+  });
 });

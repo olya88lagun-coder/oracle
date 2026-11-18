@@ -82,7 +82,7 @@ async function ThreadReport({ view }: { view: PurchaseView }) {
   return (
     <main className="page page--wide">
       <ReportGoals purchaseId={view.id} paid opened product="thread_report" />
-      <ThreadReportView chapters={report.chapters} birthDate={view.birthDate} />
+      <ThreadReportView chapters={report.chapters} birthDate={view.birthDate} today={report.createdAt} />
     </main>
   );
 }
