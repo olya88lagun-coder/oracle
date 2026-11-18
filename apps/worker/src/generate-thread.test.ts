@@ -116,8 +116,19 @@ describe("runGenerateThread", () => {
     const { userId } = await seedUser(db, { externalId: "vk-t5" });
     const purchase = await paidPurchase(userId, "pay-t5");
 
-    // настоящий numerologyText: партия 10 не принята — сборщик бросает ошибку, воркер не глотает её
-    await expect(runGenerateThread({ purchaseId: purchase.id }, { db, log: vi.fn(), now })).rejects.toThrow(/thread report: missing/);
+    // читатель без текстов (как до принятия партии 10): сборщик бросает ошибку, воркер не глотает её
+    await expect(runGenerateThread({ purchaseId: purchase.id }, { db, log: vi.fn(), now, read: () => undefined })).rejects.toThrow(/thread report: missing/);
     expect(await getThreadReport(db, purchase.id)).toBeNull();
+  });
+
+  test("with the real accepted texts the worker saves the full six-chapter report", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-t6" });
+    const purchase = await paidPurchase(userId, "pay-t6");
+
+    // настоящий numerologyText: партии 9 и 10 приняты
+    await runGenerateThread({ purchaseId: purchase.id }, { db, log: vi.fn(), now });
+    const report = await getThreadReport(db, purchase.id);
+    expect(report?.chapters.map((chapter) => chapter.id)).toEqual(["now", "years", "past", "periods", "rhythm", "rules"]);
+    for (const chapter of report?.chapters ?? []) expect(chapter.blocks.length).toBeGreaterThan(0);
   });
 });
