@@ -44,11 +44,13 @@ export type ThreadMonth = { readonly index: number; readonly value: number; read
 export function personalMonthsOf(birth: BirthDate, year: ThreadYear): readonly ThreadMonth[] {
   // Первый и тринадцатый старты берём от правила года, чтобы цепочка сходилась с границами лет (29 февраля → 1 марта)
   const starts = [startMs(birth, year.year)];
+  // Год сдвинут на 1 марта: месяцы идут с 1-го числа, иначе 1–28 марта и 29 марта дали бы два одинаковых месяца подряд
+  const moved = birth.month === 2 && birth.day === 29 && !isLeap(year.year);
   for (let k = 1; k < 12; k++) {
-    const monthIndex = birth.month - 1 + k;
+    const monthIndex = (moved ? 2 : birth.month - 1) + k;
     const target = year.year + Math.floor(monthIndex / 12);
     const month = monthIndex % 12;
-    starts.push(Date.UTC(target, month, Math.min(birth.day, new Date(Date.UTC(target, month + 1, 0)).getUTCDate())));
+    starts.push(Date.UTC(target, month, moved ? 1 : Math.min(birth.day, new Date(Date.UTC(target, month + 1, 0)).getUTCDate())));
   }
   starts.push(startMs(birth, year.year + 1));
   return starts.slice(0, 12).map((start, i) => ({

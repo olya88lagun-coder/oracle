@@ -98,6 +98,13 @@ test("personal months of 29.02.1992: 2027 starts on 1 March, the chain holds in 
   for (const year of [2026, 2027, 2028]) expectChain("1992-02-29", year);
 });
 
+test("29.02 birth, non-leap year: segments start on the 1st of 12 distinct calendar months, the last ends on 28 February", () => {
+  const { months } = monthsFor("1992-02-29", 2027);
+  expect(months.map((item) => item.start.slice(5))).toEqual(["03-01", "04-01", "05-01", "06-01", "07-01", "08-01", "09-01", "10-01", "11-01", "12-01", "01-01", "02-01"]);
+  expect(new Set(months.map((item) => item.start.slice(5, 7))).size).toBe(12);
+  expect(months[11]?.end).toBe("2028-02-28");
+});
+
 test("personal months chain holds for 30th and 1st births across years", () => {
   for (const value of ["1990-01-30", "1990-12-31", "1990-01-01"]) for (const year of [2026, 2027, 2028]) expectChain(value, year);
 });
