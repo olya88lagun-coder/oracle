@@ -1,9 +1,9 @@
-import type { GenerateNatalReportJob, GenerateReportJob } from "@oracle/core";
+import type { GenerateNatalReportJob, GenerateReportJob, GenerateThreadReportJob } from "@oracle/core";
 import { createLilaGame, createTestDb, getBirthDate, finishLilaGame, getActiveLilaGame, getLilaGameByPurchase, getPurchase, listReceiptsToSend, saveBirthDate, saveReport, seedUser, type Database } from "@oracle/db/testing";
 import { afterEach, beforeEach, describe, expect, test, vi, type Mock } from "vitest";
 import { createFakeGateway, type FakeGateway } from "./payments/fake";
 import type { GatewayPayment } from "./payments/gateway";
-import { getLilaPurchaseView, getPurchaseView, paymentDescription, purchaseReturnPath, retryPurchase, startLilaPurchase, startNatalPurchase, startPurchase, syncPayment, type PaymentsDeps } from "./payments-service";
+import { getLilaPurchaseView, getPurchaseView, paymentDescription, purchaseReturnPath, retryPurchase, startLilaPurchase, startNatalPurchase, startPurchase, startThreadPurchase, syncPayment, type PaymentsDeps } from "./payments-service";
 
 const APP_URL = "http://localhost:3000";
 const DATE = "1988-11-18";
@@ -14,6 +14,7 @@ let gateway: FakeGateway;
 let deps: PaymentsDeps;
 let enqueue: Mock<(job: GenerateReportJob) => Promise<void>>;
 let enqueueNatal: Mock<(job: GenerateNatalReportJob) => Promise<void>>;
+let enqueueThread: Mock<(job: GenerateThreadReportJob) => Promise<void>>;
 let userId: string;
 let now: Date;
 
@@ -23,8 +24,9 @@ beforeEach(async () => {
   gateway = createFakeGateway({ appUrl: APP_URL, store });
   enqueue = vi.fn<(job: GenerateReportJob) => Promise<void>>().mockResolvedValue(undefined);
   enqueueNatal = vi.fn<(job: GenerateNatalReportJob) => Promise<void>>().mockResolvedValue(undefined);
+  enqueueThread = vi.fn<(job: GenerateThreadReportJob) => Promise<void>>().mockResolvedValue(undefined);
   now = new Date();
-  deps = { db, gateway, appUrl: APP_URL, now: () => now, enqueueGenerate: enqueue, enqueueGenerateNatal: enqueueNatal };
+  deps = { db, gateway, appUrl: APP_URL, now: () => now, enqueueGenerate: enqueue, enqueueGenerateNatal: enqueueNatal, enqueueGenerateThread: enqueueThread };
   ({ userId } = await seedUser(db, { externalId: "vk-1" }));
   await saveBirthDate(db, userId, DATE, now);
 });
@@ -506,6 +508,97 @@ describe("startNatalPurchase", () => {
 
     expect(await getPurchaseView(deps, { purchaseId: paid!.id, userId })).toMatchObject({ product: "natal_report", status: "generating" });
     expect(enqueueNatal).toHaveBeenCalledWith({ purchaseId: paid!.id });
+    expect(enqueue).not.toHaveBeenCalled();
+  });
+});
+
+describe("startThreadPurchase", () => {
+  const BIRTH = "1990-07-15";
+
+  async function buyThread(birth: unknown = BIRTH, email: unknown = "a@b.ru") {
+    const outcome = await startThreadPurchase(deps, { userId, email, birth });
+    if (!outcome.ok) throw new Error(outcome.error);
+    return outcome.url;
+  }
+
+  test("creates a 490 ₽ payment for the date from the request with the thread description, without touching the portrait", async () => {
+    const create = vi.spyOn(gateway, "createPayment");
+    const url = await buyThread();
+
+    const payment = store.get(paymentOf(url))!;
+    expect(payment.amountKopecks).toBe(49_000);
+    expect(create.mock.calls[0]![0]).toMatchObject({ amountKopecks: 49_000, description: "Разбор нити — «Твой оракул», чек: a@b.ru", receiptEmail: "a@b.ru" });
+    expect(await getPurchase(db, payment.purchaseId!)).toMatchObject({
+      product: "thread_report",
+      birthDate: BIRTH,
+      natalInput: null,
+      inputKey: null,
+      receiptEmail: "a@b.ru",
+      amountKopecks: 49_000,
+      status: "pending",
+    });
+    expect(await getBirthDate(db, userId)).toBe(DATE);
+  });
+
+  test.each([undefined, null, 19900715, { date: BIRTH }, "", "1990-02-31", "15.07.1990", " 1990-07-15", "1990-7-15", "2999-01-01"])(
+    "rejects the birth %j before any payment is made",
+    async (birth) => {
+      expect(await startThreadPurchase(deps, { userId, email: "a@b.ru", birth })).toEqual({ ok: false, error: "invalid_birth" });
+      expect(store.size).toBe(0);
+    },
+  );
+
+  test.each([undefined, "", "nope"])("rejects the e-mail %j for a regular buyer", async (email) => {
+    expect(await startThreadPurchase(deps, { userId, email, birth: BIRTH })).toEqual({ ok: false, error: "invalid_email" });
+    expect(store.size).toBe(0);
+  });
+
+  test("does not sell the same date twice, but sells the matrix of the same date separately", async () => {
+    const paid = await pay(await buyThread());
+    expect(await startThreadPurchase(deps, { userId, email: "a@b.ru", birth: BIRTH })).toEqual({ ok: false, error: "already_paid", purchaseId: paid!.id });
+    await saveBirthDate(db, userId, BIRTH, now);
+    expect((await startPurchase(deps, { userId, email: "a@b.ru" })).ok).toBe(true);
+  });
+
+  test("queues the thread job, not the others, and only for the first payment of the same date", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    const first = await buyThread();
+    const second = await buyThread(BIRTH, "c@d.ru");
+    const firstPaid = await pay(first);
+    await pay(second);
+
+    expect(enqueue).not.toHaveBeenCalled();
+    expect(enqueueNatal).not.toHaveBeenCalled();
+    expect(enqueueThread.mock.calls).toEqual([[{ purchaseId: firstPaid!.id }]]);
+  });
+
+  test("the owner buys for 0 ₽ without e-mail and gateway, and the job is queued once", async () => {
+    deps = { ...deps, isOwner: async () => true };
+    const outcome = await startThreadPurchase(deps, { userId, email: undefined, birth: BIRTH });
+
+    expect(outcome.ok).toBe(true);
+    expect(store.size).toBe(0);
+    const purchaseId = outcome.ok ? outcome.url.split("/").pop()! : "";
+    expect(await getPurchase(db, purchaseId)).toMatchObject({ amountKopecks: 0, status: "succeeded", product: "thread_report", birthDate: BIRTH, receiptEmail: null });
+    expect(enqueueThread.mock.calls).toEqual([[{ purchaseId }]]);
+    expect(enqueue).not.toHaveBeenCalled();
+  });
+
+  test("retry of a canceled purchase makes a new one for the same date, and the view tells the product", async () => {
+    const canceled = await pay(await buyThread(), "canceled");
+    const retried = await retryPurchase(deps, { userId, purchaseId: canceled!.id });
+    expect(retried.ok).toBe(true);
+    const next = [...store.values()].find((payment) => payment.purchaseId !== canceled!.id)!;
+    expect(await getPurchase(db, next.purchaseId!)).toMatchObject({ product: "thread_report", birthDate: BIRTH, receiptEmail: "a@b.ru", amountKopecks: 49_000 });
+    expect(await getPurchaseView(deps, { purchaseId: next.purchaseId!, userId })).toMatchObject({ product: "thread_report", status: "pending", birthDate: BIRTH });
+  });
+
+  test("a paid purchase without a report queues the thread job when the page is viewed", async () => {
+    const paid = await pay(await buyThread());
+    enqueueThread.mockClear();
+
+    expect(await getPurchaseView(deps, { purchaseId: paid!.id, userId })).toMatchObject({ product: "thread_report", status: "generating" });
+    expect(enqueueThread).toHaveBeenCalledWith({ purchaseId: paid!.id });
     expect(enqueue).not.toHaveBeenCalled();
   });
 });

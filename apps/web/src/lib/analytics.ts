@@ -108,5 +108,5 @@ export function reachGoalThenNavigate(goal: Goal, params: Record<string, string 
 }
 
 // Параметры платёжных целей — закрытый список: продукт и безопасный код ошибки. Ни дат, ни почты, ни намерений, ни номеров покупок
-export type CheckoutProduct = "matrix" | "compat" | "lila" | "natal";
+export type CheckoutProduct = "matrix" | "compat" | "lila" | "natal" | "thread";
 export const checkoutParams = (product: CheckoutProduct, error?: string): Record<string, string> => (error ? { product, error } : { product });
