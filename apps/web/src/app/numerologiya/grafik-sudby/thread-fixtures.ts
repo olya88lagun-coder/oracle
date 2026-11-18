@@ -48,3 +48,27 @@ export async function mockThreadReportBatch(importOriginal: () => Promise<typeof
     acceptedNumerologyPages: (kind) => (isReport(kind) ? (accepted() ? KEYS.map((key) => ({ kind, key, batch: 10 })) : []) : real.acceptedNumerologyPages(kind)),
   };
 }
+
+function reportFixture(real: typeof Content, kind: "month" | "past" | "rules", key: string): Content.NumerologyText {
+  return {
+    kind,
+    key,
+    title: `Заготовка ${kind} ${key}`,
+    description: `Описание страницы ${kind} ${key} для теста.`,
+    batch: 10,
+    sections: real.NUMEROLOGY_SECTION_TITLES[kind].map((title) => ({ title, paragraphs: [`Первый абзац: ${title}.`, "Второй абзац."], items: [] })),
+    faq: [],
+  };
+}
+
+// Мок @oracle/content/numerology: приняты и партия 9, и партия 10, с короткими заготовками текстов (для страницы-примера разбора)
+export async function mockThreadReportOpen(importOriginal: () => Promise<typeof Content>): Promise<typeof Content> {
+  const real = await importOriginal();
+  const accepted = await mockThreadAccepted(importOriginal);
+  const isReport = (kind: string): kind is "month" | "past" | "rules" => kind === "month" || kind === "past" || kind === "rules";
+  return {
+    ...accepted,
+    numerologyText: (kind, key) => (isReport(kind) ? ((KEYS as readonly string[]).includes(key) ? reportFixture(real, kind, key) : undefined) : accepted.numerologyText(kind, key)),
+    acceptedNumerologyPages: (kind) => (isReport(kind) ? KEYS.map((key) => ({ kind, key, batch: 10 })) : accepted.acceptedNumerologyPages(kind)),
+  };
+}

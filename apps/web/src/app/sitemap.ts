@@ -18,7 +18,7 @@ import { TARO_DAY_PATH, TARO_PATH } from "@/lib/taro-paths";
 // Приоритет — подсказка, а не команда (Google его не учитывает, Яндекс учитывает как намёк), но разведём виды страниц:
 // входы в практики выше, справочные и юридические страницы ниже, остальные (значения арканов, карт, клеток, знаков) — посередине
 const PRACTICE_PATHS: ReadonlySet<string> = new Set(["/arkan-2027", NUMEROLOGY_PATH, PERSONAL_YEAR_PATH, CLOCK_PATH, PYTHAGORAS_PATH, THREAD_PATH, MATRIX_PATH, COMPAT_PATH, LILA_PATH, TARO_PATH, TARO_DAY_PATH, MOON_PATH, NATAL_PATH]);
-const REFERENCE_PATHS: ReadonlySet<string> = new Set([GLOSSARY_PATH, "/metodika", `${MATRIX_PATH}/primer`, `${LILA_PATH}/primer`, `${NATAL_PATH}/primer`, ...DOCUMENT_PATHS]);
+const REFERENCE_PATHS: ReadonlySet<string> = new Set([GLOSSARY_PATH, "/metodika", `${MATRIX_PATH}/primer`, `${LILA_PATH}/primer`, `${NATAL_PATH}/primer`, `${THREAD_PATH}/primer`, ...DOCUMENT_PATHS]);
 
 const priorityOf = (path: string): number => {
   if (path === "/") return 1;
