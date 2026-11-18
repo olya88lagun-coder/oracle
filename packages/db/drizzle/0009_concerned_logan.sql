@@ -1,0 +1,1 @@
+ALTER TYPE "public"."product" ADD VALUE 'thread_report';

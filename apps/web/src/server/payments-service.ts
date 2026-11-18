@@ -63,6 +63,7 @@ const DESCRIPTION_MAX = 128;
 export const PRODUCT_DESCRIPTIONS: Readonly<Record<Product, string>> = {
   matrix_report: "Разбор матрицы судьбы — «Твой оракул»",
   natal_report: "Разбор натальной карты — «Твой оракул»",
+  thread_report: "Разбор нити — «Твой оракул»",
   lila_session: "Сессия Лилы с проводником — «Твой оракул»",
 };
 const emailSchema = z.email().max(254);

@@ -204,6 +204,19 @@ describe("receipts to send", () => {
   });
 });
 
+describe("thread report purchases", () => {
+  test("keep only the birth date and find the paid purchase by the same date", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-thread" });
+    const created = await createPurchase(db, { userId, product: "thread_report", birthDate: "1990-07-15", receiptEmail: "a@b.ru", amountKopecks: 29_000 });
+    expect(created).toMatchObject({ product: "thread_report", birthDate: "1990-07-15", natalInput: null, inputKey: null });
+    await markPurchaseSucceeded(db, created.id, T0);
+
+    const key = { userId, product: "thread_report", birthDate: "1990-07-15", inputKey: null } as const;
+    expect((await findPaidPurchase(db, key))?.id).toBe(created.id);
+    expect(await findPaidPurchase(db, { ...key, birthDate: "1990-07-16" })).toBeNull();
+  });
+});
+
 describe("natal report purchases", () => {
   test("keep the birth snapshot and find the paid purchase only by the same snapshot key", async () => {
     const { userId } = await seedUser(db, { externalId: "vk-natal" });
