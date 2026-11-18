@@ -38,6 +38,27 @@ function startMs(birth: BirthDate, year: number): number {
   return Date.UTC(year, moved ? 2 : birth.month - 1, moved ? 1 : birth.day);
 }
 
+export type ThreadMonth = { readonly index: number; readonly value: number; readonly start: string; readonly end: string };
+
+// Двенадцать личных месяцев года: число = год + календарный месяц начала; день начала — день рождения, в коротком месяце — его последний день
+export function personalMonthsOf(birth: BirthDate, year: ThreadYear): readonly ThreadMonth[] {
+  // Первый и тринадцатый старты берём от правила года, чтобы цепочка сходилась с границами лет (29 февраля → 1 марта)
+  const starts = [startMs(birth, year.year)];
+  for (let k = 1; k < 12; k++) {
+    const monthIndex = birth.month - 1 + k;
+    const target = year.year + Math.floor(monthIndex / 12);
+    const month = monthIndex % 12;
+    starts.push(Date.UTC(target, month, Math.min(birth.day, new Date(Date.UTC(target, month + 1, 0)).getUTCDate())));
+  }
+  starts.push(startMs(birth, year.year + 1));
+  return starts.slice(0, 12).map((start, i) => ({
+    index: i + 1,
+    value: foldToNine(year.value + new Date(start).getUTCMonth() + 1),
+    start: iso(start),
+    end: iso((starts[i + 1] ?? start) - DAY_MS),
+  }));
+}
+
 export function calculateLifeThread(value: string, today: Date): LifeThread | null {
   const birth = parseBirthDate(value, today);
   if (!birth) return null;
