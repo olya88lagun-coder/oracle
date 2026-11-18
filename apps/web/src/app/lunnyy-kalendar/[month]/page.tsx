@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MoonLightCurve } from "@/components/moon/MoonLightCurve";
 import { MoonMonthDays } from "@/components/moon/MoonMonthDays";
+import { MoonMonthEvents } from "@/components/moon/MoonMonthEvents";
 import { MoonMonthExplorer } from "@/components/moon/MoonMonthExplorer";
 import { MoonSignRibbon } from "@/components/moon/MoonSignRibbon";
 import { MoonTodayMark } from "@/components/moon/MoonTodayMark";
@@ -85,6 +86,7 @@ export default async function LunarMonthPage({ params }: Params) {
         <MoonLightCurve curve={page.curve} width={CURVE_WIDTH} height={CURVE_HEIGHT} />
         <MoonMonthExplorer weeks={page.weeks} days={page.cells} events={page.events} initialIndex={initialIndex} />
         <MoonSignRibbon segments={page.ribbon} />
+        <MoonMonthEvents items={page.timeline} />
         <MoonMonthDays rows={page.rows} />
         {page.faq.length > 0 && (
           <section className="moon-faq" aria-labelledby="moon-month-faq-title">
