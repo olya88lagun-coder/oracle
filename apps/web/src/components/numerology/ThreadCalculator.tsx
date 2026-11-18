@@ -1,13 +1,26 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { sessionStore } from "@/lib/matrix-save";
 import { reachNumerologyGoal } from "@/lib/numerology";
 import { localToday, threadOutcome, type ThreadOutcome, type ThreadTexts } from "@/lib/life-thread";
-import { ThreadResult } from "./ThreadResult";
+import { takeThreadIntent } from "@/lib/thread-offer";
+import { ThreadResult, type ThreadOffer } from "./ThreadResult";
 
-export function ThreadCalculator({ texts }: { texts: ThreadTexts }) {
+export function ThreadCalculator({ texts, offer }: { texts: ThreadTexts; offer?: ThreadOffer }) {
   const input = useRef<HTMLInputElement>(null);
   const [outcome, setOutcome] = useState<ThreadOutcome | null>(null);
+  // После входа через «Войти и купить разбор» возвращаем дату из sessionStorage вкладки и сразу строим нить; запись читается и стирается всегда
+  useEffect(() => {
+    const pending = takeThreadIntent(sessionStore());
+    if (!pending || !offer?.signedIn || !input.current) return;
+    const next = threadOutcome(pending, localToday(new Date()));
+    if (!next.ok) return;
+    input.current.value = pending;
+    setOutcome(next);
+    // Только один раз, после загрузки страницы
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   function calculate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const next = threadOutcome(input.current?.value ?? "", localToday(new Date()));
@@ -32,6 +45,6 @@ export function ThreadCalculator({ texts }: { texts: ThreadTexts }) {
         </form>
       </div>
     </section>
-    {outcome?.ok && <ThreadResult key={outcome.iso} thread={outcome.thread} texts={texts} />}
+    {outcome?.ok && <ThreadResult key={outcome.iso} thread={outcome.thread} texts={texts} iso={outcome.iso} offer={offer} />}
   </>;
 }

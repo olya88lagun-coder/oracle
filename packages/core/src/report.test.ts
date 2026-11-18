@@ -16,6 +16,10 @@ import {
   reportChapters,
   SCENARIO_FIELDS,
   SCENARIO_TITLES,
+  GENERATE_THREAD_JOB_OPTIONS,
+  generateThreadReportJobKey,
+  THREAD_REPORT_PRICE_KOPECKS,
+  THREAD_REPORT_PRODUCT,
 } from "./report";
 
 const matrixOf = (iso: string) => {
@@ -64,6 +68,17 @@ describe("natal report product", () => {
   test("the snapshot key rounds the coordinates to two decimals", () => {
     expect(natalSnapshotKey({ date: "1990-03-07", time: "12:00", latitude: 55.7558, longitude: 37.6173 })).toBe("1990-03-07|12:00|55.76|37.62");
     expect(natalSnapshotKey({ date: "1990-03-07", time: "12:00", latitude: 55.7541, longitude: 37.6149 })).toBe("1990-03-07|12:00|55.75|37.61");
+  });
+});
+
+describe("thread report product", () => {
+  test("costs 490 rubles and has its own queue, job key and short job timeout", () => {
+    expect(THREAD_REPORT_PRODUCT).toBe("thread_report");
+    expect(THREAD_REPORT_PRICE_KOPECKS).toBe(49_000);
+    expect(QUEUES.generateThreadReport).toBe("generate-thread-report");
+    expect(generateThreadReportJobKey({ purchaseId: "abc" })).toBe("generate-thread-report:abc");
+    expect(GENERATE_THREAD_JOB_OPTIONS.expireInSeconds).toBe(300);
+    expect(GENERATE_THREAD_JOB_OPTIONS.retryLimit).toBe(GENERATE_JOB_OPTIONS.retryLimit);
   });
 });
 

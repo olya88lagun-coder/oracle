@@ -1,10 +1,11 @@
-import { LILA_QUEUES, QUEUES, RECEIPTS_QUEUE, type ConclusionJob, type GenerateNatalReportJob, type GenerateReportJob, type GuideMoveJob, type ReceiptsReminderJob } from "@oracle/core";
+import { LILA_QUEUES, QUEUES, RECEIPTS_QUEUE, type ConclusionJob, type GenerateNatalReportJob, type GenerateReportJob, type GenerateThreadReportJob, type GuideMoveJob, type ReceiptsReminderJob } from "@oracle/core";
 import { createDb } from "@oracle/db";
 import { PgBoss } from "pg-boss";
 import { createWriter, limitConcurrency } from "./ai";
 import { readWorkerEnv } from "./env";
 import { runGenerate } from "./generate";
 import { runGenerateNatal } from "./generate-natal";
+import { runGenerateThread } from "./generate-thread";
 import { runConclusion, runGuideMove } from "./lila";
 import { log } from "./log";
 import { runReceiptsReminder } from "./receipts";
@@ -27,6 +28,7 @@ boss.on("error", (error) => log("error", "pg-boss error", { error: String(error)
 await boss.start();
 await boss.createQueue(QUEUES.generateReport);
 await boss.createQueue(QUEUES.generateNatalReport);
+await boss.createQueue(QUEUES.generateThreadReport);
 await boss.createQueue(LILA_QUEUES.guideMove);
 await boss.createQueue(LILA_QUEUES.conclusion);
 await boss.createQueue(RECEIPTS_QUEUE);
@@ -49,6 +51,17 @@ await boss.work<GenerateNatalReportJob>(QUEUES.generateNatalReport, async ([job]
     await runGenerateNatal(job.data, { db, writer, log, concurrency: env.aiConcurrency });
   } catch (error) {
     log("warn", "natal generate job failed", { purchaseId: job.data.purchaseId, error: String(error), cause: error instanceof Error ? String(error.cause) : undefined });
+    throw error;
+  }
+});
+
+await boss.work<GenerateThreadReportJob>(QUEUES.generateThreadReport, async ([job]) => {
+  if (!job) return;
+  try {
+    await runGenerateThread(job.data, { db, log });
+  } catch (error) {
+    // В тексте ошибки сборщика только номера глав и ключи, личных данных нет
+    log("warn", "thread generate job failed", { purchaseId: job.data.purchaseId, error: String(error), cause: error instanceof Error ? String(error.cause) : undefined });
     throw error;
   }
 });

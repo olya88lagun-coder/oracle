@@ -8,6 +8,7 @@ type Dependencies = { isReady: () => boolean; fetchEvents: () => Promise<unknown
 const PRODUCTS: Record<Product, { name: string; goal: Goal }> = {
   matrix_report: { name: "Разбор матрицы судьбы", goal: "report_paid" },
   natal_report: { name: "Разбор натальной карты", goal: "natal_paid" },
+  thread_report: { name: "Разбор нити", goal: "thread_paid" },
   lila_session: { name: "Лила с проводником", goal: "lila_paid" },
 };
 const UUID = /^[\da-f]{8}(-[\da-f]{4}){3}-[\da-f]{12}$/i;

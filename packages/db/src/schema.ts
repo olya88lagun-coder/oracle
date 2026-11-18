@@ -3,7 +3,7 @@ import { sql } from "drizzle-orm";
 import { boolean, check, date, doublePrecision, index, integer, jsonb, pgEnum, pgTable, primaryKey, smallint, text, time, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const authProviderEnum = pgEnum("auth_provider", ["vk"]);
-export const productEnum = pgEnum("product", ["matrix_report", "lila_session", "natal_report"]);
+export const productEnum = pgEnum("product", ["matrix_report", "lila_session", "natal_report", "thread_report"]);
 export const guideSourceEnum = pgEnum("guide_source", ["ai", "none"]);
 export const purchaseStatusEnum = pgEnum("purchase_status", ["pending", "succeeded", "canceled"]);
 

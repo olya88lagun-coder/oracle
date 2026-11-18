@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LILA_SESSION_PRICE_KOPECKS, MATRIX_REPORT_PRICE_KOPECKS, NATAL_REPORT_PRICE_KOPECKS } from "@oracle/core";
+import { LILA_SESSION_PRICE_KOPECKS, MATRIX_REPORT_PRICE_KOPECKS, NATAL_REPORT_PRICE_KOPECKS, THREAD_REPORT_PRICE_KOPECKS } from "@oracle/core";
 import { DocumentPage, type DocumentSection } from "@/components/document/DocumentPage";
 import { DISCLAIMER, formatRubles, OPERATOR, REFUND_DAYS } from "@/lib/legal";
 import { breadcrumbJsonLd, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
@@ -55,6 +55,12 @@ export default function ContactsPage() {
             действии, деле и деньгах, росте, глубоких слоях, главных аспектах и итоговый сценарий. Стоимость — {formatRubles(NATAL_REPORT_PRICE_KOPECKS)}.
             Разбор покупается на странице <Link href="/natalnaya-karta">натальной карты</Link> после расчёта и входа через VK ID; нужно знать время
             рождения. Оплата и чек — как для разбора матрицы.
+          </p>
+          <p>
+            «Разбор нити» — персональный текстовый разбор по дате рождения: шесть глав — где вы сейчас и двенадцать личных месяцев, семь лет вперёд,
+            прошлые годы, четыре периода жизни, ваш ритм, три правила и вопрос на год. Стоимость — {formatRubles(THREAD_REPORT_PRICE_KOPECKS)}. Разбор
+            покупается на странице <Link href="/numerologiya/grafik-sudby">нити судьбы</Link> после расчёта и входа через VK ID. Текст собирается из
+            готовых описаний и не является предсказанием или консультацией. Оплата и чек — как для разбора матрицы.
           </p>
           <p>
             «Сессия Лилы с проводником» — одна партия игры «Лила» с короткими абзацами проводника на ходах и итоговым выводом с файлом PDF. Стоимость —{" "}

@@ -5,9 +5,13 @@ import {
   MATRIX_REPORT_PRODUCT,
   NATAL_REPORT_PRICE_KOPECKS,
   NATAL_REPORT_PRODUCT,
+  THREAD_REPORT_PRICE_KOPECKS,
+  THREAD_REPORT_PRODUCT,
+  calculateLifeThread,
   natalSnapshotKey,
   type GenerateNatalReportJob,
   type GenerateReportJob,
+  type GenerateThreadReportJob,
   type NatalSnapshot,
   type Product,
 } from "@oracle/core";
@@ -47,6 +51,7 @@ export type PaymentsDeps = {
   now: () => Date;
   enqueueGenerate: (job: GenerateReportJob) => Promise<void>;
   enqueueGenerateNatal: (job: GenerateNatalReportJob) => Promise<void>;
+  enqueueGenerateThread: (job: GenerateThreadReportJob) => Promise<void>;
   // Оплата принята, чек владелица формирует вручную: напоминание уходит ей одним сообщением на окно времени
   remindReceipts?: (now: Date) => Promise<void>;
   isOwner?: (userId: string) => Promise<boolean>;
@@ -63,6 +68,7 @@ const DESCRIPTION_MAX = 128;
 export const PRODUCT_DESCRIPTIONS: Readonly<Record<Product, string>> = {
   matrix_report: "Разбор матрицы судьбы — «Твой оракул»",
   natal_report: "Разбор натальной карты — «Твой оракул»",
+  thread_report: "Разбор нити — «Твой оракул»",
   lila_session: "Сессия Лилы с проводником — «Твой оракул»",
 };
 const emailSchema = z.email().max(254);
@@ -94,8 +100,9 @@ async function grantFree(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<
   return { ok: true, url: purchaseReturnPath(purchase) };
 }
 
-// Цена разбора по продукту: матрица и натальная карта продаются одним потоком, различаются ценой и данными
-const reportPrice = (product: Product): number => (product === NATAL_REPORT_PRODUCT ? NATAL_REPORT_PRICE_KOPECKS : MATRIX_REPORT_PRICE_KOPECKS);
+// Цена разбора по продукту: матрица, натальная карта и нить продаются одним потоком, различаются ценой и данными
+const REPORT_PRICES: Partial<Record<Product, number>> = { [NATAL_REPORT_PRODUCT]: NATAL_REPORT_PRICE_KOPECKS, [THREAD_REPORT_PRODUCT]: THREAD_REPORT_PRICE_KOPECKS };
+const reportPrice = (product: Product): number => REPORT_PRICES[product] ?? MATRIX_REPORT_PRICE_KOPECKS;
 
 // natal — снимок данных рождения натального разбора; у матрицы его нет, а дата берётся из портрета
 type ReportPurchase = { userId: string; product: Product; birthDate: string; email: string | null; natal?: NatalSnapshot };
@@ -205,6 +212,18 @@ export async function startNatalPurchase(deps: PaymentsDeps, p: { userId: string
   return purchaseFor(deps, { userId: p.userId, product: NATAL_REPORT_PRODUCT, birthDate: parsed.snapshot.date, email, natal: parsed.snapshot });
 }
 
+// «Разбор нити» покупается по дате из запроса: график считается в браузере, портрет не трогается.
+// Дата — строго ГГГГ-ММ-ДД (без пробелов: в покупку попадает ровно проверенная строка); в ответ и в логи она не попадает
+const THREAD_BIRTH = /^\d{4}-\d{2}-\d{2}$/;
+
+export async function startThreadPurchase(deps: PaymentsDeps, p: { userId: string; email: unknown; birth: unknown }): Promise<StartPurchaseOutcome> {
+  const owner = await isOwner(deps, p.userId);
+  const email = owner ? null : readEmail(p.email);
+  if (!owner && !email) return { ok: false, error: "invalid_email" };
+  if (typeof p.birth !== "string" || !THREAD_BIRTH.test(p.birth) || !calculateLifeThread(p.birth, deps.now())) return { ok: false, error: "invalid_birth" };
+  return purchaseFor(deps, { userId: p.userId, product: THREAD_REPORT_PRODUCT, birthDate: p.birth, email });
+}
+
 // «Попробовать снова» после отмены: та же дата и тот же e-mail, новая покупка
 export async function retryPurchase(deps: PaymentsDeps, p: { userId: string; purchaseId: unknown }): Promise<StartPurchaseOutcome> {
   const purchase = typeof p.purchaseId === "string" ? await getPurchase(deps.db, p.purchaseId) : null;
@@ -223,8 +242,12 @@ async function firstPaidOf(deps: PaymentsDeps, purchase: PurchaseRecord): Promis
 }
 
 // Задача генерации — в очередь своего продукта
-const enqueueReport = (deps: PaymentsDeps, purchase: PurchaseRecord): Promise<void> =>
-  purchase.product === NATAL_REPORT_PRODUCT ? deps.enqueueGenerateNatal({ purchaseId: purchase.id }) : deps.enqueueGenerate({ purchaseId: purchase.id });
+function enqueueReport(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<void> {
+  const job = { purchaseId: purchase.id };
+  if (purchase.product === NATAL_REPORT_PRODUCT) return deps.enqueueGenerateNatal(job);
+  if (purchase.product === THREAD_REPORT_PRODUCT) return deps.enqueueGenerateThread(job);
+  return deps.enqueueGenerate(job);
+}
 
 async function enqueueIfFirst(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<void> {
   const first = await firstPaidOf(deps, purchase);

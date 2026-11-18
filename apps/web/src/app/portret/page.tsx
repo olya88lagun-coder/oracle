@@ -10,7 +10,7 @@ import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 import { LILA_GAME_PATH, lilaHistoryPath } from "@/lib/lila-paths";
 import { movesLabel } from "@/lib/lila-turn";
 import { keyArcana } from "@/lib/matrix-view";
-import { PORTRAIT_REPORT_TITLE } from "@/lib/natal-copy";
+import { portraitReportTitle } from "@/lib/portrait-report-title";
 import { PRACTICES, type Practice } from "@/lib/practices";
 import { formatIsoDate, reportPath } from "@/lib/report-offer";
 import { getDb } from "@/server/db";
@@ -196,7 +196,7 @@ export default async function PortraitPage() {
                         {report.ready ? "Готов" : "готовится"}
                       </span>
                       <h3>
-                        {report.product === "natal_report" ? PORTRAIT_REPORT_TITLE : "Разбор матрицы судьбы"} · по дате {formatIsoDate(report.birthDate)}
+                        {portraitReportTitle(report.product)} · по дате {formatIsoDate(report.birthDate)}
                       </h3>
                       <Link href={reportPath(report.id)}>
                         Открыть разбор
