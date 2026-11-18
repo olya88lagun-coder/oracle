@@ -1,6 +1,6 @@
 import { numerologyText } from "@oracle/content/numerology";
 import { buildThreadReport, type ThreadTextReader } from "@oracle/content/thread-report";
-import { calculateLifeThread, type GenerateThreadReportJob } from "@oracle/core";
+import { calculateLifeThread, THREAD_REPORT_PRODUCT, type GenerateThreadReportJob } from "@oracle/core";
 import { findPaidPurchase, getPurchase, getReport, saveReport, type Database } from "@oracle/db";
 import type { Logger } from "./log";
 
@@ -14,8 +14,10 @@ export async function runGenerateThread(job: GenerateThreadReportJob, deps: Gene
   if (await getReport(deps.db, job.purchaseId)) return;
   const purchase = await getPurchase(deps.db, job.purchaseId);
   const birthDate = purchase?.birthDate ?? null;
-  if (!purchase || purchase.status !== "succeeded" || !birthDate) {
-    deps.log("info", "thread report skipped", { purchaseId: job.purchaseId, reason: !purchase ? "no_purchase" : purchase.status !== "succeeded" ? "not_paid" : "data_deleted" });
+  // Чужая покупка с датой рождения (матрица, натальная) не должна получить главы нити: saveReport не перезаписывает, настоящий разбор был бы заблокирован
+  if (!purchase || purchase.product !== THREAD_REPORT_PRODUCT || purchase.status !== "succeeded" || !birthDate) {
+    const reason = !purchase ? "no_purchase" : purchase.product !== THREAD_REPORT_PRODUCT ? "wrong_product" : purchase.status !== "succeeded" ? "not_paid" : "data_deleted";
+    deps.log("info", "thread report skipped", { purchaseId: job.purchaseId, reason });
     return;
   }
   // Сайт не ставит задачу для второй оплаты той же даты; проверяем ещё раз — задачу могли поставить до того, как нашлась первая

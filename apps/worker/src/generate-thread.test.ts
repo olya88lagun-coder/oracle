@@ -92,6 +92,26 @@ describe("runGenerateThread", () => {
     expect(log).toHaveBeenCalledWith("warn", "duplicate paid purchase — refund manually", { purchaseId: second.id });
   });
 
+  test("ignores a job that carries a matrix or natal purchase", async () => {
+    const { userId } = await seedUser(db, { externalId: "vk-t6" });
+    const matrix = await createPurchase(db, { userId, product: "matrix_report", birthDate: BIRTH, receiptEmail: "a@b.ru", amountKopecks: 39_000 });
+    const natal = await createPurchase(db, {
+      userId,
+      product: "natal_report",
+      natal: { date: BIRTH, time: "12:00", instant: "1990-07-15T08:00:00.000Z", latitude: 55.7558, longitude: 37.6173, placeName: "Москва" },
+      receiptEmail: "a@b.ru",
+      amountKopecks: 49_000,
+    });
+    const log = vi.fn();
+    for (const [purchase, paymentId] of [[matrix, "pay-t6a"], [natal, "pay-t6b"]] as const) {
+      await attachPayment(db, purchase.id, { paymentId, confirmationUrl: "https://pay.test" });
+      await markPurchaseSucceeded(db, purchase.id, new Date());
+      await runGenerateThread({ purchaseId: purchase.id }, { db, log, now, read });
+      expect(await getThreadReport(db, purchase.id)).toBeNull();
+      expect(log).toHaveBeenCalledWith("info", "thread report skipped", { purchaseId: purchase.id, reason: "wrong_product" });
+    }
+  });
+
   test("fails loudly when the texts are not published yet, without personal data in the error", async () => {
     const { userId } = await seedUser(db, { externalId: "vk-t5" });
     const purchase = await paidPurchase(userId, "pay-t5");
