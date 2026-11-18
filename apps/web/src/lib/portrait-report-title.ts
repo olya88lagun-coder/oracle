@@ -1,4 +1,5 @@
 import type { Product } from "@oracle/core";
+import type { Metadata } from "next";
 import { PORTRAIT_REPORT_TITLE } from "./natal-copy";
 import { THREAD_REPORT_TITLE } from "./thread-copy";
 
@@ -8,3 +9,9 @@ export function portraitReportTitle(product: Product): string {
   if (product === "thread_report") return THREAD_REPORT_TITLE;
   return "Разбор матрицы судьбы";
 }
+
+// Заголовок вкладки страницы разбора: по купленному продукту; страница личная, поэтому вне поиска
+export const reportPageMetadata = (product: Product | undefined): Metadata => ({
+  title: product ? portraitReportTitle(product) : "Разбор матрицы судьбы",
+  robots: { index: false, follow: false },
+});
