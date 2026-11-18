@@ -37,3 +37,14 @@ export async function mockThreadAccepted(importOriginal: () => Promise<typeof Co
     acceptedNumerologyPages: (kind) => (isThread(kind) ? KEYS.map((key) => ({ kind, key, batch: 9 })) : real.acceptedNumerologyPages(kind)),
   };
 }
+
+// Мок @oracle/content/numerology для платного «Разбора нити»: партия 10 (month, past, rules) принята, пока accepted() — true,
+// иначе закрыта независимо от настоящего списка партий; остальное — как на самом деле
+export async function mockThreadReportBatch(importOriginal: () => Promise<typeof Content>, accepted: () => boolean = () => true): Promise<typeof Content> {
+  const real = await importOriginal();
+  const isReport = (kind: string): boolean => kind === "month" || kind === "past" || kind === "rules";
+  return {
+    ...real,
+    acceptedNumerologyPages: (kind) => (isReport(kind) ? (accepted() ? KEYS.map((key) => ({ kind, key, batch: 10 })) : []) : real.acceptedNumerologyPages(kind)),
+  };
+}

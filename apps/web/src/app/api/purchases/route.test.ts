@@ -16,9 +16,13 @@ const mocks = vi.hoisted(() => {
     startNatalPurchase: vi.fn(),
     startThreadPurchase: vi.fn(),
     retryPurchase: vi.fn(),
+    batch10: { accepted: true },
   };
 });
 
+vi.mock("@oracle/content/numerology", async (importOriginal) =>
+  (await import("@/app/numerologiya/grafik-sudby/thread-fixtures")).mockThreadReportBatch(importOriginal as never, () => mocks.batch10.accepted),
+);
 vi.mock("@oracle/db", () => ({ getPurchase: mocks.getPurchase }));
 vi.mock("@/server/db", () => ({ getDb: () => mocks.db }));
 vi.mock("@/server/env", () => ({ getEnv: mocks.getEnv }));
@@ -49,6 +53,7 @@ const call = (body: unknown) =>
 beforeEach(() => {
   vi.clearAllMocks();
   Object.assign(mocks.env, { payments: { kind: "fake" }, paidReports: true, paidNatal: true, paidThread: false });
+  mocks.batch10.accepted = true;
   mocks.getCurrentUser.mockResolvedValue({ id: "user-1", displayName: "Тест" });
   mocks.getPurchase.mockResolvedValue(null);
   mocks.startThreadPurchase.mockResolvedValue({ ok: true, url: "https://pay.test/1" });
@@ -71,7 +76,17 @@ describe("POST /api/purchases, thread report", () => {
     expect(mocks.startThreadPurchase).not.toHaveBeenCalled();
   });
 
-  test("passes e-mail and birth to the thread purchase when PAID_THREAD is on", async () => {
+  test("answers 404 while batch 10 is not accepted, even with PAID_THREAD on", async () => {
+    mocks.env.paidThread = true;
+    mocks.batch10.accepted = false;
+    const response = await call({ product: "thread_report", email: "a@b.ru", birth: "1990-07-15" });
+
+    expect(response.status).toBe(404);
+    expect(await response.json()).toEqual({ ok: false, error: "not_found" });
+    expect(mocks.startThreadPurchase).not.toHaveBeenCalled();
+  });
+
+  test("passes e-mail and birth to the thread purchase when PAID_THREAD is on and batch 10 is accepted", async () => {
     mocks.env.paidThread = true;
     const response = await call({ product: "thread_report", email: "a@b.ru", birth: "1990-07-15" });
 

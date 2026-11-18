@@ -46,6 +46,11 @@ export function acceptedThreadPaths(): string[] {
   return acceptedNumerologyPages("thread").length && acceptedNumerologyPages("period").length ? [THREAD_PATH] : [];
 }
 
+// Платный «Разбор нити» собирается из текстов партии 10: пока владелица не приняла все три вида, продажи нет даже при PAID_THREAD=on
+export function threadReportReady(): boolean {
+  return (["month", "past", "rules"] as const).every((kind) => acceptedNumerologyPages(kind).length > 0);
+}
+
 // Карточки годов и периодов для клиентской части: уходят пропсами, сами тексты в браузерный чанк не попадают
 export function acceptedThreadTexts(): ThreadTexts {
   const collect = (kind: "thread" | "period"): Record<number, ThreadCard> => {

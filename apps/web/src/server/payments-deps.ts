@@ -1,4 +1,5 @@
 import { LILA_SESSION_PRODUCT, MATRIX_REPORT_PRODUCT, NATAL_REPORT_PRODUCT, receiptsReminderWindow, THREAD_REPORT_PRODUCT, type Product } from "@oracle/core";
+import { threadReportReady } from "../lib/numerology-pages";
 import { getDb } from "./db";
 import { getEnv, type PaymentsConfig } from "./env";
 import { createFakeGateway, type FakeGateway } from "./payments/fake";
@@ -44,7 +45,7 @@ export function salesEnabled(product: Product = MATRIX_REPORT_PRODUCT): boolean 
   const env = getEnv();
   if (env.payments === null) return false;
   if (product === NATAL_REPORT_PRODUCT) return env.paidNatal;
-  if (product === THREAD_REPORT_PRODUCT) return env.paidThread;
+  if (product === THREAD_REPORT_PRODUCT) return env.paidThread && threadReportReady();
   return product === LILA_SESSION_PRODUCT ? env.paidLila : env.paidReports;
 }
 
