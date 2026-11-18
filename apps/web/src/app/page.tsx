@@ -3,10 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT, MATRIX_REPORT_PRICE_KOPECKS } from "@oracle/core";
 import { HomeDateStart } from "@/components/HomeDateStart";
+import { ThreadPromo } from "@/components/numerology/ThreadPromo";
 import { YearPromo } from "@/components/year-arcana/YearPromo";
 import { BLOG_PATH, BLOG_POSTS, blogPath } from "@/lib/blog";
 import { formatRubles } from "@/lib/legal";
 import { HOME_PRINCIPLES, HOME_PRINCIPLES_TITLE } from "@/lib/home-principles";
+import { acceptedThreadPaths } from "@/lib/numerology-pages";
 import { FREE_RESULT_PROMISE, FREE_RESULT_TERMS, PRACTICES } from "@/lib/practices";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE, websiteJsonLd } from "@/lib/seo";
 import { salesEnabled } from "@/server/payments-deps";
@@ -111,6 +113,7 @@ export default function HomePage() {
         </section>
 
         <YearPromo context="home" id="home-year" />
+        {acceptedThreadPaths().length > 0 && <ThreadPromo id="home-thread" />}
 
         <section className="stack home-principles" aria-labelledby="home-principles">
           <h2 id="home-principles">{HOME_PRINCIPLES_TITLE}</h2>
