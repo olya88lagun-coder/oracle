@@ -22,44 +22,50 @@ const LEGAL = [
 export function Footer() {
   return (
     <footer className="footer">
-      <div className="footer__top">
-        <Link href="/" className="wordmark wordmark--small" aria-label="Твой оракул — главная">
-          Твой <em>оракул</em>
-        </Link>
-        <nav aria-label="Разделы сайта">
-          {PRACTICES.map((section) => (
-            <Link key={section.href} href={section.href}>
-              {section.short}
-            </Link>
-          ))}
-          {/* Не в SECTIONS: этот список общий с шапкой, а там уже семь разделов */}
-          <Link href={MOON_PATH}>Луна сегодня</Link>
-          <Link href={LUNAR_CALENDAR_PATH}>Лунный календарь</Link>
+      <div className="footer__main">
+        <div className="footer__brand">
+          <Link href="/" className="wordmark wordmark--small" aria-label="Твой оракул — главная">
+            Твой <em>оракул</em>
+          </Link>
+          <p className="disclaimer">{DISCLAIMER}</p>
+        </div>
+        <nav aria-label="Разделы сайта" className="footer__col footer__col--practices">
+          <p className="footer__title">Практики</p>
+          <div className="footer__links">
+            {PRACTICES.map((section) => (
+              <Link key={section.href} href={section.href}>
+                {section.short}
+              </Link>
+            ))}
+            {/* Не в SECTIONS: этот список общий с шапкой, а там уже семь разделов */}
+            <Link href={MOON_PATH}>Луна сегодня</Link>
+            <Link href={LUNAR_CALENDAR_PATH}>Лунный календарь</Link>
+          </div>
         </nav>
-        <nav aria-label="О проекте">
-          {MORE.map((link) => (
-            <Link key={link.href} href={link.href}>
-              {link.label}
-            </Link>
-          ))}
-          {SOCIAL_LINKS.map((link) => (
-            <a key={link.url} href={link.url} rel="me noopener" target="_blank">
-              {link.name}
-            </a>
-          ))}
-        </nav>
-      </div>
-      <div className="footer__bottom">
-        <p className="disclaimer">{DISCLAIMER}</p>
-        <nav aria-label="Документы">
-          {LEGAL.map((link) => (
-            <Link key={link.href} href={link.href}>
-              {link.label}
-            </Link>
-          ))}
-          <CookieSettingsButton />
+        <nav aria-label="О проекте" className="footer__col">
+          <p className="footer__title">Сайт</p>
+          <div className="footer__links">
+            {MORE.map((link) => (
+              <Link key={link.href} href={link.href}>
+                {link.label}
+              </Link>
+            ))}
+            {SOCIAL_LINKS.map((link) => (
+              <a key={link.url} href={link.url} rel="me noopener" target="_blank">
+                {link.name}
+              </a>
+            ))}
+          </div>
         </nav>
       </div>
+      <nav aria-label="Документы" className="footer__legal">
+        {LEGAL.map((link) => (
+          <Link key={link.href} href={link.href}>
+            {link.label}
+          </Link>
+        ))}
+        <CookieSettingsButton />
+      </nav>
     </footer>
   );
 }

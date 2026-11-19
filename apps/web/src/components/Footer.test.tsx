@@ -11,3 +11,11 @@ test("the footer links to the lunar calendar entry, which leads to the current m
   const html = renderToStaticMarkup(<Footer />);
   expect(html).toMatch(/<a href="\/lunnyy-kalendar">Лунный календарь<\/a>/);
 });
+
+test("the footer keeps its three link groups, the disclaimer and the legal links with the cookie settings", () => {
+  const html = renderToStaticMarkup(<Footer />);
+  for (const label of ["Разделы сайта", "О проекте", "Документы"]) expect(html).toContain(`aria-label="${label}"`);
+  expect(html).toContain("не предсказания");
+  for (const text of ["Политика обработки данных", "Оферта", "Согласие", "Настройки cookie"]) expect(html).toContain(text);
+  expect(html.match(/<footer/g)).toHaveLength(1);
+});

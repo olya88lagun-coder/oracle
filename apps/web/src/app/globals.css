@@ -877,27 +877,23 @@ a.report-toc__title:hover { color: var(--accent); }
   .site-header__account-label { display: inline; }
 }
 @media (min-width: 860px) and (max-width: 1099px) { .site-nav { gap: 18px; } .site-header__account-label { display: none; } }
-.footer { max-width: var(--container); margin: 0 auto; padding: 40px 16px 32px; font-size: 14px; color: var(--ink-faint); }
-.footer__top, .footer__bottom { display: grid; gap: 18px; }
-.footer nav { display: flex; flex-wrap: wrap; gap: 0 22px; }
-.footer nav a, .footer nav .link-button { display: inline-flex; align-items: center; min-height: 44px; }
-.footer a, .footer .link-button { color: var(--ink-faint); text-decoration: none; }
+.footer { max-width: var(--container); margin: 0 auto; padding: 40px 16px 28px; font-size: 14px; color: var(--ink-faint); border-top: 1px solid transparent; border-image: linear-gradient(90deg, transparent, var(--accent-line), transparent) 1; }
+.footer__main { display: grid; gap: 28px; }
+.footer__brand { display: grid; gap: 14px; align-content: start; }
+.footer__brand .disclaimer { margin: 0; max-width: 34em; font-size: 14px; line-height: 1.6; }
+.footer__col { display: grid; gap: 6px; align-content: start; }
+.footer__title { margin: 0; color: var(--accent); font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+.footer__links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 18px; }
+.footer a, .footer .link-button { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-faint); text-decoration: none; }
 .footer a:hover, .footer .link-button:hover { color: var(--ink); }
-.footer__bottom { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
-.footer .link-button { text-decoration: none; }
-.footer__bottom .disclaimer { margin: 0; max-width: 640px; font-size: 14px; }
+.footer__legal { display: flex; flex-wrap: wrap; gap: 0 22px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
 @media (min-width: 860px) {
   .footer { padding: 56px 28px 36px; }
-  /* шесть практик и пять ссылок «О проекте» в одну строку помещаются только от ~1280 px (1320 — с запасом на полосу прокрутки); уже — ссылки «О проекте» второй строкой под практиками, а не одно слово на перенос */
-  .footer__top { grid-template-columns: auto 1fr; align-items: center; gap: 0 40px; }
-  .footer__top > nav:last-child { grid-column: 2; }
-  .footer nav { gap: 0 18px; }
-  .footer__bottom { grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 60px; }
-  .footer__bottom nav { justify-content: flex-end; }
-}
-@media (min-width: 1320px) {
-  .footer__top { grid-template-columns: auto 1fr auto; gap: 28px; }
-  .footer__top > nav:last-child { grid-column: auto; }
+  .footer__main { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1.2fr) minmax(0, 0.9fr); gap: 56px; }
+  .footer__col--practices .footer__links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .footer__col:not(.footer__col--practices) .footer__links { grid-template-columns: minmax(0, 1fr); }
+  .footer a, .footer .link-button { min-height: 36px; }
+  .footer__legal { margin-top: 36px; padding-top: 20px; gap: 0 28px; }
 }
 .cookie-banner { position: fixed; z-index: 30; inset: auto 0 0; display: grid; gap: 12px; padding: 14px 16px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line-strong); background: var(--surface-2); color: var(--ink-soft); font-size: 14px; box-shadow: 0 -16px 36px rgba(0, 0, 0, 0.3); }
 .cookie-banner p { margin: 0; line-height: 1.55; }
