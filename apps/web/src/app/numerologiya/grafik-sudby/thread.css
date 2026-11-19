@@ -223,3 +223,229 @@
   .thread-offer > :not(.thread-offer__title) { max-width: 64ch; }
   .thread-offer .thread-offer__cta, .thread-offer .thread-offer__form > .button { width: auto; min-width: 320px; justify-self: start; }
 }
+
+/* ==================== оформление — Kimi (P1.4) ==================== */
+
+/* Первый экран: предметная сцена (золотая нить со шпульки на сланце) в духе героев нумерологии,
+   форма и подсказка остаются на тёмной части кадра */
+.thread-page.numerology-landing::before {
+  background:
+    linear-gradient(0deg, var(--bg), var(--scrim-clear) 42%),
+    linear-gradient(90deg, var(--scrim) 0%, color-mix(in srgb, var(--scrim) 62%, transparent) 42%, var(--scrim-clear) 70%),
+    radial-gradient(ellipse 70% 60% at 78% -10%, color-mix(in srgb, var(--lavender) 18%, transparent), transparent 70%),
+    image-set(url("/images/numerology/thread-hero-960.webp") 1x, url("/images/numerology/thread-hero-1920.webp") 2x) 74% 42% / cover no-repeat;
+}
+
+@media (max-width: 759.98px) {
+  .thread-page.numerology-landing::before {
+    background:
+      linear-gradient(0deg, var(--bg), var(--scrim-clear) 46%),
+      linear-gradient(90deg, color-mix(in srgb, var(--scrim) 84%, transparent) 0%, color-mix(in srgb, var(--scrim) 56%, transparent) 100%),
+      image-set(url("/images/numerology/thread-hero-960.webp") 1x, url("/images/numerology/thread-hero-1920.webp") 2x) 68% 30% / cover no-repeat;
+  }
+}
+
+/* Герой занимает сцену: картинка читается, заголовок и форма собраны вместе */
+.thread-hero {
+  display: grid;
+  align-content: center;
+  min-height: calc(min(var(--numerology-scene-height), 720px) - 128px);
+}
+
+/* Результат: «гравированные» плашки с бронзовой рамкой, как у блоков разбора натальной карты */
+.thread-now,
+.thread-period {
+  border-color: var(--accent-line);
+  box-shadow: inset 0 0 0 1px var(--accent-line), 0 14px 44px -12px var(--accent-glow);
+}
+
+.thread-now {
+  background:
+    radial-gradient(circle at 88% -10%, color-mix(in srgb, var(--lavender) 12%, transparent), transparent 55%),
+    linear-gradient(var(--surface-3), var(--surface));
+}
+
+.thread-now__year strong {
+  color: var(--accent-hover);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.thread-period h3 {
+  color: var(--accent-hover);
+  font-weight: 400;
+}
+
+/* Открытая формула — отдельная гравированная полоса с крупными цифрами */
+.thread-formula {
+  padding: 20px 22px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(var(--surface-2), var(--surface));
+  box-shadow: inset 0 0 0 1px var(--accent-line);
+}
+
+.thread-formula h3 {
+  margin: 0;
+}
+
+.thread-formula .year-calculation {
+  font-size: 16px;
+  letter-spacing: 0.03em;
+}
+
+.thread-formula .year-calculation span {
+  color: var(--accent-hover);
+  font-family: var(--font-display);
+  font-size: 19px;
+}
+
+/* Подписи годов на картинке: на узком экране крайние подписи почти касались — чуть меньше кегль,
+   а подпись текущего года уходит на вторую строку, чтобы не сливаться с соседней */
+@media (max-width: 480px) {
+  .thread-year { font-size: 12px; }
+  .thread-year--now { transform: translateY(15px); }
+}
+
+/* Блок продажи «Разбора нити»: тот же язык, что у NatalReportOffer — свет, двойной контур, главы справа */
+.thread-offer {
+  border-color: var(--accent-line);
+  background:
+    radial-gradient(circle at 0 0, var(--lavender-glow), transparent 55%),
+    linear-gradient(135deg, var(--surface-3), var(--surface));
+  box-shadow: inset 0 0 0 1px var(--accent-line), 0 24px 80px -30px var(--accent-glow);
+}
+
+/* Список шести глав: номера антиквой, тонкие гравированные разделители */
+.thread-offer__chapters {
+  counter-reset: thread-chapter;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.thread-offer__chapters li {
+  counter-increment: thread-chapter;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 4px;
+  border-top: 1px solid var(--line);
+}
+
+.thread-offer__chapters li:first-child {
+  border-top: 0;
+}
+
+.thread-offer__chapters li::before {
+  content: counter(thread-chapter);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 19px;
+  line-height: 1.4;
+}
+
+@media (min-width: 960px) {
+  .thread-offer:has(.thread-offer__chapters) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 14px 40px;
+    align-content: start;
+    padding: 36px;
+  }
+  .thread-offer:has(.thread-offer__chapters) > :not(.thread-offer__chapters) {
+    grid-column: 1;
+  }
+  .thread-offer:has(.thread-offer__chapters) > .thread-offer__chapters {
+    grid-column: 2;
+    grid-row: 1 / span 12;
+    align-self: start;
+  }
+}
+
+/* Готовый разбор нити (/portret/razbor/<id> и пример): тот же «документ», что у натального разбора */
+.thread-report {
+  max-width: 860px;
+  margin-inline: auto;
+  padding-block: 12px 32px;
+}
+
+body .thread-report.stack > * + * {
+  margin-top: 56px;
+}
+
+.thread-report__contents {
+  padding: 20px 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.thread-report__contents h2 {
+  font-size: 24px;
+}
+
+.thread-report__chapter h2 {
+  max-width: 24ch;
+  margin-top: 8px;
+  font-size: clamp(28px, 3.2vw, 38px);
+  line-height: 1.2;
+  text-wrap: pretty;
+}
+
+.thread-report__chapter > .eyebrow {
+  padding-top: 20px;
+  border-top: 1px solid var(--accent-line);
+}
+
+.thread-report__block h3 {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.thread-report .report-text {
+  max-width: 68ch;
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.thread-report :is(a, .thread-report__toc-link):focus-visible {
+  outline: 2px solid var(--accent-hover);
+  outline-offset: 3px;
+}
+
+/* Печать разбора: светлая «бумага», без шапки, подвала и интерактивной картинки */
+@media print {
+  :root:has(.thread-report) { color-scheme: light; background: var(--natal-print-paper); }
+  body:has(.thread-report) { background: var(--natal-print-paper); color: var(--natal-print-ink); }
+  body:has(.thread-report) :is(.site-header, .footer, .cookie-banner, nextjs-portal) { display: none; }
+  body:has(.thread-report) :is(.workspace, .page, .matrix-wrap) { width: auto; max-width: none; margin: 0; padding: 0; }
+  .thread-report {
+    --ink: var(--natal-print-ink);
+    --ink-soft: var(--natal-print-soft);
+    --ink-faint: var(--natal-print-soft);
+    --accent: var(--natal-print-ink);
+    --accent-hover: var(--natal-print-ink);
+    --accent-line: var(--natal-print-line);
+    --line: var(--natal-print-line);
+    max-width: none;
+    padding: 0;
+  }
+  .thread-report .thread-chart { display: none; }
+  .thread-report .display { max-width: none; font-size: 32px; }
+  .thread-report__contents { border-top-color: var(--natal-print-line); }
+  .thread-report .report-toc { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
+  .thread-report__toc-link { min-height: 0; padding-block: 4px; }
+  body .thread-report.stack > * + * { margin-top: 28px; }
+  .thread-report__chapter { scroll-margin-top: 0; break-inside: auto; }
+  .thread-report__chapter h2 { max-width: none; font-size: 26px; break-after: avoid; }
+  .thread-report__chapter > .eyebrow { break-after: avoid; }
+  .thread-report__block h3 { break-after: avoid; }
+  .thread-report .report-text { max-width: none; font-size: 16px; line-height: 1.65; orphans: 3; widows: 3; }
+  .thread-report :is(a, .muted, .eyebrow) { color: var(--natal-print-ink); }
+  .thread-report p:has(.thread-report__back) { display: none; }
+}
