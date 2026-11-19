@@ -7512,3 +7512,41 @@ body .taro-spreads-page.stack > .taro-spreads { margin-top: clamp(24px, 4vw, 40p
 :is(.taro-spread-tile, .spread-picker__pick)[href$="/polnolunie"] {
   --taro-spread-thumb: image-set(url("/taro/rasklady/polnolunie-160.webp") 1x, url("/taro/rasklady/polnolunie-480.webp") 2x);
 }
+
+/* ==================== оформление — Kimi ==================== */
+
+/* Новые токены (правило: цвета только переменными) */
+:root {
+  --accent-glow: rgba(203, 166, 118, 0.12);
+  --accent-line-bright: rgba(203, 166, 118, 0.68);
+}
+
+/* P1.1. Главная: ссылка-подсказка «Все практики» под формой первого экрана — бронзовая, со стрелкой вниз */
+.hero__all { gap: 8px; font-weight: 600; transition: color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out); }
+.hero__all::after {
+  content: ""; flex: none; width: 12px; height: 14px; background: currentColor;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2012%2014'%3E%3Cpath%20d='M6%201v10.4M1.8%207.4%206%2011.8l4.2-4.4'%20fill='none'%20stroke='%23fff'%20stroke-width='1.7'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2012%2014'%3E%3Cpath%20d='M6%201v10.4M1.8%207.4%206%2011.8l4.2-4.4'%20fill='none'%20stroke='%23fff'%20stroke-width='1.7'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center;
+}
+.hero__all:hover { color: var(--accent-hover); border-bottom-color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) {
+  .hero__all::after { transition: transform var(--dur-base) var(--ease-out); }
+  .hero__all:hover::after { transform: translateY(3px); }
+}
+
+/* P1.2. Открытая практика: двойной гравированный контур, мягкий бронзовый свет и метка-ромб на рамке — вместо убранного слова «Открыто» */
+.practice-card--open {
+  box-shadow: inset 0 0 0 1px var(--accent-line), 0 14px 44px -12px var(--accent-glow);
+  transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+.practice-card--open::after {
+  content: ""; position: absolute; top: 15px; right: 15px; width: 8px; height: 8px;
+  border: 1px solid var(--accent); border-radius: 1.5px; transform: rotate(45deg);
+  box-shadow: 0 0 8px var(--accent-line); pointer-events: none;
+}
+.practice-card--open:has(.practice-card__link):hover {
+  border-color: var(--accent-line-bright);
+  box-shadow: inset 0 0 0 1px var(--accent-line-bright), 0 18px 54px -12px var(--accent-glow);
+}
