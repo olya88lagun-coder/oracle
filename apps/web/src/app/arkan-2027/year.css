@@ -7,7 +7,7 @@
 .year-hero .lead { font-size: 18px; }
 .year-form { display: grid; gap: 16px; max-width: 420px; margin-top: 30px; }
 .year-form p { margin: 0; }
-.year-hero__art { aspect-ratio: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--accent); background: linear-gradient(var(--scrim-clear), var(--scrim)), url('/images/matrix/matrix-stone.webp') 65% center / cover; box-shadow: inset 0 0 0 20px var(--bg), inset 0 0 0 21px var(--line); }
+.year-hero__art { aspect-ratio: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--accent); background: linear-gradient(var(--scrim-clear), var(--scrim)), url('/images/matrix/matrix-stone-1000.webp') 65% center / cover; box-shadow: inset 0 0 0 20px var(--bg), inset 0 0 0 21px var(--line); }
 .year-hero__art span { font: 300 clamp(80px, 10vw, 140px)/1 var(--font-display); }
 .year-hero__art p { color: var(--ink-soft); font-size: 16px; }
 .year-band { display: flex; justify-content: space-between; gap: 16px; border-block: 1px solid var(--line); padding: 22px 0; color: var(--ink-soft); font-size: 14px; }
