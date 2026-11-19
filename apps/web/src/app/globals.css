@@ -7568,3 +7568,25 @@ body .taro-spreads-page.stack > .taro-spreads { margin-top: clamp(24px, 4vw, 40p
       var(--surface);
   }
 }
+
+/* 2.6. Натальная карта: образец колеса (гравировка) первым экраном вместо общей картинки практики;
+   текст и форма остаются на затемнённой части кадра, скримы не тронуты */
+main:has(> .natal-intro)::before {
+  background: image-set(url("/images/natal/natal-hero-960.webp") 1x, url("/images/natal/natal-hero-1920.webp") 2x) 72% 38% / cover no-repeat;
+}
+
+/* 2.6. Телефон: короче путь к кнопке «Рассчитать карту» — компактные подсказка про город,
+   отступы формы и вступления; строка «Время рождения неизвестно» остаётся высотой ≥ 44 px.
+   Селекторы повторяют специфичность слоя «единой сцены практик», иначе он их перекрывает. */
+@media (max-width: 760px) {
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-intro { padding-top: 22px; }
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-intro > p { margin-top: 10px; font-size: 16px; line-height: 1.5; }
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form { margin-top: 14px; margin-bottom: 40px; }
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-form__fields { gap: 12px; }
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-field > label { margin-bottom: 6px; }
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-field__help { margin-top: 6px; line-height: 1.45; }
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-field > label.natal-unknown-time { min-height: 44px; margin-top: 6px; }
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-form__bottom { margin-top: 12px; }
+  main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-form__privacy { margin-top: 12px; }
+}
+
