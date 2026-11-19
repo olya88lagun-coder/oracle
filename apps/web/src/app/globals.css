@@ -7590,3 +7590,36 @@ main:has(> .natal-intro)::before {
   main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form .natal-form__privacy { margin-top: 12px; }
 }
 
+/* 2.7. Лила: блок «Попробуйте первый бросок» — поле как предмет: гравированная рамка,
+   каменный кубик с бронзовыми точками фоном справа, текст на затемнённой части.
+   Все правила ограничены #try, кубик и контролы в самой игре не затронуты. */
+#try {
+  position: relative; overflow: hidden;
+  border-color: var(--accent-line);
+  box-shadow: inset 0 0 0 1px var(--accent-line), 0 14px 44px -12px var(--accent-glow);
+  background:
+    linear-gradient(90deg, var(--surface) 0%, var(--surface) 30%, var(--scrim) 55%, var(--scrim-clear) 100%),
+    image-set(url("/images/lila/try-dice-960.webp") 1x, url("/images/lila/try-dice-1920.webp") 2x) right center / cover no-repeat,
+    var(--surface);
+}
+/* Кубик-бросок как предмет: крупнее обычного, тёмная грань с бронзовыми точками */
+#try .die {
+  width: 64px; height: 64px; padding: 12px;
+  border-color: var(--accent-line); border-radius: 10px;
+  background: var(--input-bg);
+  box-shadow: inset 0 0 0 1px var(--line), 0 10px 28px -8px var(--scrim);
+}
+#try .die__pip[data-on] { background: var(--accent); }
+#try .dice-caption { max-width: 420px; }
+@media (max-width: 759.98px) {
+  /* На телефоне плёнка плотнее: текст читается поверх картинки */
+  #try {
+    background:
+      linear-gradient(90deg, var(--scrim) 0%, var(--scrim) 45%, var(--scrim-clear) 100%),
+      image-set(url("/images/lila/try-dice-960.webp") 1x, url("/images/lila/try-dice-1920.webp") 2x) 78% center / cover no-repeat,
+      var(--surface);
+  }
+  #try .die { width: 56px; height: 56px; padding: 10px; }
+  /* Блок поднят ближе к первому экрану: меньше пустоты под героем */
+  .lila-hero > .scene__intro { padding-block: 32px 24px; }
+}
