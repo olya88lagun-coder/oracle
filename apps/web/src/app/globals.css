@@ -886,7 +886,6 @@ a.report-toc__title:hover { color: var(--accent); }
 .footer__links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 18px; }
 .footer a, .footer .link-button { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-faint); text-decoration: none; }
 .footer a:hover, .footer .link-button:hover { color: var(--ink); }
-.footer .wordmark { min-height: 0; color: inherit; }
 .footer__legal { display: flex; flex-wrap: wrap; gap: 0 22px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
 @media (min-width: 860px) {
   .footer { padding: 56px 28px 36px; }
