@@ -1819,17 +1819,6 @@ body .stack > .taro-day-info { display: grid; gap: 44px; margin-top: 56px; paddi
 .taro-spread-card__positions { display: grid; align-content: start; gap: 4px; margin: 0; padding-left: 22px; color: var(--ink-soft); font-size: 15px; }
 .taro-spread-card .button { justify-self: start; }
 
-/* Подбор расклада по вопросу (SpreadPicker): каркас Claude, оформление — Codex (docs/design/codex-brief-oracle-2.md, этап 2) */
-.spread-picker { display: grid; gap: 14px; }
-.spread-picker__form { display: flex; flex-wrap: wrap; gap: 10px; }
-.spread-picker__input { flex: 1 1 260px; min-height: 48px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: var(--radius-md, 12px); background: var(--surface-2); color: var(--ink); font: inherit; }
-.spread-picker__examples { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-.spread-picker__chip { min-height: 44px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 999px; background: transparent; color: var(--ink-soft); font: inherit; cursor: pointer; }
-.spread-picker__chip:hover { border-color: var(--accent); color: var(--accent); }
-.spread-picker__note { margin: 0; color: var(--ink-soft); }
-.spread-picker__picks { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
-.spread-picker__pick { display: grid; gap: 4px; padding: 14px 16px; border: 1px solid var(--accent-line); border-radius: var(--radius-md, 12px); color: inherit; text-decoration: none; }
-.spread-picker__pick:hover { border-color: var(--accent); }
 
 /* Картинки раскладов (apps/web/public/taro/rasklady): каркас Claude, кадрирование и оформление — Codex (docs/design/codex-brief-oracle-2.md, этап 2) */
 .taro-spread-card:has(.taro-spread-card__art) { grid-template-rows: auto auto auto auto 1fr auto; }
@@ -7097,3 +7086,429 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 /* Портрет аркана в ключевом узле схемы (MatrixDiagram, только личный результат): каркас Claude, оформление — Codex */
 .matrix-point__art { opacity: 0.4; pointer-events: none; }
 .matrix-point.is-selected .matrix-point__art { opacity: 0.55; }
+
+/* Расклады Таро — «Ночной атлас», этап 2. */
+.spread-picker.taro-panel {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  padding: clamp(16px, 3.1vw, 36px);
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
+  background: linear-gradient(130deg, var(--surface-3), var(--surface) 64%);
+}
+
+.spread-picker > h2 {
+  margin: 0 0 2px;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.spread-picker__form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.spread-picker__input {
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 64%, var(--line));
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+}
+
+.spread-picker__input::placeholder {
+  color: var(--ink-faint);
+  opacity: 1;
+}
+
+.spread-picker__form > .button {
+  min-height: 52px;
+  white-space: normal;
+}
+
+.spread-picker__examples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.spread-picker__examples > li { min-width: 0; max-width: 100%; }
+
+.spread-picker__chip {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 7px 13px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font: 500 14px/1.35 var(--font-body);
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.spread-picker :is(input, button, a):focus-visible,
+.taro-spreads-page .taro-spread-card a:focus-visible {
+  outline: 2px solid var(--accent-hover);
+  outline-offset: 3px;
+}
+
+.spread-picker .spread-picker__privacy {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.spread-picker__result:empty { margin-top: -14px; }
+
+.spread-picker__result:not(:empty) {
+  display: grid;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--accent-line);
+}
+
+.spread-picker__note {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--ink-soft);
+  font-size: 15px;
+}
+
+.spread-picker__picks {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.spread-picker__pick {
+  position: relative;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 3px;
+  align-content: start;
+  min-height: 100%;
+  padding: 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.spread-picker__pick::before {
+  width: 54px;
+  aspect-ratio: 1;
+  grid-area: 1 / 1 / span 3;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--taro-spread-thumb, none) center / cover no-repeat var(--surface-3);
+  content: "";
+}
+
+.spread-picker__pick > strong {
+  margin: 0;
+  font: 400 21px/1.15 var(--font-display);
+  overflow-wrap: anywhere;
+}
+
+.spread-picker__pick > .eyebrow {
+  color: var(--accent);
+  font-size: 14px;
+  letter-spacing: 0.065em;
+}
+
+.spread-picker__pick > span:last-child {
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.taro-spreads-page .taro-spread-card {
+  gap: 13px;
+  padding: clamp(14px, 2vw, 24px);
+  border-radius: 16px;
+}
+
+.taro-spread-card__diagram,
+.taro-spread-tile__art {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--bg);
+}
+
+.taro-spread-card__diagram::before,
+.taro-spread-tile__art::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  content: "";
+}
+
+.taro-spread-card__diagram {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 8px;
+  min-height: 132px;
+  aspect-ratio: 1.75;
+  padding: 10px;
+}
+
+.taro-spread-card__diagram::before {
+  background-image: linear-gradient(to top, var(--scrim), var(--scrim-clear) 62%), var(--taro-spread-cover, none);
+}
+
+.taro-spread-card__diagram .eyebrow {
+  z-index: 0;
+  grid-area: 1 / 1;
+  justify-self: start;
+  min-width: 0;
+  padding: 4px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--bg);
+  font-size: 14px;
+}
+
+.taro-spread-card__diagram .taro-glyph,
+.taro-spread-tile__art .taro-glyph {
+  width: 80px;
+  max-width: 100%;
+  padding: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: var(--bg);
+}
+
+.taro-spread-card__diagram .taro-glyph { grid-area: 1 / 2; }
+
+.taro-spread-card__diagram .taro-glyph rect,
+.taro-spread-tile__art .taro-glyph rect {
+  fill: var(--surface-3);
+  stroke: var(--accent);
+  stroke-width: 1.4;
+}
+
+.taro-spread-card__diagram .taro-glyph path,
+.taro-spread-tile__art .taro-glyph path {
+  fill: var(--accent-hover);
+  opacity: 1;
+}
+
+.taro-spread-card h2 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.taro-spread-card__positions {
+  gap: 5px;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+body .taro-spreads-page.stack > .taro-spreads { margin-top: clamp(24px, 4vw, 40px); }
+
+.taro-spreads > li,
+.taro-spreads-promo__list > li {
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 420px;
+}
+
+.taro-spreads-promo__list > li { contain-intrinsic-block-size: auto 225px; }
+
+.taro-spread-tile {
+  gap: 12px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  transition: none;
+}
+
+.taro-spread-tile:hover {
+  border-color: var(--line-strong);
+  box-shadow: none;
+  transform: none;
+}
+
+.taro-spread-tile__art {
+  display: grid;
+  align-self: stretch;
+  justify-items: end;
+  align-items: end;
+  min-height: 100px;
+  padding: 5px;
+}
+
+.taro-spread-tile__art::before {
+  background-image: linear-gradient(to top, var(--scrim), var(--scrim-clear) 68%), var(--taro-spread-thumb, none);
+}
+
+.taro-spread-tile__art .taro-glyph { width: 55px; padding: 4px; }
+
+.taro-spread-tile:focus-visible { outline-offset: -3px; }
+
+.taro-spread-tile__go { white-space: normal; }
+
+@media (max-width: 639px) {
+  .taro-spreads-page .taro-spreads-head { gap: 10px; }
+  .taro-spread-tile { grid-template-columns: minmax(80px, 30%) minmax(0, 1fr); padding: 12px; }
+}
+
+@media (min-width: 640px) {
+  .spread-picker__form { grid-template-columns: minmax(0, 1fr) auto; }
+  .spread-picker__picks { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+  .taro-spread-tile { grid-template-rows: auto 1fr; align-content: stretch; }
+  .taro-spread-tile__art { aspect-ratio: 1.5; }
+  .taro-spread-tile__text { grid-template-rows: auto auto 1fr auto; align-self: stretch; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .spread-picker__chip:hover,
+  .spread-picker__pick:hover { border-color: var(--accent); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .spread-picker__result:not(:empty) {
+    animation: spread-picker-reveal var(--dur-base) var(--ease-out);
+  }
+
+  @keyframes spread-picker-reveal {
+    from { opacity: 0.82; transform: translateY(3px); }
+  }
+}
+
+.taro-spreads-page .taro-spread-card {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.taro-spreads-page .taro-spread-card:has(> .taro-spread-card__art) {
+  grid-template-rows: auto auto auto 1fr auto;
+}
+
+.taro-spread-card__art,
+.taro-spread-card__diagram {
+  grid-area: 1 / 1;
+}
+
+.taro-spread-card__art {
+  aspect-ratio: 1.75;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+}
+
+.taro-spread-card:has(> .taro-spread-card__art) > .taro-spread-card__diagram {
+  z-index: 1;
+  min-height: 0;
+  aspect-ratio: auto;
+  border: 0;
+  background: transparent;
+}
+
+.taro-spread-card__art img,
+.taro-spread-hero__art img {
+  object-position: 50% 47%;
+}
+
+/* Фон «Конфликта» используется, пока Image для него не появится в разметке. */
+.taro-spread-card:has(> a[href$="/konflikt"]):not(:has(> .taro-spread-card__art)) {
+  --taro-spread-cover: image-set(url("/taro/rasklady/konflikt-480.webp") 1x, url("/taro/rasklady/konflikt.webp") 2x);
+}
+
+.taro-spread-page[data-spread="konflikt"] .taro-spreads-head:not(:has(> .taro-spread-hero__art))::after {
+  background: url("/taro/rasklady/konflikt.webp") center 47% / cover no-repeat var(--bg);
+  content: "";
+}
+
+.taro-spread-hero__art,
+.taro-spread-page[data-spread="konflikt"] .taro-spreads-head:not(:has(> .taro-spread-hero__art))::after {
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  aspect-ratio: 2.35;
+}
+
+@media (min-width: 860px) {
+  .taro-spread-page .taro-spreads-head:has(> .taro-spread-hero__art),
+  .taro-spread-page[data-spread="konflikt"] .taro-spreads-head {
+    max-width: none;
+    grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+    column-gap: clamp(22px, 4vw, 56px);
+    align-items: start;
+  }
+
+  .taro-spread-hero__art,
+  .taro-spread-page[data-spread="konflikt"] .taro-spreads-head:not(:has(> .taro-spread-hero__art))::after {
+    grid-area: 1 / 2 / span 3;
+    align-self: center;
+    aspect-ratio: 1.72;
+  }
+}
+
+:is(.taro-spread-tile, .spread-picker__pick)[href$="/tri-karty"] {
+  --taro-spread-thumb: image-set(url("/taro/rasklady/tri-karty-160.webp") 1x, url("/taro/rasklady/tri-karty-480.webp") 2x);
+}
+
+:is(.taro-spread-tile, .spread-picker__pick)[href$="/otnosheniya"] {
+  --taro-spread-thumb: image-set(url("/taro/rasklady/otnosheniya-160.webp") 1x, url("/taro/rasklady/otnosheniya-480.webp") 2x);
+}
+
+:is(.taro-spread-tile, .spread-picker__pick)[href$="/vybor"] {
+  --taro-spread-thumb: image-set(url("/taro/rasklady/vybor-160.webp") 1x, url("/taro/rasklady/vybor-480.webp") 2x);
+}
+
+:is(.taro-spread-tile, .spread-picker__pick)[href$="/delo-i-dengi"] {
+  --taro-spread-thumb: image-set(url("/taro/rasklady/delo-i-dengi-160.webp") 1x, url("/taro/rasklady/delo-i-dengi-480.webp") 2x);
+}
+
+:is(.taro-spread-tile, .spread-picker__pick)[href$="/na-segodnya"] {
+  --taro-spread-thumb: image-set(url("/taro/rasklady/na-segodnya-160.webp") 1x, url("/taro/rasklady/na-segodnya-480.webp") 2x);
+}
+
+:is(.taro-spread-tile, .spread-picker__pick)[href$="/novyy-god"] {
+  --taro-spread-thumb: image-set(url("/taro/rasklady/novyy-god-160.webp") 1x, url("/taro/rasklady/novyy-god-480.webp") 2x);
+}
+
+:is(.taro-spread-tile, .spread-picker__pick)[href$="/samopoznanie"] {
+  --taro-spread-thumb: image-set(url("/taro/rasklady/samopoznanie-160.webp") 1x, url("/taro/rasklady/samopoznanie-480.webp") 2x);
+}
+
+:is(.taro-spread-tile, .spread-picker__pick)[href$="/konflikt"] {
+  --taro-spread-thumb: image-set(url("/taro/rasklady/konflikt-160.webp") 1x, url("/taro/rasklady/konflikt-480.webp") 2x);
+}
+
+:is(.taro-spread-tile, .spread-picker__pick)[href$="/smena-raboty"] {
+  --taro-spread-thumb: image-set(url("/taro/rasklady/smena-raboty-160.webp") 1x, url("/taro/rasklady/smena-raboty-480.webp") 2x);
+}
+
+:is(.taro-spread-tile, .spread-picker__pick)[href$="/roditeli"] {
+  --taro-spread-thumb: image-set(url("/taro/rasklady/roditeli-160.webp") 1x, url("/taro/rasklady/roditeli-480.webp") 2x);
+}
+
+:is(.taro-spread-tile, .spread-picker__pick)[href$="/novolunie"] {
+  --taro-spread-thumb: image-set(url("/taro/rasklady/novolunie-160.webp") 1x, url("/taro/rasklady/novolunie-480.webp") 2x);
+}
+
+:is(.taro-spread-tile, .spread-picker__pick)[href$="/polnolunie"] {
+  --taro-spread-thumb: image-set(url("/taro/rasklady/polnolunie-160.webp") 1x, url("/taro/rasklady/polnolunie-480.webp") 2x);
+}

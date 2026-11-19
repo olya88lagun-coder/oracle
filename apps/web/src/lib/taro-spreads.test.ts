@@ -151,7 +151,7 @@ describe("taro spreads", () => {
       expect(TARO_SPREADS.map((spread) => spread.slug), slug).toContain(slug);
       for (const size of ["full", "card", "thumb"] as const) expect(existsSync(join(dir, spreadImage(slug, size)!)), `${slug} ${size}`).toBe(true);
     }
-    expect(spreadImage("konflikt")).toBeNull();
+    expect(spreadImage("konflikt", "full")).toBe("/taro/rasklady/konflikt.webp");
     expect(spreadImage("tri-karty", "card")).toBe("/taro/rasklady/tri-karty-480.webp");
   });
 
