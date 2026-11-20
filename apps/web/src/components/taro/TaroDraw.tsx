@@ -6,6 +6,8 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { reachGoal } from "@/lib/analytics";
 import { addSeenCard, formatUntilNextCard, msUntilNextMoscowDay, pickCardIndex, readDayCard, readSeenCards, writeDayCard } from "@/lib/taro-day";
 import { PosterButton } from "@/components/PosterButton";
+import { WeekdayStrip } from "@/components/weekday/WeekdayStrip";
+import { weekdayPlanet } from "@/lib/weekday-planets";
 import { TaroBack } from "./TaroBack";
 import { TaroShare } from "./TaroShare";
 
@@ -173,6 +175,8 @@ export function TaroDraw({ cards, children }: { cards: readonly DrawCard[]; chil
             <h2>Вопрос для себя</h2>
             <p>{drawn.question}</p>
           </article>
+          {/* drawn появляется только после гидратации, поэтому «сегодня» из браузера не расходится с разметкой сервера */}
+          <WeekdayStrip planet={weekdayPlanet(new Date())} />
         </section>
       )}
       {shown.length > 0 && (

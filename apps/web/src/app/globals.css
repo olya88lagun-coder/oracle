@@ -7676,3 +7676,152 @@ main:has(> .natal-intro)::before {
 @media (max-width: 639px) {
   .taro-spreads > li { contain-intrinsic-block-size: auto 560px; }
 }
+
+/* Дни недели и планеты: знак планеты в «гравированном» кружке, блок «Планета дня», колесо недели, карточки семи дней, лента на лунном календаре */
+.weekday-mark {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--accent-line);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, rgba(203, 166, 118, 0.2), transparent 62%), var(--surface-2);
+  box-shadow: inset 0 0 0 4px var(--bg), inset 0 0 0 5px rgba(203, 166, 118, 0.2);
+  color: var(--accent-hover);
+}
+
+.weekday-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px 16px;
+  align-items: start;
+  padding: 18px 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: 20px;
+  background: radial-gradient(circle at 100% 0, var(--lavender-glow), transparent 48%), linear-gradient(135deg, var(--surface-3), var(--surface));
+}
+
+.weekday-strip__body > * { margin: 0; }
+.weekday-strip__eyebrow { color: var(--accent-soft); font-size: 14px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; }
+.weekday-strip__body > .weekday-strip__lead { margin-top: 4px; color: var(--ink); font: 400 clamp(22px, 3vw, 28px)/1.2 var(--font-display); text-wrap: balance; }
+.weekday-strip__body > .weekday-strip__archetype { margin-top: 8px; color: var(--ink-soft); }
+.weekday-strip__body > .weekday-strip__question { margin-top: 12px; padding-inline-start: 12px; border-inline-start: 1px solid var(--accent); color: var(--accent-hover); }
+.weekday-strip__more { grid-column: 1 / -1; justify-self: start; }
+
+@media (min-width: 720px) {
+  .weekday-strip { grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px 22px; padding: 22px 26px; align-items: center; }
+  .weekday-strip__more { grid-column: auto; justify-self: end; }
+  .weekday-strip .weekday-mark { width: 64px; height: 64px; }
+}
+
+.taro-reading > .weekday-strip { grid-column: 1 / -1; }
+.weekday-today { min-width: 0; }
+
+.weekday-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; align-items: center; padding-block: 10px 25px; }
+.weekday-hero__copy { display: grid; gap: 16px; min-width: 0; }
+.weekday-hero__copy > * { margin: 0; }
+.weekday-hero h1 { max-width: 12ch; color: var(--ink); font: 300 clamp(40px, 5.9vw, 76px)/1.02 var(--font-display); letter-spacing: -0.035em; text-wrap: balance; }
+.weekday-hero__lead { max-width: 56ch; color: var(--ink-soft); font-size: 17px; line-height: 1.65; }
+
+@media (min-width: 900px) {
+  .weekday-hero { grid-template-columns: minmax(0, 1fr) minmax(340px, 44%); gap: clamp(28px, 6vw, 86px); }
+}
+
+.weekday-wheel { display: block; width: 100%; max-width: 460px; height: auto; margin-inline: auto; overflow: visible; }
+.weekday-wheel :is(.weekday-wheel__ring, .weekday-wheel__disc, .weekday-wheel__halo) { fill: none; }
+.weekday-wheel__ring { stroke: var(--line-strong); stroke-width: 1; }
+.weekday-wheel__ring--inner { stroke: var(--line); stroke-dasharray: 2 7; stroke-linecap: round; }
+.weekday-wheel__ticks line { stroke: var(--line-strong); stroke-width: 1; }
+.weekday-wheel__ticks line[data-long] { stroke: var(--accent-line); stroke-width: 1.6; }
+.weekday-wheel__star { fill: rgba(203, 166, 118, 0.05); stroke: var(--accent-line); stroke-width: 1.2; stroke-linejoin: round; }
+.weekday-wheel :is(.weekday-wheel__glyph, .weekday-wheel__centre) path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.weekday-wheel__centre path { stroke: var(--accent); stroke-width: 0.7; opacity: 0.55; }
+.weekday-wheel__disc { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.2; }
+.weekday-wheel__glyph path { stroke: var(--accent-soft); stroke-width: 1.5; }
+.weekday-wheel__halo { stroke: var(--accent-line); stroke-width: 1; }
+.weekday-wheel__node[data-today] .weekday-wheel__disc { fill: var(--surface-3); stroke: var(--accent); stroke-width: 1.6; }
+.weekday-wheel__node[data-today] .weekday-wheel__glyph path { stroke: var(--accent-hover); stroke-width: 1.7; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .weekday-wheel__star { stroke-dasharray: 1; animation: weekday-draw 2.6s var(--ease-out) both; }
+  .weekday-wheel__ticks { transform-box: view-box; transform-origin: 50% 50%; animation: weekday-turn 280s linear infinite; }
+  .weekday-wheel__halo { transform-box: fill-box; transform-origin: center; animation: weekday-pulse 3.4s ease-in-out infinite; }
+  .weekday-card[data-today] .weekday-mark { animation: weekday-glow 4.2s ease-in-out infinite; }
+}
+
+@keyframes weekday-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes weekday-turn { to { transform: rotate(360deg); } }
+@keyframes weekday-pulse { 0%, 100% { opacity: 0.85; transform: scale(1); } 50% { opacity: 0.2; transform: scale(1.22); } }
+@keyframes weekday-glow { 0%, 100% { box-shadow: inset 0 0 0 4px var(--bg), inset 0 0 0 5px rgba(203, 166, 118, 0.2), 0 0 0 0 rgba(203, 166, 118, 0); } 50% { box-shadow: inset 0 0 0 4px var(--bg), inset 0 0 0 5px rgba(203, 166, 118, 0.5), 0 0 28px 2px rgba(203, 166, 118, 0.28); } }
+
+.moon-page :is(.weekday-week, .weekday-today) { min-width: 0; padding-block: 25px; border-top: 1px solid var(--line); }
+.weekday-week__lead { max-width: 62ch; margin: 0 0 24px; color: var(--ink-soft); line-height: 1.65; }
+
+.weekday-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.weekday-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  scroll-margin-top: 16px;
+}
+
+.weekday-card > * { margin: 0; }
+.weekday-card__head { display: flex; align-items: center; gap: 14px; }
+.weekday-card__head > div { min-width: 0; }
+.weekday-card__head h3 { margin: 2px 0 0; color: var(--ink); font-size: 26px; }
+.weekday-card__planet { margin: 0; color: var(--accent-soft); font-size: 14px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
+.weekday-card__badge { position: absolute; top: -13px; right: 20px; padding: 3px 12px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 14px; font-weight: 600; }
+.weekday-card__label { display: block; margin-bottom: 3px; color: var(--accent-soft); font-family: var(--font-body); font-size: 14px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+.weekday-card__archetype { color: var(--ink); }
+.weekday-card__question { padding-inline-start: 12px; border-inline-start: 1px solid var(--accent); color: var(--ink); font: 400 19px/1.35 var(--font-display); }
+.weekday-card > .weekday-card__practice { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 15px; }
+.weekday-card__practice a { font-weight: 600; }
+
+.weekday-card[data-today] {
+  border-color: var(--accent);
+  background: radial-gradient(circle at 100% 0, rgba(203, 166, 118, 0.16), transparent 52%), linear-gradient(180deg, var(--surface-3), var(--surface));
+  box-shadow: 0 0 0 1px var(--accent-line), 0 20px 60px rgba(203, 166, 118, 0.1);
+}
+
+.weekday-card--how { justify-content: center; border-style: dashed; border-color: var(--line-strong); background: none; }
+.weekday-card--how h3 { color: var(--ink); font-size: 24px; }
+.weekday-card--how ol { display: grid; gap: 8px; margin: 0; padding-inline-start: 22px; color: var(--ink-soft); }
+
+@media (min-width: 720px) {
+  .weekday-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .weekday-card { padding: 24px; }
+}
+
+@media (min-width: 1100px) {
+  .weekday-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.weekday-ribbon { min-width: 0; }
+.weekday-ribbon p { max-width: 62ch; margin: 0 0 16px; color: var(--ink-soft); }
+.weekday-ribbon ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.weekday-ribbon a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 12px 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  background: var(--surface);
+  text-align: center;
+  text-decoration: none;
+  transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.weekday-ribbon a:hover { border-color: var(--accent); background: var(--surface-2); }
+.weekday-ribbon .weekday-mark { width: 40px; height: 40px; }
+.weekday-ribbon__day { color: var(--ink); font-weight: 600; }
+.weekday-ribbon__planet { color: var(--ink-soft); font-size: 14px; }
+.moon-month .weekday-ribbon { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }

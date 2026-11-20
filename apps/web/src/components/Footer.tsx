@@ -5,6 +5,7 @@ import { LUNAR_CALENDAR_PATH } from "@/lib/lunar-calendar-paths";
 import { MOON_PATH } from "@/lib/moon-paths";
 import { SECTIONS } from "@/lib/sections";
 import { SOCIAL_LINKS } from "@/lib/site";
+import { WEEKDAY_PATH } from "@/lib/weekday-paths";
 
 const PRACTICES = SECTIONS.filter((section) => section.short !== "Блог");
 const MORE = [
@@ -40,6 +41,7 @@ export function Footer() {
             {/* Не в SECTIONS: этот список общий с шапкой, а там уже семь разделов */}
             <Link href={MOON_PATH}>Луна сегодня</Link>
             <Link href={LUNAR_CALENDAR_PATH}>Лунный календарь</Link>
+            <Link href={WEEKDAY_PATH}>Дни недели и планеты</Link>
           </div>
         </nav>
         <nav aria-label="О проекте" className="footer__col">

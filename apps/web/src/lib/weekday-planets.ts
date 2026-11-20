@@ -1,0 +1,137 @@
+import { MATRIX_PATH } from "./arcana-paths";
+import { LILA_PATH } from "./lila-paths";
+import { MOON_PATH } from "./moon-paths";
+import { NATAL_PATH } from "./natal-paths";
+import { TARO_SPREADS_PATH } from "./taro-paths";
+import { WEEKDAY_PATH } from "./weekday-paths";
+
+export { WEEKDAY_PATH };
+
+export type PlanetGlyph = "moon" | "mars" | "mercury" | "jupiter" | "venus" | "saturn" | "sun";
+
+export type WeekdayPlanet = {
+  slug: string;
+  day: string;
+  dayShort: string;
+  planet: string;
+  // «день Луны», «день Марса»
+  planetGenitive: string;
+  glyph: PlanetGlyph;
+  archetype: string;
+  question: string;
+  // Ссылка на практику сайта: просто повод заглянуть, без утверждений о «связи» планеты с точками матрицы
+  practice: { href: string; label: string; lead: string };
+};
+
+// Классический порядок планет-покровителей, от понедельника до воскресенья. Тексты — владелицы сайта; без обещаний, «можно» и «нельзя» на планету не перекладываем
+export const WEEKDAY_PLANETS: readonly WeekdayPlanet[] = [
+  {
+    slug: "ponedelnik",
+    day: "Понедельник",
+    dayShort: "Пн",
+    planet: "Луна",
+    planetGenitive: "Луны",
+    glyph: "moon",
+    archetype: "Забота, ритм, интуиция, внутреннее состояние.",
+    question: "Что сегодня требует моего мягкого внимания и заботы, а не жёсткого контроля?",
+    practice: { href: MOON_PATH, label: "Луна сегодня", lead: "Хороший день, чтобы прислушаться к себе и заглянуть в лунный ритм." },
+  },
+  {
+    slug: "vtornik",
+    day: "Вторник",
+    dayShort: "Вт",
+    planet: "Марс",
+    planetGenitive: "Марса",
+    glyph: "mars",
+    archetype: "Действие, границы, импульс, защита.",
+    question: "Где сегодня мне важно чётко обозначить свои границы или сделать один маленький, но решительный шаг?",
+    practice: { href: LILA_PATH, label: "Лила", lead: "Один шаг по полю игры — как один шаг в жизни: небольшой и свой." },
+  },
+  {
+    slug: "sreda",
+    day: "Среда",
+    dayShort: "Ср",
+    planet: "Меркурий",
+    planetGenitive: "Меркурия",
+    glyph: "mercury",
+    archetype: "Информация, общение, обучение, связи.",
+    question: "Какую мысль я сегодня пытаюсь донести или, наоборот, какую информацию мне стоит проверить, прежде чем делать выводы?",
+    practice: { href: NATAL_PATH, label: "Натальная карта", lead: "Отличный момент, чтобы разобраться в деталях своей карты." },
+  },
+  {
+    slug: "chetverg",
+    day: "Четверг",
+    dayShort: "Чт",
+    planet: "Юпитер",
+    planetGenitive: "Юпитера",
+    glyph: "jupiter",
+    archetype: "Смыслы, расширение, щедрость, масштаб.",
+    question: "Где я могу позволить себе чуть больше свободы, доверия или масштаба, не теряя опоры?",
+    practice: { href: TARO_SPREADS_PATH, label: "Расклады Таро", lead: "День для вопросов о смысле: выберите расклад и посмотрите на ситуацию шире." },
+  },
+  {
+    slug: "pyatnitsa",
+    day: "Пятница",
+    dayShort: "Пт",
+    planet: "Венера",
+    planetGenitive: "Венеры",
+    glyph: "venus",
+    archetype: "Гармония, эстетика, удовольствие, отношения.",
+    question: "Что сегодня может принести мне чувство красоты, комфорта или искренней связи с другим человеком?",
+    practice: { href: "/sovmestimost", label: "Совместимость", lead: "Время подумать об отношениях: посмотрите, чем вы с близким человеком похожи и чем различаетесь." },
+  },
+  {
+    slug: "subbota",
+    day: "Суббота",
+    dayShort: "Сб",
+    planet: "Сатурн",
+    planetGenitive: "Сатурна",
+    glyph: "saturn",
+    archetype: "Структура, дисциплина, время, пределы.",
+    question: "Какая граница, правило или пауза сегодня помогает мне сохранять устойчивость и не распыляться?",
+    practice: { href: "/numerologiya/grafik-sudby", label: "График судьбы", lead: "День подвести итоги и честно посмотреть на свои годы и периоды." },
+  },
+  {
+    slug: "voskresenie",
+    day: "Воскресенье",
+    dayShort: "Вс",
+    planet: "Солнце",
+    planetGenitive: "Солнца",
+    glyph: "sun",
+    archetype: "Ядро личности, жизненные силы, видимость, творчество.",
+    question: "В чём сегодня я могу позволить себе быть собой, без оглядки на чужие ожидания?",
+    practice: { href: MATRIX_PATH, label: "Матрица судьбы", lead: "День вернуться к себе: рассчитайте матрицу и перечитайте, что в ней о вашем ядре." },
+  },
+];
+
+const WEEKDAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
+const moscowWeekday = new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone: "Europe/Moscow" });
+
+// Индекс в WEEKDAY_PLANETS (0 — понедельник) для момента `date`: день недели по Москве, как и на страницах Луны
+export function weekdayIndex(date: Date): number {
+  const index = WEEKDAY_NAMES.indexOf(moscowWeekday.format(date) as (typeof WEEKDAY_NAMES)[number]);
+  return (index + 6) % 7;
+}
+
+export function weekdayPlanet(date: Date): WeekdayPlanet {
+  return WEEKDAY_PLANETS[weekdayIndex(date)]!;
+}
+
+export const WEEKDAY_FAQ: readonly { question: string; answer: string }[] = [
+  {
+    question: "Почему дням недели соответствуют планеты?",
+    answer: "Так сложилось в античной традиции: семь классических «блуждающих светил» — Луна, Марс, Меркурий, Юпитер, Венера, Сатурн и Солнце — поставили в ряд по порядку, и каждый день получил своего покровителя. Следы этого видны в названиях дней во многих языках, например по-французски mardi — день Марса, а по-английски Saturday — день Сатурна.",
+  },
+  {
+    question: "Это прогноз на день?",
+    answer: "Нет. Планета дня не разрешает и не запрещает вам никаких действий и ничего не предсказывает. Её образ служит мягкой подсказкой, на чём сегодня можно задержать внимание, и вопросом, который удобно задать себе.",
+  },
+  {
+    question: "Нужно ли строить дела по планете дня?",
+    answer: "Не нужно. Это способ вести наблюдение за собой: сравнить, что вы чувствуете и делаете, с образом дня. Планы, работа и решения остаются за вами и вашими обстоятельствами.",
+  },
+  {
+    question: "Какой день недели на сайте — по какому времени?",
+    answer: "По Москве, как и в лунном календаре и в карте дня: день меняется в полночь по московскому времени.",
+  },
+];

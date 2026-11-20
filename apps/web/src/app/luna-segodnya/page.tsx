@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MoonExplorer, type MoonView } from "@/components/moon/MoonExplorer";
+import { WeekdayStrip } from "@/components/weekday/WeekdayStrip";
+import { weekdayPlanet } from "@/lib/weekday-planets";
 import type { MoonSnapshot } from "@oracle/core/moon";
 import { DISCLAIMER } from "@/lib/legal";
 import { currentMonthPath } from "@/lib/lunar-calendar-paths";
@@ -71,6 +73,9 @@ export default function MoonTodayPage() {
             {today.signSummary && <article className="moon-text__block" data-kind="sign"><h3>Луна {today.signName}</h3><p>{today.signSummary.text}</p></article>}
           </section>
         )}
+        <div className="weekday-today">
+          <WeekdayStrip planet={weekdayPlanet(new Date())} />
+        </div>
         <section className="moon-links" aria-labelledby="moon-links-title">
           <h2 id="moon-links-title">Продолжить</h2>
           <ul>
