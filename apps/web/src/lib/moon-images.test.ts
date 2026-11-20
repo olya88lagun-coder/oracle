@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { PHASES } from "@oracle/core/moon/visual";
 import { describe, expect, test } from "vitest";
-import { PHASE_IMAGE_PHASES, phaseImage } from "./moon-images";
+import { PHASE_IMAGE_PHASES, phaseImage, SIGN_IMAGE_SIGNS, signImage } from "./moon-images";
 
 // Папка public находится рядом с src: ищем от файла теста, а не от текущей папки, чтобы CI из корня репозитория находил картинки
 const onDisk = (url: string) => existsSync(fileURLToPath(new URL(`../../public${url}`, import.meta.url)));
@@ -25,5 +25,23 @@ describe("phase pictures", () => {
 
   test("a phase that is not in the list gets null instead of a path to a missing file", () => {
     expect(phaseImage("unknown" as never)).toBeNull();
+  });
+});
+
+describe("sign pictures", () => {
+  test("all twelve signs are listed, and each has all three sizes on disk", () => {
+    expect(SIGN_IMAGE_SIGNS).toHaveLength(12);
+    expect(new Set(SIGN_IMAGE_SIGNS).size).toBe(12);
+    for (const sign of SIGN_IMAGE_SIGNS) for (const size of [960, 480, 160] as const) expect(onDisk(signImage(sign, size)!), `${sign} ${size}`).toBe(true);
+  });
+
+  test("the paths follow the same pattern as the phase pictures", () => {
+    expect(signImage("scorpio")).toBe("/luna/signs/scorpio.webp");
+    expect(signImage("scorpio", 480)).toBe("/luna/signs/scorpio-480.webp");
+    expect(signImage("scorpio", 160)).toBe("/luna/signs/scorpio-160.webp");
+  });
+
+  test("an unknown sign gets null instead of a path to a missing file", () => {
+    expect(signImage("ophiuchus" as never)).toBeNull();
   });
 });
