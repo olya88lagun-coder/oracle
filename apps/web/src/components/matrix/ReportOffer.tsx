@@ -18,11 +18,11 @@ import { chapterTeaser, QUESTION_TOPICS, type TeaserChapter } from "./chapter-te
 type CompatContext = { dateLabel: string; saveFirstNote: ReactNode; onLoginClick: () => void };
 // free — владелица сайта: платное для неё бесплатно, почта не нужна, цели Метрики не считаются
 type Props = { state: Exclude<OfferState, { kind: "hidden" }>; matrix: Matrix; onSaveDate: () => Promise<boolean>; compat?: CompatContext; free?: boolean };
-type Goals = { view: Goal; click: Goal };
+type Goals = { view: Goal; click: Goal; sticky: Goal };
 
 const PRICE = `${MATRIX_REPORT_PRICE_KOPECKS / 100} ₽`;
-const MATRIX_GOALS: Goals = { view: "report_offer_view", click: "report_offer_click" };
-const COMPAT_GOALS: Goals = { view: "compat_offer_view", click: "compat_offer_click" };
+const MATRIX_GOALS: Goals = { view: "report_offer_view", click: "report_offer_click", sticky: "report_sticky_click" };
+const COMPAT_GOALS: Goals = { view: "compat_offer_view", click: "compat_offer_click", sticky: "compat_sticky_click" };
 
 // Главы, кроме выбранной темы, «запечатаны»: тонкий замок у номера. Выбранная глава отмечена — это та, о которой человек хочет прочитать
 function ChapterList({ matrix, topic }: { matrix: Matrix; topic: TeaserChapter }) {
@@ -237,7 +237,7 @@ export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }:
       {/* Другое имя, чтобы не дублировать «Купить разбор — …» / «Войти и купить разбор — …»: настоящая кнопка и форма остаются в блоке выше */}
       {showSticky && (
         <div className="report-offer__sticky">
-          <a className="button button--lavender" href="#report-offer-action">
+          <a className="button button--lavender" href="#report-offer-action" onClick={() => reachGoal(goals.sticky)}>
             К покупке разбора — <span className="nowrap">{PRICE}</span>
           </a>
         </div>
