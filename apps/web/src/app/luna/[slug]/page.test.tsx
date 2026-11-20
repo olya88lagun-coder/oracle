@@ -77,6 +77,19 @@ describe("the phases page", () => {
     expect(markup).toContain("Сейчас:");
   });
 
+  test("all eight cards show the engraving as a decorative picture", async () => {
+    const markup = await render("fazy-luny");
+    expect(markup.match(/class="moon-phase-art"/g)).toHaveLength(8);
+    expect(markup.match(/alt=""[^>]*class="moon-phase-art"|class="moon-phase-art"[^>]*alt=""/g)).toHaveLength(8);
+    expect(markup).toContain("/luna/phases/waningCrescent-480.webp");
+    expect(markup).toContain("/luna/phases/full-480.webp");
+  });
+
+  test("the preview picture of the link is the first quarter engraving", async () => {
+    const metadata = await generateMetadata({ params: Promise.resolve({ slug: "fazy-luny" }) });
+    expect(JSON.stringify(metadata.openGraph)).toContain("/luna/phases/firstQuarter.webp");
+  });
+
   test("does not link to itself in the continue block", async () => {
     expect(await render("fazy-luny")).not.toContain('<a href="/luna/fazy-luny">');
   });

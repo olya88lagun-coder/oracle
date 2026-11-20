@@ -3,6 +3,7 @@ import { MOON_EXTRA_TEXTS_ACCEPTED, PHASES_FAQ, PHASES_INTRO, yearFaq, yearIntro
 import { moonSnapshot, moonYearEvents, nextMoonEvent, PHASES, SUPERMOON_KM, type PhaseId } from "@oracle/core/moon";
 import { EVENT_NAMES, isInWindow, momentLabel, SIGN_NAMES } from "./lunar-calendar";
 import { lunarMonthPath, moscowDate } from "./lunar-calendar-paths";
+import { phaseImage } from "./moon-images";
 import { PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-today";
 import { yearMoonPath, yearWindow } from "./moon-year-paths";
 
@@ -70,7 +71,7 @@ export type PhasesPage = {
   now: { phase: PhaseId; phaseName: string; percent: number; signLocative: string };
   schema: { phase: PhaseId; name: string; illumination: number; waxing: boolean; current: boolean }[];
   upcoming: { name: string; label: string; date: string }[];
-  cards: { phase: PhaseId; title: string; text: string; question: string }[];
+  cards: { phase: PhaseId; title: string; text: string; question: string; image: string | null }[];
   intro: string | null;
   faq: { question: string; answer: string }[];
 };
@@ -90,7 +91,7 @@ export function buildPhasesPage(now: Date): PhasesPage {
     upcoming,
     cards: PHASES.flatMap((phase) => {
       const text = phaseText(phase);
-      return text ? [{ phase, title: text.title, text: text.text, question: text.question }] : [];
+      return text ? [{ phase, title: text.title, text: text.text, question: text.question, image: phaseImage(phase, 480) }] : [];
     }),
     intro: MOON_EXTRA_TEXTS_ACCEPTED ? PHASES_INTRO : null,
     faq: MOON_EXTRA_TEXTS_ACCEPTED ? [...PHASES_FAQ] : [],
