@@ -164,9 +164,15 @@ describe("buildMonthPage(2026, 11)", () => {
   });
 
   test("carries the accepted FAQ with the dates of the month", () => {
-    expect(page.faq).toHaveLength(4);
+    // Четыре вопроса с датами месяца и три вопроса о том, чего календарь не делает (приняты 20 ноября 2026)
+    expect(page.faq).toHaveLength(7);
     expect(page.faq[0]!.question).toBe("Когда новолуние в ноябре 2026?");
     expect(page.faq[1]!.answer).toMatch(/24 ноября, 17:5\d/);
+    expect(page.faq.slice(4).map((item) => item.question)).toEqual([
+      "Почему календарь не делит дни на удачные и неудачные?",
+      "Влияет ли фаза Луны на расчёт матрицы судьбы или натальной карты?",
+      "Что сайт хранит о моих вопросах и раскладах?",
+    ]);
   });
 });
 
