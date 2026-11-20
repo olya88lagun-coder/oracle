@@ -77,12 +77,12 @@ describe("the phases page", () => {
     expect(markup).toContain("Сейчас:");
   });
 
-  test("seven cards show the engraving as a decorative picture with its sizes, and the full moon card has none", async () => {
+  test("all eight cards show the engraving as a decorative picture", async () => {
     const markup = await render("fazy-luny");
-    expect(markup.match(/class="moon-phase-art"/g)).toHaveLength(7);
-    expect(markup.match(/alt=""[^>]*class="moon-phase-art"|class="moon-phase-art"[^>]*alt=""/g)).toHaveLength(7);
+    expect(markup.match(/class="moon-phase-art"/g)).toHaveLength(8);
+    expect(markup.match(/alt=""[^>]*class="moon-phase-art"|class="moon-phase-art"[^>]*alt=""/g)).toHaveLength(8);
     expect(markup).toContain("/luna/phases/waningCrescent-480.webp");
-    expect(markup).not.toContain("/luna/phases/full");
+    expect(markup).toContain("/luna/phases/full-480.webp");
   });
 
   test("the preview picture of the link is the first quarter engraving", async () => {

@@ -18,7 +18,12 @@ describe("phase pictures", () => {
     expect(phaseImage("firstQuarter", 160)).toBe("/luna/phases/firstQuarter-160.webp");
   });
 
-  test("only the full moon has no picture yet, and it says so with null instead of a path to a missing file", () => {
-    expect(PHASES.filter((phase) => phaseImage(phase) === null)).toEqual(["full"]);
+  test("all eight phases have a picture", () => {
+    expect(PHASES.filter((phase) => phaseImage(phase) === null)).toEqual([]);
+    expect(PHASE_IMAGE_PHASES).toHaveLength(8);
+  });
+
+  test("a phase that is not in the list gets null instead of a path to a missing file", () => {
+    expect(phaseImage("unknown" as never)).toBeNull();
   });
 });
