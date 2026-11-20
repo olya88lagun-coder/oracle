@@ -11,6 +11,7 @@ import { MoonMonthExplorer } from "@/components/moon/MoonMonthExplorer";
 import { MoonSignRibbon } from "@/components/moon/MoonSignRibbon";
 import { MoonTodayMark } from "@/components/moon/MoonTodayMark";
 import { NatalSprite } from "@/components/natal/NatalSprite";
+import { WeekdayRibbon } from "@/components/weekday/WeekdayRibbon";
 import { DISCLAIMER } from "@/lib/legal";
 import { buildMonthPage, CURVE_HEIGHT, CURVE_WIDTH, isInWindow, MONTH_NAMES, monthWindow } from "@/lib/lunar-calendar";
 import { lunarMonthPath, parseMonthSlug } from "@/lib/lunar-calendar-paths";
@@ -101,6 +102,7 @@ export default async function LunarMonthPage({ params }: Params) {
         <MoonMonthEvents items={page.timeline} />
         <MoonKeyPoints items={page.keyPoints} />
         <MoonMonthDays rows={page.rows} guide={page.guide} />
+        <WeekdayRibbon />
         {page.faq.length > 0 && (
           <section className="moon-faq" id="moon-month-faq" aria-labelledby="moon-month-faq-title">
             <h2 id="moon-month-faq-title">Вопросы о лунном календаре</h2>
