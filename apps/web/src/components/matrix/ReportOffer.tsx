@@ -4,7 +4,7 @@ import { MATRIX_REPORT_PRICE_KOPECKS, reportChapters, type Matrix } from "@oracl
 import { arcanumByNumber } from "@oracle/content";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { checkoutParams, reachGoal, reachGoalThenNavigate, type CheckoutProduct, type Goal } from "@/lib/analytics";
 import { arcanumImage, MATRIX_PATH } from "@/lib/arcana-paths";
 import { loginHref } from "@/lib/next-path";
@@ -144,8 +144,27 @@ export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }:
   const chapterNumber = reportChapters(matrix).findIndex((chapter) => chapter.id === topic) + 1;
   const goals = compat ? COMPAT_GOALS : MATRIX_GOALS;
   const ref = useOfferViewGoal(goals.view, !free);
+  const sectionRef = useRef<HTMLElement>(null);
+  const actionRef = useRef<HTMLDivElement>(null);
+  // Липкая кнопка (только телефон, см. CSS): пока блок продажи на экране, а настоящая кнопка с формой — нет
+  const [showSticky, setShowSticky] = useState(false);
+  const canSticky = !free && (state.kind === "guest" || state.kind === "buy");
+  useEffect(() => {
+    const section = sectionRef.current;
+    const action = actionRef.current;
+    if (!canSticky || !section || !action || typeof IntersectionObserver === "undefined") return;
+    let inSection = false;
+    let inAction = false;
+    const update = () => setShowSticky(inSection && !inAction);
+    // последняя запись — самое свежее состояние
+    const sectionObserver = new IntersectionObserver((entries) => { inSection = entries.at(-1)?.isIntersecting ?? inSection; update(); });
+    const actionObserver = new IntersectionObserver((entries) => { inAction = entries.at(-1)?.isIntersecting ?? inAction; update(); });
+    sectionObserver.observe(section);
+    actionObserver.observe(action);
+    return () => { sectionObserver.disconnect(); actionObserver.disconnect(); };
+  }, [canSticky]);
   return (
-    <section className="card card--accent report-offer" aria-labelledby="report-offer-title">
+    <section ref={sectionRef} className="card card--accent report-offer" aria-labelledby="report-offer-title">
       <div className="stack report-offer__main">
         <p className="eyebrow">{compat ? `Разбор вашей матрицы · по дате ${compat.dateLabel}` : "Разбор всей матрицы"}</p>
         <h2 ref={ref} id="report-offer-title" className="report-offer__title">
@@ -156,7 +175,7 @@ export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }:
             ? "Личный разбор по вашей дате рождения. Внутри семь глав вашей матрицы и эксперимент на 7 дней. Отдельный платный разбор пары здесь не предлагается."
             : "Получите семь глав по вашей матрице: о личности и центре, задаче, отношениях, деньгах и деле, роде, предназначениях и вашем сценарии. В итоговой главе есть эксперимент на 7 дней и вопрос для себя."}
         </p>
-        <div className="stack report-offer__action">
+        <div ref={actionRef} id="report-offer-action" className="stack report-offer__action">
           <OfferAction state={state} onSaveDate={onSaveDate} goals={goals} compat={compat} free={free} />
           <p className="muted">
             Разовая оплата за разбор одной даты. Готов за несколько минут, хранится в «Моём портрете», пока вы не удалите свои данные, и скачивается в PDF.
@@ -215,6 +234,14 @@ export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }:
           <Link className="text-link" href="/matrica-sudby/primer">Посмотреть полный пример и PDF</Link>
         </div>
       </div>
+      {/* Другое имя, чтобы не дублировать «Купить разбор — …» / «Войти и купить разбор — …»: настоящая кнопка и форма остаются в блоке выше */}
+      {showSticky && (
+        <div className="report-offer__sticky">
+          <a className="button button--lavender" href="#report-offer-action">
+            К покупке разбора — <span className="nowrap">{PRICE}</span>
+          </a>
+        </div>
+      )}
     </section>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { preload } from "react-dom";
 import { YearArcanaCatalog } from "@/components/year-arcana/YearArcanaCatalog";
 import { YearCalculator } from "@/components/year-arcana/YearCalculator";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
@@ -17,6 +18,8 @@ export const metadata: Metadata = publicMetadata({
 });
 
 export default function YearPage() {
+  // Картинка круга лежит в CSS-фоне и без подсказки находится поздно, а это вход рекламы
+  preload("/images/matrix/matrix-stone-1000.webp", { as: "image", fetchPriority: "high" });
   const data = {
     "@context": "https://schema.org",
     "@graph": [
