@@ -44,6 +44,10 @@ export default function HomePage() {
   return (
     <main className="home">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd()) }} />
+      {/* Декоративная нить у левого края: рисуется при прокрутке (CSS), только на широком экране */}
+      <svg className="page-thread-line" viewBox="0 0 24 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path d="M12 0 C 2 120, 22 240, 12 360 S 2 600, 12 720 S 22 880, 12 1000" pathLength="1" vectorEffect="non-scaling-stroke" />
+      </svg>
       <section className="hero">
         <div className="hero__art">
           <Image src="/hero.webp" alt="" fill priority unoptimized sizes="100vw" />
