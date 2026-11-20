@@ -5306,6 +5306,21 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 @keyframes scroll-rise { from { opacity: 0; translate: 0 36px; } }
 @keyframes hero-sink { to { translate: 0 36px; opacity: 0.55; } }
 
+/* Плёночное зерно поверх всего сайта: неподвижный тайл шума в 4 %, не ловит клики. Отключается при повышенном контрасте и печати */
+body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: 0.04;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+@media (prefers-contrast: more), print { body::after { display: none; } }
+
+/* Тонкая золотая нить у левого края главной: прочерчивается по мере прокрутки страницы. Только широкий экран (в боковом поле), только при разрешённой анимации */
+.page-thread-line { display: none; }
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 900px) {
+    .page-thread-line { position: fixed; top: 0; left: 0; z-index: 1; display: block; width: 24px; height: 100vh; pointer-events: none; }
+    .page-thread-line path { fill: none; stroke: var(--accent); stroke-opacity: 0.55; stroke-width: 1; stroke-dasharray: 1; stroke-dashoffset: 1; animation: thread-line-draw linear both; animation-timeline: scroll(root block); }
+  }
+}
+@keyframes thread-line-draw { to { stroke-dashoffset: 0; } }
+
 /* Продажа разбора: выбор темы вопроса, «запечатанная» основа главы, замки у остальных глав */
 .report-offer__topics { gap: 10px; }
 .report-offer__topics > * { margin: 0; }
