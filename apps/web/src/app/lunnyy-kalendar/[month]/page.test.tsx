@@ -58,13 +58,20 @@ describe("the November 2026 page", () => {
     expect(count(html, /class="moon-month__next"/g)).toBe(1);
   });
 
-  test("has the accepted intro and four questions with real dates, and breadcrumbs and FAQ in JSON-LD", async () => {
+  test("has the accepted intro and seven questions (four with real dates), and breadcrumbs and FAQ in JSON-LD", async () => {
     const html = await render();
     const json = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ?? "";
     expect(json).toContain("BreadcrumbList");
     expect(json).toContain("FAQPage");
     expect(html).toContain("moon-month__intro");
-    expect(count(html, /<details/g)).toBe(4);
+    expect(count(html, /<details/g)).toBe(7);
+    // Принятые тексты: сводка месяца, четыре ключевые точки с образом знака и вопросом, пояснение к таблице и якорь на ключевые точки
+    expect(html).toContain("В ноябре 2026 года новолуние — 9 ноября, 10:02");
+    expect(count(html, /class="moon-keypoints__item"/g)).toBe(4);
+    expect(html).toContain('href="#moon-key-points"');
+    expect(html).toContain("moon-days__guide");
+    // Ссылки на расклады стоят в ключевых точках и не повторяются в «Событиях месяца»
+    expect(count(html, /moon-events__action/g)).toBe(2);
     expect(html).toContain("Когда полнолуние в ноябре 2026?");
     expect(html).toMatch(/24 ноября, 17:5\d/);
   });

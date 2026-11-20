@@ -4,7 +4,7 @@ import type { TimelineItem } from "@/lib/lunar-calendar";
 import { MoonMonthEvents } from "./MoonMonthEvents";
 
 const items: TimelineItem[] = [
-  { kind: "new", title: "Новолуние", label: "9 ноября, 10:02", date: "2026-11-09", at: 1 },
+  { kind: "new", title: "Новолуние", label: "9 ноября, 10:02", date: "2026-11-09", at: 1, action: { label: "Расклад на новолуние", href: "/taro/rasklady/novolunie" } },
   { kind: "sign", title: "Луна входит в знак: Телец", label: "10 ноября, 04:30", date: "2026-11-10", at: 2 },
 ];
 
@@ -15,6 +15,8 @@ describe("MoonMonthEvents", () => {
     expect(html.match(/<li /g)).toHaveLength(2);
     expect(html).toContain('<time dateTime="2026-11-09">9 ноября, 10:02</time>');
     expect(html).toContain("Луна входит в знак: Телец");
+    expect(html).toContain('<a class="moon-events__action" href="/taro/rasklady/novolunie">Расклад на новолуние</a>');
+    expect(html.match(/moon-events__action/g)).toHaveLength(1);
     expect(html).not.toMatch(/благоприятн|неблагоприятн|удачн/i);
   });
 

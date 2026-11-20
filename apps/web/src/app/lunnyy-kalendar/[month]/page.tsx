@@ -2,6 +2,8 @@ import { monthIntro } from "@oracle/content/moon-calendar";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { MoonHub } from "@/components/moon/MoonHub";
+import { MoonKeyPoints } from "@/components/moon/MoonKeyPoints";
 import { MoonLightCurve } from "@/components/moon/MoonLightCurve";
 import { MoonMonthDays } from "@/components/moon/MoonMonthDays";
 import { MoonMonthEvents } from "@/components/moon/MoonMonthEvents";
@@ -13,10 +15,8 @@ import { DISCLAIMER } from "@/lib/legal";
 import { buildMonthPage, CURVE_HEIGHT, CURVE_WIDTH, isInWindow, MONTH_NAMES, monthWindow } from "@/lib/lunar-calendar";
 import { lunarMonthPath, parseMonthSlug } from "@/lib/lunar-calendar-paths";
 import { MOON_PATH } from "@/lib/moon-paths";
-import { NATAL_PATH } from "@/lib/natal-paths";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
-import { TARO_DAY_PATH } from "@/lib/taro-paths";
 
 type Params = { params: Promise<{ month: string }> };
 
@@ -75,6 +75,7 @@ export default async function LunarMonthPage({ params }: Params) {
           <h1>{page.title}</h1>
           <p className="moon-hero__place">По Москве</p>
           {intro && <p className="moon-month__intro">{intro}</p>}
+          {page.summary && <p className="moon-month__intro">{page.summary}</p>}
         </header>
         <nav className="moon-month__nav" aria-label="Месяцы">
           {page.prev && <Link className="moon-month__prev" href={page.prev.href}>← {page.prev.label}</Link>}
@@ -83,25 +84,30 @@ export default async function LunarMonthPage({ params }: Params) {
             {page.months.map((item) => <li key={item.href}><Link href={item.href} aria-current={item.current ? "page" : undefined}>{item.label}</Link></li>)}
           </ul>
         </nav>
+        <nav className="moon-month__nav" aria-label="Разделы страницы">
+          <ul className="moon-month__list">
+            <li><a href="#moon-calendar">Календарь</a></li>
+            <li><a href="#moon-events">События месяца</a></li>
+            {page.keyPoints.length > 0 && <li><a href="#moon-key-points">Ключевые точки</a></li>}
+            <li><a href="#moon-days">День за днём</a></li>
+            {page.faq.length > 0 && <li><a href="#moon-month-faq">Вопросы</a></li>}
+          </ul>
+        </nav>
         <MoonLightCurve curve={page.curve} width={CURVE_WIDTH} height={CURVE_HEIGHT} />
-        <MoonMonthExplorer weeks={page.weeks} days={page.cells} events={page.events} initialIndex={initialIndex} />
+        <div id="moon-calendar">
+          <MoonMonthExplorer weeks={page.weeks} days={page.cells} events={page.events} initialIndex={initialIndex} />
+        </div>
         <MoonSignRibbon segments={page.ribbon} />
         <MoonMonthEvents items={page.timeline} />
-        <MoonMonthDays rows={page.rows} />
+        <MoonKeyPoints items={page.keyPoints} />
+        <MoonMonthDays rows={page.rows} guide={page.guide} />
         {page.faq.length > 0 && (
-          <section className="moon-faq" aria-labelledby="moon-month-faq-title">
+          <section className="moon-faq" id="moon-month-faq" aria-labelledby="moon-month-faq-title">
             <h2 id="moon-month-faq-title">Вопросы о лунном календаре</h2>
             {page.faq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
           </section>
         )}
-        <section className="moon-links" aria-labelledby="moon-month-links-title">
-          <h2 id="moon-month-links-title">Продолжить</h2>
-          <ul>
-            <li><Link className="touch-link" href={MOON_PATH}>Луна сегодня</Link></li>
-            <li><Link className="touch-link" href={TARO_DAY_PATH}>Вытянуть карту дня</Link></li>
-            <li><Link className="touch-link" href={NATAL_PATH}>Какая Луна в вашей натальной карте</Link></li>
-          </ul>
-        </section>
+        <MoonHub now={new Date()} current={path} id="moon-month-links-title" />
         <p className="moon-disclaimer">{DISCLAIMER}</p>
       </main>
     </>

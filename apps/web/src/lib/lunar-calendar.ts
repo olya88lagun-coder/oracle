@@ -1,11 +1,13 @@
 import { MONTH_FAQ_TEMPLATES, MOON_CALENDAR_TEXTS_ACCEPTED, type MonthFacts, type PhaseKind } from "@oracle/content/moon-calendar";
-import { daysInMonth, moonMonth, type MoonEvent, type SignRun } from "@oracle/core/moon";
+import { DAILY_GUIDE, KEY_POINT_ASTRONOMY, KEY_POINTS_NOTE, KEY_POINTS_TITLE, keyPointQuestion, MONTH_FAQ_EXTRA, MOON_EXTRA_TEXTS_ACCEPTED, monthSummary, SIGN_SYMBOLS } from "@oracle/content/moon-year";
+import { daysInMonth, moonMonth, moonSnapshot, type MoonEvent, type SignRun } from "@oracle/core/moon";
 import type { PhaseId } from "@oracle/core/moon/visual";
 import type { SignId } from "@oracle/core/natal";
 import { isInWindow, lunarMonthPath, monthFromIndex, monthIndex, monthWindow, moscowDate, type YearMonth } from "./lunar-calendar-paths";
+import { PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-today";
+import { TARO_SPREADS_PATH } from "./taro-paths";
 
 export { isInWindow, monthWindow };
-import { PHASE_NAMES } from "./moon-today";
 
 export const MONTH_NAMES: readonly string[] = ["январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"];
 
@@ -14,7 +16,12 @@ export const SIGN_NAMES: Record<SignId, string> = {
   libra: "Весы", scorpio: "Скорпион", sagittarius: "Стрелец", capricorn: "Козерог", aquarius: "Водолей", pisces: "Рыбы",
 };
 
-const EVENT_NAMES: Record<MoonEvent["kind"], string> = { new: "Новолуние", firstQuarter: "Первая четверть", full: "Полнолуние", lastQuarter: "Последняя четверть" };
+export const EVENT_NAMES: Record<MoonEvent["kind"], string> = { new: "Новолуние", firstQuarter: "Первая четверть", full: "Полнолуние", lastQuarter: "Последняя четверть" };
+// Расклады «Новолуние» и «Полнолуние» — календарный повод, а не влияние Луны; слаги совпадают со слагами в taro-spreads-extra.ts (тест это проверяет)
+export const SPREAD_ACTIONS: Partial<Record<MoonEvent["kind"], { label: string; href: string }>> = {
+  new: { label: "Расклад на новолуние", href: `${TARO_SPREADS_PATH}/novolunie` },
+  full: { label: "Расклад на полнолуние", href: `${TARO_SPREADS_PATH}/polnolunie` },
+};
 // Освещённость в момент события: так отметки стоят на кривой точно, а не по ближайшему дню
 const EVENT_ILLUMINATION: Record<MoonEvent["kind"], number> = { new: 0, firstQuarter: 0.5, full: 1, lastQuarter: 0.5 };
 
@@ -25,6 +32,8 @@ const dayMonthFormat = format({ day: "numeric", month: "long" });
 const shortFormat = format({ day: "numeric", month: "short" });
 const capital = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
 const clock = (date: Date): string => clockFormat.format(date);
+// «9 ноября, 10:02» по Москве
+export const momentLabel = (date: Date): string => `${dayMonthFormat.format(date)}, ${clock(date)}`;
 const shortLabel = (date: Date): string => `${shortFormat.format(date).replace(/\.$/, "")}, ${clock(date)}`;
 
 // Кривая освещённости по дням: одна точка в середине суточного слота, 0 внизу и 1 вверху. area замкнута по нижнему краю
@@ -61,9 +70,32 @@ export type CalendarDay = {
   riseSet: string;
 };
 // Событие ленты «События месяца»: главная фаза или переход Луны в другой знак; at — миллисекунды, по ним лента упорядочена
-export type TimelineItem = { kind: MoonEvent["kind"] | "sign"; title: string; label: string; date: string; at: number };
+export type TimelineItem = { kind: MoonEvent["kind"] | "sign"; title: string; label: string; date: string; at: number; action?: { label: string; href: string } };
 
-export type CalendarEvent = { kind: MoonEvent["kind"]; name: string; label: string; date: string; dayIndex: number };
+// Ключевая точка месяца: фаза с точным временем, знак Луны на этот момент, астрономия, образ знака и вопрос к себе; ссылка на расклад — у новолуния и полнолуния
+export type KeyPoint = { kind: MoonEvent["kind"]; title: string; label: string; date: string; signLocative: string; astronomy: string; symbol: string; question: string; action?: { label: string; href: string } };
+
+export function keyPointsOf(events: readonly MoonEvent[], accepted: boolean = MOON_EXTRA_TEXTS_ACCEPTED): KeyPoint[] {
+  if (!accepted) return [];
+  return events.map((event) => {
+    const { sign } = moonSnapshot(event.at);
+    return {
+      kind: event.kind,
+      title: EVENT_NAMES[event.kind],
+      label: momentLabel(event.at),
+      date: moscowDate(event.at),
+      signLocative: SIGN_NAMES_LOCATIVE[sign],
+      astronomy: KEY_POINT_ASTRONOMY[event.kind],
+      symbol: SIGN_SYMBOLS[sign],
+      question: keyPointQuestion(event.kind, sign),
+      action: SPREAD_ACTIONS[event.kind],
+    };
+  });
+}
+
+export const KEY_POINTS_COPY = { title: KEY_POINTS_TITLE, note: KEY_POINTS_NOTE };
+
+export type CalendarEvent ={ kind: MoonEvent["kind"]; name: string; label: string; date: string; dayIndex: number };
 export type DayRow = { date: string; label: string; phaseName: string; percent: number; lunar: string; signName: string; riseSet: string };
 
 export type MonthPage = {
@@ -82,6 +114,9 @@ export type MonthPage = {
   next: { label: string; href: string } | null;
   months: { label: string; href: string; current: boolean }[];
   faq: { question: string; answer: string }[];
+  summary: string | null;
+  keyPoints: KeyPoint[];
+  guide: { intro: string; items: readonly string[] } | null;
 };
 
 export const CURVE_WIDTH = 720;
@@ -105,13 +140,17 @@ function faqFromEvents(year: number, month: number, events: readonly CalendarEve
 
 // Главные фазы и переходы в новый знак по порядку времени. Начало месяца (знак, в котором Луна уже стоит) в ленту не входит: это не событие месяца
 export function monthTimeline(events: readonly MoonEvent[], signRuns: readonly SignRun[]): TimelineItem[] {
-  const label = (at: Date) => `${dayMonthFormat.format(at)}, ${clock(at)}`;
-  const phases = events.map((event): TimelineItem => ({ kind: event.kind, title: EVENT_NAMES[event.kind], label: label(event.at), date: moscowDate(event.at), at: event.at.getTime() }));
-  const signs = signRuns.slice(1).map((run): TimelineItem => ({ kind: "sign", title: `Луна входит в знак: ${SIGN_NAMES[run.sign]}`, label: label(run.from), date: moscowDate(run.from), at: run.from.getTime() }));
+  const phases = events.map((event): TimelineItem => ({ kind: event.kind, title: EVENT_NAMES[event.kind], label: momentLabel(event.at), date: moscowDate(event.at), at: event.at.getTime(), action: SPREAD_ACTIONS[event.kind] }));
+  const signs = signRuns.slice(1).map((run): TimelineItem => ({ kind: "sign", title: `Луна входит в знак: ${SIGN_NAMES[run.sign]}`, label: momentLabel(run.from), date: moscowDate(run.from), at: run.from.getTime() }));
   return [...phases, ...signs].sort((a, b) => a.at - b.at);
 }
 
 export const monthFaq = (year: number, month: number): { question: string; answer: string }[] => faqFromEvents(year, month, toCalendarEvents(moonMonth(year, month).events));
+
+function summaryOf(year: number, month: number, events: readonly MoonEvent[], signChanges: number): string {
+  const items = (kind: MoonEvent["kind"]) => events.filter((event) => event.kind === kind).map((event) => ({ label: momentLabel(event.at), signLocative: SIGN_NAMES_LOCATIVE[moonSnapshot(event.at).sign] }));
+  return monthSummary({ monthLocative: MONTH_LOCATIVE[month - 1]!, year, new: items("new"), full: items("full"), signChanges });
+}
 
 const monthLabel = ({ year, month }: YearMonth): string => `${capital(MONTH_NAMES[month - 1]!)} ${year}`;
 
@@ -167,7 +206,8 @@ export function buildMonthPage(year: number, month: number, now: Date): MonthPag
     cells,
     weeks,
     events,
-    timeline: monthTimeline(data.events, data.signRuns),
+    // Ссылки на расклады стоят в «Ключевых точках»; пока их нет, они остаются в «Событиях месяца», чтобы не повторяться на странице
+    timeline: monthTimeline(data.events, data.signRuns).map((item) => (MOON_EXTRA_TEXTS_ACCEPTED ? { ...item, action: undefined } : item)),
     signRuns: data.signRuns.map((run) => ({ signName: SIGN_NAMES[run.sign], label: `${shortLabel(run.from)} — ${shortLabel(run.to)}` })),
     ribbon: ribbonSegments(data.signRuns, start, end),
     curve: { ...curve, events: markers },
@@ -176,6 +216,10 @@ export function buildMonthPage(year: number, month: number, now: Date): MonthPag
     next: neighbour(here + 1),
     months: window.map((item) => ({ label: monthLabel(item), href: lunarMonthPath(item.year, item.month), current: monthIndex(item) === here })),
     // Вопросы показываются только после того, как владелица приняла тексты
-    faq: MOON_CALENDAR_TEXTS_ACCEPTED ? faqFromEvents(year, month, events) : [],
+    faq: [...(MOON_CALENDAR_TEXTS_ACCEPTED ? faqFromEvents(year, month, events) : []), ...(MOON_EXTRA_TEXTS_ACCEPTED ? MONTH_FAQ_EXTRA : [])],
+    // Сводка, ключевые точки и пояснение к таблице — только после приёмки новых текстов
+    summary: MOON_EXTRA_TEXTS_ACCEPTED ? summaryOf(year, month, data.events, data.signRuns.length - 1) : null,
+    keyPoints: keyPointsOf(data.events),
+    guide: MOON_EXTRA_TEXTS_ACCEPTED ? DAILY_GUIDE : null,
   };
 }
