@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import type { CalendarDay, CalendarEvent } from "@/lib/lunar-calendar";
 import { moscowDate } from "@/lib/lunar-calendar-paths";
@@ -58,9 +60,20 @@ export function MoonMonthExplorer({ weeks, days, events, initialIndex }: { weeks
             <time dateTime={day.date}>{day.label}</time> · {day.phaseName} · освещено {percent(day)} %
           </figcaption>
         </figure>
+        <div className="moon-month__cards">
+          <figure className="moon-month__sign-card">
+            {day.signImage && <Image className="moon-sign-art" src={day.signImage} alt="" width={480} height={480} unoptimized sizes="140px" />}
+            <figcaption><span>Знак Луны</span><strong>{day.signName}</strong></figcaption>
+          </figure>
+          <div className="moon-month__day-card">
+            <span>Лунные сутки</span>
+            <strong>{day.lunarNumber}-е{day.lunarSymbol ? ` · «${day.lunarSymbol}»` : ""}</strong>
+            {day.lunarChange && <small>{day.lunarChange}</small>}
+            <Link href={day.dayHref}>О лунных сутках →</Link>
+          </div>
+        </div>
+        {day.lunarQuestion && <p className="moon-month__day-question">{day.lunarQuestion}</p>}
         <dl className="moon-month__details">
-          <div><dt>Лунные сутки</dt><dd>{day.lunarNumber}-е{day.lunarChange ? `, ${day.lunarChange}` : ""}</dd></div>
-          <div><dt>Знак Луны</dt><dd>{day.signName}</dd></div>
           <div><dt>Восход и заход</dt><dd>{day.riseSet}</dd></div>
         </dl>
       </aside>
