@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { renderPathPoster, renderPoster, renderThreadPoster, type PathPosterSpec, type PosterSpec, type ThreadPosterSpec } from "@/lib/poster";
+import type { MoonPosterSpec } from "@/lib/poster-moon";
+import { renderMoonPoster } from "@/lib/poster-moon-render";
 
 // «Картинка для сторис»: рисуется в браузере и скачивается или уходит в окно «Поделиться» вместе с файлом. Ни дат, ни данных на сервер
-export function PosterButton({ spec, label = "Картинка для сторис" }: { spec: PosterSpec | PathPosterSpec | ThreadPosterSpec; label?: string }) {
+export function PosterButton({ spec, label = "Картинка для сторис" }: { spec: PosterSpec | PathPosterSpec | ThreadPosterSpec | MoonPosterSpec; label?: string }) {
   const [state, setState] = useState<"idle" | "busy" | "done" | "error">("idle");
 
   async function make() {
@@ -12,7 +14,7 @@ export function PosterButton({ spec, label = "Картинка для стори
     try {
       const serif = getComputedStyle(document.querySelector("h1, h2") ?? document.body).fontFamily;
       const fonts = { serif, sans: getComputedStyle(document.body).fontFamily };
-      const blob = "thread" in spec ? await renderThreadPoster(spec, fonts) : "trail" in spec ? await renderPathPoster(spec, fonts) : await renderPoster(spec, fonts);
+      const blob = "moon" in spec ? await renderMoonPoster(spec, fonts) : "thread" in spec ? await renderThreadPoster(spec, fonts) : "trail" in spec ? await renderPathPoster(spec, fonts) : await renderPoster(spec, fonts);
       const file = new File([blob], `${spec.fileName}.png`, { type: "image/png" });
       if (navigator.canShare?.({ files: [file] })) {
         try {

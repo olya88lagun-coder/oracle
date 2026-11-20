@@ -35,9 +35,9 @@ export function wrapLines(measure: Measure, text: string, maxWidth: number): str
   return lines;
 }
 
-const COLORS = { bg: "#0A090E", ink: "#F1E9DF", soft: "#B9AFA5", accent: "#CBA676", line: "rgba(203, 166, 118, 0.38)" } as const;
+export const COLORS = { bg: "#0A090E", ink: "#F1E9DF", soft: "#B9AFA5", accent: "#CBA676", line: "rgba(203, 166, 118, 0.38)" } as const;
 
-function loadImage(src: string): Promise<HTMLImageElement> {
+export function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve(image);
@@ -46,7 +46,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+export function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
   ctx.arcTo(x + w, y, x + w, y + h, r);
