@@ -6827,6 +6827,10 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
 .moon-keypoints__item dt { margin-top: 8px; color: var(--ink-soft); font-size: 14px; }
 .moon-keypoints__item dd { max-width: 70ch; margin: 0; }
 .moon-keypoints__item .moon-events__action { grid-column: auto; }
+.moon-day-facts { display: grid; gap: 2px; margin: 0; }
+.moon-day-facts dt { margin-top: 10px; color: var(--ink-soft); font-size: 14px; }
+.moon-day-facts dd { margin: 0; }
+.moon-links--days ol a { min-width: 44px; justify-content: center; }
 .moon-days__guide { max-width: 75ch; margin-bottom: 14px; color: var(--ink-soft); }
 .moon-days__guide p { margin: 0 0 8px; }
 .moon-days__guide ul { margin: 0; padding-inline-start: 20px; }
