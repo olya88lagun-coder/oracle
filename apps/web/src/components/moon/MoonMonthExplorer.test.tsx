@@ -41,12 +41,16 @@ describe("MoonMonthExplorer", () => {
     expect(html).toMatch(/--i:\s*29[";]/);
   });
 
-  test("shows the chosen day in the panel: a caption read aloud and three details", () => {
+  test("shows the chosen day in the panel: a caption read aloud, the engraving of the sign, the lunar day with its symbol and the rise and set", () => {
     expect(html).toContain('id="moon-month-selected"');
     expect(html).toContain('aria-live="polite"');
     expect(/id="moon-month-selected"[\s\S]*?<\/figcaption>/.exec(html)?.[0]).toContain("Первая четверть");
-    expect(count(/<dt>/g)).toBe(3);
-    for (const term of ["Лунные сутки", "Знак Луны", "Восход и заход"]) expect(html).toContain(term);
+    expect(count(/class="moon-sign-art"/g)).toBe(1);
+    expect(html).toMatch(/src="\/luna\/signs\/[a-z]+-480\.webp"/);
+    expect(count(/<dt>/g)).toBe(1);
+    for (const term of ["Знак Луны", "Лунные сутки", "Восход и заход"]) expect(html).toContain(term);
+    expect(html).toMatch(/href="\/luna\/sutki\/\d+"[^>]*>О лунных сутках →/);
+    expect(html).toContain("moon-month__day-question");
   });
 
   test("has a button for each key date with its kind, and no forbidden words", () => {

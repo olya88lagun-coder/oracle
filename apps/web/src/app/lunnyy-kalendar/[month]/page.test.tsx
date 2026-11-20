@@ -64,7 +64,9 @@ describe("the November 2026 page", () => {
     expect(json).toContain("BreadcrumbList");
     expect(json).toContain("FAQPage");
     expect(html).toContain("moon-month__intro");
-    expect(count(html, /<details/g)).toBe(7);
+    // Семь вопросов и по одной кнопке «Подробнее» у каждой из четырёх ключевых точек
+    expect(count(html, /<details/g)).toBe(7 + 4);
+    expect(count(html, /class="moon-keypoints__more"/g)).toBe(4);
     // Принятые тексты: сводка месяца, четыре ключевые точки с образом знака и вопросом, пояснение к таблице и якорь на ключевые точки
     expect(html).toContain("В ноябре 2026 года новолуние — 9 ноября, 10:02");
     expect(count(html, /class="moon-keypoints__item"/g)).toBe(4);
@@ -74,6 +76,20 @@ describe("the November 2026 page", () => {
     expect(count(html, /moon-events__action/g)).toBe(2);
     expect(html).toContain("Когда полнолуние в ноябре 2026?");
     expect(html).toMatch(/24 ноября, 17:5\d/);
+  });
+
+  test("the first screen holds the compact head and the calendar with the day panel; the long texts and the charts come below the key points", async () => {
+    const html = await render();
+    const at = (needle: string) => html.indexOf(needle);
+    expect(html).toContain("moon-month__head moon-month__head--compact");
+    // Вступление и сводка не в шапке, а в разделе «О календаре» ниже ключевых точек
+    expect(/moon-month__head[\s\S]*?<\/header>/.exec(html)?.[0]).not.toContain("moon-month__intro");
+    expect(at("id=\"moon-calendar\"")).toBeLessThan(at("id=\"moon-key-points\""));
+    expect(at("id=\"moon-key-points\"")).toBeLessThan(at("moon-about"));
+    expect(at("moon-about")).toBeLessThan(at("moon-curve"));
+    expect(at("moon-curve")).toBeLessThan(at("id=\"moon-events\""));
+    expect(at("id=\"moon-events\"")).toBeLessThan(at("id=\"moon-days\""));
+    expect(html).toContain("О календаре на ноябрь 2026");
   });
 
   test("has links onward, the disclaimer and no forbidden words", async () => {

@@ -1,3 +1,4 @@
+import { lunarDayText } from "@oracle/content/moon";
 import { MONTH_FAQ_TEMPLATES, MOON_CALENDAR_TEXTS_ACCEPTED, type MonthFacts, type PhaseKind } from "@oracle/content/moon-calendar";
 import { DAILY_GUIDE, KEY_POINT_ASTRONOMY, KEY_POINTS_NOTE, KEY_POINTS_TITLE, keyPointQuestion, MONTH_FAQ_EXTRA, MOON_EXTRA_TEXTS_ACCEPTED, monthSummary, SIGN_SYMBOLS } from "@oracle/content/moon-year";
 import { daysInMonth, moonMonth, moonSnapshot, type MoonEvent, type SignRun } from "@oracle/core/moon";
@@ -5,6 +6,7 @@ import type { PhaseId } from "@oracle/core/moon/visual";
 import type { SignId } from "@oracle/core/natal";
 import { isInWindow, lunarMonthPath, monthFromIndex, monthIndex, monthWindow, moscowDate, type YearMonth } from "./lunar-calendar-paths";
 import { signImage } from "./moon-images";
+import { dayPath } from "./moon-year-paths";
 import { PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-today";
 import { TARO_SPREADS_PATH } from "./taro-paths";
 
@@ -69,6 +71,11 @@ export type CalendarDay = {
   lunarChange: string | null;
   signName: string;
   riseSet: string;
+  // Для панели выбранного дня: гравюра знака, символ и вопрос лунных суток (после приёмки текстов суток), страница этих суток
+  signImage: string | null;
+  lunarSymbol: string | null;
+  lunarQuestion: string | null;
+  dayHref: string;
 };
 // Событие ленты «События месяца»: главная фаза или переход Луны в другой знак; at — миллисекунды, по ним лента упорядочена
 export type TimelineItem = { kind: MoonEvent["kind"] | "sign"; title: string; label: string; date: string; at: number; action?: { label: string; href: string } };
@@ -177,6 +184,10 @@ export function buildMonthPage(year: number, month: number, now: Date): MonthPag
       lunarChange: change,
       signName: SIGN_NAMES[day.snapshot.sign],
       riseSet: `${day.rise ? clock(day.rise) : "—"} / ${day.set ? clock(day.set) : "—"}`,
+      signImage: signImage(day.snapshot.sign, 480),
+      lunarSymbol: lunarDayText(day.lunarDay.number)?.symbol ?? null,
+      lunarQuestion: lunarDayText(day.lunarDay.number)?.question ?? null,
+      dayHref: dayPath(day.lunarDay.number),
     };
   });
 

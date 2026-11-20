@@ -72,11 +72,9 @@ export default async function LunarMonthPage({ params }: Params) {
         <NatalSprite />
         <MoonTodayMark year={year} month={month} />
         <nav aria-label="Хлебные крошки" className="moon-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href={MOON_PATH}>Луна сегодня</Link><span aria-hidden="true">/</span><span>{page.title}</span></nav>
-        <header className="moon-month__head">
+        <header className="moon-month__head moon-month__head--compact">
           <h1>{page.title}</h1>
           <p className="moon-hero__place">По Москве</p>
-          {intro && <p className="moon-month__intro">{intro}</p>}
-          {page.summary && <p className="moon-month__intro">{page.summary}</p>}
         </header>
         <nav className="moon-month__nav" aria-label="Месяцы">
           {page.prev && <Link className="moon-month__prev" href={page.prev.href}>← {page.prev.label}</Link>}
@@ -88,19 +86,26 @@ export default async function LunarMonthPage({ params }: Params) {
         <nav className="moon-month__nav" aria-label="Разделы страницы">
           <ul className="moon-month__list">
             <li><a href="#moon-calendar">Календарь</a></li>
-            <li><a href="#moon-events">События месяца</a></li>
             {page.keyPoints.length > 0 && <li><a href="#moon-key-points">Ключевые точки</a></li>}
+            <li><a href="#moon-events">События месяца</a></li>
             <li><a href="#moon-days">День за днём</a></li>
             {page.faq.length > 0 && <li><a href="#moon-month-faq">Вопросы</a></li>}
           </ul>
         </nav>
-        <MoonLightCurve curve={page.curve} width={CURVE_WIDTH} height={CURVE_HEIGHT} />
         <div id="moon-calendar">
           <MoonMonthExplorer weeks={page.weeks} days={page.cells} events={page.events} initialIndex={initialIndex} />
         </div>
+        <MoonKeyPoints items={page.keyPoints} />
+        {(intro || page.summary) && (
+          <section className="moon-about" aria-labelledby="moon-about-title">
+            <h2 id="moon-about-title">О календаре на {MONTH_NAMES[month - 1]} {year}</h2>
+            {intro && <p className="moon-month__intro">{intro}</p>}
+            {page.summary && <p className="moon-month__intro">{page.summary}</p>}
+          </section>
+        )}
+        <MoonLightCurve curve={page.curve} width={CURVE_WIDTH} height={CURVE_HEIGHT} />
         <MoonSignRibbon segments={page.ribbon} />
         <MoonMonthEvents items={page.timeline} />
-        <MoonKeyPoints items={page.keyPoints} />
         <MoonMonthDays rows={page.rows} guide={page.guide} />
         <WeekdayRibbon />
         {page.faq.length > 0 && (
