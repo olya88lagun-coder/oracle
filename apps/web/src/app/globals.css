@@ -6827,6 +6827,13 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
 .moon-keypoints__item dt { margin-top: 8px; color: var(--ink-soft); font-size: 14px; }
 .moon-keypoints__item dd { max-width: 70ch; margin: 0; }
 .moon-keypoints__item .moon-events__action { grid-column: auto; }
+/* Гравюра знака Луны рядом с текстом ключевой точки: на телефоне над текстом, от 700px слева */
+.moon-keypoints__item[data-image="true"] { display: grid; gap: 14px; align-items: start; }
+.moon-sign-art { width: min(100%, 220px); height: auto; border-radius: var(--radius); }
+@media (min-width: 700px) {
+  .moon-keypoints__item[data-image="true"] { grid-template-columns: 200px minmax(0, 1fr); gap: 20px; }
+  .moon-sign-art { width: 200px; }
+}
 .moon-day-facts { display: grid; gap: 2px; margin: 0; }
 .moon-day-facts dt { margin-top: 10px; color: var(--ink-soft); font-size: 14px; }
 .moon-day-facts dd { margin: 0; }

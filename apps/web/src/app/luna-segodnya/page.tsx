@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MoonExplorer, type MoonView } from "@/components/moon/MoonExplorer";
+import { PosterButton } from "@/components/PosterButton";
+import { moonPosterSpec } from "@/lib/poster-moon";
 import { WeekdayStrip } from "@/components/weekday/WeekdayStrip";
 import { weekdayPlanet } from "@/lib/weekday-planets";
 import type { MoonSnapshot } from "@oracle/core/moon";
@@ -64,6 +66,7 @@ export default function MoonTodayPage() {
             <li className="moon-tile" data-kind="rise"><span className="moon-tile__label">Восход и заход</span><span className="moon-tile__value">{today.rise ?? "—"} / {today.set ?? "—"}</span><span className="moon-tile__note">по Москве</span></li>
           </ul>
           <p className="moon-next">Ближайшая смена: {today.next.label}</p>
+          <p className="moon-poster"><PosterButton spec={moonPosterSpec(today)} /></p>
           </>}
         />
         {hasTexts && (

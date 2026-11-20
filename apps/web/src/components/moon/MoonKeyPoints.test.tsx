@@ -47,6 +47,14 @@ describe("MoonKeyPoints", () => {
     for (const word of FORBIDDEN_MOON_WORDS) expect(text, word).not.toContain(word);
   });
 
+  test("every key point shows the engraving of the Moon's sign as a decorative picture", () => {
+    expect(november.map((point) => point.signImage)).toEqual(["/luna/signs/leo-480.webp", "/luna/signs/scorpio-480.webp", "/luna/signs/aquarius-480.webp", "/luna/signs/gemini-480.webp"]);
+    const html = renderToStaticMarkup(<MoonKeyPoints items={november} />);
+    expect(html.match(/class="moon-sign-art"/g)).toHaveLength(4);
+    expect(html).toContain("/luna/signs/scorpio-480.webp");
+    expect(html.match(/alt=""/g)).toHaveLength(4);
+  });
+
   test("renders nothing without key points", () => {
     expect(renderToStaticMarkup(<MoonKeyPoints items={[]} />)).toBe("");
   });

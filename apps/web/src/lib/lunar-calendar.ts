@@ -4,6 +4,7 @@ import { daysInMonth, moonMonth, moonSnapshot, type MoonEvent, type SignRun } fr
 import type { PhaseId } from "@oracle/core/moon/visual";
 import type { SignId } from "@oracle/core/natal";
 import { isInWindow, lunarMonthPath, monthFromIndex, monthIndex, monthWindow, moscowDate, type YearMonth } from "./lunar-calendar-paths";
+import { signImage } from "./moon-images";
 import { PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-today";
 import { TARO_SPREADS_PATH } from "./taro-paths";
 
@@ -73,7 +74,7 @@ export type CalendarDay = {
 export type TimelineItem = { kind: MoonEvent["kind"] | "sign"; title: string; label: string; date: string; at: number; action?: { label: string; href: string } };
 
 // Ключевая точка месяца: фаза с точным временем, знак Луны на этот момент, астрономия, образ знака и вопрос к себе; ссылка на расклад — у новолуния и полнолуния
-export type KeyPoint = { kind: MoonEvent["kind"]; title: string; label: string; date: string; signLocative: string; astronomy: string; symbol: string; question: string; action?: { label: string; href: string } };
+export type KeyPoint = { kind: MoonEvent["kind"]; title: string; label: string; date: string; signLocative: string; signImage: string | null; astronomy: string; symbol: string; question: string; action?: { label: string; href: string } };
 
 export function keyPointsOf(events: readonly MoonEvent[], accepted: boolean = MOON_EXTRA_TEXTS_ACCEPTED): KeyPoint[] {
   if (!accepted) return [];
@@ -85,6 +86,7 @@ export function keyPointsOf(events: readonly MoonEvent[], accepted: boolean = MO
       label: momentLabel(event.at),
       date: moscowDate(event.at),
       signLocative: SIGN_NAMES_LOCATIVE[sign],
+      signImage: signImage(sign, 480),
       astronomy: KEY_POINT_ASTRONOMY[event.kind],
       symbol: SIGN_SYMBOLS[sign],
       question: keyPointQuestion(event.kind, sign),
