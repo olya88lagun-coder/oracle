@@ -63,6 +63,12 @@ describe("buildPhasesPage", () => {
     expect(page.intro).toContain("восемь фаз");
     expect(page.faq).toHaveLength(3);
   });
+
+  test("seven phase cards carry a picture of the 480 px size, the full moon card has none yet", () => {
+    expect(page.cards.filter((card) => card.image).length).toBe(7);
+    expect(page.cards.find((card) => card.phase === "full")!.image).toBeNull();
+    expect(page.cards.find((card) => card.phase === "lastQuarter")!.image).toBe("/luna/phases/lastQuarter-480.webp");
+  });
 });
 
 describe("month page additions", () => {

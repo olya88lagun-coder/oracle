@@ -6839,6 +6839,13 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
 .moon-phases__item .moon-mini { width: 56px; height: 56px; }
 .moon-phases__item[aria-current="true"] { border-color: var(--accent-line); color: var(--ink); }
 .moon-phases .moon-text__block { margin-top: 18px; }
+/* Гравюра фазы рядом с текстом: на телефоне над текстом, от 700px слева; у фазы без картинки текст идёт на всю ширину */
+.moon-phases .moon-text__block[data-image="true"] { display: grid; gap: 14px; align-items: start; }
+.moon-phase-art { width: min(100%, 220px); height: auto; border-radius: var(--radius); }
+@media (min-width: 700px) {
+  .moon-phases .moon-text__block[data-image="true"] { grid-template-columns: 200px minmax(0, 1fr); gap: 20px; }
+  .moon-phase-art { width: 200px; }
+}
 /* Переход по якорю не прячет заголовок раздела под шапкой */
 .moon-month [id^="moon-"] { scroll-margin-top: 88px; }
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MoonDisc } from "@/components/moon/MoonDisc";
@@ -6,6 +7,7 @@ import { MoonHead, MoonFaq, moonJsonLd } from "@/components/moon/MoonPageParts";
 import { MoonHub } from "@/components/moon/MoonHub";
 import { DISCLAIMER } from "@/lib/legal";
 import { buildEclipsePage, buildRetroPage, type EclipsePage, type RetroPage } from "@/lib/moon-events";
+import { phaseImage } from "@/lib/moon-images";
 import { buildPhasesPage, buildYearPage, type PhasesPage, type YearPage } from "@/lib/moon-year";
 import { parseYearSlug, PHASES_PATH, PHASES_SLUG, YEAR_PAGE_KINDS, yearMoonPath, yearMoonSlug, yearWindow } from "@/lib/moon-year-paths";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
@@ -41,7 +43,7 @@ const faqOf = (built: Built): readonly { question: string; answer: string }[] =>
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { built, path } = build((await params).slug, new Date());
-  if (built.type === "phases") return publicMetadata({ title: `${PHASES_TITLE}: восемь фаз и ближайшие переходы`, description: PHASES_DESCRIPTION, path });
+  if (built.type === "phases") return publicMetadata({ title: `${PHASES_TITLE}: восемь фаз и ближайшие переходы`, description: PHASES_DESCRIPTION, path, image: { url: phaseImage("firstQuarter")!, alt: "Луна в первой четверти: гравюра" } });
   return publicMetadata({ title: `${built.page.title} года: даты и время по Москве`, description: built.page.description, path });
 }
 
@@ -201,10 +203,13 @@ function PhasesView({ page }: { page: PhasesPage }) {
         <section className="moon-phases" aria-labelledby="moon-phases-cards-title">
           <h2 id="moon-phases-cards-title">Что говорит о каждой фазе традиция</h2>
           {page.cards.map((card) => (
-            <article key={card.phase} className="moon-text__block" data-phase={card.phase}>
-              <h3>{card.title}</h3>
-              <p>{card.text}</p>
-              <p className="moon-text__question">{card.question}</p>
+            <article key={card.phase} className="moon-text__block" data-phase={card.phase} data-image={card.image ? "true" : undefined}>
+              {card.image && <Image className="moon-phase-art" src={card.image} alt="" width={480} height={480} unoptimized sizes="200px" />}
+              <div>
+                <h3>{card.title}</h3>
+                <p>{card.text}</p>
+                <p className="moon-text__question">{card.question}</p>
+              </div>
             </article>
           ))}
         </section>
