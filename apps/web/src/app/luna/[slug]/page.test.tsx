@@ -82,12 +82,58 @@ describe("the phases page", () => {
   });
 });
 
+describe("the eclipse page", () => {
+  test("lists the four eclipses of 2026 with kinds, times in Moscow and visibility, and has one h1", async () => {
+    const markup = await render("zatmeniya-2026");
+    expect(markup.match(/<h1/g)).toHaveLength(1);
+    expect(markup).toContain("<h1>Затмения 2026</h1>");
+    expect(markup.match(/class="moon-days__row"/g)).toHaveLength(4);
+    for (const text of ["Кольцеобразное солнечное затмение", "Полное лунное затмение", "Полное солнечное затмение", "Частное лунное затмение", "Видно частично", "Не видно"]) expect(markup, text).toContain(text);
+  });
+
+  test("the text of the questions waits for the owner: only the data is on the page", async () => {
+    const markup = await render("zatmeniya-2026");
+    expect(graphOf(markup).map((entry) => entry["@type"])).toEqual(["WebPage", "BreadcrumbList"]);
+    expect(markup).not.toContain("<details");
+  });
+});
+
+describe("the retrograde pages", () => {
+  test("Mercury 2026: three periods, the end of the last one on 13 November, the title in the right gender", async () => {
+    const markup = await render("retrograd-merkuriya-2026");
+    expect(markup).toContain("<h1>Ретроградный Меркурий 2026</h1>");
+    expect(markup.match(/class="moon-days__row"/g)).toHaveLength(3);
+    expect(markup).toContain("13 ноября");
+  });
+
+  test("Venus has its own title and a page for every year of the window", async () => {
+    expect(await render("retrograd-venery-2026")).toContain("<h1>Ретроградная Венера 2026</h1>");
+    await expect(render("retrograd-venery-2030")).rejects.toThrow("NEXT_NOT_FOUND");
+  });
+
+  test("a year without a retrograde period says so instead of showing an empty table", async () => {
+    const markups = await Promise.all(["retrograd-venery-2025", "retrograd-venery-2026", "retrograd-venery-2027"].map(render));
+    const empty = markups.filter((markup) => markup.includes("периодов обратного движения нет"));
+    for (const markup of empty) expect(markup).not.toContain("<table");
+  });
+
+  test("the visible text has no forbidden word", async () => {
+    for (const slug of ["zatmeniya-2026", "retrograd-merkuriya-2026", "retrograd-venery-2026"]) {
+      const text = visibleText(await render(slug));
+      for (const word of FORBIDDEN_MOON_WORDS) expect(text, `${slug} ${word}`).not.toContain(word);
+    }
+  });
+});
+
 describe("static params", () => {
-  test("the phases page and two pages for each of the three years", () => {
+  test("the phases page and five pages for each of the three years", () => {
     const slugs = generateStaticParams().map((item) => item.slug);
-    expect(slugs).toHaveLength(7);
+    expect(slugs).toHaveLength(1 + 15);
     expect(slugs).toContain("fazy-luny");
     expect(slugs).toContain("novoluniya-2025");
     expect(slugs).toContain("polnoluniya-2027");
+    expect(slugs).toContain("zatmeniya-2026");
+    expect(slugs).toContain("retrograd-merkuriya-2027");
+    expect(slugs).toContain("retrograd-venery-2025");
   });
 });
