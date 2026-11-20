@@ -177,6 +177,10 @@ export function ReportOffer({ state, matrix, onSaveDate, compat, free = false }:
         </p>
         <div ref={actionRef} id="report-offer-action" className="stack report-offer__action">
           <OfferAction state={state} onSaveDate={onSaveDate} goals={goals} compat={compat} free={free} />
+          {/* Тот же пример, что и ниже, но у кнопки: сомневающийся видит его до решения. Текст другой, чтобы имена ссылок не совпадали */}
+          <p>
+            <Link className="text-link" href="/matrica-sudby/primer">Сначала посмотреть пример разбора</Link>
+          </p>
           <p className="muted">
             Разовая оплата за разбор одной даты. Готов за несколько минут, хранится в «Моём портрете», пока вы не удалите свои данные, и скачивается в PDF.
           </p>
