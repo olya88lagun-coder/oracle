@@ -7977,6 +7977,64 @@ main:has(> .natal-intro)::before {
   .weekday-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
+/* Дни недели: цвет планеты — герой, лента семи дней и карточки */
+[data-planet] .weekday-mark {
+  border-color: color-mix(in srgb, var(--planet) 55%, transparent);
+  background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--planet) 26%, transparent), transparent 62%), var(--surface-2);
+  box-shadow: inset 0 0 0 4px var(--bg), inset 0 0 0 5px color-mix(in srgb, var(--planet) 30%, transparent);
+  color: var(--planet);
+}
+
+.weekday-wheel[data-planet] { max-width: 500px; filter: drop-shadow(0 0 34px color-mix(in srgb, var(--planet) 26%, transparent)); }
+.weekday-wheel[data-planet] .weekday-wheel__centre path { stroke: var(--planet); stroke-width: 0.8; opacity: 0.85; }
+.weekday-wheel[data-planet] .weekday-wheel__halo { stroke: var(--planet); }
+.weekday-wheel[data-planet] .weekday-wheel__node[data-today] .weekday-wheel__disc { stroke: var(--planet); }
+.weekday-wheel[data-planet] .weekday-wheel__node[data-today] .weekday-wheel__glyph path { stroke: var(--planet); }
+.weekday-wheel[data-planet] .weekday-wheel__star { stroke: color-mix(in srgb, var(--planet) 55%, transparent); }
+
+.weekday-hero .weekday-strip { border-color: var(--line-strong); }
+.weekday-hero .weekday-strip__question { font: italic 400 clamp(19px, 2.2vw, 24px)/1.35 var(--font-display); border-inline-start-color: var(--planet); }
+
+.weekday-bar { min-width: 0; padding-block: 4px 22px; }
+.weekday-bar ol {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0;
+  padding: 10px 6px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--surface);
+  list-style: none;
+}
+.weekday-bar__day { display: grid; justify-items: center; align-content: center; gap: 6px; min-height: 44px; padding: 4px 0; color: var(--ink-soft); font-size: 14px; text-decoration: none; }
+.weekday-bar__day .weekday-mark { width: 40px; height: 40px; }
+.weekday-bar__day:is(:hover, :focus-visible) { color: var(--ink); }
+.weekday-bar__day[aria-current="true"] { color: var(--ink); font-weight: 600; }
+.weekday-bar__day[aria-current="true"] .weekday-mark { width: 48px; height: 48px; box-shadow: inset 0 0 0 4px var(--bg), inset 0 0 0 5px color-mix(in srgb, var(--planet) 45%, transparent), 0 0 26px color-mix(in srgb, var(--planet) 38%, transparent); }
+@media (min-width: 720px) {
+  .weekday-bar ol { gap: 10px; padding: 14px 18px; }
+  .weekday-bar__day .weekday-mark { width: 52px; height: 52px; }
+  .weekday-bar__day[aria-current="true"] .weekday-mark { width: 62px; height: 62px; }
+}
+
+.weekday-card[data-planet] {
+  overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--planet) 9%, var(--surface-2)), var(--surface));
+}
+.weekday-card[data-planet]::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--planet); opacity: 0.85; }
+.weekday-card[data-planet] .weekday-card__planet { color: var(--planet); }
+.weekday-card[data-planet] .weekday-card__question { padding: 12px 14px; border: 0; border-inline-start: 2px solid var(--planet); border-radius: 0 14px 14px 0; background: color-mix(in srgb, var(--planet) 8%, transparent); font-size: 20px; }
+.weekday-card[data-planet][data-today] { border-color: var(--planet); box-shadow: 0 0 0 1px color-mix(in srgb, var(--planet) 40%, transparent), 0 20px 60px color-mix(in srgb, var(--planet) 14%, transparent); }
+.weekday-ribbon li[data-planet] a { border-color: color-mix(in srgb, var(--planet) 35%, var(--line-strong)); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .weekday-card[data-planet] { transition: transform 200ms var(--ease-out), border-color 200ms var(--ease-out); }
+  .weekday-card[data-planet]:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--planet) 60%, var(--line)); }
+  .weekday-bar__day .weekday-mark { transition: transform 200ms var(--ease-out); }
+  .weekday-bar__day:hover .weekday-mark { transform: translateY(-2px); }
+}
+
 .weekday-ribbon { min-width: 0; }
 .weekday-ribbon p { max-width: 62ch; margin: 0 0 16px; color: var(--ink-soft); }
 .weekday-ribbon ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
