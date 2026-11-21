@@ -7,7 +7,7 @@ import { WeekdayWheel } from "@/components/weekday/WeekdayWheel";
 import { DISCLAIMER } from "@/lib/legal";
 import { currentMonthPath } from "@/lib/lunar-calendar-paths";
 import { MOON_PATH } from "@/lib/moon-paths";
-import { jsonLdScript, publicMetadata } from "@/lib/seo";
+import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { TARO_DAY_PATH } from "@/lib/taro-paths";
 import { WEEKDAY_FAQ, WEEKDAY_PATH, weekdayIndex, WEEKDAY_PLANETS } from "@/lib/weekday-planets";
@@ -16,6 +16,7 @@ export const metadata: Metadata = publicMetadata({
   title: "Дни недели и планеты: ритм недели",
   description: "Какая планета покровительствует каждому дню недели: образ дня, вопрос для себя и ссылка на практику. Луна, Марс, Меркурий, Юпитер, Венера, Сатурн, Солнце. Не прогноз.",
   path: WEEKDAY_PATH,
+  image: SITE_PREVIEW_IMAGE,
 });
 
 // День недели считаем по Москве в момент запроса, как на «Луне сегодня»: с ISR первый посетитель после полуночи увидел бы вчерашний день

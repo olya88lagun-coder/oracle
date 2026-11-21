@@ -1,8 +1,8 @@
 import { FORBIDDEN_MOON_WORDS } from "@oracle/content/moon";
 import { renderToStaticMarkup } from "react-dom/server";
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import { buildMoonToday, MOON_PATH } from "@/lib/moon-today";
-import Page, { metadata } from "./page";
+import Page, { generateMetadata } from "./page";
 
 const TITLE_SUFFIX = " — Твой оракул";
 const html = () => renderToStaticMarkup(<Page />);
@@ -13,10 +13,31 @@ const graphOf = (markup: string) => {
 };
 
 test("metadata: canonical path, title and description within snippet limits", () => {
+  const metadata = generateMetadata();
   expect(metadata.alternates?.canonical).toBe(MOON_PATH);
   expect(String(metadata.title).length + TITLE_SUFFIX.length).toBeLessThanOrEqual(60);
   expect(String(metadata.description).length).toBeGreaterThanOrEqual(90);
   expect(String(metadata.description).length).toBeLessThanOrEqual(175);
+});
+
+test("the title carries today's date and stays within 60 characters on the longest date", () => {
+  vi.useFakeTimers();
+  try {
+    vi.setSystemTime(new Date("2026-09-30T09:00:00Z"));
+    const title = String(generateMetadata().title);
+    expect(title).toContain("30 сентября");
+    expect(title.length + TITLE_SUFFIX.length).toBeLessThanOrEqual(60);
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+test("the share preview has a moon engraving and JSON-LD says when the data was computed", () => {
+  const metadata = generateMetadata();
+  expect(JSON.stringify(metadata.openGraph?.images)).toMatch(/\/luna\/phases\/[A-Za-z]+\.webp/);
+  expect(metadata.twitter).toMatchObject({ card: "summary_large_image" });
+  const page = graphOf(html()).find((entry) => entry["@type"] === "WebPage") as { dateModified?: string };
+  expect(page.dateModified).toMatch(/^\d{4}-\d{2}-\d{2}T00:00:00\+03:00$/);
 });
 
 test("one h1 that starts with «Луна сегодня,» and says it is for Moscow", () => {

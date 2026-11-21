@@ -132,6 +132,11 @@ describe("metadata and params", () => {
     expect(String(metadata.description).length).toBeLessThanOrEqual(175);
   });
 
+  test("the share preview carries the full-moon engraving", async () => {
+    const metadata = await generateMetadata(params("noyabr-2026"));
+    expect(JSON.stringify(metadata.openGraph?.images)).toContain("/luna/phases/full.webp");
+  });
+
   test("builds the 15 months of the window ahead of time", async () => {
     const list = await generateStaticParams();
     expect(list).toHaveLength(15);

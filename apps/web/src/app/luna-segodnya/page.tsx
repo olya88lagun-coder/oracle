@@ -16,14 +16,21 @@ import { PHASES_PATH, yearMoonPath } from "@/lib/moon-year-paths";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
-export const metadata: Metadata = publicMetadata({
-  title: "Луна сегодня: фаза, знак, лунные сутки",
-  description: "Какая сегодня Луна: фаза и освещённость, знак зодиака, лунные сутки, восход и заход по Москве и фазы на 14 дней вперёд. Бесплатно, без регистрации.",
-  path: MOON_PATH,
-});
-
 // Страница зависит от момента запроса: с ISR первый посетитель после просрочки получил бы вчерашнюю Луну. Расчёт занимает миллисекунды
 export const dynamic = "force-dynamic";
+
+// Дата в заголовке — запрос «луна сегодня 21 ноября»; картинка превью — гравюра сегодняшней фазы. Длина с суффиксом сайта ≤ 60 знаков (самый длинный месяц — «сентября»)
+export function generateMetadata(): Metadata {
+  const now = new Date();
+  const phase = buildMoonToday(now).snapshot.phase;
+  const art = phaseImage(phase);
+  return publicMetadata({
+    title: `Луна сегодня, ${dayMonth.format(now)}: фаза, знак, сутки`,
+    description: "Какая сегодня Луна: фаза и освещённость, знак зодиака, лунные сутки, восход и заход по Москве и фазы на 14 дней вперёд. Бесплатно, без регистрации.",
+    path: MOON_PATH,
+    ...(art && { image: { url: art, alt: `Луна сегодня: ${PHASE_NAMES[phase]}` } }),
+  });
+}
 
 // Картинка карточки: гравюра, а когда её нет (гравюры суток ещё не готовы) — запасной вариант, обычно крупная цифра
 function CardArt({ src, fallback }: { src: string | null; fallback?: string }) {
@@ -50,7 +57,8 @@ export default function MoonTodayPage() {
   const data = {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "WebPage", name: `Луна сегодня, ${today.dateLabel}`, url: `${SITE_URL}${MOON_PATH}`, inLanguage: "ru" },
+      // Данные пересчитаны под сегодняшние сутки по Москве
+      { "@type": "WebPage", name: `Луна сегодня, ${today.dateLabel}`, url: `${SITE_URL}${MOON_PATH}`, inLanguage: "ru", dateModified: `${today.strip[0]!.date}T00:00:00+03:00` },
       { "@type": "FAQPage", mainEntity: MOON_FAQ.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })) },
       { "@type": "BreadcrumbList", itemListElement: [
         { "@type": "ListItem", position: 1, name: "Твой оракул", item: SITE_URL },
