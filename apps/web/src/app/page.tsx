@@ -46,7 +46,10 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd()) }} />
       {/* Декоративная нить у левого края: рисуется при прокрутке (CSS), только на широком экране */}
       <svg className="page-thread-line" viewBox="0 0 24 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-        <path d="M12 0 C 2 120, 22 240, 12 360 S 2 600, 12 720 S 22 880, 12 1000" pathLength="1" vectorEffect="non-scaling-stroke" />
+        {/* Одна кривая в четыре слоя: дорожка, два слоя свечения и яркое ядро (стили — .page-thread-line__* в globals.css) */}
+        {(["track", "halo", "glow", "core"] as const).map((layer) => (
+          <path key={layer} className={`page-thread-line__${layer}`} d="M12 0 C 5 120, 19 240, 12 360 S 5 600, 12 720 S 19 880, 12 1000" pathLength="1" vectorEffect="non-scaling-stroke" />
+        ))}
       </svg>
       <section className="hero">
         <div className="hero__art">
