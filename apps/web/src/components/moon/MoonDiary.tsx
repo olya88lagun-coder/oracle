@@ -5,7 +5,8 @@ import { DIARY_MAX_LENGTH } from "@/lib/moon-diary";
 
 // «Лунный дневник» выбранного дня: одна короткая запись в ответ на вопрос дня. Запись хранится только в этом браузере.
 // Родитель даёт `key` по дате: при смене дня поле создаётся заново с записью нового дня. Несохранённый текст сохраняется, когда поле теряет фокус
-export function MoonDiary({ prompt, note, canWrite, onSave, stats }: { prompt: string; note: string; canWrite: boolean; onSave: (text: string) => void; stats: { inMonth: number; streak: number } }) {
+// `promptHidden` прячет подпись визуально (вопрос уже выведен рядом), для чтения с экрана она остаётся
+export function MoonDiary({ prompt, note, canWrite, onSave, stats, promptHidden = false }: { prompt: string; note: string; canWrite: boolean; onSave: (text: string) => void; stats: { inMonth: number; streak: number }; promptHidden?: boolean }) {
   const [text, setText] = useState(note);
   const [saved, setSaved] = useState(false);
 
@@ -29,7 +30,7 @@ export function MoonDiary({ prompt, note, canWrite, onSave, stats }: { prompt: s
   }
   return (
     <form className="moon-diary" onSubmit={submit}>
-      <label className="moon-diary__prompt" htmlFor="moon-diary-text">{prompt}</label>
+      <label className={`moon-diary__prompt${promptHidden ? " visually-hidden" : ""}`} htmlFor="moon-diary-text">{prompt}</label>
       <textarea id="moon-diary-text" className="input moon-diary__text" rows={2} maxLength={DIARY_MAX_LENGTH} value={text} placeholder="Одна строка о том, что вы заметили" onChange={(event) => { setText(event.target.value); setSaved(false); }} onBlur={() => save(text)} />
       <div className="moon-diary__row">
         <button type="submit" className="button button--ghost">Записать</button>

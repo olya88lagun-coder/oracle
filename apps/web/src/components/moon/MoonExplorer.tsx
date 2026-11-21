@@ -8,11 +8,13 @@ export type { MoonView };
 
 export type MoonCalendarDay = MoonView & { label: string; isToday: boolean };
 
-export function MoonExplorer({ today, days, heading, todayDetails }: {
+export function MoonExplorer({ today, days, heading, todayDetails, ask }: {
   today: MoonView;
   days: readonly MoonCalendarDay[];
   heading: ReactNode;
   todayDetails: ReactNode;
+  // Вопрос дня и запись: стоит сразу под диском, до ленты
+  ask?: ReactNode;
 }) {
   const [selected, setSelected] = useState(0);
   const [started, setStarted] = useState(false);
@@ -32,6 +34,7 @@ export function MoonExplorer({ today, days, heading, todayDetails }: {
           {view.phaseName} · освещено {Math.round(view.illumination * 100)} %
         </figcaption>
       </figure>
+      {ask}
       <MoonStrip days={days} selected={selected} onSelect={select} />
       <div className="moon-hero__today">
         {selected !== 0 && <p className="moon-hero__today-label">Данные на сегодня</p>}

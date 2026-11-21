@@ -45,3 +45,17 @@ test.describe("with reduced motion", () => {
     await expect(page.locator(".moon-strip__day")).toHaveCount(14);
   });
 });
+
+test("the Moon today page lets the visitor write a thought and keeps it only in the browser", async ({ page }) => {
+  const posts: string[] = [];
+  page.on("request", (request) => { if (request.method() === "POST") posts.push(request.url()); });
+  await page.addInitScript(() => window.localStorage.removeItem("moon:diary:v1"));
+  await page.goto("/luna-segodnya");
+  await page.getByRole("button", { name: "Записать мысль на сегодня" }).click();
+  await page.getByPlaceholder("Одна строка о том, что вы заметили").fill("тест");
+  await page.getByRole("button", { name: "Записать", exact: true }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Записано." })).toBeVisible();
+  const stored = await page.evaluate(() => JSON.parse(window.localStorage.getItem("moon:diary:v1") ?? "{}") as Record<string, string>);
+  expect(Object.values(stored)).toContain("тест");
+  expect(posts).toEqual([]);
+});

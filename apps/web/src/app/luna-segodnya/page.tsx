@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MoonDayAsk } from "@/components/moon/MoonDayAsk";
 import { MoonExplorer, type MoonView } from "@/components/moon/MoonExplorer";
 import { PosterButton } from "@/components/PosterButton";
 import { moonPosterSpec } from "@/lib/poster-moon";
@@ -34,6 +35,7 @@ export default function MoonTodayPage() {
   const { snapshot } = today;
   const percent = Math.round(snapshot.illumination * 100);
   const hasTexts = Boolean(today.texts.phase || today.texts.day);
+  const question = today.texts.day?.question ?? today.texts.phase?.question;
   const data = {
     "@context": "https://schema.org",
     "@graph": [
@@ -57,6 +59,7 @@ export default function MoonTodayPage() {
             label,
             isToday,
           }))}
+          ask={question ? <MoonDayAsk date={today.strip[0]!.date} question={question} /> : undefined}
           heading={<><h1>Луна сегодня, {today.dateLabel}</h1><p className="moon-hero__place">По Москве</p></>}
           todayDetails={<>
           <ul className="moon-tiles">
