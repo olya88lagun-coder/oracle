@@ -81,3 +81,22 @@ test("the question comes after the disc and before the 14-day strip", () => {
   expect(ask).toBeGreaterThan(markup.indexOf("moon-disc__caption"));
   expect(ask).toBeLessThan(markup.indexOf("moon-strip__list"));
 });
+
+const card = (markup: string, kind: string) => new RegExp(`<article class="moon-text__block" data-kind="${kind}">([\\s\\S]*?)</article>`).exec(markup)?.[1] ?? "";
+
+test("each of the three cards has a picture area: engravings for the phase and the sign, the day number while the day engravings are not ready", () => {
+  const markup = html();
+  expect(markup.match(/class="moon-text__art"/g)).toHaveLength(3);
+  expect(card(markup, "phase")).toMatch(/src="\/luna\/phases\/[a-zA-Z]+-480\.webp"/);
+  expect(card(markup, "sign")).toMatch(/src="\/luna\/signs\/[a-z]+-480\.webp"/);
+  const day = card(markup, "day");
+  expect(day).not.toContain("<img");
+  expect(day).toContain(`<span class="moon-text__numeral">${buildMoonToday(new Date()).lunarDay.number}</span>`);
+});
+
+test("the cards carry the same small labels as the tiles", () => {
+  const markup = html();
+  expect(card(markup, "phase")).toContain(">Фаза<");
+  expect(card(markup, "day")).toContain(">Лунные сутки<");
+  expect(card(markup, "sign")).toContain(">Знак Луны<");
+});
