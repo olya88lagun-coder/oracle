@@ -12,6 +12,7 @@ import { DISCLAIMER } from "@/lib/legal";
 import { buildMonthPage, isInWindow, MONTH_NAMES, monthWindow } from "@/lib/lunar-calendar";
 import { lunarMonthPath, parseMonthSlug } from "@/lib/lunar-calendar-paths";
 import { collectionItems } from "@/lib/moon-collection-items";
+import { phaseImage } from "@/lib/moon-images";
 import { MOON_PATH } from "@/lib/moon-paths";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -36,7 +37,9 @@ function resolve(slug: string): { year: number; month: number } {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { year, month } = resolve((await params).month);
   const name = `${MONTH_NAMES[month - 1]} ${year}`;
+  const art = phaseImage("full");
   return publicMetadata({
+    ...(art && { image: { url: art, alt: `Лунный календарь на ${name}: полнолуние` } }),
     title: `Лунный календарь на ${name}`,
     description: `Лунный календарь на ${name}: фазы Луны, лунные сутки, знак зодиака и время восхода по дням, новолуние и полнолуние по Москве. Бесплатно.`,
     path: lunarMonthPath(year, month),
