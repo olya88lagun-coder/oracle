@@ -7846,6 +7846,25 @@ main:has(> .natal-intro)::before {
   color: var(--accent-hover);
 }
 
+/* Цвета планет дней недели: приглушённые, каждый читается на тёмной карточке (тест weekday-colors.test.ts). Цвет задаёт data-planet на элементе */
+:root {
+  --planet-moon: #c9ccd6;
+  --planet-mars: #c27b5e;
+  --planet-mercury: #6fa6a3;
+  --planet-jupiter: #5f7fc4;
+  --planet-venus: #d7a99c;
+  --planet-saturn: #9a9aa6;
+  --planet-sun: #e0a84f;
+}
+
+[data-planet="moon"] { --planet: var(--planet-moon); }
+[data-planet="mars"] { --planet: var(--planet-mars); }
+[data-planet="mercury"] { --planet: var(--planet-mercury); }
+[data-planet="jupiter"] { --planet: var(--planet-jupiter); }
+[data-planet="venus"] { --planet: var(--planet-venus); }
+[data-planet="saturn"] { --planet: var(--planet-saturn); }
+[data-planet="sun"] { --planet: var(--planet-sun); }
+
 .weekday-strip {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
