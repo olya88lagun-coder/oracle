@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { PHASES } from "@oracle/core/moon/visual";
 import { describe, expect, test } from "vitest";
-import { PHASE_IMAGE_PHASES, phaseImage, SIGN_IMAGE_SIGNS, signImage } from "./moon-images";
+import { LUNAR_DAY_IMAGES_READY, LUNAR_DAY_SLUGS, lunarDayImage, PHASE_IMAGE_PHASES, phaseImage, SIGN_IMAGE_SIGNS, signImage } from "./moon-images";
 
 // Папка public находится рядом с src: ищем от файла теста, а не от текущей папки, чтобы CI из корня репозитория находил картинки
 const onDisk = (url: string) => existsSync(fileURLToPath(new URL(`../../public${url}`, import.meta.url)));
@@ -43,5 +43,32 @@ describe("sign pictures", () => {
 
   test("an unknown sign gets null instead of a path to a missing file", () => {
     expect(signImage("ophiuchus" as never)).toBeNull();
+  });
+});
+
+describe("lunar day pictures", () => {
+  test("thirty unique slugs in the order of the days", () => {
+    expect(LUNAR_DAY_SLUGS).toHaveLength(30);
+    expect(new Set(LUNAR_DAY_SLUGS).size).toBe(30);
+    expect(LUNAR_DAY_SLUGS[0]).toBe("svetilnik");
+    expect(LUNAR_DAY_SLUGS[11]).toBe("chasha");
+    expect(LUNAR_DAY_SLUGS[29]).toBe("lebed");
+  });
+
+  test("until the engravings are ready the helper returns null", () => {
+    expect(LUNAR_DAY_IMAGES_READY).toBe(false);
+    expect(lunarDayImage(12)).toBeNull();
+  });
+
+  test("the paths use two-digit numbers and the same size suffixes as the other pictures", () => {
+    expect(lunarDayImage(12, 480, true)).toBe("/luna/days/12-chasha-480.webp");
+    expect(lunarDayImage(1, 960, true)).toBe("/luna/days/01-svetilnik.webp");
+    expect(lunarDayImage(30, 160, true)).toBe("/luna/days/30-lebed-160.webp");
+  });
+
+  test("a day outside 1..30 gets null", () => {
+    expect(lunarDayImage(0, 960, true)).toBeNull();
+    expect(lunarDayImage(31, 960, true)).toBeNull();
+    expect(lunarDayImage(1.5, 960, true)).toBeNull();
   });
 });

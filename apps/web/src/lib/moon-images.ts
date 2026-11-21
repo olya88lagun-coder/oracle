@@ -18,3 +18,19 @@ export const phaseImage = (phase: PhaseId, size: MoonImageSize = 960): string | 
 export const SIGN_IMAGE_SIGNS: readonly SignId[] = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
 
 export const signImage = (sign: SignId, size: MoonImageSize = 960): string | null => (SIGN_IMAGE_SIGNS.includes(sign) ? `/luna/signs/${sign}${suffix(size)}.webp` : null);
+
+// Гравюры 30 лунных суток: apps/web/public/luna/days/NN-<слаг>.webp (960 px), -480 и -160. ТЗ на рисунки — docs/design/brief-lunar-day-engravings.md.
+// Пока `LUNAR_DAY_IMAGES_READY` ложен, `lunarDayImage` даёт null и карточка суток показывает цифру. Флаг включают, когда все 30 × 3 файла лежат в public
+export const LUNAR_DAY_SLUGS: readonly string[] = [
+  "svetilnik", "rog-izobiliya", "leopard", "drevo", "edinorog", "oblako", "petukh", "feniks", "letuchaya-mysh", "fonteyn",
+  "mech", "chasha", "koleso", "truba", "zmeya", "golub", "grozd-vinograda", "zerkalo", "pauk", "orel",
+  "kon", "slon", "krokodil", "medved", "cherepakha", "zhaba", "trezubets", "lotus", "osminog", "lebed",
+];
+
+export const LUNAR_DAY_IMAGES_READY = false;
+
+// Третий параметр нужен только тестам: без него берётся флаг готовности
+export const lunarDayImage = (day: number, size: MoonImageSize = 960, ready: boolean = LUNAR_DAY_IMAGES_READY): string | null => {
+  if (!ready || !Number.isInteger(day) || day < 1 || day > LUNAR_DAY_SLUGS.length) return null;
+  return `/luna/days/${String(day).padStart(2, "0")}-${LUNAR_DAY_SLUGS[day - 1]}${suffix(size)}.webp`;
+};
