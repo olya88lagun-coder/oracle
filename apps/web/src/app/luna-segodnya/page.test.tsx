@@ -84,14 +84,15 @@ test("the question comes after the disc and before the 14-day strip", () => {
 
 const card = (markup: string, kind: string) => new RegExp(`<article class="moon-text__block" data-kind="${kind}">([\\s\\S]*?)</article>`).exec(markup)?.[1] ?? "";
 
-test("each of the three cards has a picture area: engravings for the phase and the sign, the day number while the day engravings are not ready", () => {
+test("each of the three cards has a picture area with an engraving: the phase, the lunar day and the sign", () => {
   const markup = html();
   expect(markup.match(/class="moon-text__art"/g)).toHaveLength(3);
   expect(card(markup, "phase")).toMatch(/src="\/luna\/phases\/[a-zA-Z]+-480\.webp"/);
   expect(card(markup, "sign")).toMatch(/src="\/luna\/signs\/[a-z]+-480\.webp"/);
   const day = card(markup, "day");
-  expect(day).not.toContain("<img");
-  expect(day).toContain(`<span class="moon-text__numeral">${buildMoonToday(new Date()).lunarDay.number}</span>`);
+  expect(day).toMatch(/src="\/luna\/days\/[0-9]{2}-[a-z-]+-480\.webp"/);
+  expect(day).toContain(`/luna/days/${String(buildMoonToday(new Date()).lunarDay.number).padStart(2, "0")}-`);
+  expect(day).not.toContain("moon-text__numeral");
 });
 
 test("the cards carry the same small labels as the tiles", () => {

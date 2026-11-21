@@ -55,9 +55,14 @@ describe("lunar day pictures", () => {
     expect(LUNAR_DAY_SLUGS[29]).toBe("lebed");
   });
 
-  test("until the engravings are ready the helper returns null", () => {
-    expect(LUNAR_DAY_IMAGES_READY).toBe(false);
-    expect(lunarDayImage(12)).toBeNull();
+  test("the engravings are switched on and every day has all three sizes on disk", () => {
+    expect(LUNAR_DAY_IMAGES_READY).toBe(true);
+    expect(lunarDayImage(12)).toBe("/luna/days/12-chasha.webp");
+    for (let day = 1; day <= 30; day++) for (const size of [960, 480, 160] as const) expect(onDisk(lunarDayImage(day, size)!), `${day} ${size}`).toBe(true);
+  });
+
+  test("while the flag is off the helper returns null", () => {
+    expect(lunarDayImage(12, 960, false)).toBeNull();
   });
 
   test("the paths use two-digit numbers and the same size suffixes as the other pictures", () => {
