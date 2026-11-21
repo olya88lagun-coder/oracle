@@ -6,6 +6,7 @@ import { MoonHub } from "@/components/moon/MoonHub";
 import { MoonCollection } from "@/components/moon/MoonCollection";
 import { MoonMonthDays } from "@/components/moon/MoonMonthDays";
 import { MoonMonthStage } from "@/components/moon/MoonMonthStage";
+import { MoonNatalBridge } from "@/components/moon/MoonNatalBridge";
 import { NatalSprite } from "@/components/natal/NatalSprite";
 import { WeekdayRibbon } from "@/components/weekday/WeekdayRibbon";
 import { DISCLAIMER } from "@/lib/legal";
@@ -84,6 +85,7 @@ export default async function LunarMonthPage({ params }: Params) {
         </nav>
         <MoonMonthStage year={year} month={month} days={page.cells} weeks={page.weeks} events={page.events} curve={page.curve} ribbon={page.ribbon} afterMonth={page.afterMonth} initialIndex={initialIndex} />
         <MoonCollection items={collectionItems()} days={page.cells.map(({ date, sign, phase }) => ({ date, sign, phase }))} />
+        <MoonNatalBridge from="month" />
         {(intro || page.summary) && (
           <details className="moon-fold" id="moon-about">
             <summary>О календаре на {MONTH_NAMES[month - 1]} {year}</summary>

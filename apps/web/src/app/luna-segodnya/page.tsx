@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MoonDayAsk } from "@/components/moon/MoonDayAsk";
 import { MoonExplorer, type MoonView } from "@/components/moon/MoonExplorer";
+import { MoonNatalBridge } from "@/components/moon/MoonNatalBridge";
 import { PosterButton } from "@/components/PosterButton";
 import { moonPosterSpec } from "@/lib/poster-moon";
 import { WeekdayStrip } from "@/components/weekday/WeekdayStrip";
@@ -99,6 +100,7 @@ export default function MoonTodayPage() {
             {today.signSummary && <article className="moon-text__block" data-kind="sign"><CardArt src={signImage(snapshot.sign, 480)} /><p className="moon-text__eyebrow">Знак Луны</p><h3>Луна {today.signName}</h3><p>{today.signSummary.text}</p></article>}
           </section>
         )}
+        <MoonNatalBridge from="today" signName={today.signName} art={signImage(snapshot.sign, 160)} />
         <div className="weekday-today">
           <WeekdayStrip planet={weekdayPlanet(new Date())} />
         </div>
