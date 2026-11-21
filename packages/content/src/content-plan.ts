@@ -452,7 +452,7 @@ export const CONTENT_PLAN: readonly PlanTopic[] = [
     imageAlt: NUMEROLOGY_ALT,
     basis: ["numerology-pair", "compat-formulas", "compat-texts"],
     internalLinks: ["/numerologiya/kvadrat-pifagora/sovmestimost", "/sovmestimost"],
-    status: "draft",
+    status: "published",
   },
   // 22. Объяснить последовательность 1–9, переход от 9 к 1 и показать его на двух календарных годах для одной даты.
   // Опора — принятые значения 9 и 1, без прогноза событий или повторения инструкции калькулятора 2027.
