@@ -111,3 +111,11 @@ test.describe("with reduced motion", () => {
     await expect(page.locator(".moon-curve__line")).toBeVisible();
   });
 });
+
+test("every day cell shows a phase engraving and keeps its accessible name", async ({ page }) => {
+  await page.goto(MONTH);
+  await expect(page.locator(".moon-month__pick")).toHaveCount(30);
+  await expect(page.locator(".moon-month__pick img[src^='/luna/phases/']")).toHaveCount(30);
+  const names = await page.locator(".moon-month__pick").evaluateAll((buttons) => buttons.map((button) => button.getAttribute("aria-label") ?? ""));
+  for (const name of names) expect(name).toMatch(/освещено \d+ %/);
+});

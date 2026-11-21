@@ -8,6 +8,7 @@ import { arcProgress, countdownLabel, moscowMinutes, nextStageEvent } from "@/li
 import type { MoonView } from "./AnimatedDisc";
 import { MoonDayScene } from "./MoonDayScene";
 import { MoonDisc } from "./MoonDisc";
+import { MoonPhaseArt } from "./MoonPhaseArt";
 import { MoonScrubber } from "./MoonScrubber";
 
 const WEEKDAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"] as const;
@@ -145,7 +146,7 @@ export function MoonMonthStage({ year, month, days, weeks, events, curve, ribbon
                     >
                       <button type="button" className="moon-month__pick" data-index={index} aria-pressed={index === selected} aria-label={label} tabIndex={index === selected ? 0 : -1} onClick={() => select(index)} onFocus={() => select(index)} onKeyDown={(event) => move(event, index)}>
                         <span className="moon-month__date">{cell.day}</span>
-                        <MoonDisc size="mini" illumination={cell.illumination} waxing={cell.waxing} phase={cell.phase} animateIntro={false} />
+                        <MoonPhaseArt phase={cell.phase} illumination={cell.illumination} waxing={cell.waxing} />
                         <span className="moon-month__lunar">{cell.lunarNumber} л. с.</span>
                         <span className="moon-month__sign">{cell.signName}</span>
                         <span className="moon-month__marks" aria-hidden="true" />
