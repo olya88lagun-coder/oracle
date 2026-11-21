@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { WeekdayCards } from "@/components/weekday/WeekdayCards";
 import { WeekdayStrip } from "@/components/weekday/WeekdayStrip";
+import { WeekdayWeekBar } from "@/components/weekday/WeekdayWeekBar";
 import { WeekdayWheel } from "@/components/weekday/WeekdayWheel";
 import { DISCLAIMER } from "@/lib/legal";
 import { currentMonthPath } from "@/lib/lunar-calendar-paths";
@@ -48,6 +49,7 @@ export default function WeekdayPage() {
           </div>
           <WeekdayWheel today={today} />
         </header>
+        <WeekdayWeekBar today={today} />
         <section className="weekday-week" aria-labelledby="weekday-week-title">
           <h2 id="weekday-week-title">Архетипы планет-покровителей</h2>
           <p className="weekday-week__lead">Мы не считаем, что планета «разрешает» или «запрещает» вам какие-то действия. Но её архетип может подсказать, на какой фокус внимания сегодня стоит опереться.</p>

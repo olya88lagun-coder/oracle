@@ -9,7 +9,7 @@ export function WeekdayCards({ today }: { today: number }) {
       {WEEKDAY_PLANETS.map((planet, index) => {
         const isToday = index === today;
         return (
-          <li key={planet.slug} id={planet.slug} className="weekday-card" data-today={isToday || undefined} aria-current={isToday ? "date" : undefined}>
+          <li key={planet.slug} id={planet.slug} className="weekday-card" data-planet={planet.glyph} data-today={isToday || undefined} aria-current={isToday ? "date" : undefined}>
             <div className="weekday-card__head">
               <span className="weekday-mark" aria-hidden="true">
                 <PlanetGlyph glyph={planet.glyph} size={28} />
