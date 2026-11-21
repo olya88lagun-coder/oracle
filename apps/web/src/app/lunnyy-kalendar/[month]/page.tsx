@@ -3,18 +3,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MoonHub } from "@/components/moon/MoonHub";
-import { MoonKeyPoints } from "@/components/moon/MoonKeyPoints";
-import { MoonLightCurve } from "@/components/moon/MoonLightCurve";
+import { MoonCollection } from "@/components/moon/MoonCollection";
 import { MoonMonthDays } from "@/components/moon/MoonMonthDays";
-import { MoonMonthEvents } from "@/components/moon/MoonMonthEvents";
-import { MoonMonthExplorer } from "@/components/moon/MoonMonthExplorer";
-import { MoonSignRibbon } from "@/components/moon/MoonSignRibbon";
-import { MoonTodayMark } from "@/components/moon/MoonTodayMark";
+import { MoonMonthStage } from "@/components/moon/MoonMonthStage";
 import { NatalSprite } from "@/components/natal/NatalSprite";
 import { WeekdayRibbon } from "@/components/weekday/WeekdayRibbon";
 import { DISCLAIMER } from "@/lib/legal";
-import { buildMonthPage, CURVE_HEIGHT, CURVE_WIDTH, isInWindow, MONTH_NAMES, monthWindow } from "@/lib/lunar-calendar";
+import { buildMonthPage, isInWindow, MONTH_NAMES, monthWindow } from "@/lib/lunar-calendar";
 import { lunarMonthPath, parseMonthSlug } from "@/lib/lunar-calendar-paths";
+import { collectionItems } from "@/lib/moon-collection-items";
 import { MOON_PATH } from "@/lib/moon-paths";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -70,13 +67,10 @@ export default async function LunarMonthPage({ params }: Params) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }} />
       <main className="moon-month">
         <NatalSprite />
-        <MoonTodayMark year={year} month={month} />
         <nav aria-label="Хлебные крошки" className="moon-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href={MOON_PATH}>Луна сегодня</Link><span aria-hidden="true">/</span><span>{page.title}</span></nav>
-        <header className="moon-month__head">
+        <header className="moon-month__head moon-month__head--compact">
           <h1>{page.title}</h1>
           <p className="moon-hero__place">По Москве</p>
-          {intro && <p className="moon-month__intro">{intro}</p>}
-          {page.summary && <p className="moon-month__intro">{page.summary}</p>}
         </header>
         <nav className="moon-month__nav" aria-label="Месяцы">
           {page.prev && <Link className="moon-month__prev" href={page.prev.href}>← {page.prev.label}</Link>}
@@ -85,23 +79,19 @@ export default async function LunarMonthPage({ params }: Params) {
             {page.months.map((item) => <li key={item.href}><Link href={item.href} aria-current={item.current ? "page" : undefined}>{item.label}</Link></li>)}
           </ul>
         </nav>
-        <nav className="moon-month__nav" aria-label="Разделы страницы">
-          <ul className="moon-month__list">
-            <li><a href="#moon-calendar">Календарь</a></li>
-            <li><a href="#moon-events">События месяца</a></li>
-            {page.keyPoints.length > 0 && <li><a href="#moon-key-points">Ключевые точки</a></li>}
-            <li><a href="#moon-days">День за днём</a></li>
-            {page.faq.length > 0 && <li><a href="#moon-month-faq">Вопросы</a></li>}
-          </ul>
-        </nav>
-        <MoonLightCurve curve={page.curve} width={CURVE_WIDTH} height={CURVE_HEIGHT} />
-        <div id="moon-calendar">
-          <MoonMonthExplorer weeks={page.weeks} days={page.cells} events={page.events} initialIndex={initialIndex} />
-        </div>
-        <MoonSignRibbon segments={page.ribbon} />
-        <MoonMonthEvents items={page.timeline} />
-        <MoonKeyPoints items={page.keyPoints} />
-        <MoonMonthDays rows={page.rows} guide={page.guide} />
+        <MoonMonthStage year={year} month={month} days={page.cells} weeks={page.weeks} events={page.events} curve={page.curve} ribbon={page.ribbon} afterMonth={page.afterMonth} initialIndex={initialIndex} />
+        <MoonCollection items={collectionItems()} days={page.cells.map(({ date, sign, phase }) => ({ date, sign, phase }))} />
+        {(intro || page.summary) && (
+          <details className="moon-fold" id="moon-about">
+            <summary>О календаре на {MONTH_NAMES[month - 1]} {year}</summary>
+            {intro && <p className="moon-month__intro">{intro}</p>}
+            {page.summary && <p className="moon-month__intro">{page.summary}</p>}
+          </details>
+        )}
+        <details className="moon-fold" id="moon-days-data">
+          <summary>Данные по дням таблицей</summary>
+          <MoonMonthDays rows={page.rows} guide={page.guide} />
+        </details>
         <WeekdayRibbon />
         {page.faq.length > 0 && (
           <section className="moon-faq" id="moon-month-faq" aria-labelledby="moon-month-faq-title">

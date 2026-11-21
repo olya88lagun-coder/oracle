@@ -1,6 +1,7 @@
 import { LUNAR_DAY_TEXTS, lunarDayText } from "@oracle/content/moon";
 import { DAY_PAGE_NOTE, DAYS_HUB_FAQ, DAYS_HUB_INTRO, eclipseFaq, eclipseIntro, MOON_EVENTS_TEXTS_ACCEPTED, retrogradeFaq, retrogradeIntro, type Faq } from "@oracle/content/moon-events";
 import { eclipsesOfYear, moonMonth, phaseOf, retrogradePeriods, type EclipseKind, type EclipseVisibility, type RetrogradePlanet } from "@oracle/core/moon";
+import { dayOrdinal } from "./day-ordinal";
 import { momentLabel, SIGN_NAMES } from "./lunar-calendar";
 import { currentMonth, isInWindow, lunarMonthPath, monthFromIndex, monthIndex, moscowDate } from "./lunar-calendar-paths";
 import { PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-today";
@@ -96,8 +97,8 @@ export type DayPage = {
   next: { label: string; href: string } | null;
 };
 
-// «1-е», «2-е», «3-и», «4-е»…: у третьих и двадцать третьих суток окончание другое («третьи»)
-export const dayOrdinal = (day: number): string => `${day}-${day % 10 === 3 && day !== 13 ? "и" : "е"}`;
+// «1-е», «2-е», «3-и»…: функция лежит в `day-ordinal.ts` (её берёт и браузер), здесь — прежний адрес
+export { dayOrdinal };
 
 const symbolOf = (day: number): string => LUNAR_DAY_TEXTS.find((entry) => entry.day === day)!.symbol;
 
