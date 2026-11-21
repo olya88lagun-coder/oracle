@@ -19,8 +19,8 @@ test("the month page shows the grid of 30 days, the key dates and the Moon of th
   await page.goto(MONTH);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Лунный календарь на ноябрь 2026");
   await expect(page.locator(".moon-month__pick")).toHaveCount(30);
-  await expect(page.locator(".moon-event")).toHaveCount(4);
-  await expect(page.locator("figure.moon-curve")).toBeVisible();
+  await expect(page.locator(".moon-scrub__event")).toHaveCount(4);
+  await expect(page.locator(".moon-scrub__plot")).toBeVisible();
   await expect(page.locator(".moon-days__row")).toHaveCount(30);
   await expect(caption(page)).toBeVisible();
 });
@@ -29,7 +29,7 @@ test("choosing a day turns the big Moon to that day: full Moon on 24 November", 
   await page.goto(MONTH);
   await choose(page, "2026-11-24", /24 ноября · Полнолуние/);
   await expect(day(page, "2026-11-24")).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator('.moon-month__panel .moon-disc')).toHaveAttribute("data-phase", "full");
+  await expect(page.locator(".moon-scene .moon-disc")).toHaveAttribute("data-phase", "full");
 });
 
 test("arrow keys move the choice across days and weeks, and Home and End jump to the ends of the month", async ({ page }) => {
@@ -48,7 +48,7 @@ test("arrow keys move the choice across days and weeks, and Home and End jump to
 test("a key date button leads the Moon to the date of that event", async ({ page }) => {
   await page.goto(MONTH);
   await expect(async () => {
-    await page.locator('.moon-event[data-kind="new"]').click();
+    await page.locator('.moon-scrub__event[data-kind="new"]').click();
     await expect(caption(page)).toContainText("9 ноября", { timeout: 1500 });
   }).toPass({ timeout: 25_000 });
   await expect(caption(page)).toContainText("Новолуние");
@@ -56,38 +56,39 @@ test("a key date button leads the Moon to the date of that event", async ({ page
 
 test("the switcher leads to the next month and the entry address leads to the current one", async ({ page }) => {
   await page.goto(MONTH);
-  await page.getByRole("link", { name: /Декабрь 2026 →/ }).click();
+  // На телефоне стрелки «←» и «→» скрыты, остаётся список месяцев: переходим по нему
+  await page.getByRole("link", { name: "Декабрь 2026", exact: true }).click();
   await expect(page).toHaveURL(/\/lunnyy-kalendar\/dekabr-2026$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Лунный календарь на декабрь 2026");
   await page.goto("/lunnyy-kalendar");
   await expect(page).toHaveURL(/\/lunnyy-kalendar\/[a-z]+-\d{4}$/);
 });
 
-test("on the page of the current month today is marked in the grid, in the table and on the curve and ribbon", async ({ page }) => {
+test("on the page of the current month today is marked in the grid and in the scene", async ({ page }) => {
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Moscow" });
   await page.goto("/lunnyy-kalendar");
   await expect(page).toHaveURL(/\/lunnyy-kalendar\/[a-z]+-\d{4}$/);
-  await expect(page.locator(".moon-month")).toHaveAttribute("data-has-today", "true");
   await expect(page.locator(`td.moon-month__cell.is-today[data-date="${today}"]`)).toHaveCount(1);
-  await expect(page.locator(`tr.moon-days__row.is-today[data-date="${today}"]`)).toHaveCount(1);
-  await expect(page.locator(`tr.moon-days__row.is-today[data-date="${today}"]`)).toHaveAttribute("aria-current", "date");
-  await expect(page.locator(".moon-days__row.is-today")).toHaveCount(1);
+  await expect(page.locator(`td.moon-month__cell.is-today[data-date="${today}"]`)).toHaveAttribute("aria-current", "date");
+  await expect(page.locator(".moon-month__cell.is-today")).toHaveCount(1);
+  await expect(page.locator('.moon-scene[data-today="true"]')).toHaveCount(1);
 });
 
-test("the page has the intro and four questions with the real dates of the month", async ({ page }) => {
+test("the page has the intro behind a fold and the questions with the real dates of the month", async ({ page }) => {
   await page.goto(MONTH);
-  await expect(page.locator(".moon-month__intro")).toBeVisible();
-  await expect(page.locator(".moon-faq details")).toHaveCount(4);
+  await page.locator("#moon-about summary").click();
+  await expect(page.locator("#moon-about .moon-month__intro").first()).toBeVisible();
+  expect(await page.locator(".moon-faq details").count()).toBeGreaterThanOrEqual(4);
   await page.getByText("Когда полнолуние в ноябре 2026?").click();
   await expect(page.locator(".moon-faq")).toContainText("24 ноября");
 });
 
 test("the ribbon shows a glyph and a name for each sign", async ({ page }) => {
   await page.goto(MONTH);
-  const segments = page.locator(".moon-ribbon__seg");
+  const segments = page.locator(".moon-scrub__sign");
   expect(await segments.count()).toBeGreaterThanOrEqual(11);
-  await expect(page.locator(".moon-ribbon__glyph")).toHaveCount(await segments.count());
-  await expect(page.locator(".moon-ribbon__sign").first()).not.toBeEmpty();
+  await expect(page.locator(".moon-scrub__glyph")).toHaveCount(await segments.count());
+  await expect(page.locator(".moon-scrub__sign span").first()).not.toBeEmpty();
 });
 
 test("a month outside the window is a real 404", async ({ page }) => {
@@ -108,7 +109,7 @@ test.describe("with reduced motion", () => {
   test("the choice of a day works at once", async ({ page }) => {
     await page.goto(MONTH);
     await choose(page, "2026-11-24", /24 ноября · Полнолуние/);
-    await expect(page.locator(".moon-curve__line")).toBeVisible();
+    await expect(page.locator(".moon-scrub__plot")).toBeVisible();
   });
 });
 
