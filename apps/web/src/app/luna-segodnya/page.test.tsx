@@ -32,6 +32,12 @@ test("the title carries today's date and stays within 60 characters on the longe
   }
 });
 
+test("has the «Ваша Луна» bridge to the moon-sign calculator", () => {
+  const markup = html();
+  expect(markup).toContain('class="moon-bridge"');
+  expect(markup).toContain('href="/natalnaya-karta/lunnyy-znak"');
+});
+
 test("the share preview has a moon engraving and JSON-LD says when the data was computed", () => {
   const metadata = generateMetadata();
   expect(JSON.stringify(metadata.openGraph?.images)).toMatch(/\/luna\/phases\/[A-Za-z]+\.webp/);
