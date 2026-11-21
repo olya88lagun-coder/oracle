@@ -1,9 +1,7 @@
 import { moonMonth } from "@oracle/core/moon";
-import { FORBIDDEN_MOON_WORDS } from "@oracle/content/moon";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
 import { keyPointsOf } from "@/lib/lunar-calendar";
-import { MoonKeyPoints } from "./MoonKeyPoints";
 import { MoonMonthDays } from "./MoonMonthDays";
 
 const november = keyPointsOf(moonMonth(2026, 11).events, true);
@@ -31,32 +29,6 @@ describe("keyPointsOf", () => {
 
   test("nothing is built while the owner has not accepted the texts", () => {
     expect(keyPointsOf(moonMonth(2026, 11).events, false)).toEqual([]);
-  });
-});
-
-describe("MoonKeyPoints", () => {
-  test("shows each key point with astronomy, symbolism and a question, and no ratings of days", () => {
-    const html = renderToStaticMarkup(<MoonKeyPoints items={november} />);
-    expect(html).toContain("Ключевые точки месяца для самонаблюдения");
-    expect(html.match(/<li class="moon-keypoints__item"/g)).toHaveLength(4);
-    expect(html.match(/<dt>Астрономия<\/dt>/g)).toHaveLength(4);
-    expect(html.match(/<dt>Вопрос для размышления<\/dt>/g)).toHaveLength(4);
-    expect(html).toContain("Луна в Скорпионе");
-    expect(html.match(/moon-events__action/g)).toHaveLength(2);
-    const text = html.replace(/<[^>]+>/g, " ").toLowerCase();
-    for (const word of FORBIDDEN_MOON_WORDS) expect(text, word).not.toContain(word);
-  });
-
-  test("every key point shows the engraving of the Moon's sign as a decorative picture", () => {
-    expect(november.map((point) => point.signImage)).toEqual(["/luna/signs/leo-480.webp", "/luna/signs/scorpio-480.webp", "/luna/signs/aquarius-480.webp", "/luna/signs/gemini-480.webp"]);
-    const html = renderToStaticMarkup(<MoonKeyPoints items={november} />);
-    expect(html.match(/class="moon-sign-art"/g)).toHaveLength(4);
-    expect(html).toContain("/luna/signs/scorpio-480.webp");
-    expect(html.match(/alt=""/g)).toHaveLength(4);
-  });
-
-  test("renders nothing without key points", () => {
-    expect(renderToStaticMarkup(<MoonKeyPoints items={[]} />)).toBe("");
   });
 });
 

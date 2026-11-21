@@ -1,10 +1,11 @@
 import { lunarDayText } from "@oracle/content/moon";
 import { MONTH_FAQ_TEMPLATES, MOON_CALENDAR_TEXTS_ACCEPTED, type MonthFacts, type PhaseKind } from "@oracle/content/moon-calendar";
 import { DAILY_GUIDE, KEY_POINT_ASTRONOMY, KEY_POINTS_NOTE, KEY_POINTS_TITLE, keyPointQuestion, MONTH_FAQ_EXTRA, MOON_EXTRA_TEXTS_ACCEPTED, monthSummary, SIGN_SYMBOLS } from "@oracle/content/moon-year";
-import { daysInMonth, moonMonth, moonSnapshot, type MoonEvent, type SignRun } from "@oracle/core/moon";
+import { daysInMonth, moonMonth, moonSnapshot, nextMoonEvent, type MoonEvent, type SignRun } from "@oracle/core/moon";
 import type { PhaseId } from "@oracle/core/moon/visual";
 import type { SignId } from "@oracle/core/natal";
 import { isInWindow, lunarMonthPath, monthFromIndex, monthIndex, monthWindow, moscowDate, type YearMonth } from "./lunar-calendar-paths";
+import { dayOrdinal } from "./day-ordinal";
 import { signImage } from "./moon-images";
 import { dayPath } from "./moon-year-paths";
 import { PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-today";
@@ -76,6 +77,16 @@ export type CalendarDay = {
   lunarSymbol: string | null;
   lunarQuestion: string | null;
   dayHref: string;
+  // Для сцены дня: знак Луны, готовые подписи («Луна в Овне», «11-е лунные сутки»), восход и заход в минутах от полуночи по Москве для дуги пути,
+  // крупная гравюра знака для картинки сторис, признак «в этот день Луна перешла в другой знак» и главная фаза дня с её содержанием
+  sign: SignId;
+  signLine: string;
+  dayLine: string;
+  signImageLarge: string | null;
+  riseMin: number | null;
+  setMin: number | null;
+  signChange: boolean;
+  keyPoint: KeyPoint | null;
 };
 // Событие ленты «События месяца»: главная фаза или переход Луны в другой знак; at — миллисекунды, по ним лента упорядочена
 export type TimelineItem = { kind: MoonEvent["kind"] | "sign"; title: string; label: string; date: string; at: number; action?: { label: string; href: string } };
@@ -104,7 +115,15 @@ export function keyPointsOf(events: readonly MoonEvent[], accepted: boolean = MO
 
 export const KEY_POINTS_COPY = { title: KEY_POINTS_TITLE, note: KEY_POINTS_NOTE };
 
-export type CalendarEvent ={ kind: MoonEvent["kind"]; name: string; label: string; date: string; dayIndex: number };
+// Названия главных фаз в родительном падеже: «до полнолуния»
+const EVENT_GENITIVE: Record<MoonEvent["kind"], string> = { new: "новолуния", firstQuarter: "первой четверти", full: "полнолуния", lastQuarter: "последней четверти" };
+
+export type CalendarEvent = { kind: MoonEvent["kind"]; name: string; label: string; date: string; dayIndex: number; at: number; genitive: string };
+
+function afterMonthEvent(end: Date): { at: number; genitive: string } {
+  const event = nextMoonEvent(new Date(end.getTime() - 1));
+  return { at: event.at.getTime(), genitive: EVENT_GENITIVE[event.kind] };
+}
 export type DayRow = { date: string; label: string; phaseName: string; percent: number; lunar: string; signName: string; riseSet: string };
 
 export type MonthPage = {
@@ -125,6 +144,8 @@ export type MonthPage = {
   faq: { question: string; answer: string }[];
   summary: string | null;
   keyPoints: KeyPoint[];
+  // Первая главная фаза после этого месяца: счётчик «до …» не обрывается в последние дни месяца
+  afterMonth: { at: number; genitive: string } | null;
   guide: { intro: string; items: readonly string[] } | null;
 };
 
@@ -136,7 +157,7 @@ const MONTH_LOCATIVE: readonly string[] = ["январе", "феврале", "м
 function toCalendarEvents(events: readonly MoonEvent[]): CalendarEvent[] {
   return events.map((event) => {
     const date = moscowDate(event.at);
-    return { kind: event.kind, name: EVENT_NAMES[event.kind], label: `${dayMonthFormat.format(event.at)}, ${clock(event.at)}`, date, dayIndex: Number(date.slice(8)) - 1 };
+    return { kind: event.kind, name: EVENT_NAMES[event.kind], label: `${dayMonthFormat.format(event.at)}, ${clock(event.at)}`, date, dayIndex: Number(date.slice(8)) - 1, at: event.at.getTime(), genitive: EVENT_GENITIVE[event.kind] };
   });
 }
 
@@ -170,8 +191,11 @@ export function buildMonthPage(year: number, month: number, now: Date): MonthPag
   const start = new Date(Date.UTC(year, month - 1, 1) - 3 * 3_600_000);
   const end = new Date(Date.UTC(month === 12 ? year + 1 : year, month === 12 ? 0 : month, 1) - 3 * 3_600_000);
 
-  const cells = data.days.map((day): CalendarDay => {
+  const keyPoints = keyPointsOf(data.events);
+  const cells = data.days.map((day, position): CalendarDay => {
     const change = day.lunarDay.changeAt && day.lunarDay.changeTo ? `с ${clock(day.lunarDay.changeAt)} — ${day.lunarDay.changeTo}-е` : null;
+    const dayStart = Date.parse(`${day.date}T00:00:00+03:00`);
+    const minutes = (moment: Date | null) => (moment ? Math.round((moment.getTime() - dayStart) / 60_000) : null);
     return {
       date: day.date,
       day: day.day,
@@ -188,6 +212,14 @@ export function buildMonthPage(year: number, month: number, now: Date): MonthPag
       lunarSymbol: lunarDayText(day.lunarDay.number)?.symbol ?? null,
       lunarQuestion: lunarDayText(day.lunarDay.number)?.question ?? null,
       dayHref: dayPath(day.lunarDay.number),
+      sign: day.snapshot.sign,
+      signLine: `Луна ${SIGN_NAMES_LOCATIVE[day.snapshot.sign]}`,
+      dayLine: `${dayOrdinal(day.lunarDay.number)} лунные сутки`,
+      signImageLarge: signImage(day.snapshot.sign, 960),
+      riseMin: minutes(day.rise),
+      setMin: minutes(day.set),
+      signChange: position > 0 && data.days[position - 1]!.snapshot.sign !== day.snapshot.sign,
+      keyPoint: keyPoints.find((point) => point.date === day.date) ?? null,
     };
   });
 
@@ -232,7 +264,8 @@ export function buildMonthPage(year: number, month: number, now: Date): MonthPag
     faq: [...(MOON_CALENDAR_TEXTS_ACCEPTED ? faqFromEvents(year, month, events) : []), ...(MOON_EXTRA_TEXTS_ACCEPTED ? MONTH_FAQ_EXTRA : [])],
     // Сводка, ключевые точки и пояснение к таблице — только после приёмки новых текстов
     summary: MOON_EXTRA_TEXTS_ACCEPTED ? summaryOf(year, month, data.events, data.signRuns.length - 1) : null,
-    keyPoints: keyPointsOf(data.events),
+    keyPoints,
+    afterMonth: afterMonthEvent(end),
     guide: MOON_EXTRA_TEXTS_ACCEPTED ? DAILY_GUIDE : null,
   };
 }
