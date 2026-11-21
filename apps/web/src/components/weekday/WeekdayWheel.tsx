@@ -24,7 +24,7 @@ export function WeekdayWheel({ today }: { today: number | null }) {
     return { key: index, x1: C + from * Math.cos(rad), y1: C + from * Math.sin(rad), x2: C + 186 * Math.cos(rad), y2: C + 186 * Math.sin(rad), long };
   });
   return (
-    <svg className="weekday-wheel" viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden="true" focusable="false">
+    <svg className="weekday-wheel" data-planet={today === null ? undefined : WEEKDAY_PLANETS[today]!.glyph} viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden="true" focusable="false">
       <circle className="weekday-wheel__ring" cx={C} cy={C} r={186} />
       <g className="weekday-wheel__ticks">
         {ticks.map((tick) => (

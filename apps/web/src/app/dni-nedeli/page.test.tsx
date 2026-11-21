@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, test } from "vitest";
-import { WEEKDAY_PATH } from "@/lib/weekday-planets";
+import { WeekdayWeekBar } from "@/components/weekday/WeekdayWeekBar";
+import { WEEKDAY_PATH, WEEKDAY_PLANETS } from "@/lib/weekday-planets";
 import Page, { metadata } from "./page";
 
 const TITLE_SUFFIX = " — Твой оракул";
@@ -28,4 +29,26 @@ test("shows the today block, the wheel and a FAQ; the disclaimer is there", () =
   expect(markup).toContain("weekday-wheel");
   expect(markup).toContain("<details>");
   expect(markup).toContain("moon-disclaimer");
+});
+
+test("the week bar has seven links to the card anchors, one of them marked as today", () => {
+  const markup = html();
+  const bar = markup.slice(markup.indexOf("weekday-bar"), markup.indexOf("weekday-week"));
+  expect(bar.match(/class="weekday-bar__day"/g)).toHaveLength(7);
+  for (const { slug } of WEEKDAY_PLANETS) expect(bar).toContain(`href="#${slug}"`);
+  expect(bar.match(/aria-current="true"/g)).toHaveLength(1);
+});
+
+test("every day card and the planet strip carry data-planet", () => {
+  const markup = html();
+  expect(markup.match(/class="weekday-card" data-planet="[a-z]+"/g)).toHaveLength(7);
+  expect(markup).toMatch(/class="weekday-strip"[^>]*data-planet="[a-z]+"/);
+});
+
+test("the week bar marks the first and the last day of the week correctly", () => {
+  for (const today of [0, 6]) {
+    const bar = renderToStaticMarkup(<WeekdayWeekBar today={today} />);
+    expect(bar.match(/aria-current="true"/g)).toHaveLength(1);
+    expect(bar.indexOf('aria-current="true"')).toBeGreaterThan(bar.indexOf(`href="#${WEEKDAY_PLANETS[today]!.slug}"`));
+  }
 });

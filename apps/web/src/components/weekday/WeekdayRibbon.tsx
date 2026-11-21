@@ -10,7 +10,7 @@ export function WeekdayRibbon() {
       <p>У каждого дня недели есть своя планета-покровитель. Это не прогноз, а образ дня и вопрос, с которым удобно его прожить.</p>
       <ul>
         {WEEKDAY_PLANETS.map((planet) => (
-          <li key={planet.slug}>
+          <li key={planet.slug} data-planet={planet.glyph}>
             <Link href={`${WEEKDAY_PATH}#${planet.slug}`}>
               <span className="weekday-mark" aria-hidden="true">
                 <PlanetGlyph glyph={planet.glyph} size={26} />
