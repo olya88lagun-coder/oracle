@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
-import { loadMoonToday, loadRibbonData } from "./moon-place-compute";
+import { loadMonthPage, loadMoonToday, loadRibbonData } from "./moon-place-compute";
 import { placeFromCity } from "./moon-place";
 
 const NOVOSIBIRSK = placeFromCity({ id: 1496747, name: "Новосибирск", region: "Новосибирская область", country: "Россия", latitude: 55.0415, longitude: 82.9346, zone: "Asia/Novosibirsk", population: 1_500_000 });
@@ -13,6 +13,7 @@ describe("moon-place-compute", () => {
     }
     expect(source).toMatch(/import\("\.\/moon-today"\)/);
     expect(source).toMatch(/import\("\.\/moon-ribbon"\)/);
+    expect(source).toMatch(/import\("\.\/lunar-calendar"\)/);
   });
 
   test("loadMoonToday for Novosibirsk returns the local date", async () => {
@@ -25,4 +26,10 @@ describe("moon-place-compute", () => {
     expect(data.date).toBe("2026-11-23");
     expect(Object.keys(data).sort()).toEqual(["date", "discImage", "illumination", "lunarDay", "phase", "phaseName", "sign", "signName", "waxing"]);
   });
+
+  test("loadMonthPage returns the month for the place with local event times", async () => {
+    const page = await loadMonthPage(NOVOSIBIRSK, 2026, 11, new Date("2026-11-22T09:00:00Z"));
+    expect(page.cells).toHaveLength(30);
+    expect(page.events.find((event) => event.kind === "full")?.label).toBe("24 ноября, 21:54");
+  }, 60_000);
 });
