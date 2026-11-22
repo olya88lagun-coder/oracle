@@ -11,7 +11,7 @@ describe("MoonRibbon", () => {
   test("renders five tab links with aria-current on the current one only", () => {
     const html = renderToStaticMarkup(<MoonRibbon current="calendar" now={NOW} />);
     expect(html).toContain('aria-label="Лунный раздел"');
-    expect(html.match(/class="moon-ribbon__tab"/g) ?? []).toHaveLength(5);
+    expect(html.match(/class="moon-rail__tab"/g) ?? []).toHaveLength(5);
     expect(html.match(/aria-current="page"/g)).toHaveLength(1);
     expect(html).toMatch(/aria-current="page"[^>]*>Календарь<|href="\/lunnyy-kalendar\/noyabr-2026"[^>]*aria-current="page"/);
     for (const href of ["/luna-segodnya", "/lunnyy-kalendar/noyabr-2026", "/luna/fazy-luny", "/luna/sutki", "/dni-nedeli"]) expect(html).toContain(`href="${href}"`);
@@ -24,15 +24,15 @@ describe("MoonRibbon", () => {
   test("renders the live part only when initial data is given", () => {
     const data = moonRibbonData(NOW);
     const live = renderToStaticMarkup(<MoonRibbon current="today" now={NOW} initial={data} />);
-    expect(live).toContain("moon-ribbon__now");
+    expect(live).toContain("moon-rail__now");
     expect(live).toContain(data.phaseName);
     expect(live).toContain(`${data.lunarDay.number}-е сутки`);
-    expect(renderToStaticMarkup(<MoonRibbon current="today" now={NOW} />)).not.toContain("moon-ribbon__now");
+    expect(renderToStaticMarkup(<MoonRibbon current="today" now={NOW} />)).not.toContain("moon-rail__now");
   });
 
   test("does not render the streak chip on the server and contains none of FORBIDDEN_MOON_WORDS", () => {
     const html = renderToStaticMarkup(<MoonRibbon current="today" now={NOW} initial={moonRibbonData(NOW)} />);
-    expect(html).not.toContain("moon-ribbon__streak");
+    expect(html).not.toContain("moon-rail__streak");
     for (const word of FORBIDDEN_MOON_WORDS) expect(text(html), word).not.toContain(word);
   });
 });

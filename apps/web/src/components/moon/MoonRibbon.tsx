@@ -46,30 +46,30 @@ export function MoonRibbon({ current, now, initial, albumHref = `${MOON_PATH}#mo
   const frame = visit && visit.rewards.length > 0 ? Math.max(...visit.rewards) : 0;
   const streak = visit?.streak.current ?? 0;
   return (
-    <nav className="moon-ribbon" aria-label={RIBBON_LABEL} data-frame={frame || undefined}>
+    <nav className="moon-rail" aria-label={RIBBON_LABEL} data-frame={frame || undefined}>
       {data && (
-        <div className="moon-ribbon__now">
-          <div className="moon-ribbon__orbit" aria-hidden="true">
+        <div className="moon-rail__now">
+          <div className="moon-rail__orbit" aria-hidden="true">
             <svg viewBox="0 0 52 52">
-              <circle className="moon-ribbon__ring" cx="26" cy="26" r="22" />
-              <circle className="moon-ribbon__prog" cx="26" cy="26" r="22" strokeDasharray={RING} strokeDashoffset={RING * (1 - data.lunarDay.progress)} />
+              <circle className="moon-rail__ring" cx="26" cy="26" r="22" />
+              <circle className="moon-rail__prog" cx="26" cy="26" r="22" strokeDasharray={RING} strokeDashoffset={RING * (1 - data.lunarDay.progress)} />
             </svg>
             {data.discImage && <Image src={data.discImage} alt="" width={40} height={40} unoptimized />}
           </div>
-          <p className="moon-ribbon__text">
+          <p className="moon-rail__text">
             <b>{ribbonPhaseLine(data)}</b>
             <span>{ribbonSignLine(data)}</span>
           </p>
         </div>
       )}
-      <ul className="moon-ribbon__tabs" ref={tabsRef}>
+      <ul className="moon-rail__tabs" ref={tabsRef}>
         {moonTabs(now).map((tab) => (
           <li key={tab.key}>
-            <Link className="moon-ribbon__tab" href={tab.href} aria-current={tab.key === current ? "page" : undefined}>{tab.label}</Link>
+            <Link className="moon-rail__tab" href={tab.href} aria-current={tab.key === current ? "page" : undefined}>{tab.label}</Link>
           </li>
         ))}
       </ul>
-      {streak >= 1 && <Link className="moon-ribbon__streak" href={albumHref}>{daysInRow(streak)}</Link>}
+      {streak >= 1 && <Link className="moon-rail__streak" href={albumHref}>{daysInRow(streak)}</Link>}
     </nav>
   );
 }

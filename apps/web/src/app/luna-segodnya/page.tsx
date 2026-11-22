@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { MoonRibbon } from "@/components/moon/MoonRibbon";
+import { moonRibbonData } from "@/lib/moon-ribbon";
 import { MoonAlbum } from "@/components/moon/MoonAlbum";
 import { MoonDayAsk } from "@/components/moon/MoonDayAsk";
 import { MoonExplorer, type MoonView } from "@/components/moon/MoonExplorer";
@@ -76,6 +78,7 @@ export default function MoonTodayPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }} />
       <main className="moon-page">
+        <MoonRibbon current="today" now={now} initial={moonRibbonData(now)} />
         <nav aria-label="Хлебные крошки" className="moon-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><span>Луна сегодня</span></nav>
         <MoonExplorer
           today={toMoonView(today.strip[0]!.date, today.dateLabel, snapshot)}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MoonRibbon } from "@/components/moon/MoonRibbon";
 import { notFound } from "next/navigation";
 import { MoonHub } from "@/components/moon/MoonHub";
 import { moonJsonLd } from "@/components/moon/MoonPageParts";
@@ -45,6 +46,7 @@ export default async function LunarDayPage({ params }: Params) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(moonJsonLd(title, path, [])) }} />
       <main className="moon-month">
+        <MoonRibbon current="days" now={now} />
         <nav aria-label="Хлебные крошки" className="moon-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href={MOON_PATH}>Луна сегодня</Link><span aria-hidden="true">/</span><Link href={DAYS_PATH}>Лунные сутки</Link><span aria-hidden="true">/</span><span>{dayOrdinal(day)} сутки</span></nav>
         <header className="moon-month__head">
           <h1>{title}</h1>

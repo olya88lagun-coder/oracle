@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MoonRibbon } from "@/components/moon/MoonRibbon";
 import { MoonHub } from "@/components/moon/MoonHub";
 import { MoonFaq, MoonHead, moonJsonLd } from "@/components/moon/MoonPageParts";
 import { DISCLAIMER } from "@/lib/legal";
@@ -25,6 +26,7 @@ export default function LunarDaysPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(moonJsonLd(TITLE, DAYS_PATH, hub.faq)) }} />
       <main className="moon-month">
+        <MoonRibbon current="days" now={now} />
         <MoonHead title={TITLE} intro={hub.intro} />
         <section className="moon-links moon-links--days" aria-labelledby="moon-days-list-title">
           <h2 id="moon-days-list-title">Сутки по номерам</h2>
