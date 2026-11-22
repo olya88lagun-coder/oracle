@@ -21,11 +21,10 @@ export function WhatIsMatrix() {
         Дальше по тем же правилам строятся дополнительные точки и линии: родовые, отношений, денег, предназначений.
       </p>
       <p>
-        Пример: дата 08.06.1994. День даёт 8 — аркан 8 «<Link href="/matrica-sudby/arkan-8-spravedlivost">Справедливость</Link>», месяц — 6,
-        аркан 6 «Влюблённые». Сумма цифр года 1 + 9 + 9 + 4 = 23, это больше 22, поэтому 2 + 3 = 5 — аркан 5 «Иерофант». Задача: 8 + 6 + 5 = 19 —
-        аркан 19 «<Link href="/matrica-sudby/arkan-19-solnce">Солнце</Link>». Центр: 8 + 6 + 5 + 19 = 38, а 3 + 8 = 11 — аркан 11 «
-        <Link href="/matrica-sudby/arkan-11-sila">Сила</Link>». Пошаговый разбор всех точек — в статье{" "}
-        <Link href={post("kak-rasschitat-matritsu-sudby")}>о том, как рассчитать матрицу судьбы</Link>, а считать вручную не обязательно: это
+        Для даты 08.06.1994 основа — аркан 8 «<Link href="/matrica-sudby/arkan-8-spravedlivost">Справедливость</Link>», аркан 6 «Влюблённые» и
+        аркан 5 «Иерофант»; задача — аркан 19 «<Link href="/matrica-sudby/arkan-19-solnce">Солнце</Link>», центр — аркан 11 «
+        <Link href="/matrica-sudby/arkan-11-sila">Сила</Link>». Пошаговый расчёт всех точек — в статье{" "}
+        <Link href={post("kak-rasschitat-matritsu-sudby")}>о том, как рассчитать матрицу судьбы</Link>, а вручную считать не обязательно: это
         делает <Link href={MATRIX_PATH}>калькулятор</Link>.
       </p>
 
