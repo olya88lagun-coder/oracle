@@ -7,6 +7,7 @@ import { DIAGRAM_LINES, DIAGRAM_POINTS, pointTitle } from "@/lib/matrix-view";
 import { TARO_AUTHOR_CREDIT, taroCardImage, taroCardPath } from "@/lib/taro-paths";
 import { NatalSprite } from "@/components/natal/NatalSprite";
 import { NatalWheel } from "@/components/natal/NatalWheel";
+import { NatalWheelZoom } from "@/components/natal/NatalWheelZoom";
 
 type MatrixExample = {
   date: { day: number; month: number; year: number };
@@ -26,14 +27,15 @@ const MATRIX_EXAMPLES: Readonly<Record<string, MatrixExample>> = {
 };
 const shortName = (point: MatrixPoint) => ({ heart: "♥", money: "₽", love: "Л" }[point as "heart" | "money" | "love"] ?? point);
 function letterPosition(point: (typeof DIAGRAM_POINTS)[number]) {
-  if (/^B[12]$|^D[12]$/.test(point.point)) return { x: point.x + 26, y: point.y };
-  if (/^F[12]$/.test(point.point)) return { x: point.x + 20, y: point.y - 22 };
-  if (/^G[12]$/.test(point.point)) return { x: point.x - 20, y: point.y - 22 };
-  if (/^H[12]$/.test(point.point)) return { x: point.x + 20, y: point.y - 22 };
-  if (/^I[12]$/.test(point.point)) return { x: point.x - 20, y: point.y - 22 };
-  if (point.point === "heart" || point.point === "money") return { x: point.x + 24, y: point.y };
-  if (point.point === "love") return { x: point.x, y: point.y + 24 };
-  return { x: point.x, y: point.y - point.r - 10 };
+  const offsets: Partial<Record<MatrixPoint, readonly [number, number]>> = {
+    B1: [26, 0], B2: [-26, 0], D1: [-26, 0], D2: [-26, 0],
+    F1: [20, -18], F2: [-25, 0], G1: [-20, -18], G2: [25, 0],
+    H1: [26, 0], H2: [-26, 0], I1: [-26, 0], I2: [-26, 0],
+    H: [30, 0], I: [-30, 0], D: [0, 34],
+    heart: [24, 0], money: [24, 0], love: [0, 26],
+  };
+  const offset = offsets[point.point];
+  return offset ? { x: point.x + offset[0], y: point.y + offset[1] } : { x: point.x, y: point.y - point.r - 10 };
 }
 
 function MatrixStudyFigure({ slug, example }: { slug: string; example: MatrixExample }) {
@@ -46,7 +48,7 @@ function MatrixStudyFigure({ slug, example }: { slug: string; example: MatrixExa
     <figure className="study-figure" aria-labelledby={titleId}>
       <figcaption id={titleId}>{example.title}</figcaption>
       <div className={`study-matrix${example.full ? " study-matrix--full" : ""}`}>
-        <div className="study-matrix__viewport" tabIndex={example.full ? 0 : undefined} role={example.full ? "region" : undefined} aria-label={example.full ? "Схема всех точек с прокруткой" : undefined}>
+        <div className="study-matrix__viewport" tabIndex={0} role="region" aria-label="Схема точек с прокруткой">
           <svg viewBox="-24 -24 448 448" role="img" aria-labelledby={`${titleId}-drawing`}>
             <title id={`${titleId}-drawing`}>{`Матрица на вымышленной дате ${date}: буквы обозначают точки, числа — арканы`}</title>
             {DIAGRAM_LINES.map(([from, to]) => {
@@ -69,7 +71,7 @@ function MatrixStudyFigure({ slug, example }: { slug: string; example: MatrixExa
           {example.points.map(point => <div key={point}><dt>{shortName(point)}</dt><dd>{pointTitle(point, matrix[point])}</dd></div>)}
         </dl>
       </div>
-      <p className="study-figure__note">Вымышленная дата: {date}. Выделены точки, о которых идёт речь в статье. {example.full ? "На телефоне схему можно прокручивать. Индексы 1 и 2 обозначают внутренние точки на пути от внешнего узла к центру." : "Буквы обозначают позиции на схеме; числа внутри кругов — рассчитанные арканы."}</p>
+      <p className="study-figure__note">Вымышленная дата: {date}. Выделены точки, о которых идёт речь в статье. На телефоне схему можно прокручивать. {example.full ? "Индексы 1 и 2 обозначают внутренние точки на пути от внешнего узла к центру." : "Буквы обозначают позиции на схеме; числа внутри кругов — рассчитанные арканы."}</p>
     </figure>
   );
 }
@@ -106,7 +108,7 @@ function NatalHouseStudyFigure() {
       <figcaption id="study-natal-houses">Как найти дом: Солнце в 10-м доме</figcaption>
       <NatalSprite />
       <div className="study-natal">
-        <NatalWheel chart={chart} birth={{ city: "Москва", date: "1990-03-07", time: "12:25" }} />
+        <div><NatalWheel chart={chart} birth={{ city: "Москва", date: "1990-03-07", time: "12:25" }} /><NatalWheelZoom chart={chart} birth={{ city: "Москва", date: "1990-03-07", time: "12:25" }} /></div>
         <ol className="study-natal__key">
           <li><strong>Найдите символ ☉.</strong> В этом примере Солнце находится в Рыбах.</li>
           <li><strong>Проследите сектор к центру.</strong> Номер 10 внутри колеса обозначает дом; ♓ на внешнем кольце — знак.</li>
