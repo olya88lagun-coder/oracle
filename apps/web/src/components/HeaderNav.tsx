@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { SECTIONS } from "@/lib/sections";
-
-const isCurrent = (pathname: string, prefix: string) => pathname === prefix || pathname.startsWith(`${prefix}/`);
+import { MOON_PATH } from "@/lib/moon-paths";
+import { isSectionCurrent, SECTIONS } from "@/lib/sections";
 
 // Основная навигация по практикам: на компьютере в шапке, на телефоне — в меню по кнопке
 export function HeaderNav() {
@@ -30,7 +29,12 @@ export function HeaderNav() {
     <>
       <nav className="site-nav" aria-label="Основная навигация">
         {SECTIONS.map((section) => (
-          <Link key={section.href} href={section.href} aria-current={isCurrent(pathname, section.href) ? "page" : undefined}>
+          <Link key={section.href} href={section.href} aria-current={isSectionCurrent(pathname, section) ? "page" : undefined}>
+            {section.href === MOON_PATH && (
+              <svg className="site-nav__moon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+                <path d="M11.5 2.2A6 6 0 1 0 13.8 10 4.8 4.8 0 0 1 11.5 2.2Z" fill="currentColor" />
+              </svg>
+            )}
             {section.short}
           </Link>
         ))}
@@ -53,7 +57,7 @@ export function HeaderNav() {
       </div>
       <nav id="mobile-nav" className="site-mobile-nav" aria-label="Навигация на телефоне" hidden={!open}>
         {SECTIONS.map((section) => (
-          <Link key={section.href} href={section.href} aria-current={isCurrent(pathname, section.href) ? "page" : undefined}>
+          <Link key={section.href} href={section.href} aria-current={isSectionCurrent(pathname, section) ? "page" : undefined}>
             {section.title}
           </Link>
         ))}

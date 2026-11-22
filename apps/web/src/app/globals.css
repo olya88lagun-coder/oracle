@@ -859,6 +859,7 @@ a.report-toc__title:hover { color: var(--accent); }
 .site-nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-soft); text-decoration: none; }
 .site-nav a:hover, .site-nav a[aria-current] { color: var(--ink); }
 .site-nav a[aria-current] { box-shadow: 0 1px 0 var(--accent); }
+.site-nav__moon { flex: none; margin-inline-end: 6px; color: var(--accent); }
 .site-header__actions { display: flex; align-items: center; gap: 4px; }
 .site-header__account { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--ink); font-size: 13px; white-space: nowrap; text-decoration: none; }
 .site-header__account-label { display: none; }

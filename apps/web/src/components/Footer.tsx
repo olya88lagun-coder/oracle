@@ -7,7 +7,8 @@ import { SECTIONS } from "@/lib/sections";
 import { SOCIAL_LINKS } from "@/lib/site";
 import { WEEKDAY_PATH } from "@/lib/weekday-paths";
 
-const PRACTICES = SECTIONS.filter((section) => section.short !== "Блог");
+// «Луна» есть в шапке, а в подвале у неё свои строки «Луна сегодня» и «Лунный календарь»
+const PRACTICES = SECTIONS.filter((section) => section.short !== "Блог" && section.short !== "Луна");
 const MORE = [
   { href: "/blog", label: "Блог" },
   { href: "/portret", label: "Мой портрет" },
