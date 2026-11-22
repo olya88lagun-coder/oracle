@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LILA_GAME_PATH } from "@/lib/lila-paths";
+import { LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
 import { blogPath, blogPostBySlug } from "@/lib/blog";
 
 const intentionPost = blogPostBySlug("kak-sformulirovat-namerenie-dlya-lily")!;
@@ -69,6 +69,7 @@ export function HowToPlayLila() {
         </li>
       </ul>
       <p>Лила — инструмент самопознания, а не предсказание. Мы не обещаем, что игра «скажет, что будет».</p>
+      <p>Перед партией можно <Link href={`${LILA_PATH}#field`}>посмотреть поле Лилы и все 72 клетки</Link> или попробовать первый бросок без сохранения.</p>
       <p>
         <Link className="button button--lavender" href={LILA_GAME_PATH}>
           Играть

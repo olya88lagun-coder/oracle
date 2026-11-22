@@ -103,6 +103,9 @@ export default async function LilaCellPage({ params }: Params) {
                 На поле
               </a>
             </div>
+            <p className="detail-note">
+              Впервые на поле? <Link className="touch-link" href={`${LILA_PATH}#how`}>Правила игры Лила онлайн</Link>: как начать с шестёрки и пройти путь по 72 клеткам.
+            </p>
           </header>
 
           <div className="detail-sections">

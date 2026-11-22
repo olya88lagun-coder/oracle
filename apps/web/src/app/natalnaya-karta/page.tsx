@@ -4,6 +4,7 @@ import { NatalCalculator } from "@/components/natal/NatalCalculator";
 import { NatalCatalog, NatalHouseCatalog } from "@/components/natal/NatalCatalog";
 import { NatalGuide, natalFaqJsonLd } from "@/components/natal/NatalGuide";
 import { NatalMoreLinks } from "@/components/natal/NatalMoreLinks";
+import { NatalReadingExample } from "@/components/natal/NatalReadingExample";
 import { NatalSprite } from "@/components/natal/NatalSprite";
 import { DISCLAIMER, NATAL_INTRO, NATAL_TITLE } from "@/lib/natal-copy";
 import { NATAL_PATH } from "@/lib/natal-paths";
@@ -40,6 +41,7 @@ export default async function NatalPage() {
       <NatalSprite />
       <NatalCalculator signedIn={Boolean(user)} savedProfile={savedProfile} offerEnabled={salesEnabled(NATAL_REPORT_PRODUCT)} ownerFree={user ? await isOwnerUser(user.id) : false} />
       <NatalMoreLinks />
+      <NatalReadingExample />
       <NatalHouseCatalog />
       <NatalCatalog />
       <NatalGuide />
