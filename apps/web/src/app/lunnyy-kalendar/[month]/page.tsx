@@ -5,8 +5,7 @@ import { MoonRibbon } from "@/components/moon/MoonRibbon";
 import { notFound } from "next/navigation";
 import { MoonHub } from "@/components/moon/MoonHub";
 import { MoonCollection } from "@/components/moon/MoonCollection";
-import { MoonMonthDays } from "@/components/moon/MoonMonthDays";
-import { MoonMonthStage } from "@/components/moon/MoonMonthStage";
+import { MoonMonthPlace, MoonMonthRowsPlace, MoonPlaceLine } from "@/components/moon/MoonMonthPlace";
 import { MoonNatalBridge } from "@/components/moon/MoonNatalBridge";
 import { NatalSprite } from "@/components/natal/NatalSprite";
 import { WeekdayRibbon } from "@/components/weekday/WeekdayRibbon";
@@ -66,6 +65,8 @@ export default async function LunarMonthPage({ params }: Params) {
     ],
   };
   // Для статичной страницы первый выбор — день первого полнолуния месяца; в текущем месяце браузер переведёт его на сегодняшний день
+  // В браузер уходит только то, что зависит от города: остальное (FAQ, тексты, ссылки) остаётся серверным
+  const stageData = { cells: page.cells, weeks: page.weeks, events: page.events, curve: page.curve, ribbon: page.ribbon, afterMonth: page.afterMonth, rows: page.rows, guide: page.guide };
   const initialIndex = page.events.find((event) => event.kind === "full")?.dayIndex ?? 0;
   return (
     <>
@@ -76,7 +77,7 @@ export default async function LunarMonthPage({ params }: Params) {
         <nav aria-label="Хлебные крошки" className="moon-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href={MOON_PATH}>Луна сегодня</Link><span aria-hidden="true">/</span><span>{page.title}</span></nav>
         <header className="moon-month__head moon-month__head--compact">
           <h1>{page.title}</h1>
-          <p className="moon-hero__place">По Москве</p>
+          <MoonPlaceLine />
         </header>
         <nav className="moon-month__nav" aria-label="Месяцы">
           {page.prev && <Link className="moon-month__prev" href={page.prev.href}>← {page.prev.label}</Link>}
@@ -85,7 +86,7 @@ export default async function LunarMonthPage({ params }: Params) {
             {page.months.map((item) => <li key={item.href}><Link href={item.href} aria-current={item.current ? "page" : undefined}>{item.label}</Link></li>)}
           </ul>
         </nav>
-        <MoonMonthStage year={year} month={month} days={page.cells} weeks={page.weeks} events={page.events} curve={page.curve} ribbon={page.ribbon} afterMonth={page.afterMonth} initialIndex={initialIndex} />
+        <MoonMonthPlace year={year} month={month} initial={stageData} initialIndex={initialIndex} />
         <MoonCollection items={collectionItems()} days={page.cells.map(({ date, sign, phase }) => ({ date, sign, phase }))} />
         <MoonNatalBridge from="month" />
         {(intro || page.summary) && (
@@ -97,7 +98,7 @@ export default async function LunarMonthPage({ params }: Params) {
         )}
         <details className="moon-fold" id="moon-days-data">
           <summary>Данные по дням таблицей</summary>
-          <MoonMonthDays rows={page.rows} guide={page.guide} />
+          <MoonMonthRowsPlace year={year} month={month} initial={stageData} />
         </details>
         <WeekdayRibbon />
         {page.faq.length > 0 && (
