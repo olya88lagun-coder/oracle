@@ -63,3 +63,17 @@ test("has the Moon ribbon with the days tab current", async () => {
   expect(markup.indexOf('aria-label="Лунный раздел"')).toBeLessThan(markup.indexOf("moon-breadcrumb"));
   expect(markup.match(/aria-current="page"[^>]*>Сутки</g)).toHaveLength(1);
 });
+
+test("the header shows the engraving of the day with its symbol, and the share preview uses the big engraving", async () => {
+  const markup = await render("8");
+  expect(markup).toContain("/luna/days/08-feniks-480.webp");
+  expect(markup).toMatch(/alt="Гравюра суток: «Феникс»"/);
+  expect(markup.match(/<h1/g)).toHaveLength(1);
+  const metadata = await generateMetadata({ params: Promise.resolve({ day: "15" }) });
+  expect(JSON.stringify(metadata.openGraph?.images)).toContain("/luna/days/15-zmeya.webp");
+  expect(metadata.twitter).toMatchObject({ card: "summary_large_image" });
+});
+
+test("every day has its engraving in the header", async () => {
+  for (let day = 1; day <= 30; day++) expect(await render(String(day)), String(day)).toMatch(/\/luna\/days\/\d{2}-[a-z-]+-480\.webp/);
+});

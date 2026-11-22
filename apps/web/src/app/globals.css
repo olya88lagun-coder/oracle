@@ -8748,3 +8748,33 @@ main:has(> .natal-intro)::before {
 @media (max-width: 1000px) {
   .moon-rail { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "now now streak" "place tabs tabs"; }
 }
+
+/* Страницы лунных суток: гравюра суток в шапке и каталог из 30 карточек с гравюрами */
+.moon-day-head { display: grid; gap: 18px; justify-items: center; text-align: center; }
+.moon-day-head__art img { display: block; width: 180px; height: auto; aspect-ratio: 1; border-radius: 22px; box-shadow: 0 0 40px rgba(203, 166, 118, 0.18), 0 0 0 1px var(--accent-line); }
+.moon-day-head__text { min-width: 0; }
+
+.moon-day-cards__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 14px 0 0; padding: 0; list-style: none; }
+.moon-day-cards .moon-day-card { display: grid; gap: 10px; align-content: start; height: 100%; padding: 10px 10px 14px; border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(165deg, var(--surface-3), var(--surface) 70%); color: var(--ink); text-align: center; text-decoration: none; }
+.moon-day-cards .moon-day-card:hover { border-color: var(--accent-line); }
+.moon-day-cards .moon-day-card:focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 3px; }
+.moon-day-card img { display: block; width: 100%; height: auto; aspect-ratio: 1; border-radius: 12px; object-fit: cover; }
+.moon-day-card__label { font: 400 18px/1.2 var(--font-display); }
+
+@media (min-width: 560px) {
+  .moon-day-cards__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 700px) {
+  .moon-day-head { grid-template-columns: auto minmax(0, 1fr); gap: 32px; justify-items: start; text-align: left; align-items: center; }
+  .moon-day-head__art img { width: 220px; }
+}
+
+@media (min-width: 860px) {
+  .moon-day-cards__grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .moon-day-cards .moon-day-card { transition: transform 200ms var(--ease-out), border-color 200ms var(--ease-out); }
+  .moon-day-cards .moon-day-card:hover { transform: translateY(-3px); }
+}

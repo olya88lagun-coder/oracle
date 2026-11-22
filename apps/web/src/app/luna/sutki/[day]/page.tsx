@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { MoonRibbon } from "@/components/moon/MoonRibbon";
 import { notFound } from "next/navigation";
@@ -8,6 +9,7 @@ import { DISCLAIMER } from "@/lib/legal";
 import { buildDayPage, dayOrdinal } from "@/lib/moon-events";
 import { MOON_PATH } from "@/lib/moon-paths";
 import { dayPath, DAYS_PATH, LUNAR_DAYS, parseDay } from "@/lib/moon-year-paths";
+import { lunarDayImage } from "@/lib/moon-images";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 
 type Params = { params: Promise<{ day: string }> };
@@ -29,10 +31,12 @@ function resolve(value: string): number {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const day = resolve((await params).day);
   const { symbol } = buildDayPage(day, new Date());
+  const art = lunarDayImage(day, 960);
   return publicMetadata({
     title: `${dayOrdinal(day)} лунные сутки: «${symbol}»`,
     description: `${dayOrdinal(day)} лунные сутки: символ «${symbol}», образ, вопрос к себе, на какие фазы Луны обычно приходятся и ближайшие даты по Москве. Бесплатно.`,
     path: dayPath(day),
+    ...(art && { image: { url: art, alt: `Гравюра суток: «${symbol}»` } }),
   });
 }
 
@@ -42,16 +46,24 @@ export default async function LunarDayPage({ params }: Params) {
   const page = buildDayPage(day, now);
   const title = `${dayOrdinal(day)} лунные сутки: «${page.symbol}»`;
   const path = dayPath(day);
+  const art = lunarDayImage(day, 480);
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(moonJsonLd(title, path, [])) }} />
       <main className="moon-month">
         <MoonRibbon current="days" now={now} />
         <nav aria-label="Хлебные крошки" className="moon-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href={MOON_PATH}>Луна сегодня</Link><span aria-hidden="true">/</span><Link href={DAYS_PATH}>Лунные сутки</Link><span aria-hidden="true">/</span><span>{dayOrdinal(day)} сутки</span></nav>
-        <header className="moon-month__head">
-          <h1>{title}</h1>
-          <p className="moon-hero__place">По Москве</p>
-          {page.note && <p className="moon-month__intro">{page.note}</p>}
+        <header className="moon-month__head moon-day-head">
+          {art && (
+            <div className="moon-day-head__art">
+              <Image src={art} alt={`Гравюра суток: «${page.symbol}»`} width={480} height={480} unoptimized priority sizes="(min-width: 700px) 220px, 180px" />
+            </div>
+          )}
+          <div className="moon-day-head__text">
+            <h1>{title}</h1>
+            <p className="moon-hero__place">По Москве</p>
+            {page.note && <p className="moon-month__intro">{page.note}</p>}
+          </div>
         </header>
         {page.text && (
           <section className="moon-text" aria-labelledby="moon-day-text-title">
