@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import type { CalendarDay, CalendarEvent, MonthPage } from "@/lib/lunar-calendar";
-import { moscowDate } from "@/lib/lunar-calendar-paths";
 import { diaryStats, readDiary, withNote, writeDiary, type DiaryNotes } from "@/lib/moon-diary";
-import { arcProgress, countdownLabel, moscowMinutes, nextStageEvent } from "@/lib/moon-stage";
+import { arcProgress, countdownLabel, nextStageEvent } from "@/lib/moon-stage";
+import { zoneDate, zoneMinutes } from "@/lib/moon-zone";
 import type { MoonView } from "./AnimatedDisc";
 import { MoonDayScene } from "./MoonDayScene";
 import { MoonDisc } from "./MoonDisc";
@@ -19,7 +19,7 @@ const percent = (day: CalendarDay): number => Math.round(day.illumination * 100)
 // Одна «лунная сцена» месяца вместо шести блоков: сцена выбранного дня, лента-скраббер и сетка делят одно состояние — выбранный день.
 // Выбор: нажатие или фокус в сетке, жест по ленте, кружок главной фазы, знак на ленте, стрелки и свайп в сцене, ссылка вида #2026-11-24.
 // В текущем месяце страница открывается на сегодняшнем дне. Дневник хранится только в браузере (moon-diary.ts)
-export function MoonMonthStage({ year, month, days, weeks, events, curve, ribbon, afterMonth, initialIndex }: {
+export function MoonMonthStage({ year, month, days, weeks, events, curve, ribbon, afterMonth, initialIndex, zone = "Europe/Moscow" }: {
   year: number;
   month: number;
   days: readonly CalendarDay[];
@@ -29,6 +29,8 @@ export function MoonMonthStage({ year, month, days, weeks, events, curve, ribbon
   ribbon: MonthPage["ribbon"];
   afterMonth: MonthPage["afterMonth"];
   initialIndex: number;
+  // Часовой пояс данных (выбранный город); по умолчанию Москва: «сегодня» и положение на дуге считаются по нему
+  zone?: string;
 }) {
   const [selected, setSelected] = useState(initialIndex);
   const [started, setStarted] = useState(false);
@@ -51,14 +53,14 @@ export function MoonMonthStage({ year, month, days, weeks, events, curve, ribbon
 
   // Страница собрана заранее, поэтому «сегодня», ссылку на день и дневник узнаём в браузере
   useEffect(() => {
-    const today = days.findIndex((day) => day.date === moscowDate(new Date()));
+    const today = days.findIndex((day) => day.date === zoneDate(new Date(), zone));
     const linked = days.findIndex((day) => `#${day.date}` === window.location.hash);
     setNow(Date.now());
     setNotes(readDiary());
     if (today >= 0) setTodayIndex(today);
     const first = linked >= 0 ? linked : today;
     if (first >= 0) setSelected(first);
-  }, [days]);
+  }, [days, zone]);
 
   // Счётчик до ближайшей фазы обновляется раз в полминуты и только пока открыта вкладка
   useEffect(() => {
@@ -81,8 +83,8 @@ export function MoonMonthStage({ year, month, days, weeks, events, curve, ribbon
 
   const day = days[selected]!;
   const isToday = todayIndex === selected;
-  const todayStr = now === null ? null : moscowDate(new Date(now));
-  const progress = isToday && now !== null ? arcProgress(day.riseMin, day.setMin, moscowMinutes(now)) : null;
+  const todayStr = now === null ? null : zoneDate(new Date(now), zone);
+  const progress = isToday && now !== null ? arcProgress(day.riseMin, day.setMin, zoneMinutes(now, zone)) : null;
   const upcoming = todayIndex !== null && now !== null ? nextStageEvent(events, afterMonth, now) : null;
   const countdown = upcoming && now !== null ? `До ${upcoming.genitive} — ${countdownLabel(upcoming.at - now)}` : null;
   // Записывать можно до сегодняшнего дня включительно; в будущих месяцах дневник закрыт

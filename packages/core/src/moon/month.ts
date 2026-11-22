@@ -1,11 +1,11 @@
 import * as Astronomy from "astronomy-engine";
 import type { SignId } from "../natal/zodiac";
-import { lunarDayFromRises, MOSCOW, moonRises, moonSets } from "./day";
+import { localToUtc } from "../natal/time";
+import { lunarDayFromRises, MOSCOW, moonRises, moonSets, type Place } from "./day";
 import { moonSnapshot, nextMoonEvent, previousNewMoon, type MoonEvent, type MoonSnapshot } from "./phase";
 import { moonSignChanges } from "./signs";
 
 const DAY_MS = 86_400_000;
-const OFFSET_MS = MOSCOW.utcOffsetMinutes * 60_000;
 
 export type MoonMonthDay = {
   date: string;
@@ -17,14 +17,13 @@ export type MoonMonthDay = {
   set: Date | null;
 };
 export type SignRun = { sign: SignId; from: Date; to: Date };
-export type MoonMonth = { year: number; month: number; days: MoonMonthDay[]; events: MoonEvent[]; signRuns: SignRun[] };
+// range — границы месяца в зоне места: 00:00 первого числа и 00:00 первого числа следующего месяца
+export type MoonMonth = { year: number; month: number; days: MoonMonthDay[]; events: MoonEvent[]; signRuns: SignRun[]; range: { start: Date; end: Date } };
 
 export function daysInMonth(year: number, month: number): number {
   return new Date(Date.UTC(year, month, 0)).getUTCDate();
 }
 
-// Начало месяца по Москве: 00:00 UTC+3 первого числа
-const monthStart = (year: number, month: number): Date => new Date(Date.UTC(year, month - 1, 1) - OFFSET_MS);
 const pad = (value: number): string => String(value).padStart(2, "0");
 
 // Все новолуния с последнего перед `from` до `to`: от них отсчитываются лунные сутки
@@ -37,25 +36,31 @@ function newMoons(from: Date, to: Date): Date[] {
   }
 }
 
-// Месяц по Москве: на полдень каждого дня фаза, знак и номер лунных суток; восход и заход; смены лунных суток внутри дня;
+// Местная полночь числа `day` месяца в зоне места (день больше длины месяца переходит на следующий месяц)
+const localMidnight = (place: Place, year: number, month: number, day: number): Date => localToUtc(place.zone, { year, month, day, hour: 0, minute: 0 }).utc;
+
+// Месяц по месту (по умолчанию Москва): на полдень каждого дня фаза, знак и номер лунных суток; восход и заход; смены лунных суток внутри дня;
 // четыре главные фазы месяца и промежутки знаков Луны. Восходы и новолуния считаем один раз на весь месяц
-export function moonMonth(year: number, month: number): MoonMonth {
-  const start = monthStart(year, month);
-  const end = monthStart(month === 12 ? year + 1 : year, month === 12 ? 1 : month + 1);
+export function moonMonth(year: number, month: number, place: Place = MOSCOW): MoonMonth {
+  const count = daysInMonth(year, month);
+  // Начала местных суток: в сутки перевода часов они длятся 23 или 25 часов, поэтому не прибавляем 24 часа
+  const starts = Array.from({ length: count + 1 }, (_, index) => localMidnight(place, year, month, 1 + index));
+  const start = starts[0]!;
+  const end = starts[count]!;
   const moons = newMoons(start, end);
   const windowDays = (end.getTime() - moons[0]!.getTime()) / DAY_MS + 2;
-  const rises = moonRises(moons[0]!, windowDays);
-  const sets = moonSets(moons[0]!, windowDays);
+  const rises = moonRises(moons[0]!, windowDays, place);
+  const sets = moonSets(moons[0]!, windowDays, place);
   const lunarAt = (at: Date) => {
     const newMoon = [...moons].reverse().find((moon) => moon.getTime() <= at.getTime()) ?? moons[0]!;
     return lunarDayFromRises(at, newMoon, rises);
   };
   const within = (dates: readonly Date[], from: number, to: number) => dates.find((date) => date.getTime() >= from && date.getTime() < to) ?? null;
 
-  const days = Array.from({ length: daysInMonth(year, month) }, (_, index): MoonMonthDay => {
-    const dayStart = start.getTime() + index * DAY_MS;
-    const dayEnd = dayStart + DAY_MS;
-    const noon = new Date(dayStart + DAY_MS / 2);
+  const days = Array.from({ length: count }, (_, index): MoonMonthDay => {
+    const dayStart = starts[index]!.getTime();
+    const dayEnd = starts[index + 1]!.getTime();
+    const noon = new Date(dayStart + (dayEnd - dayStart) / 2);
     const first = lunarAt(new Date(dayStart)).number;
     // Смена суток внутри дня: восход или новолуние. Если за день их две (29→30 и новолуние 30→1), берём итоговую: после неё сутки остаются до конца дня
     const steps = [...rises, ...moons]
@@ -93,5 +98,5 @@ export function moonMonth(year: number, month: number): MoonMonth {
   }
   signRuns.push({ sign, from, to: end });
 
-  return { year, month, days, events, signRuns };
+  return { year, month, days, events, signRuns, range: { start, end } };
 }

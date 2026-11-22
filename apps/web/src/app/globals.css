@@ -8732,3 +8732,19 @@ main:has(> .natal-intro)::before {
 
 @keyframes moon-portal-breathe { 50% { transform: scale(1.045); filter: brightness(1.12); } }
 @keyframes moon-portal-spin { to { transform: rotate(360deg); } }
+
+/* Выбор города на лунных страницах: чип в ленте и окно с полем города */
+.moon-rail .moon-rail__place { grid-area: place; display: inline-flex; align-items: center; gap: 6px; max-width: 160px; min-height: 44px; padding: 0 14px; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 999px; background: transparent; color: var(--ink-soft); font: inherit; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.moon-rail .moon-rail__place:hover { border-color: var(--accent); color: var(--ink); }
+.moon-rail .moon-rail__place:focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 2px; }
+
+.moon-place { width: min(480px, calc(100% - 32px)); max-height: calc(100% - 32px); padding: 22px 20px; overflow: auto; border: 1px solid var(--accent-line); border-radius: 20px; background: var(--surface); color: var(--ink); }
+.moon-place::backdrop { background: var(--scrim); }
+.moon-place__title { margin: 0 0 14px; font-size: 26px; }
+.moon-place__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+
+/* Сетка ленты с чипом города: на компьютере «лунные данные | вкладки | город | нить», на телефоне город стоит в начале строки вкладок */
+.moon-rail { grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto auto; grid-template-areas: "now tabs place streak"; }
+@media (max-width: 1000px) {
+  .moon-rail { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "now now streak" "place tabs tabs"; }
+}

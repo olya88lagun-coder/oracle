@@ -9,8 +9,12 @@ import { createCitySearch, describeCities, navigateCityList, type CityOption, ty
 // Поле «Место рождения»: комбобокс со списком городов (шаблон ARIA «combobox со списком»). Фокус всегда остаётся в поле ввода,
 // выбранный пункт указывает aria-activedescendant. Разметка — как в макете калькулятора (состояния 1–5).
 
+// Тексты поля можно заменить на другой странице (лунные страницы: «Ваш город»); без замены — тексты калькулятора натальной карты
+export type CityCopy = { label?: string; placeholder?: string; hint?: string; listLabel?: string };
+
 type ViewProps = {
   baseId: string;
+  copy?: CityCopy;
   value: string;
   state: CityState;
   open: boolean;
@@ -39,14 +43,14 @@ export function CityFieldView(props: ViewProps) {
 
   return (
     <div className={`natal-field natal-city${error ? " natal-field--error" : ""}`}>
-      <label htmlFor={`${baseId}-input`}>{LABEL_CITY}</label>
+      <label htmlFor={`${baseId}-input`}>{props.copy?.label ?? LABEL_CITY}</label>
       <input
         className="natal-city__input"
         id={`${baseId}-input`}
         name="city"
         type="text"
         value={props.value}
-        placeholder={CITY_PLACEHOLDER}
+        placeholder={props.copy?.placeholder ?? CITY_PLACEHOLDER}
         autoComplete="off"
         role="combobox"
         aria-autocomplete="list"
@@ -62,7 +66,7 @@ export function CityFieldView(props: ViewProps) {
         onBlur={props.onBlur}
       />
       {/* mousedown по списку не отнимает фокус у поля: иначе blur закрыл бы список раньше, чем сработает click по пункту */}
-      <ul className="natal-city__list" id={listId} role="listbox" aria-label={CITY_LIST_LABEL} hidden={!listVisible} onMouseDown={(event) => event.preventDefault()}>
+      <ul className="natal-city__list" id={listId} role="listbox" aria-label={props.copy?.listLabel ?? CITY_LIST_LABEL} hidden={!listVisible} onMouseDown={(event) => event.preventDefault()}>
         {listVisible && state.status === "results" &&
           options.map((option, index) => (
             <li key={option.city.id} className="natal-city__option" id={optionId(baseId, index)} role="option" aria-selected={index === activeIndex} onClick={() => props.onOptionClick?.(index)}>
@@ -94,7 +98,7 @@ export function CityFieldView(props: ViewProps) {
         </p>
       )}
       <p className="natal-field__help" id={helpId}>
-        {CITY_HINT}
+        {props.copy?.hint ?? CITY_HINT}
       </p>
       <p className="sr-only" role="status" aria-live="polite">
         {found}
@@ -104,6 +108,7 @@ export function CityFieldView(props: ViewProps) {
 }
 
 type Props = {
+  copy?: CityCopy;
   value: string; // текст в поле
   selected: City | null;
   error: string | null;
@@ -115,7 +120,7 @@ type Props = {
 
 const IDLE_STATE: CityState = { status: "idle" };
 
-export function CityField({ value, selected, error, inputRef, onTextChange, onSelect, onBlur }: Props) {
+export function CityField({ copy, value, selected, error, inputRef, onTextChange, onSelect, onBlur }: Props) {
   const baseId = useId();
   const searchRef = useRef<CitySearch | null>(null);
   const [state, setState] = useState<CityState>(IDLE_STATE);
@@ -173,6 +178,7 @@ export function CityField({ value, selected, error, inputRef, onTextChange, onSe
   return (
     <CityFieldView
       baseId={baseId}
+      copy={copy}
       value={value}
       state={state}
       open={open}

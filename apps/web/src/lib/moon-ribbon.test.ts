@@ -25,3 +25,18 @@ describe("moonRibbonData", () => {
     expect(moonRibbonData(new Date(day.endsAt.getTime() - 1)).lunarDay.progress).toBeGreaterThan(0.999);
   });
 });
+
+describe("moonRibbonData for a Place", () => {
+  test("gives the same phase and sign as for Moscow but the local date", () => {
+    const at = new Date("2026-11-22T18:00:00Z");
+    const place = { latitude: 54.99, longitude: 82.9, zone: "Asia/Novosibirsk" };
+    const local = moonRibbonData(at, place);
+    const moscow = moonRibbonData(at);
+    expect(local.date).toBe("2026-11-23");
+    expect(moscow.date).toBe("2026-11-22");
+    expect(local.phase).toBe(moscow.phase);
+    expect(local.sign).toBe(moscow.sign);
+    expect(local.lunarDay.progress).toBeGreaterThanOrEqual(0);
+    expect(local.lunarDay.progress).toBeLessThanOrEqual(1);
+  });
+});

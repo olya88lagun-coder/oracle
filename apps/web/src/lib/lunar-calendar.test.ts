@@ -1,5 +1,8 @@
+import { readFileSync } from "node:fs";
+import type { Place } from "@oracle/core/moon";
 import { describe, expect, test } from "vitest";
 import { buildMonthPage, isInWindow, lightCurve, MONTH_NAMES, monthFaq, monthWindow, ribbonSegments } from "./lunar-calendar";
+import { MONTH_BASELINE_MONTHS, MONTH_BASELINE_NOW, plainMonthPage } from "./lunar-calendar.test-support";
 import { LUNAR_CALENDAR_PATH, lunarMonthPath, MONTH_SLUGS, moscowDate, parseMonthSlug } from "./lunar-calendar-paths";
 
 const NOW = new Date("2026-11-17T09:00:00Z"); // 12:00 по Москве
@@ -188,5 +191,42 @@ describe("monthFaq", () => {
     const answer = monthFaq(2026, 5)[1]!.answer;
     expect(answer).toMatch(/1 мая, 20:2\d/);
     expect(answer).toMatch(/31 мая, 11:4\d/);
+  });
+});
+
+describe("buildMonthPage for a Place", () => {
+  const NOVOSIBIRSK: Place = { latitude: 54.99, longitude: 82.9, zone: "Asia/Novosibirsk" };
+  const BERLIN: Place = { latitude: 52.52, longitude: 13.405, zone: "Europe/Berlin" };
+
+  test("for Moscow equals the stored baseline", () => {
+    const baseline = JSON.parse(readFileSync(new URL("./__fixtures__/moon-month-moscow.json", import.meta.url), "utf8")) as Record<string, unknown>;
+    for (const [year, month] of MONTH_BASELINE_MONTHS) {
+      expect(JSON.parse(JSON.stringify(plainMonthPage(buildMonthPage(year, month, MONTH_BASELINE_NOW)))), `${year}-${month}`).toEqual(baseline[`${year}-${month}`]);
+    }
+  }, 120_000);
+
+  test("Novosibirsk November 2026: event times are in the place's zone and riseMin counts from local midnight", () => {
+    const moscow = buildMonthPage(2026, 11, MONTH_BASELINE_NOW);
+    const local = buildMonthPage(2026, 11, MONTH_BASELINE_NOW, NOVOSIBIRSK);
+    expect(moscow.events.find((event) => event.kind === "full")?.label).toBe("24 ноября, 17:54");
+    expect(local.events.find((event) => event.kind === "full")?.label).toBe("24 ноября, 21:54");
+    expect(local.cells).toHaveLength(30);
+    for (const cell of local.cells) {
+      if (cell.riseMin !== null) {
+        expect(cell.riseMin).toBeGreaterThanOrEqual(0);
+        expect(cell.riseMin).toBeLessThan(24 * 60);
+      }
+    }
+    expect(local.cells[0]!.riseSet).not.toBe(moscow.cells[0]!.riseSet);
+  });
+
+  test("Berlin March 2027 builds 31 cells with consistent weeks and no negative riseMin", () => {
+    const page = buildMonthPage(2027, 3, MONTH_BASELINE_NOW, BERLIN);
+    expect(page.cells).toHaveLength(31);
+    expect(page.weeks.flat().filter((slot) => slot !== null)).toHaveLength(31);
+    for (const cell of page.cells) {
+      expect(cell.riseMin === null || cell.riseMin >= 0).toBe(true);
+      expect(cell.setMin === null || cell.setMin >= 0).toBe(true);
+    }
   });
 });

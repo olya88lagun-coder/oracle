@@ -1,4 +1,4 @@
-import { dayOrdinal } from "./moon-events";
+import { dayOrdinal } from "./day-ordinal";
 import { signImage } from "./moon-images";
 import type { MoonToday } from "./moon-today";
 
