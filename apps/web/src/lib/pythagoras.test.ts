@@ -2,7 +2,7 @@ import { expect, test } from "vitest";
 import { GOALS } from "./analytics";
 import { DATE_ERROR } from "./matrix-save";
 import { acceptedSquarePaths } from "./numerology-pages";
-import { PYTHAGORAS_PATH, SQUARE_CELL_NAMES, SQUARE_FAQ, SQUARE_LINE_NAMES, SQUARE_LINES_PATH, squareCellPath, squareOutcome, squareVariant } from "./pythagoras";
+import { PYTHAGORAS_PATH, SQUARE_CELL_NAMES, SQUARE_FAQ, SQUARE_LINE_NAMES, SQUARE_LINES_PATH, squareCellPath, squareOutcome, squareVariant, withoutExampleDates } from "./pythagoras";
 
 const TODAY = new Date("2026-11-08");
 
@@ -45,4 +45,9 @@ test("FAQ: formula with the 14.05.1987 example, other calculators, no karma or i
 test("Metrika goals", () => {
   expect(GOALS).toContain("pythagoras_calculated");
   expect(GOALS).toContain("pythagoras_to_matrix");
+});
+
+test("withoutExampleDates drops the sentence with a foreign example date and keeps the rest", () => {
+  const text = "Одна единица — мягкий характер. Пример — 23.02.1972: рабочие числа 26, 8, 22 и 4. В символическом прочтении это самоанализ.";
+  expect(withoutExampleDates(text)).toBe("Одна единица — мягкий характер. В символическом прочтении это самоанализ.");
 });

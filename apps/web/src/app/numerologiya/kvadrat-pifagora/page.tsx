@@ -8,7 +8,7 @@ import type { SquareSummaries } from "@/components/numerology/PythagorasResult";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { NUMEROLOGY_PATH } from "@/lib/numerology";
 import { acceptedPairPaths } from "@/lib/numerology-pages";
-import { PYTHAGORAS_PATH, SQUARE_CELL_NAMES, SQUARE_FAQ, SQUARE_LINE_NAMES, SQUARE_LINES_PATH, squareCellPath, squareVariant } from "@/lib/pythagoras";
+import { PYTHAGORAS_PATH, SQUARE_CELL_NAMES, SQUARE_FAQ, SQUARE_LINE_NAMES, SQUARE_LINES_PATH, squareCellPath, squareVariant, withoutExampleDates } from "@/lib/pythagoras";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import "../../arkan-2027/year.css";
@@ -20,7 +20,10 @@ export const metadata: Metadata = publicMetadata({
   path: PYTHAGORAS_PATH,
 });
 
-const firstParagraph = (text: ReturnType<typeof numerologyText>, title: string) => text?.sections.find((section) => section.title === title)?.paragraphs[0];
+const firstParagraph = (text: ReturnType<typeof numerologyText>, title: string) => {
+  const paragraph = text?.sections.find((section) => section.title === title)?.paragraphs[0];
+  return paragraph && withoutExampleDates(paragraph);
+};
 
 // Только принятые тексты: у непринятой ячейки в результате нет ни описания, ни ссылки
 function acceptedSummaries(): SquareSummaries {
