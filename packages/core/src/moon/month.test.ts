@@ -1,5 +1,8 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vitest";
+import { MOSCOW, type Place } from "./day";
 import { daysInMonth, moonMonth } from "./month";
+import { BASELINE_MONTHS, plainMonth } from "./month.test-support";
 
 const minutes = (a: Date, b: Date) => Math.abs(a.getTime() - b.getTime()) / 60_000;
 // Эталон: timeanddate.com/moon/phases/russia/moscow?year=2026, время по Москве (UTC+3), сверено 17.11.2026
@@ -111,5 +114,60 @@ describe("month boundaries", () => {
     expect(moonMonth(2028, 2).days[28]!.date).toBe("2028-02-29");
     expect(moonMonth(2027, 2).days).toHaveLength(28);
     expect(moonMonth(2027, 2).days[27]!.date).toBe("2027-02-28");
+  });
+});
+
+describe("moonMonth for a Place", () => {
+  const NOVOSIBIRSK: Place = { latitude: 54.99, longitude: 82.9, zone: "Asia/Novosibirsk" };
+  const BERLIN: Place = { latitude: 52.52, longitude: 13.405, zone: "Europe/Berlin" };
+  const MURMANSK: Place = { latitude: 68.97, longitude: 33.09, zone: "Europe/Moscow" };
+  const HOUR = 3_600_000;
+
+  test("for Moscow equals the stored baseline for all 15 months", () => {
+    const baseline = JSON.parse(readFileSync(new URL("./__fixtures__/moscow-months.json", import.meta.url), "utf8")) as Record<string, unknown>;
+    for (const [year, month] of BASELINE_MONTHS) {
+      const key = `${year}-${String(month).padStart(2, "0")}`;
+      expect(plainMonth(moonMonth(year, month)), key).toEqual(baseline[key]);
+      expect(plainMonth(moonMonth(year, month, MOSCOW)), key).toEqual(baseline[key]);
+    }
+  });
+
+  test("Novosibirsk November 2026 starts at local midnight, has local rises and the same full moon moment", () => {
+    const month = moonMonth(2026, 11, NOVOSIBIRSK);
+    expect(month.range.start.toISOString()).toBe("2026-10-31T17:00:00.000Z");
+    expect(month.range.end.toISOString()).toBe("2026-11-30T17:00:00.000Z");
+    const first = month.days[0]!;
+    if (first.rise) {
+      expect(first.rise.getTime()).toBeGreaterThanOrEqual(month.range.start.getTime());
+      expect(first.rise.getTime()).toBeLessThan(month.range.start.getTime() + 24 * HOUR);
+    }
+    expect(month.events).toEqual(moonMonth(2026, 11).events.filter((event) => event.at >= month.range.start && event.at < month.range.end));
+  });
+
+  test("Berlin March 2027 cuts the 23-hour day 28 at local midnights", () => {
+    const month = moonMonth(2027, 3, BERLIN);
+    expect(month.range.start.toISOString()).toBe("2027-02-28T23:00:00.000Z");
+    expect(month.days).toHaveLength(31);
+    expect(month.days[27]!.snapshot.at.toISOString()).toBe("2027-03-28T10:30:00.000Z"); // середина между 2027-03-27T23:00Z и 2027-03-28T22:00Z
+  });
+
+  test("Berlin October 2027 has a 25-hour day 31 with its snapshot inside it", () => {
+    const month = moonMonth(2027, 10, BERLIN);
+    expect(month.days[30]!.snapshot.at.toISOString()).toBe("2027-10-31T10:30:00.000Z"); // середина между 2027-10-30T22:00Z и 2027-10-31T23:00Z
+    expect(month.range.end.toISOString()).toBe("2027-10-31T23:00:00.000Z");
+  });
+
+  test("a polar place (Murmansk, December 2026) does not throw, lunar days stay 1..30 and a day without a rise has rise null", () => {
+    const month = moonMonth(2026, 12, MURMANSK);
+    expect(month.days).toHaveLength(31);
+    month.days.forEach((day, index) => {
+      expect(day.lunarDay.number).toBeGreaterThanOrEqual(1);
+      expect(day.lunarDay.number).toBeLessThanOrEqual(30);
+      if (day.rise) {
+        const from = month.range.start.getTime() + index * 24 * HOUR;
+        expect(day.rise.getTime()).toBeGreaterThanOrEqual(from);
+        expect(day.rise.getTime()).toBeLessThan(from + 24 * HOUR);
+      }
+    });
   });
 });
