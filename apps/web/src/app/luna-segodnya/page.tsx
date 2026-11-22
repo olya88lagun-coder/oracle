@@ -73,7 +73,7 @@ export default function MoonTodayPage() {
             <li><Link className="touch-link" href={yearMoonPath("full", currentMonth(new Date()).year)}>Полнолуния года</Link></li>
             <li><Link className="touch-link" href={today.links.cardOfDay}>Вытянуть карту дня</Link></li>
             <li><Link className="touch-link" href={today.links.natal}>Какая Луна в вашей натальной карте</Link></li>
-            {today.signSummary && <li><Link className="touch-link" href={today.signSummary.href}>Значение: Луна {today.signName}</Link></li>}
+            {today.signSummary && <li><Link className="touch-link" href={today.signSummary.href}>Что означает Луна {today.signName} в карте рождения</Link></li>}
           </ul>
         </section>
         <section className="moon-faq" aria-labelledby="moon-faq-title">
