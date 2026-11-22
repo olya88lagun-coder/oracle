@@ -31,9 +31,9 @@ export const SPREAD_ACTIONS: Partial<Record<MoonEvent["kind"], { label: string; 
 const EVENT_ILLUMINATION: Record<MoonEvent["kind"], number> = { new: 0, firstQuarter: 0.5, full: 1, lastQuarter: 0.5 };
 
 // Подписи времени в зоне места (по умолчанию Москва); форматтеры создаются один раз на зону
-type Labels = { clock: (date: Date) => string; dayMonth: (date: Date) => string; moment: (date: Date) => string; shortLabel: (date: Date) => string; dateOf: (date: Date) => string };
+export type Labels = { clock: (date: Date) => string; dayMonth: (date: Date) => string; moment: (date: Date) => string; shortLabel: (date: Date) => string; dateOf: (date: Date) => string };
 const labelCache = new Map<string, Labels>();
-function labelsFor(zone: string): Labels {
+export function labelsFor(zone: string): Labels {
   let labels = labelCache.get(zone);
   if (!labels) {
     const format = (options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("ru-RU", { timeZone: zone, ...options });
