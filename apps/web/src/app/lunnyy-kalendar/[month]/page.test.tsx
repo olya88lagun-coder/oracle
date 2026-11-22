@@ -90,6 +90,13 @@ describe("the November 2026 page", () => {
     expect(html).toContain("Картинка для сторис");
   });
 
+  test("the scene and the table of days lead to the pages of single dates", async () => {
+    const html = await render();
+    expect(html).toContain('<a href="/lunnyy-kalendar/24-noyabrya-2026">Страница дня →</a>');
+    expect(count(html, /href="\/lunnyy-kalendar\/\d{1,2}-noyabrya-2026"/g)).toBeGreaterThanOrEqual(31);
+    expect(html).toContain('<a href="/lunnyy-kalendar/1-noyabrya-2026">1 ноября</a>');
+  });
+
   test("the diary and the collection wait for the browser: no notes on the server, the collection starts closed", async () => {
     const html = await render();
     expect(html).not.toContain("moon-diary");

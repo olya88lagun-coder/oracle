@@ -36,3 +36,32 @@ export function monthWindow(now: Date): YearMonth[] {
 export const isInWindow = (year: number, month: number, now: Date): boolean => monthWindow(now).some((item) => item.year === year && item.month === month);
 
 export const currentMonthPath = (now: Date): string => lunarMonthPath(currentMonth(now).year, currentMonth(now).month);
+
+// Страницы отдельных дней: «24-noyabrya-2026», слаг месяца в родительном падеже, день без нуля
+export const MONTH_GENITIVE_SLUGS: readonly string[] = ["yanvarya", "fevralya", "marta", "aprelya", "maya", "iyunya", "iyulya", "avgusta", "sentyabrya", "oktyabrya", "noyabrya", "dekabrya"];
+
+export type YearMonthDay = { year: number; month: number; day: number };
+
+const lengthOfMonth = (year: number, month: number): number => new Date(Date.UTC(year, month, 0)).getUTCDate();
+
+export const lunarDayPath = (year: number, month: number, day: number): string => `${LUNAR_CALENDAR_PATH}/${day}-${MONTH_GENITIVE_SLUGS[month - 1]}-${year}`;
+
+// Только точное «день-слаг-год»: нули, регистр, месяц в именительном падеже и несуществующие числа дают null
+export function parseDaySlug(slug: string): YearMonthDay | null {
+  const match = /^([1-9]|[12]\d|3[01])-([a-z]+)-(\d{4})$/.exec(slug);
+  const month = match ? MONTH_GENITIVE_SLUGS.indexOf(match[2]!) + 1 : 0;
+  if (!match || month === 0) return null;
+  const year = Number(match[3]);
+  const day = Number(match[1]);
+  return day <= lengthOfMonth(year, month) ? { year, month, day } : null;
+}
+
+// Из даты вида YYYY-MM-DD (так записаны дни месяца в данных календаря) в адрес дня
+export function lunarDayPathOfDate(isoDate: string): string {
+  const [year, month, day] = isoDate.split("-").map(Number) as [number, number, number];
+  return lunarDayPath(year, month, day);
+}
+
+// Адреса всех дней окна месяцев
+export const lunarDayPaths = (now: Date): string[] =>
+  monthWindow(now).flatMap(({ year, month }) => Array.from({ length: lengthOfMonth(year, month) }, (_, index) => lunarDayPath(year, month, index + 1)));

@@ -1,4 +1,6 @@
+import Link from "next/link";
 import type { DayRow } from "@/lib/lunar-calendar";
+import { lunarDayPathOfDate } from "@/lib/lunar-calendar-paths";
 
 // Подробности «день за днём»: на телефоне оформление превращает строки в карточки или прокручивает таблицу внутри блока
 export function MoonMonthDays({ rows, guide }: { rows: readonly DayRow[]; guide?: { intro: string; items: readonly string[] } | null }) {
@@ -25,7 +27,7 @@ export function MoonMonthDays({ rows, guide }: { rows: readonly DayRow[]; guide?
           <tbody>
             {rows.map((row) => (
               <tr key={row.date} className="moon-days__row" data-date={row.date}>
-                <th scope="row">{row.label}</th>
+                <th scope="row"><Link href={lunarDayPathOfDate(row.date)} prefetch={false}>{row.label}</Link></th>
                 <td>{row.phaseName} · {row.percent} %</td>
                 <td>{row.lunar}</td>
                 <td>{row.signName}</td>

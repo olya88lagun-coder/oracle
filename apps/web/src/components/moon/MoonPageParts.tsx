@@ -28,7 +28,8 @@ export function MoonFaq({ id, title, items }: { id: string; title: string; items
   );
 }
 
-export function moonJsonLd(name: string, path: string, faq: readonly FaqItem[]) {
+// parents — промежуточные уровни хлебных крошек между «Луной сегодня» и самой страницей (например, месяц для страницы дня)
+export function moonJsonLd(name: string, path: string, faq: readonly FaqItem[], parents: readonly { name: string; path: string }[] = []) {
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -37,7 +38,8 @@ export function moonJsonLd(name: string, path: string, faq: readonly FaqItem[]) 
       { "@type": "BreadcrumbList", itemListElement: [
         { "@type": "ListItem", position: 1, name: "Твой оракул", item: SITE_URL },
         { "@type": "ListItem", position: 2, name: "Луна сегодня", item: `${SITE_URL}${MOON_PATH}` },
-        { "@type": "ListItem", position: 3, name, item: `${SITE_URL}${path}` },
+        ...parents.map((parent, index) => ({ "@type": "ListItem", position: 3 + index, name: parent.name, item: `${SITE_URL}${parent.path}` })),
+        { "@type": "ListItem", position: 3 + parents.length, name, item: `${SITE_URL}${path}` },
       ] },
     ],
   };

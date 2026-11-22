@@ -22,6 +22,13 @@ describe("MoonNatalBridge", () => {
     expect(html).toContain(`href="${MOON_SIGN_PATH}"`);
   });
 
+  test("day: names the sign of the day and leads to the moon-sign page", () => {
+    const html = renderToStaticMarkup(<MoonNatalBridge from="day" signName="в Тельце" />);
+    expect(html).toContain("В этот день Луна в Тельце");
+    expect(html).toContain(`href="${MOON_SIGN_PATH}"`);
+    expect(html).toContain('data-from="day"');
+  });
+
   test("weekday: leads to the natal calculator", () => {
     const html = renderToStaticMarkup(<MoonNatalBridge from="weekday" />);
     expect(html).toContain(`href="${NATAL_PATH}"`);
@@ -29,7 +36,7 @@ describe("MoonNatalBridge", () => {
   });
 
   test("one heading, no prices, no forecasts, and the data stays in the browser", () => {
-    for (const from of ["today", "month", "weekday"] as const) {
+    for (const from of ["today", "month", "weekday", "day"] as const) {
       const html = renderToStaticMarkup(<MoonNatalBridge from={from} signName="в Овне" />);
       expect(html.match(/<h2/g), from).toHaveLength(1);
       expect(html, from).not.toContain("₽");

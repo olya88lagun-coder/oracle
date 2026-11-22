@@ -2,7 +2,7 @@ import { NATAL_PATH } from "./natal-paths";
 
 // Мост с лунных страниц к натальной карте: человек видит чужую (общую для всех) Луну и идёт узнать свою.
 // Ведём на быстрый расчёт лунного знака: он короткий, бесплатный, а под результатом стоит блок платного разбора карты
-export type BridgeFrom = "today" | "month" | "weekday";
+export type BridgeFrom = "today" | "month" | "weekday" | "day";
 
 export const MOON_SIGN_PATH = `${NATAL_PATH}/lunnyy-znak`;
 
@@ -11,13 +11,22 @@ export type BridgeCopy = { eyebrow: string; title: string; text: string; cta: st
 const NOTE = "Бесплатно, без регистрации. Расчёт идёт в вашем браузере.";
 export const BRIDGE_NOTE = NOTE;
 
-// signName — «в Овне»: сегодняшний знак Луны, как он записан на странице
+// signName — «в Овне»: знак Луны на сегодня или на день страницы, как он записан на странице
 export function bridgeCopy(from: BridgeFrom, signName?: string): BridgeCopy {
   if (from === "today") {
     return {
       eyebrow: "Ваша Луна",
       title: "Сегодняшняя Луна одна для всех. Ваша — в карте рождения",
       text: `Сегодня Луна ${signName ?? "в одном из знаков"}. А в натальной карте Луна описывает вашу эмоциональную жизнь: то, что даёт чувство опоры. Её знак зависит от даты, времени и места рождения.`,
+      cta: "Узнать свою Луну",
+      href: MOON_SIGN_PATH,
+    };
+  }
+  if (from === "day") {
+    return {
+      eyebrow: "Ваша Луна",
+      title: "Луна этого дня одна для всех. Ваша — в карте рождения",
+      text: `В этот день Луна ${signName ?? "в одном из знаков"}. А в натальной карте Луна описывает вашу эмоциональную жизнь: то, что даёт чувство опоры. Её знак зависит от даты, времени и места рождения.`,
       cta: "Узнать свою Луну",
       href: MOON_SIGN_PATH,
     };

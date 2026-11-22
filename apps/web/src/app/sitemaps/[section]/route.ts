@@ -9,6 +9,7 @@ const SITEMAP_SECTIONS: Readonly<Record<string, readonly string[]>> = {
   lila: ["/lila"],
   taro: ["/taro"],
   natal: ["/natalnaya-karta"],
+  luna: ["/luna-segodnya", "/luna", "/lunnyy-kalendar", "/dni-nedeli"],
   numerologiya: ["/numerologiya"],
   blog: ["/blog"],
 };

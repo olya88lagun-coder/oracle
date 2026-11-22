@@ -43,3 +43,15 @@ describe("MoonMonthDays guide", () => {
     expect(html.match(/<li>/g)).toHaveLength(2);
   });
 });
+
+describe("MoonMonthDays links", () => {
+  test("the date of every row leads to the page of that date", () => {
+    const rows = [
+      { date: "2026-11-01", label: "1 ноября", phaseName: "Убывающая Луна", percent: 51, lunar: "22-е", signName: "Лев", riseSet: "21:00 / 11:00" },
+      { date: "2026-11-24", label: "24 ноября", phaseName: "Полнолуние", percent: 100, lunar: "15-е", signName: "Телец", riseSet: "15:12 / 08:32" },
+    ];
+    const html = renderToStaticMarkup(<MoonMonthDays rows={rows} />);
+    expect(html).toContain('<a href="/lunnyy-kalendar/1-noyabrya-2026">1 ноября</a>');
+    expect(html).toContain('<a href="/lunnyy-kalendar/24-noyabrya-2026">24 ноября</a>');
+  });
+});
