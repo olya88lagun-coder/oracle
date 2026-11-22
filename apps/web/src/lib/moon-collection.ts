@@ -41,6 +41,16 @@ export function nextOpening(id: CollectionId, days: readonly { date: string; sig
   return days.find((day) => day.date >= today && openedBy(day.sign, day.phase).includes(id))?.date ?? null;
 }
 
+// Ближайший день строго после сегодняшнего, который откроет ещё не открытую гравюру; null — в списке такого дня нет
+export function nextGravure(seen: readonly CollectionId[], days: readonly { date: string; sign: SignId; phase: PhaseId }[], today: string): { id: CollectionId; date: string } | null {
+  for (const day of days) {
+    if (day.date <= today) continue;
+    const id = openedBy(day.sign, day.phase).find((candidate) => !seen.includes(candidate));
+    if (id) return { id, date: day.date };
+  }
+  return null;
+}
+
 export function readSeen(): CollectionId[] {
   try {
     return parseSeen(window.localStorage.getItem(SEEN_KEY));

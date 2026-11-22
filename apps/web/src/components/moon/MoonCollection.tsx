@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { moscowDate } from "@/lib/lunar-calendar-paths";
-import { nextOpening, openedBy, readSeen, unlock, writeSeen, type CollectionId } from "@/lib/moon-collection";
+import { nextOpening, openedBy } from "@/lib/moon-collection";
 import type { CollectionItem } from "@/lib/moon-collection-items";
 import type { SignId } from "@oracle/core/natal";
 import type { PhaseId } from "@oracle/core/moon/visual";
+import { useMoonVisit } from "./useMoonVisit";
 
 const dayMonth = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", timeZone: "UTC" });
 const dateLabel = (iso: string): string => dayMonth.format(new Date(`${iso}T12:00:00Z`));
@@ -14,24 +14,12 @@ const dateLabel = (iso: string): string => dayMonth.format(new Date(`${iso}T12:0
 // «Коллекция Луны»: 12 знаков и 8 фаз. Гравюра открывается, когда вы заходите на страницу в день, где Луна в этом знаке или фазе;
 // закрытые видны силуэтом с подсказкой, когда откроются в этом месяце. Список хранится только в браузере (moon-collection.ts)
 export function MoonCollection({ items, days }: { items: readonly CollectionItem[]; days: readonly { date: string; sign: SignId; phase: PhaseId }[] }) {
-  const [seen, setSeen] = useState<readonly CollectionId[]>([]);
-  const [fresh, setFresh] = useState<readonly CollectionId[]>([]);
-  const [today, setToday] = useState<string | null>(null);
-
-  useEffect(() => {
-    const iso = moscowDate(new Date());
-    const current = readSeen();
-    const day = days.find((item) => item.date === iso);
-    setToday(iso);
-    if (!day) {
-      setSeen(current);
-      return;
-    }
-    const result = unlock(current, openedBy(day.sign, day.phase));
-    if (result.fresh.length > 0) writeSeen(result.seen);
-    setSeen(result.seen);
-    setFresh(result.fresh);
-  }, [days]);
+  // Заход и открытие гравюр ведёт общий модуль привычки (moon-visit.ts); до монтирования в браузере список пуст
+  const todayDay = days.find((item) => item.date === moscowDate(new Date()));
+  const state = useMoonVisit(todayDay ? openedBy(todayDay.sign, todayDay.phase) : []);
+  const seen = state?.seen ?? [];
+  const fresh = state?.fresh ?? [];
+  const today = state?.today ?? null;
 
   const names = items.filter((item) => fresh.includes(item.id)).map((item) => item.name);
   return (
