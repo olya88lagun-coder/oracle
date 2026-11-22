@@ -8,3 +8,10 @@ export const PLACE_RESET = "Вернуться к Москве";
 export const PLACE_CLOSE = "Закрыть";
 
 export const placeChipAria = (label: string): string => `Город для лунных данных: ${label}. Изменить`;
+
+// «Сейчас в городе Новосибирск — 23 ноября»: показывается, когда местная дата отличается от серверной (московской).
+// Названия городов хранятся в именительном падеже, поэтому «в городе <название>»
+export function placeNoteFor(placeName: string, serverDate: string, localDate: string): string | null {
+  if (serverDate === localDate) return null;
+  return `Сейчас в городе ${placeName} — ${localDate.replace(/\s+\d{4}$/, "")}`;
+}

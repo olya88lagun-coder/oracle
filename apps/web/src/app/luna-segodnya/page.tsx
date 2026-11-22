@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MoonRibbon } from "@/components/moon/MoonRibbon";
 import { moonRibbonData } from "@/lib/moon-ribbon";
 import { MoonAlbum } from "@/components/moon/MoonAlbum";
-import { MoonTodayView } from "@/components/moon/MoonTodayView";
+import { MoonTodayLive } from "@/components/moon/MoonTodayLive";
 import { MoonNatalBridge } from "@/components/moon/MoonNatalBridge";
 import { WeekdayStrip } from "@/components/weekday/WeekdayStrip";
 import { weekdayPlanet } from "@/lib/weekday-planets";
@@ -58,7 +58,7 @@ export default function MoonTodayPage() {
       <main className="moon-page">
         <MoonRibbon current="today" now={now} initial={moonRibbonData(now)} />
         <nav aria-label="Хлебные крошки" className="moon-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><span>Луна сегодня</span></nav>
-        <MoonTodayView today={today} headingDate={today.dateLabel} />
+        <MoonTodayLive initial={today} headingDate={today.dateLabel} />
         <MoonAlbum thread={buildThreadDays(now)} days={today.strip.map(({ date, snapshot: day }) => ({ date, sign: day.sign, phase: day.phase }))} items={collectionItems()} todayUnlock={openedBy(snapshot.sign, snapshot.phase)} />
         <MoonNatalBridge from="today" signName={today.signName} art={signImage(snapshot.sign, 160)} />
         <div className="weekday-today">
