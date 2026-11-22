@@ -63,6 +63,30 @@ describe("the page of 24 November 2026", () => {
   });
 });
 
+describe("the details of the page", () => {
+  test("a day without events says so under a plural heading", async () => {
+    const html = await render("2-noyabrya-2026");
+    expect(html).toContain("Главных фаз и входа Луны в новый знак в этот день нет.");
+    expect(html).not.toContain("Событие дня");
+  });
+
+  test("the breadcrumb list of the markup has the month between the section and the day", async () => {
+    const html = await render();
+    expect(html).toContain('"name":"Ноябрь 2026"');
+    expect(html).toContain('"position":4');
+  });
+
+  test("a neighbour is announced by its full date and light, not by dots and digits", async () => {
+    const html = await render();
+    expect(html).toContain('aria-label="24 ноября, освещено 100 %"');
+  });
+
+  test("the sign tile does not repeat itself when the Moon enters the sign before noon", async () => {
+    const html = await render("26-oktyabrya-2026");
+    expect(html).not.toMatch(/Телец<\/span><span class="moon-tile__note">в \d\d:\d\d — Телец/);
+  });
+});
+
 describe("the neighbours of the window", () => {
   test("the first day has no link to the day before", async () => {
     const html = await render("1-oktyabrya-2026");

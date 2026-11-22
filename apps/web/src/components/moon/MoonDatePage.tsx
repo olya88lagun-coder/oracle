@@ -42,13 +42,13 @@ export function MoonDatePage({ page, now }: { page: DatePage; now: Date }) {
 
       <ul className="moon-tiles moon-date__tiles">
         <li className="moon-tile" data-kind="phase"><span className="moon-tile__label">Фаза</span><span className="moon-tile__value">{page.phaseName}</span><span className="moon-tile__note">{page.waxing ? "растущая" : "убывающая"} · освещено {percent} %</span></li>
-        <li className="moon-tile" data-kind="sign"><span className="moon-tile__label">Знак Луны</span><span className="moon-tile__value">{page.signName}</span><span className="moon-tile__note">{page.signChange ? `в ${page.signChange.time} — ${page.signChange.signName}` : `${page.signDegree}° знака`}</span></li>
+        <li className="moon-tile" data-kind="sign"><span className="moon-tile__label">Знак Луны</span><span className="moon-tile__value">{page.signName}</span><span className="moon-tile__note">{page.signChange ? (page.signChange.signName === page.signName ? `с ${page.signChange.time}` : `в ${page.signChange.time} — ${page.signChange.signName}`) : `${page.signDegree}° знака`}</span></li>
         <li className="moon-tile" data-kind="day"><span className="moon-tile__label">Лунные сутки</span><span className="moon-tile__value">{ordinal}</span><span className="moon-tile__note">{page.lunarChange ? `в ${page.lunarChange.time} начнутся ${dayOrdinal(page.lunarChange.to)}` : "весь день"}</span></li>
         <li className="moon-tile" data-kind="rise"><span className="moon-tile__label">Восход и заход</span><span className="moon-tile__value">{page.rise ?? "—"} / {page.set ?? "—"}</span><span className="moon-tile__note">по Москве</span></li>
       </ul>
 
       <section className="moon-date__section" aria-labelledby="moon-date-events-title">
-        <h2 id="moon-date-events-title">{page.events.length > 1 ? "События дня" : "Событие дня"}</h2>
+        <h2 id="moon-date-events-title">{page.events.length === 1 ? "Событие дня" : "События дня"}</h2>
         {quiet && <p className="moon-date__quiet">Главных фаз и входа Луны в новый знак в этот день нет.</p>}
         {page.events.length > 0 && (
           <ol className="moon-date-events">
@@ -70,7 +70,7 @@ export function MoonDatePage({ page, now }: { page: DatePage; now: Date }) {
         <ol className="moon-date-days">
           {page.neighbours.map((item) => (
             <li key={item.href} className="moon-date-days__item">
-              <Link href={item.href} aria-current={item.current ? "date" : undefined} aria-label={`${item.label}: ${item.phaseName}`}>
+              <Link href={item.href} aria-current={item.current ? "date" : undefined} aria-label={`${item.longLabel}, освещено ${item.percent} %`}>
                 {item.image && <Image src={item.image} alt="" width={160} height={160} unoptimized loading="lazy" />}
                 <span>{item.label}</span>
               </Link>

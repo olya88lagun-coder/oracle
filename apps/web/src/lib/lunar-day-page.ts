@@ -1,5 +1,5 @@
 import { lunarDayText, phaseText, type LunarDayText, type PhaseText } from "@oracle/content/moon";
-import { KEY_POINT_ASTRONOMY } from "@oracle/content/moon-year";
+import { KEY_POINT_ASTRONOMY, MOON_EXTRA_TEXTS_ACCEPTED } from "@oracle/content/moon-year";
 import { MOSCOW, moonMonth, type MoonEvent, type MoonMonth } from "@oracle/core/moon";
 import type { PhaseId } from "@oracle/core/moon/visual";
 import type { SignId } from "@oracle/core/natal";
@@ -11,7 +11,7 @@ import { PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-today";
 
 // Страница одной даты лунного календаря: все числа берутся из расчёта месяца (по Москве), здесь они собраны для показа и текстов
 export type DayEvent = { at: number; time: string; kind: "phase" | "sign" | "lunar"; text: string; note: string | null };
-export type DayNeighbour = { href: string; label: string; phase: PhaseId; phaseName: string; image: string | null; current: boolean };
+export type DayNeighbour = { href: string; label: string; longLabel: string; percent: number; phase: PhaseId; phaseName: string; image: string | null; current: boolean };
 
 export type DatePage = {
   year: number;
@@ -74,7 +74,7 @@ export function buildDatePage(year: number, month: number, day: number, now: Dat
   const entry = data.days[day - 1]!;
   const { snapshot } = entry;
 
-  const phaseEvents = data.events.filter((event) => labels.dateOf(event.at) === entry.date).map((event): DayEvent => ({ at: event.at.getTime(), time: labels.clock(event.at), kind: "phase", text: EVENT_NAMES[event.kind], note: KEY_POINT_ASTRONOMY[event.kind] }));
+  const phaseEvents = data.events.filter((event) => labels.dateOf(event.at) === entry.date).map((event): DayEvent => ({ at: event.at.getTime(), time: labels.clock(event.at), kind: "phase", text: EVENT_NAMES[event.kind], note: MOON_EXTRA_TEXTS_ACCEPTED ? KEY_POINT_ASTRONOMY[event.kind] : null }));
   const signRuns = data.signRuns.slice(1).filter((run) => labels.dateOf(run.from) === entry.date);
   const signEvents = signRuns.map((run): DayEvent => ({ at: run.from.getTime(), time: labels.clock(run.from), kind: "sign", text: `Луна входит в знак ${SIGN_NAMES[run.sign]}`, note: null }));
   const lunarEvents: DayEvent[] = entry.lunarDay.changeAt && entry.lunarDay.changeTo ? [{ at: entry.lunarDay.changeAt.getTime(), time: labels.clock(entry.lunarDay.changeAt), kind: "lunar", text: `Начинаются ${dayOrdinal(entry.lunarDay.changeTo)} лунные сутки`, note: null }] : [];
@@ -86,7 +86,7 @@ export function buildDatePage(year: number, month: number, day: number, now: Dat
   const all = surroundingDays(year, month, now);
   const index = all.findIndex((item) => item.date === entry.date);
   const link = (item: (typeof all)[number]) => ({ href: lunarDayPathOfDate(item.date), label: dayLabel(new Date(item.snapshot.at)) });
-  const neighbours = all.slice(Math.max(0, index - 3), index + 4).map((item): DayNeighbour => ({ href: lunarDayPathOfDate(item.date), label: `${item.date.slice(8)}.${item.date.slice(5, 7)}`, phase: item.snapshot.phase, phaseName: PHASE_NAMES[item.snapshot.phase], image: phaseImage(item.snapshot.phase, 160), current: item.date === entry.date }));
+  const neighbours = all.slice(Math.max(0, index - 3), index + 4).map((item): DayNeighbour => ({ href: lunarDayPathOfDate(item.date), label: `${item.date.slice(8)}.${item.date.slice(5, 7)}`, longLabel: dayLabel(new Date(item.snapshot.at)), percent: Math.round(item.snapshot.illumination * 100), phase: item.snapshot.phase, phaseName: PHASE_NAMES[item.snapshot.phase], image: phaseImage(item.snapshot.phase, 160), current: item.date === entry.date }));
 
   const lunarText = lunarDayText(entry.lunarDay.number);
   return {

@@ -18,7 +18,7 @@ describe("the day with a main phase and a sign change at once", () => {
     expect(dateDescription(page)).toContain("восход в 15:12 по Москве");
     expect(dateDescription(page).endsWith("Бесплатно.")).toBe(true);
     const answer = dateAnswer(page);
-    for (const part of ["17:54", "100 %", "15-е лунные сутки", "Луна в Тельце", "Близнецы", "15:12", "08:32"]) expect(answer, part).toContain(part);
+    for (const part of ["17:54", "100 %", "15-е лунные сутки", "Луна входит в знак Близнецы в 14:09", "15:12", "08:32"]) expect(answer, part).toContain(part);
   });
 
   test("three questions with the date, the first one answered by the answer paragraph", () => {
@@ -57,6 +57,26 @@ describe("the kinds of days", () => {
     expect(dateAnswer({ ...base, rise: null })).toContain("не восходит");
     expect(dateAnswer({ ...base, set: null })).toContain("не заходит");
     expect(dateDescription({ ...base, rise: null })).toContain("не восходит");
+  });
+});
+
+describe("honesty of the lead", () => {
+  const pages = allPages();
+
+  test("a day without a main phase is never led by the name of a main phase, even when its phase bucket is called so", () => {
+    const day = pages.filter((page) => !page.mainEvent);
+    expect(day.some((page) => /^(Новолуние|Полнолуние|Первая четверть|Последняя четверть)$/.test(page.phaseName))).toBe(true);
+    for (const page of day) for (const text of [dateTitle(page), dateDescription(page), dateAnswer(page)]) expect(text.toLowerCase(), `${page.date}: ${text}`).not.toMatch(/новолуние|полнолуние|четверть/);
+  });
+
+  test("a day with a sign change names the sign at the moment of the change and not the sign at noon", () => {
+    const changed = pages.filter((page) => page.signChange);
+    expect(changed.length).toBeGreaterThan(10);
+    for (const page of changed) {
+      expect(dateDescription(page), page.date).toContain(`входит в знак ${page.signChange!.signName} в ${page.signChange!.time}`);
+      expect(dateAnswer(page), page.date).toContain(`входит в знак ${page.signChange!.signName} в ${page.signChange!.time}`);
+      expect(dateAnswer(page), page.date).not.toContain(`${page.signLine}.`);
+    }
   });
 });
 

@@ -88,7 +88,7 @@ export function MoonDayScene({ day, view, year, started, isToday, progress, coun
           <strong>{day.signLine}</strong>
           <span>{day.dayLine}{day.lunarSymbol ? ` · «${day.lunarSymbol}»` : ""}{day.lunarChange ? ` (${day.lunarChange})` : ""}</span>
           <Link href={day.dayHref}>О лунных сутках →</Link>
-          <Link href={lunarDayPathOfDate(day.date)}>Страница дня →</Link>
+          <Link href={lunarDayPathOfDate(day.date)} prefetch={false}>Страница дня →</Link>
         </p>
         {countdown && <p className="moon-scene__countdown" role="timer" aria-live="off">{countdown}</p>}
         <MoonPathArc rise={rise} set={set} progress={progress} />

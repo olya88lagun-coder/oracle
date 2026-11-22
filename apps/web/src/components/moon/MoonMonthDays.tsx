@@ -27,7 +27,7 @@ export function MoonMonthDays({ rows, guide }: { rows: readonly DayRow[]; guide?
           <tbody>
             {rows.map((row) => (
               <tr key={row.date} className="moon-days__row" data-date={row.date}>
-                <th scope="row"><Link href={lunarDayPathOfDate(row.date)}>{row.label}</Link></th>
+                <th scope="row"><Link href={lunarDayPathOfDate(row.date)} prefetch={false}>{row.label}</Link></th>
                 <td>{row.phaseName} · {row.percent} %</td>
                 <td>{row.lunar}</td>
                 <td>{row.signName}</td>

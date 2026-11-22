@@ -80,7 +80,7 @@ export default async function LunarMonthPage({ params }: Params) {
     const page = buildDatePage(date.year, date.month, date.day, now);
     return (
       <>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(moonJsonLd(dateTitle(page), lunarDayPath(date.year, date.month, date.day), dateFaq(page))) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(moonJsonLd(dateTitle(page), lunarDayPath(date.year, date.month, date.day), dateFaq(page), [{ name: page.monthLabel, path: page.monthHref }])) }} />
         <MoonDatePage page={page} now={now} />
       </>
     );
