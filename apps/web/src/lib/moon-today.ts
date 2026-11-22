@@ -8,31 +8,9 @@ import { TARO_DAY_PATH } from "./taro-paths";
 
 export { MOON_PATH };
 
-export const PHASE_NAMES: Record<PhaseId, string> = {
-  new: "Новолуние",
-  waxingCrescent: "Растущий серп",
-  firstQuarter: "Первая четверть",
-  waxingGibbous: "Растущая Луна",
-  full: "Полнолуние",
-  waningGibbous: "Убывающая Луна",
-  lastQuarter: "Последняя четверть",
-  waningCrescent: "Убывающий серп",
-};
+import { PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-names";
 
-export const SIGN_NAMES_LOCATIVE: Record<SignId, string> = {
-  aries: "в Овне",
-  taurus: "в Тельце",
-  gemini: "в Близнецах",
-  cancer: "в Раке",
-  leo: "во Льве",
-  virgo: "в Деве",
-  libra: "в Весах",
-  scorpio: "в Скорпионе",
-  sagittarius: "в Стрельце",
-  capricorn: "в Козероге",
-  aquarius: "в Водолее",
-  pisces: "в Рыбах",
-};
+export { PHASE_NAMES, SIGN_NAMES_LOCATIVE };
 
 const EVENT_NAMES: Record<MoonEvent["kind"], string> = { new: "Новолуние", firstQuarter: "Первая четверть", full: "Полнолуние", lastQuarter: "Последняя четверть" };
 
