@@ -13,7 +13,7 @@ const RIM = "#806951";
 const TEXTURE = "/images/moon/moon-surface.webp";
 
 // Звёзды в фоне всегда в одних и тех же местах: картинка не зависит от случайности
-function starfield(ctx: Ctx, width: number, height: number) {
+export function starfield(ctx: Ctx, width: number, height: number) {
   let seed = 7;
   const next = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
   for (let i = 0; i < 150; i++) {
@@ -28,7 +28,7 @@ function starfield(ctx: Ctx, width: number, height: number) {
 }
 
 // Четырёхлучевая звезда
-function star(ctx: Ctx, x: number, y: number, radius: number) {
+export function star(ctx: Ctx, x: number, y: number, radius: number) {
   const inner = radius * 0.16;
   ctx.beginPath();
   for (let i = 0; i < 8; i++) {
@@ -55,7 +55,7 @@ function crescent(ctx: Ctx, x: number, y: number, radius: number, direction: 1 |
 }
 
 // Двойная рамка и лучи в углах
-function frame(ctx: Ctx, width: number, height: number) {
+export function frame(ctx: Ctx, width: number, height: number) {
   ctx.strokeStyle = GOLD;
   ctx.lineWidth = 3;
   roundRect(ctx, 22, 22, width - 44, height - 44, 26);

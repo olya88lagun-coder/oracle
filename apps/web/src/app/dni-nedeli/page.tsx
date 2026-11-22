@@ -4,7 +4,7 @@ import { MoonRibbon } from "@/components/moon/MoonRibbon";
 import { moonRibbonData } from "@/lib/moon-ribbon";
 import { MoonNatalBridge } from "@/components/moon/MoonNatalBridge";
 import { WeekdayCards } from "@/components/weekday/WeekdayCards";
-import { WeekdayStrip } from "@/components/weekday/WeekdayStrip";
+import { WeekdayNow } from "@/components/weekday/WeekdayNow";
 import { WeekdayWeekBar } from "@/components/weekday/WeekdayWeekBar";
 import { WeekdayWheel } from "@/components/weekday/WeekdayWheel";
 import { DISCLAIMER } from "@/lib/legal";
@@ -50,7 +50,7 @@ export default function WeekdayPage() {
             <p className="eyebrow eyebrow--line">Ритм недели</p>
             <h1>Дни недели и планеты</h1>
             <p className="weekday-hero__lead">В классической традиции каждому дню недели покровительствует своя планета. Её образ не разрешает и не запрещает вам ничего, он служит мягкой подсказкой: на чём сегодня можно задержать внимание.</p>
-            <WeekdayStrip planet={planet} link={false} artwork />
+            <WeekdayNow planet={planet} />
           </div>
           <WeekdayWheel today={today} />
         </header>
