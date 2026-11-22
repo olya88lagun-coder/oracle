@@ -4,7 +4,8 @@ import { LILA_NOTE_MAX_CHARS } from "@oracle/core";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
-import { lilaCellPath } from "@/lib/lila-paths";
+import { ImageZoom } from "@/components/detail/ImageZoom";
+import { lilaCellImage, lilaImageFile, lilaCellPath } from "@/lib/lila-paths";
 import type { Turn } from "@/lib/lila-turn";
 import { CellArt } from "./CellArt";
 
@@ -49,7 +50,9 @@ export function TurnPanel({ turn, moveNumber, note, images, editable, onSaveNote
       ) : (
         <>
           <div className="turn-art-heading">
-            <CellArt cell={landed} available={images} priority />
+            {images.includes(lilaImageFile(landed, "card")) && images.includes(lilaImageFile(landed, "page")) ? (
+              <ImageZoom src={lilaCellImage(landed, "card")} fullSrc={lilaCellImage(landed, "page")} alt={`Клетка ${landed.number} «${landed.name}»`} width={480} height={480} className="lila-art lila-art--card" priority />
+            ) : <CellArt cell={landed} available={images} priority />}
             <div>
               <small>
                 Клетка {landed.number}

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import { ArticleStudyFigure } from "@/components/blog/ArticleStudyFigure";
 import { ArticleBody } from "@/components/blog/ArticleBody";
 import { ArticleToc } from "@/components/blog/ArticleToc";
 import { HowToPlayLila } from "@/components/blog/HowToPlayLila";
@@ -93,6 +94,7 @@ export default async function BlogPostPage({ params }: Params) {
         <div className="blog-article-layout">
           <ArticleToc targetId={TEXT_ID} />
           <div id={TEXT_ID} className="blog-prose stack">
+            <ArticleStudyFigure slug={post.slug} />
             {content}
             <p className="blog-disclaimer">{DISCLAIMER}</p>
           </div>

@@ -14,10 +14,13 @@ export const metadata = publicMetadata({ title: "Пример полного р�
 export default function ReportExamplePage() {
   return <main className="workspace"><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbJsonLd([{ name: "Матрица судьбы", path: "/matrica-sudby" }, { name: "Пример разбора", path: "/matrica-sudby/primer" }])) }} /><div className="matrix-wrap">
     <p className="muted">Персональный разбор одной даты — {formatRubles(MATRIX_REPORT_PRICE_KOPECKS)}, разовая оплата. Здесь можно бесплатно оценить формат результата.</p>
+    <details className="report-book-option">
+      <summary>Листать пример как книгу</summary>
     <ReportBook
       cover={{ title: "Пример полного разбора", subtitle: "Демонстрационная дата", image: arcanumImage(arcanumByNumber(DEMO_MATRIX.E), "card") }}
       pages={orderedChapters(DEMO_REPORT).map((chapter) => ({ id: chapter.id, title: CHAPTER_TITLES[chapter.id], paragraphs: chapter.paragraphs, scenario: chapter.scenario as Record<string, string> | null | undefined }))}
     />
+    </details>
     <ReportView demo matrix={DEMO_MATRIX} birthDate={DEMO_DATE} chapters={DEMO_REPORT} />
   </div></main>;
 }

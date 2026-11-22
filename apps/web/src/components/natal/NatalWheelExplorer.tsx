@@ -19,6 +19,7 @@ import {
 } from "@/lib/natal-wheel-card";
 import { NatalGlyph, bodyGlyphId } from "./NatalGlyph";
 import { NatalWheel, type NatalBirth } from "./NatalWheel";
+import { NatalWheelZoom } from "./NatalWheelZoom";
 
 // Колесо с пояснением: на колесо можно навести мышь или нажать (планета, знак, дом, ось), то же доступно кнопками — их ряд идёт
 // после карточки, чтобы на телефоне пояснение оказывалось сразу под колесом. Колесо для программ экрана остаётся картинкой с описанием,
@@ -71,6 +72,7 @@ export function NatalWheelExplorer({ chart, birth, keyTexts, initialSelection }:
         birth={birth}
         interaction={{ selection, onHover: (target) => dispatch({ type: "hover", target }), onTap: (target) => dispatch({ type: "tap", target }) }}
       />
+      <NatalWheelZoom chart={chart} birth={birth} />
       <div className="natal-wheel-card" role="group" aria-live="polite" aria-label={WHEEL_CARD_LABEL}>
         {card ? <CardBody card={card} /> : <p className="natal-wheel-card__hint">{WHEEL_CARD_HINT}</p>}
       </div>

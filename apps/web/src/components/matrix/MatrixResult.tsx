@@ -38,41 +38,41 @@ export function MatrixResult({ matrix, dateLabel, headingRef, actions, offer }: 
               ))}
             </ul>
           </div>
-
-          <ul className="matrix-keys" aria-label="Ключевые точки">
-            {KEY_POINTS.map(({ point, key, label }) => {
-              const arcanum = arcanumByNumber(matrix[point]);
-              return (
-                <li key={point} className={`card matrix-key stack${point === selected ? " is-selected" : ""}`}>
-                  <div className="matrix-key__art">
-                    <Image src={arcanumImage(arcanum, "card")} alt="" fill unoptimized sizes="(min-width: 1200px) 220px, (min-width: 900px) 45vw, 100vw" />
-                  </div>
-                  <div className="matrix-key__head">
-                    <span className="matrix-key__number" aria-hidden="true">
-                      {arcanum.number}
-                    </span>
-                    <div>
-                      <p className="eyebrow">
-                        {label} · точка {point}
-                      </p>
-                      <h3>
-                        <span className="visually-hidden">Аркан {arcanum.number}, </span>
-                        {arcanum.name}
-                      </h3>
-                    </div>
-                  </div>
-                  {arcanum[key].map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                  <Link className="touch-link" href={arcanumPath(arcanum)}>
-                    Подробнее об аркане «{arcanum.name}»
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
         </div>
       </div>
+
+      <ul className="matrix-keys" aria-label="Ключевые точки">
+        {KEY_POINTS.map(({ point, key, label }) => {
+          const arcanum = arcanumByNumber(matrix[point]);
+          return (
+            <li key={point} className={`card matrix-key stack${point === selected ? " is-selected" : ""}`}>
+              <div className="matrix-key__art">
+                <Image src={arcanumImage(arcanum, "card")} alt="" fill unoptimized sizes="(min-width: 1200px) 220px, (min-width: 900px) 45vw, 100vw" />
+              </div>
+              <div className="matrix-key__head">
+                <span className="matrix-key__number" aria-hidden="true">
+                  {arcanum.number}
+                </span>
+                <div>
+                  <p className="eyebrow">
+                    {label} · точка {point}
+                  </p>
+                  <h3>
+                    <span className="visually-hidden">Аркан {arcanum.number}, </span>
+                    {arcanum.name}
+                  </h3>
+                </div>
+              </div>
+              {arcanum[key].map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+              <Link className="touch-link" href={arcanumPath(arcanum)}>
+                Подробнее об аркане «{arcanum.name}»
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
 
       {/* Главный коммерческий блок — сразу после трёх бесплатных ключевых карточек, пока интерес самый горячий */}
       {offer}
