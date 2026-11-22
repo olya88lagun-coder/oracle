@@ -52,3 +52,14 @@ test("the week bar marks the first and the last day of the week correctly", () =
     expect(bar.indexOf('aria-current="true"')).toBeGreaterThan(bar.indexOf(`href="#${WEEKDAY_PLANETS[today]!.slug}"`));
   }
 });
+
+test("all seven planets use local raster artwork in the scene, navigation and cards", () => {
+  const markup = html();
+  for (const { glyph } of WEEKDAY_PLANETS) {
+    expect(markup).toContain(`/images/weekday/${glyph}-160.webp`);
+    expect(markup).toContain(`/images/weekday/${glyph}-384.webp`);
+  }
+  expect(markup.match(/weekday-system__centre/g)).toHaveLength(1);
+  expect(markup.match(/weekday-system__companion/g)).toHaveLength(6);
+  expect(markup).not.toContain("weekday-wheel__glyph");
+});
