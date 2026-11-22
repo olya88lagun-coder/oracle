@@ -36,3 +36,13 @@ describe("MoonRibbon", () => {
     for (const word of FORBIDDEN_MOON_WORDS) expect(text(html), word).not.toContain(word);
   });
 });
+
+describe("MoonRibbon city chip", () => {
+  test("renders the place chip with Moscow by default and opens a dialog", () => {
+    const html = renderToStaticMarkup(<MoonRibbon current="today" now={NOW} />);
+    expect(html).toMatch(/<button[^>]*class="moon-rail__place"[^>]*aria-haspopup="dialog"/);
+    expect(html).toContain("Москва");
+    expect(html).toContain('aria-label="Город для лунных данных: Москва. Изменить"');
+    expect(html).toContain("<dialog");
+  });
+});
