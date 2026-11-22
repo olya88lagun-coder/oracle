@@ -1,5 +1,5 @@
 import { lunarDayText } from "@oracle/content/moon";
-import { lunarDay, type PhaseId } from "@oracle/core/moon";
+import { lunarDay, MOSCOW, type PhaseId, type Place } from "@oracle/core/moon";
 import type { SignId } from "@oracle/core/natal";
 import { phaseImage } from "./moon-images";
 import { buildMoonToday } from "./moon-today";
@@ -17,9 +17,9 @@ export type MoonRibbonData = {
   discImage: string | null;
 };
 
-export function moonRibbonData(now: Date): MoonRibbonData {
-  const today = buildMoonToday(now);
-  const day = lunarDay(now);
+export function moonRibbonData(now: Date, place: Place = MOSCOW): MoonRibbonData {
+  const today = buildMoonToday(now, place);
+  const day = lunarDay(now, place);
   const span = day.endsAt.getTime() - day.startsAt.getTime();
   const progress = span > 0 ? Math.min(1, Math.max(0, (now.getTime() - day.startsAt.getTime()) / span)) : 0;
   return {
