@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Лунный раздел: полоса, плитка, альбом</title>
+<style>
+  :root { --bg:#0B090E; --surface:#121017; --surface-2:#18141F; --line:#2A2430; --line-2:#3A3242; --ink:#F2EAE0; --soft:#B9AFA5; --gold:#CBA676; --gold-2:#DDBC8E; --gold-line:rgba(203,166,118,.38); --lav:#B9A4E8; --glow:rgba(221,188,142,.35); --serif: "Noto Serif Display", "Cormorant Garamond", Georgia, "Times New Roman", serif; --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#07050A; color:var(--ink); font:16px/1.5 var(--sans); padding:24px 16px 80px; }
+  .wrap { max-width:1080px; margin:0 auto; }
+  h1 { font:400 clamp(28px,4vw,40px)/1.15 var(--serif); margin:0 0 6px; }
+  .lead { color:var(--soft); margin:0 0 34px; max-width:70ch; }
+  h2 { font:400 clamp(22px,3vw,28px)/1.2 var(--serif); margin:54px 0 6px; }
+  .q { color:var(--gold); font-size:14px; letter-spacing:.14em; text-transform:uppercase; margin:0 0 6px; }
+  .hint { color:var(--soft); margin:0 0 18px; max-width:72ch; }
+  .grid2 { display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr)); align-items:start; }
+  .pick { cursor:pointer; border:1px solid var(--line); border-radius:20px; padding:14px; background:#0E0B12; transition:border-color .2s, box-shadow .2s; }
+  .pick:hover { border-color:var(--gold-line); }
+  .pick.is-picked { border-color:var(--gold); box-shadow:0 0 0 1px var(--gold), 0 0 30px rgba(203,166,118,.18); }
+  .pick .tag { display:flex; gap:10px; align-items:baseline; margin:0 0 12px; }
+  .pick .tag b { font:600 13px var(--sans); letter-spacing:.14em; color:var(--bg); background:var(--gold); border-radius:6px; padding:2px 8px; }
+  .pick .tag span { color:var(--soft); font-size:14px; }
+  .screen { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--bg); position:relative; }
+  .mock-head { display:flex; align-items:center; gap:18px; padding:12px 18px; border-bottom:1px solid var(--line); font-size:14px; }
+  .logo { font:400 22px var(--serif); } .logo i { color:var(--gold); font-style:normal; }
+  .mock-head nav { display:flex; gap:14px; color:var(--soft); margin-left:auto; flex-wrap:wrap; }
+  .mock-head nav .on { color:var(--gold-2); display:inline-flex; align-items:center; gap:6px; }
+  .mini { width:20px; height:20px; border-radius:50%; object-fit:cover; box-shadow:0 0 10px var(--glow); }
+  .body-hint { padding:22px 18px; color:#6d6575; font-size:14px; }
+  .body-hint h3 { font:400 28px var(--serif); color:var(--ink); margin:0 0 6px; }
+
+  /* ===== Полоса A: лента ===== */
+  .band { display:flex; align-items:center; gap:18px; padding:10px 18px; background:linear-gradient(90deg, rgba(203,166,118,.08), rgba(185,164,232,.06) 60%, transparent), var(--surface); border-bottom:1px solid var(--line); position:relative; overflow:hidden; }
+  .band::after { content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:linear-gradient(90deg, transparent, var(--gold), transparent); opacity:.55; }
+  .orbit { position:relative; width:52px; height:52px; flex:none; }
+  .orbit img { position:absolute; inset:7px; width:38px; height:38px; border-radius:50%; box-shadow:0 0 22px var(--glow); animation:breathe 5s ease-in-out infinite; }
+  .orbit svg { position:absolute; inset:0; }
+  .orbit .ring { fill:none; stroke:var(--line-2); stroke-width:1.5; }
+  .orbit .prog { fill:none; stroke:var(--gold); stroke-width:2; stroke-linecap:round; stroke-dasharray:138; stroke-dashoffset:60; transform:rotate(-90deg); transform-origin:center; filter:drop-shadow(0 0 3px var(--gold)); }
+  .band .now { line-height:1.25; min-width:0; }
+  .band .now b { display:block; font:400 18px var(--serif); }
+  .band .now span { color:var(--soft); font-size:13px; }
+  .tabs { display:flex; gap:4px; margin-left:auto; flex-wrap:wrap; }
+  .tabs a { padding:8px 14px; border-radius:999px; color:var(--soft); font-size:14px; text-decoration:none; border:1px solid transparent; }
+  .tabs a.on { color:var(--bg); background:linear-gradient(180deg,var(--gold-2),var(--gold)); font-weight:600; box-shadow:0 0 18px var(--glow); }
+  .tabs a:not(.on):hover { border-color:var(--gold-line); color:var(--ink); }
+  .streak-chip { display:flex; align-items:center; gap:8px; padding:6px 12px; border:1px solid var(--gold-line); border-radius:999px; font-size:13px; color:var(--gold-2); background:rgba(203,166,118,.06); white-space:nowrap; }
+  .streak-chip i { width:7px; height:7px; border-radius:50%; background:var(--gold); box-shadow:0 0 8px var(--gold); display:inline-block; }
+
+  /* ===== Полоса B: нижняя док-панель на телефоне ===== */
+  .phone { width:290px; margin:0 auto; border:8px solid #1b1621; border-radius:34px; background:var(--bg); overflow:hidden; position:relative; height:520px; }
+  .phone .p-top { padding:14px 16px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; font:400 18px var(--serif); }
+  .phone .p-body { padding:18px 16px; }
+  .phone .p-body h3 { font:400 26px/1.1 var(--serif); margin:0 0 8px; }
+  .phone .p-disc { width:140px; height:140px; border-radius:50%; margin:16px auto; box-shadow:0 0 50px var(--glow); display:block; }
+  .dock { position:absolute; left:10px; right:10px; bottom:10px; display:flex; gap:2px; padding:6px; border:1px solid var(--gold-line); border-radius:22px; background:rgba(18,16,23,.82); backdrop-filter:blur(14px); box-shadow:0 10px 30px rgba(0,0,0,.5), 0 0 24px rgba(203,166,118,.12); }
+  .dock a { flex:1; text-align:center; font-size:10.5px; color:var(--soft); padding:6px 0 5px; border-radius:16px; text-decoration:none; display:grid; justify-items:center; gap:3px; }
+  .dock a img { width:24px; height:24px; border-radius:50%; opacity:.72; filter:saturate(.8); }
+  .dock a.on { color:var(--gold-2); background:rgba(203,166,118,.14); }
+  .dock a.on img { opacity:1; filter:none; box-shadow:0 0 14px var(--glow); }
+
+  /* ===== Плитка на главной ===== */
+  .home { padding:22px; background:radial-gradient(900px 300px at 80% -20%, rgba(185,164,232,.10), transparent), var(--bg); }
+  .home small { color:#6d6575; font-size:13px; }
+  .portal { margin-top:14px; display:grid; grid-template-columns:auto 1fr; gap:26px; align-items:center; padding:26px; border:1px solid var(--gold-line); border-radius:26px; background:linear-gradient(160deg,var(--surface-2),var(--surface) 70%); position:relative; overflow:hidden; }
+  .portal::before { content:""; position:absolute; width:380px; height:380px; right:-120px; top:-160px; border-radius:50%; background:radial-gradient(circle, rgba(185,164,232,.16), transparent 65%); }
+  .halo { position:relative; width:150px; height:150px; }
+  .halo img { position:absolute; inset:14px; width:122px; height:122px; border-radius:50%; box-shadow:0 0 46px var(--glow); animation:breathe 6s ease-in-out infinite; }
+  .halo .dots { position:absolute; inset:0; border:1px dashed var(--gold-line); border-radius:50%; animation:spin 60s linear infinite; }
+  .halo .dots::after { content:""; position:absolute; top:-4px; left:50%; width:8px; height:8px; margin-left:-4px; border-radius:50%; background:var(--gold-2); box-shadow:0 0 12px var(--gold); }
+  .portal .eyebrow { color:var(--gold); font-size:13px; letter-spacing:.2em; text-transform:uppercase; margin:0 0 6px; }
+  .portal h3 { font:400 clamp(24px,3.4vw,32px)/1.12 var(--serif); margin:0 0 8px; }
+  .portal p { color:var(--soft); margin:0 0 14px; }
+  .chips { display:flex; gap:8px; flex-wrap:wrap; }
+  .chips span { border:1px solid var(--line-2); border-radius:12px; padding:6px 12px; font-size:13px; color:var(--soft); }
+  .btn { display:inline-block; padding:12px 22px; border-radius:999px; background:var(--lav); color:#16111F; font-weight:600; text-decoration:none; }
+  .week-arc { display:flex; gap:6px; align-items:flex-end; margin-top:12px; }
+  .week-arc div { text-align:center; font-size:11px; color:var(--soft); }
+  .week-arc img { display:block; width:34px; height:34px; border-radius:50%; margin:0 auto 4px; opacity:.55; }
+  .week-arc .t img { opacity:1; width:44px; height:44px; box-shadow:0 0 18px var(--glow); }
+  .wide { margin-top:14px; display:flex; flex-wrap:wrap; gap:22px; align-items:center; padding:18px 22px; border:1px solid var(--line); border-radius:22px; background:linear-gradient(90deg, rgba(203,166,118,.08), var(--surface) 55%); }
+  .wide .sign { width:78px; height:78px; border-radius:50%; flex:none; box-shadow:0 0 0 1px var(--gold-line); }
+  .wide .txt { flex:1 1 220px; min-width:0; } .wide .txt b { font:400 22px var(--serif); display:block; } .wide .txt span { color:var(--soft); font-size:14px; }
+
+  /* ===== Альбом и нить ===== */
+  .album { padding:26px 22px; background:radial-gradient(800px 260px at 50% 0%, rgba(203,166,118,.10), transparent), var(--bg); }
+  .reveal { display:grid; grid-template-columns:auto 1fr; gap:22px; align-items:center; border:1px solid var(--gold); border-radius:22px; padding:16px 20px; background:linear-gradient(120deg, rgba(203,166,118,.14), rgba(185,164,232,.06) 70%); position:relative; overflow:hidden; box-shadow:0 0 40px rgba(203,166,118,.14); }
+  .reveal::after { content:""; position:absolute; inset:0; background:linear-gradient(105deg, transparent 35%, rgba(255,255,255,.12) 50%, transparent 65%); transform:translateX(-120%); animation:sheen 4.5s ease-in-out infinite; pointer-events:none; }
+  .reveal img { width:104px; height:104px; border-radius:50%; box-shadow:0 0 34px var(--glow), 0 0 0 1px var(--gold); animation:pop .9s cubic-bezier(.2,.9,.2,1.2) both; }
+  .reveal .k { color:var(--gold); font-size:13px; letter-spacing:.2em; text-transform:uppercase; }
+  .reveal b { font:400 26px var(--serif); display:block; margin:2px 0; }
+  .reveal span { color:var(--soft); font-size:14px; }
+  .thread-title { display:flex; justify-content:space-between; align-items:baseline; margin:26px 0 10px; flex-wrap:wrap; gap:6px; }
+  .thread-title b { font:400 22px var(--serif); } .thread-title span { color:var(--gold-2); font-size:14px; }
+  .thread { position:relative; display:grid; grid-template-columns:repeat(14,1fr); gap:4px; padding:18px 8px 10px; border:1px solid var(--line); border-radius:18px; background:var(--surface); }
+  .thread::before { content:""; position:absolute; left:20px; right:20px; top:44px; height:2px; background:linear-gradient(90deg, var(--line) 0 38%, var(--gold) 38% 100%); box-shadow:0 0 10px rgba(203,166,118,.5); }
+  .bead { position:relative; text-align:center; font-size:10px; color:#6d6575; }
+  .bead img { display:block; width:min(30px,100%); aspect-ratio:1; border-radius:50%; margin:0 auto 6px; opacity:.28; filter:grayscale(.6); position:relative; }
+  .bead.lit { color:var(--gold-2); } .bead.lit img { opacity:1; filter:none; box-shadow:0 0 12px var(--glow); }
+  .bead.today img { width:min(38px,100%); box-shadow:0 0 22px var(--gold), 0 0 0 2px var(--gold); animation:breathe 3.4s ease-in-out infinite; }
+  .gallery { display:grid; grid-template-columns:repeat(10,1fr); gap:8px; margin-top:12px; }
+  .slot { aspect-ratio:1; border-radius:14px; border:1px solid var(--line); overflow:hidden; position:relative; background:#0d0a11; }
+  .slot img { width:100%; height:100%; object-fit:cover; opacity:.16; filter:grayscale(1) blur(1px); }
+  .slot.on { border-color:var(--gold-line); } .slot.on img { opacity:1; filter:none; }
+  .slot.new { border-color:var(--gold); box-shadow:0 0 22px rgba(203,166,118,.5); } .slot.new img { opacity:1; filter:none; }
+  .slot em { position:absolute; left:0; right:0; bottom:0; font:normal 10px/1.2 var(--sans); text-align:center; padding:3px 2px; background:linear-gradient(transparent, rgba(0,0,0,.8)); color:var(--ink); }
+  .milestones { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+  .milestones span { border:1px dashed var(--line-2); border-radius:12px; padding:6px 12px; font-size:13px; color:var(--soft); }
+  .milestones span.done { border:1px solid var(--gold-line); color:var(--gold-2); background:rgba(203,166,118,.08); }
+  .note { color:var(--soft); font-size:14px; margin:14px 0 0; }
+  @keyframes breathe { 50% { transform:scale(1.045); filter:brightness(1.12); } }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @keyframes sheen { 0%,55% { transform:translateX(-120%); } 85%,100% { transform:translateX(120%); } }
+  @keyframes pop { from { transform:scale(.5) rotate(-12deg); opacity:0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation:none !important; } }
+  @media (max-width:640px) { .portal { grid-template-columns:1fr; justify-items:center; text-align:center; } .chips { justify-content:center; } .gallery { grid-template-columns:repeat(5,1fr); } .reveal { grid-template-columns:1fr; justify-items:center; text-align:center; } .thread { grid-template-columns:repeat(7,1fr); row-gap:12px; } .thread::before { display:none; } .tabs { margin-left:0; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Лунный раздел: как людям легко найти Луну и вернуться</h1>
+  <p class="lead">Три части одного подхода А. Это макеты: картинки настоящие (гравюры с сайта), шрифт заголовков запасной, на сайте будет Noto Serif Display. Нажмите на вариант, который ближе, и напишите, что нравится, а что нет. Можно брать части из разных.</p>
+
+  <!-- ============ 1. ПОЛОСА ============ -->
+  <p class="q" style="margin-top:20px">Часть 1 · Лунная полоса</p>
+  <h2 style="margin-top:0">Одна полоса на всех лунных страницах, плюс «Луна» в шапке</h2>
+  <p class="hint">Видна всегда под шапкой: живой диск с кольцом «сколько прошло от лунных суток», вкладки между разделами, нить заходов справа. «Луна» в шапке тоже с живым диском: восьмой пункт, на телефоне попадёт в меню.</p>
+
+  <div class="grid2">
+    <div class="pick" data-choice="strip-band" onclick="pick(this)">
+      <div class="tag"><b>А</b><span>Лента под шапкой (компьютер)</span></div>
+      <div class="screen">
+        <div class="mock-head"><span class="logo">Твой <i>оракул</i></span>
+          <nav><span>Матрица</span><span>Совместимость</span><span>Лила</span><span>Таро</span><span>Натальная карта</span><span class="on"><img class="mini" src="https://tvoy-orakul.ru/luna/phases/waxingGibbous-160.webp" alt="">Луна</span><span>Блог</span></nav></div>
+        <div class="band">
+          <div class="orbit"><svg viewBox="0 0 52 52"><circle class="ring" cx="26" cy="26" r="22"/><circle class="prog" cx="26" cy="26" r="22"/></svg><img src="https://tvoy-orakul.ru/luna/phases/waxingGibbous-160.webp" alt=""></div>
+          <div class="now"><b>Растущая Луна · 89 %</b><span>Луна в Овне · 13-е сутки «Колесо»</span></div>
+          <div class="tabs"><a class="on">Сегодня</a><a>Календарь</a><a>Фазы</a><a>Сутки</a><a>Дни недели</a></div>
+        </div>
+        <div class="body-hint"><h3>Луна сегодня, 22 ноября</h3>содержимое страницы…</div>
+      </div>
+    </div>
+
+    <div class="pick" data-choice="strip-dock" onclick="pick(this)">
+      <div class="tag"><b>Б</b><span>Плавающая док-панель (телефон)</span></div>
+      <div class="phone">
+        <div class="p-top"><span>Твой <span style="color:var(--gold)">оракул</span></span><span>☰</span></div>
+        <div class="p-body"><h3>Луна сегодня, 22 ноября</h3><img class="p-disc" src="https://tvoy-orakul.ru/luna/phases/waxingGibbous.webp" alt=""><div style="text-align:center;color:var(--soft);font-size:13px">Растущая Луна · 89 %</div></div>
+        <div class="dock">
+          <a class="on"><img src="https://tvoy-orakul.ru/luna/phases/waxingGibbous-160.webp" alt="">Сегодня</a>
+          <a><img src="https://tvoy-orakul.ru/luna/phases/full-160.webp" alt="">Календарь</a>
+          <a><img src="https://tvoy-orakul.ru/luna/phases/firstQuarter-160.webp" alt="">Фазы</a>
+          <a><img src="https://tvoy-orakul.ru/luna/days/13-koleso-160.webp" alt="">Сутки</a>
+          <a><img src="https://tvoy-orakul.ru/luna/phases/waningCrescent-160.webp" alt="">Недели</a>
+        </div>
+      </div>
+      <p class="note" style="text-align:center">Панель закрывает низ экрана и спорит с cookie-баннером; прячется при прокрутке вниз, возвращается вверх.</p>
+    </div>
+  </div>
+
+  <!-- ============ 2. ГЛАВНАЯ ============ -->
+  <p class="q" style="margin-top:56px">Часть 2 · Вход с главной</p>
+  <h2 style="margin-top:0">Живая плитка «Луна сегодня»</h2>
+  <p class="hint">Главная сейчас про практики и совсем не про Луну. Плитка стоит под первым экраном, считается на сегодня и ведёт на «Луну сегодня». Два варианта.</p>
+
+  <div class="grid2" style="grid-template-columns:1fr">
+    <div class="pick" data-choice="home-portal" onclick="pick(this)">
+      <div class="tag"><b>А</b><span>«Портал»: большая карточка с дышащей Луной</span></div>
+      <div class="screen home"><small>…под первым экраном главной…</small>
+        <div class="portal">
+          <div class="halo"><span class="dots"></span><img src="https://tvoy-orakul.ru/luna/phases/waxingGibbous.webp" alt=""></div>
+          <div>
+            <p class="eyebrow">Луна сегодня · 22 ноября</p>
+            <h3>Растущая Луна, 13-е сутки «Колесо»</h3>
+            <p>Луна в Овне. Через 2 дня полнолуние. Ваша серия заходов: 5 дней, открыто 9 гравюр из 20.</p>
+            <div class="chips"><span>89 % света</span><span>Овен</span><span>Восход 14:22</span></div>
+            <div class="week-arc">
+              <div><img src="https://tvoy-orakul.ru/luna/phases/waxingGibbous-160.webp" alt="">вс</div>
+              <div class="t"><img src="https://tvoy-orakul.ru/luna/phases/waxingGibbous-160.webp" alt="">сег</div>
+              <div><img src="https://tvoy-orakul.ru/luna/phases/waxingGibbous-160.webp" alt="">вт</div>
+              <div><img src="https://tvoy-orakul.ru/luna/phases/full-160.webp" alt="">ср</div>
+              <div><img src="https://tvoy-orakul.ru/luna/phases/full-160.webp" alt="">чт</div>
+              <div><img src="https://tvoy-orakul.ru/luna/phases/full-160.webp" alt="">пт</div>
+            </div>
+            <p style="margin:14px 0 0"><a class="btn">Открыть Луну сегодня</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pick" data-choice="home-wide" onclick="pick(this)">
+      <div class="tag"><b>Б</b><span>«Лента»: тонкая строка с гравюрой знака</span></div>
+      <div class="screen home"><small>…под первым экраном главной…</small>
+        <div class="wide">
+          <img class="sign" src="https://tvoy-orakul.ru/luna/signs/aries-160.webp" alt="">
+          <div class="txt"><b>Сегодня Луна в Овне</b><span>Растущая, 89 %, 13-е сутки «Колесо». Полнолуние через 2 дня.</span></div>
+          <a class="btn">Луна сегодня</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 3. АЛЬБОМ ============ -->
+  <p class="q" style="margin-top:56px">Часть 3 · Привычка в браузере</p>
+  <h2 style="margin-top:0">«Лунный альбом»: гравюра за заход и нить дней</h2>
+  <p class="hint">Блок на «Луне сегодня». Каждый новый заход открывает гравюру знака или фазы (как сейчас в календаре, но теперь и здесь). Нить показывает последние 14 дней фазами Луны: дни с заходом светятся золотом. Всё хранится только в браузере, без регистрации.</p>
+
+  <div class="pick" data-choice="album" onclick="pick(this)">
+    <div class="tag"><b>А</b><span>Блок «Лунный альбом» на «Луне сегодня»</span></div>
+    <div class="screen album">
+      <div class="reveal">
+        <img src="https://tvoy-orakul.ru/luna/signs/aries-480.webp" alt="">
+        <div><div class="k">Сегодня открылась гравюра</div><b>Овен</b><span>Нажмите, чтобы посмотреть в альбоме. Следующая откроется 23 ноября: Телец.</span></div>
+      </div>
+
+      <div class="thread-title"><b>Нить Луны</b><span>5 дней подряд · лучший ряд 9</span></div>
+      <div class="thread">
+        <div class="bead"><img src="https://tvoy-orakul.ru/luna/phases/new-160.webp" alt="">9</div>
+        <div class="bead"><img src="https://tvoy-orakul.ru/luna/phases/waxingCrescent-160.webp" alt="">10</div>
+        <div class="bead"><img src="https://tvoy-orakul.ru/luna/phases/waxingCrescent-160.webp" alt="">11</div>
+        <div class="bead"><img src="https://tvoy-orakul.ru/luna/phases/waxingCrescent-160.webp" alt="">12</div>
+        <div class="bead"><img src="https://tvoy-orakul.ru/luna/phases/waxingCrescent-160.webp" alt="">13</div>
+        <div class="bead"><img src="https://tvoy-orakul.ru/luna/phases/waxingCrescent-160.webp" alt="">14</div>
+        <div class="bead"><img src="https://tvoy-orakul.ru/luna/phases/waxingCrescent-160.webp" alt="">15</div>
+        <div class="bead"><img src="https://tvoy-orakul.ru/luna/phases/firstQuarter-160.webp" alt="">16</div>
+        <div class="bead"><img src="https://tvoy-orakul.ru/luna/phases/firstQuarter-160.webp" alt="">17</div>
+        <div class="bead lit"><img src="https://tvoy-orakul.ru/luna/phases/waxingGibbous-160.webp" alt="">18</div>
+        <div class="bead lit"><img src="https://tvoy-orakul.ru/luna/phases/waxingGibbous-160.webp" alt="">19</div>
+        <div class="bead lit"><img src="https://tvoy-orakul.ru/luna/phases/waxingGibbous-160.webp" alt="">20</div>
+        <div class="bead lit"><img src="https://tvoy-orakul.ru/luna/phases/waxingGibbous-160.webp" alt="">21</div>
+        <div class="bead lit today"><img src="https://tvoy-orakul.ru/luna/phases/waxingGibbous-160.webp" alt="">сег</div>
+      </div>
+
+      <div class="thread-title"><b>Альбом</b><span>открыто 9 из 20</span></div>
+      <div class="gallery">
+        <div class="slot new"><img src="https://tvoy-orakul.ru/luna/signs/aries-160.webp" alt=""><em>Овен</em></div>
+        <div class="slot on"><img src="https://tvoy-orakul.ru/luna/signs/pisces-160.webp" alt=""><em>Рыбы</em></div>
+        <div class="slot on"><img src="https://tvoy-orakul.ru/luna/signs/aquarius-160.webp" alt=""><em>Водолей</em></div>
+        <div class="slot on"><img src="https://tvoy-orakul.ru/luna/signs/capricorn-160.webp" alt=""><em>Козерог</em></div>
+        <div class="slot on"><img src="https://tvoy-orakul.ru/luna/signs/sagittarius-160.webp" alt=""><em>Стрелец</em></div>
+        <div class="slot"><img src="https://tvoy-orakul.ru/luna/signs/taurus-160.webp" alt=""><em>Телец</em></div>
+        <div class="slot"><img src="https://tvoy-orakul.ru/luna/signs/gemini-160.webp" alt=""><em>Близнецы</em></div>
+        <div class="slot"><img src="https://tvoy-orakul.ru/luna/signs/cancer-160.webp" alt=""><em>Рак</em></div>
+        <div class="slot"><img src="https://tvoy-orakul.ru/luna/signs/leo-160.webp" alt=""><em>Лев</em></div>
+        <div class="slot"><img src="https://tvoy-orakul.ru/luna/signs/virgo-160.webp" alt=""><em>Дева</em></div>
+        <div class="slot on"><img src="https://tvoy-orakul.ru/luna/phases/new-160.webp" alt=""><em>Новолуние</em></div>
+        <div class="slot on"><img src="https://tvoy-orakul.ru/luna/phases/waxingCrescent-160.webp" alt=""><em>Серп</em></div>
+        <div class="slot on"><img src="https://tvoy-orakul.ru/luna/phases/firstQuarter-160.webp" alt=""><em>Четверть</em></div>
+        <div class="slot on"><img src="https://tvoy-orakul.ru/luna/phases/waxingGibbous-160.webp" alt=""><em>Растущая</em></div>
+        <div class="slot"><img src="https://tvoy-orakul.ru/luna/phases/full-160.webp" alt=""><em>Полнолуние</em></div>
+        <div class="slot"><img src="https://tvoy-orakul.ru/luna/phases/waningGibbous-160.webp" alt=""><em>Убывающая</em></div>
+        <div class="slot"><img src="https://tvoy-orakul.ru/luna/phases/lastQuarter-160.webp" alt=""><em>Четверть</em></div>
+        <div class="slot"><img src="https://tvoy-orakul.ru/luna/phases/waningCrescent-160.webp" alt=""><em>Серп</em></div>
+        <div class="slot"><img src="https://tvoy-orakul.ru/luna/signs/libra-160.webp" alt=""><em>Весы</em></div>
+        <div class="slot"><img src="https://tvoy-orakul.ru/luna/signs/scorpio-160.webp" alt=""><em>Скорпион</em></div>
+      </div>
+
+      <div class="milestones"><span class="done">3 дня · золотая рамка</span><span class="done">5 дней · нить засветилась</span><span>7 дней · «Неделя с Луной»</span><span>14 дней · «Лунный цикл»</span><span>30 дней · «Полный круг»</span></div>
+      <p class="note">Подсказка «Завтра откроется: Телец» заставляет вернуться. Награды-рамки за 3, 7, 14, 30 дней, только красота, без обещаний и оценок дней.</p>
+    </div>
+  </div>
+</div>
+<script>
+  function pick(el){ el.classList.toggle('is-picked'); if (window.toggleSelect) { try { toggleSelect(el); } catch(e){} } }
+</script>
+</body>
+</html>

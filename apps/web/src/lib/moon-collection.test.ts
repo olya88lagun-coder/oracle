@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { COLLECTION_IDS, nextOpening, openedBy, parseSeen, unlock } from "./moon-collection";
+import { COLLECTION_IDS, nextGravure, nextOpening, openedBy, parseSeen, unlock } from "./moon-collection";
 
 describe("collection", () => {
   test("has 12 signs and 8 phases, 20 pictures in all, without repeats", () => {
@@ -33,5 +33,21 @@ describe("collection", () => {
     expect(nextOpening("phase:full", days, "2026-11-20")).toBe("2026-11-24");
     expect(nextOpening("sign:pisces", days, "2026-11-20")).toBeNull();
     expect(nextOpening("sign:leo", days, "2026-11-20")).toBeNull();
+  });
+
+  test("nextGravure returns the first later day that opens an unseen engraving, skipping seen ones, and null when nothing is left", () => {
+    const days = [
+      { date: "2026-11-22", sign: "aries" as const, phase: "waxingGibbous" as const },
+      { date: "2026-11-23", sign: "taurus" as const, phase: "waxingGibbous" as const },
+      { date: "2026-11-24", sign: "taurus" as const, phase: "full" as const },
+    ];
+    expect(nextGravure(["sign:aries", "phase:waxingGibbous"], days, "2026-11-22")).toEqual({ id: "sign:taurus", date: "2026-11-23" });
+    expect(nextGravure(["sign:aries", "phase:waxingGibbous", "sign:taurus"], days, "2026-11-22")).toEqual({ id: "phase:full", date: "2026-11-24" });
+    expect(nextGravure(["sign:aries", "phase:waxingGibbous", "sign:taurus", "phase:full"], days, "2026-11-22")).toBeNull();
+  });
+
+  test("nextGravure ignores today and earlier days", () => {
+    const days = [{ date: "2026-11-22", sign: "aries" as const, phase: "full" as const }, { date: "2026-11-21", sign: "leo" as const, phase: "new" as const }];
+    expect(nextGravure([], days, "2026-11-22")).toBeNull();
   });
 });

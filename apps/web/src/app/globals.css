@@ -8455,3 +8455,76 @@ main:has(> .natal-intro)::before {
 /* `.moon-page a` красит ссылки в акцент; на лавандовой кнопке нужен тёмный текст */
 .moon-bridge .moon-bridge__cta,
 .moon-bridge .moon-bridge__cta:hover { color: var(--lavender-ink); text-decoration: none; }
+
+/* «Лунный альбом» на «Луне сегодня»: награда за заход, нить Луны за 14 дней, альбом гравюр, награды-рамки */
+.moon-album {
+  --album-glow: rgba(203, 166, 118, 0.35);
+  display: grid;
+  gap: 14px;
+  margin-block: 28px;
+  padding: 24px 20px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: radial-gradient(800px 260px at 50% 0%, rgba(203, 166, 118, 0.1), transparent), var(--surface);
+}
+
+.moon-album h2 { font-size: clamp(26px, 4vw, 34px); }
+.moon-album h3 { font-size: 22px; }
+.moon-album__lead, .moon-album__muted, .moon-album__count { margin: 0; color: var(--ink-soft); }
+.moon-album__muted, .moon-album__count { font-size: 14px; }
+.moon-album__eyebrow { margin: 0; color: var(--accent); font-size: 14px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; }
+
+.moon-album__reveal { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; padding: 16px 18px; overflow: hidden; border: 1px solid var(--accent); border-radius: 20px; background: linear-gradient(120deg, rgba(203, 166, 118, 0.14), rgba(185, 164, 232, 0.06) 70%); box-shadow: 0 0 40px rgba(203, 166, 118, 0.14); }
+.moon-album__reveal img { width: 104px; height: 104px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 34px var(--album-glow), 0 0 0 1px var(--accent); }
+.moon-album__reveal-name { margin: 2px 0; font: 400 26px/1.15 var(--font-display); }
+.moon-album__hide { min-height: 44px; margin-top: 6px; padding: 0 12px; border: 0; background: none; color: var(--accent-soft); font: inherit; font-size: 14px; text-decoration: underline; cursor: pointer; }
+
+.moon-album__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; margin-top: 10px; }
+.moon-album__streak { margin: 0; color: var(--accent-hover); font-size: 14px; }
+
+.moon-album__thread { position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px 4px; margin: 0; padding: 18px 8px 10px; list-style: none; border: 1px solid var(--line); border-radius: 18px; background: var(--bg); }
+.moon-album__bead { display: grid; justify-items: center; gap: 6px; color: var(--ink-faint); font-size: 14px; }
+.moon-album__bead img { width: min(34px, 100%); height: auto; aspect-ratio: 1; border-radius: 50%; opacity: 0.3; filter: grayscale(0.6); }
+.moon-album__bead.is-lit { color: var(--accent-hover); }
+.moon-album__bead.is-lit img { opacity: 1; filter: none; box-shadow: 0 0 12px var(--album-glow); }
+.moon-album__bead.is-today img { width: min(42px, 100%); box-shadow: 0 0 22px var(--accent), 0 0 0 2px var(--accent); }
+
+.moon-album__gallery { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.moon-album__slot { position: relative; aspect-ratio: 1; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); }
+.moon-album__slot img { width: 100%; height: 100%; object-fit: cover; opacity: 0.16; filter: grayscale(1) blur(1px); }
+.moon-album__slot span { position: absolute; inset: auto 0 0; padding: 12px 2px 3px; background: linear-gradient(transparent, rgba(0, 0, 0, 0.8)); color: var(--ink); font-size: 14px; line-height: 1.15; text-align: center; }
+.moon-album__slot.is-open { border-color: var(--accent-line); }
+.moon-album__slot.is-open img { opacity: 1; filter: none; }
+.moon-album__slot.is-fresh { border-color: var(--accent); box-shadow: 0 0 22px var(--album-glow); }
+
+.moon-album__rewards { display: flex; flex-wrap: wrap; gap: 10px; margin: 4px 0 0; padding: 0; list-style: none; }
+.moon-album__reward { padding: 8px 12px; border: 1px dashed var(--line-strong); border-radius: 12px; color: var(--ink-soft); font-size: 14px; }
+.moon-album__reward.is-done { border-style: solid; border-color: var(--accent-line); background: rgba(203, 166, 118, 0.08); color: var(--accent-hover); }
+
+/* Рамка по высшей награде: 3, 7, 14, 30 дней — всё богаче золото, без новых картинок */
+.moon-album[data-frame] .moon-album__slot.is-open { border-color: var(--accent); }
+.moon-album[data-frame="7"] .moon-album__slot.is-open, .moon-album[data-frame="14"] .moon-album__slot.is-open { box-shadow: 0 0 14px var(--album-glow); }
+.moon-album[data-frame="30"] .moon-album__slot.is-open { box-shadow: 0 0 18px var(--album-glow), inset 0 0 0 1px var(--accent-hover); }
+
+@media (min-width: 700px) {
+  .moon-album { padding: 28px 32px; }
+  .moon-album__thread { grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 4px; }
+  .moon-album__thread::before { content: ""; position: absolute; inset: 41px 20px auto; height: 2px; background: linear-gradient(90deg, var(--line), var(--accent)); box-shadow: 0 0 10px rgba(203, 166, 118, 0.5); opacity: 0.5; }
+  .moon-album__bead { position: relative; }
+  .moon-album__gallery { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+  .moon-album__slot span { font-size: 14px; }
+}
+
+@media (max-width: 520px) {
+  .moon-album__reveal { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .moon-album__reveal::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.12) 50%, transparent 65%); transform: translateX(-120%); animation: moon-album-sheen 4.5s var(--ease-out) infinite; pointer-events: none; }
+  .moon-album__reveal img { animation: moon-album-pop 0.9s cubic-bezier(0.2, 0.9, 0.2, 1.2) both; }
+  .moon-album__bead.is-today img { animation: moon-album-breathe 3.4s ease-in-out infinite; }
+}
+
+@keyframes moon-album-sheen { 0%, 55% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+@keyframes moon-album-pop { from { transform: scale(0.5) rotate(-12deg); opacity: 0; } }
+@keyframes moon-album-breathe { 50% { transform: scale(1.06); } }
