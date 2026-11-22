@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MoonNatalBridge } from "@/components/moon/MoonNatalBridge";
 import { WeekdayCards } from "@/components/weekday/WeekdayCards";
 import { WeekdayStrip } from "@/components/weekday/WeekdayStrip";
 import { WeekdayWeekBar } from "@/components/weekday/WeekdayWeekBar";
@@ -56,6 +57,7 @@ export default function WeekdayPage() {
           <p className="weekday-week__lead">Мы не считаем, что планета «разрешает» или «запрещает» вам какие-то действия. Но её архетип может подсказать, на какой фокус внимания сегодня стоит опереться.</p>
           <WeekdayCards today={today} />
         </section>
+        <MoonNatalBridge from="weekday" />
         <section className="moon-links" aria-labelledby="weekday-links-title">
           <h2 id="weekday-links-title">Продолжить</h2>
           <ul>
