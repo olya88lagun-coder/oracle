@@ -6,6 +6,7 @@ export const PLACE_HINT = "Восход, заход и лунные сутки �
 export const PLACE_LIST_LABEL = "Города";
 export const PLACE_RESET = "Вернуться к Москве";
 export const PLACE_CLOSE = "Закрыть";
+export const PLACE_ZONE_ERROR = "Не удалось определить часовой пояс этого города в вашем браузере. Выберите другой город.";
 
 export const placeChipAria = (label: string): string => `Город для лунных данных: ${label}. Изменить`;
 

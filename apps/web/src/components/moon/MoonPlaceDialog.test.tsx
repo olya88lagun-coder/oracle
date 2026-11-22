@@ -24,6 +24,10 @@ describe("MoonPlaceDialog", () => {
     expect(html).toContain(copy.PLACE_RESET);
   });
 
+  test("has the message for a city whose time zone the browser does not know", () => {
+    expect(copy.PLACE_ZONE_ERROR).toMatch(/часов/);
+  });
+
   test("the copy contains none of FORBIDDEN_MOON_WORDS and the chip label is Moscow by default", () => {
     const html = text(renderToStaticMarkup(<MoonPlaceDialog open={false} onClose={() => undefined} current={null} />));
     for (const word of FORBIDDEN_MOON_WORDS) expect(html, word).not.toContain(word);
