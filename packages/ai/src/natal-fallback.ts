@@ -9,10 +9,11 @@ import {
   natalPageSlug,
   natalText,
   planetFunction,
+  SIGN_NAMES,
   type NatalBody,
 } from "@oracle/content/natal";
 import type { ScenarioField } from "@oracle/core";
-import { mainAspects, natalChapterOutline, type BodyId, type ChapterPoint, type NatalChapterId, type NatalChapterOutline, type NatalChart } from "@oracle/core/natal";
+import { mainAspects, natalChapterOutline, type BodyId, type ChapterPoint, type HouseDetail, type NatalChapterId, type NatalChapterOutline, type NatalChart } from "@oracle/core/natal";
 
 // Глава натального разбора, собранная без ИИ из готовых текстов: вступление, «Суть» страниц знаков и описания домов
 export type NatalChapter = { id: NatalChapterId; source: "ai" | "fallback"; paragraphs?: string[]; scenario?: Record<ScenarioField, string> };
@@ -32,6 +33,13 @@ function pointParagraphs(point: ChapterPoint, blocks: NatalBlocks): string[] {
   // Если есть блок «планета в доме», он заменяет общее описание дома
   const house = point.house === null ? undefined : (point.body === "ascendant" ? undefined : blocks.house(point.body, point.house)) ?? HOUSE_TEXTS[point.house];
   return house ? [lead, house] : [lead];
+}
+
+// «Дом 2 начинается в знаке Телец; его управитель — Венера — стоит в Водолее, в 8 доме.» Это данные карты, а не общий смысл дома
+export function houseCuspLine(detail: HouseDetail): string {
+  const sign = SIGN_NAMES[detail.rulerSign];
+  const where = detail.rulerHouse === null ? "" : detail.rulerHouse === detail.house ? ", в этом же доме" : `, в ${detail.rulerHouse} доме`;
+  return `Дом ${detail.house} начинается в знаке ${SIGN_NAMES[detail.cuspSign].nominative}; его управитель — ${BODY_NAMES[detail.ruler].name} — стоит ${sign.preposition} ${sign.prepositional}${where}.`;
 }
 
 const orb = (value: number) => value.toFixed(1).replace(".", ",");
@@ -73,7 +81,7 @@ function scenario(chart: NatalChart): Record<ScenarioField, string> {
 function chapterOf(outline: NatalChapterOutline, chart: NatalChart, blocks: NatalBlocks): NatalChapter {
   if (outline.id === "scenario") return { id: outline.id, source: "fallback", scenario: scenario(chart) };
   if (outline.id === "aspects") return { id: outline.id, source: "fallback", paragraphs: [NATAL_CHAPTER_INTROS.aspects, ...aspectParagraphs(chart, blocks)] };
-  const extraHouses = outline.houses.flatMap((house) => (HOUSE_TEXTS[house] ? [HOUSE_TEXTS[house]] : []));
+  const extraHouses = outline.houseDetails.flatMap((detail) => (HOUSE_TEXTS[detail.house] ? [`${HOUSE_TEXTS[detail.house]} ${houseCuspLine(detail)}`] : []));
   return { id: outline.id, source: "fallback", paragraphs: [NATAL_CHAPTER_INTROS[outline.id], ...outline.points.flatMap((point) => pointParagraphs(point, blocks)), ...extraHouses] };
 }
 
