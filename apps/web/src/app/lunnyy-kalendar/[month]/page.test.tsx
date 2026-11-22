@@ -59,7 +59,8 @@ describe("the November 2026 page", () => {
     const html = await render();
     expect(html).toContain('href="/lunnyy-kalendar/oktyabr-2026"');
     expect(html).toContain('href="/lunnyy-kalendar/dekabr-2026"');
-    expect(count(html, /aria-current="page"/g)).toBe(1);
+    // Один у списка месяцев и один у вкладки «Календарь» в ленте раздела
+    expect(count(html, /aria-current="page"/g)).toBe(2);
     expect(count(html, /class="moon-month__prev"/g)).toBe(1);
     expect(count(html, /class="moon-month__next"/g)).toBe(1);
   });
@@ -150,4 +151,11 @@ describe("metadata and params", () => {
       await expect(generateMetadata(params(slug)), slug).rejects.toMatchObject({ digest: expect.stringContaining("404") });
     }
   });
+});
+
+test("has the Moon ribbon with the calendar tab current", async () => {
+  const markup = await render();
+  expect(markup).toContain('aria-label="Лунный раздел"');
+  expect(markup.indexOf('aria-label="Лунный раздел"')).toBeLessThan(markup.indexOf("moon-breadcrumb"));
+  expect(markup.match(/aria-current="page"[^>]*>Календарь</g)).toHaveLength(1);
 });

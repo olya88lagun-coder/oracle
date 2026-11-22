@@ -150,3 +150,10 @@ describe("static params", () => {
     expect(slugs).toContain("retrograd-venery-2025");
   });
 });
+
+test("has the Moon ribbon with the phases tab current", async () => {
+  const markup = await render("fazy-luny");
+  expect(markup).toContain('aria-label="Лунный раздел"');
+  expect(markup.indexOf('aria-label="Лунный раздел"')).toBeLessThan(markup.indexOf("moon-breadcrumb"));
+  expect(markup.match(/aria-current="page"[^>]*>Фазы</g)).toHaveLength(1);
+});

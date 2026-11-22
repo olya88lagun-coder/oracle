@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { MoonRibbon } from "@/components/moon/MoonRibbon";
 import { notFound } from "next/navigation";
 import { MoonDisc } from "@/components/moon/MoonDisc";
 import { MoonHead, MoonFaq, moonJsonLd } from "@/components/moon/MoonPageParts";
@@ -226,6 +227,7 @@ export default async function MoonYearPage({ params }: Params) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(moonJsonLd(titleOf(built), path, faqOf(built))) }} />
       <main className="moon-month">
+        <MoonRibbon current="phases" now={now} />
         {built.type === "phases" && <PhasesView page={built.page} />}
         {built.type === "year" && <YearView page={built.page} />}
         {built.type === "eclipse" && <EclipseView page={built.page} />}

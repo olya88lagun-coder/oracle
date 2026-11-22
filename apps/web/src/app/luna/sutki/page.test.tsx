@@ -15,3 +15,10 @@ test("one h1, thirty links to the days with their symbols, and no link to itself
   expect(markup).toContain("30 · Лебедь");
   expect(markup).not.toContain('<a href="/luna/sutki">');
 });
+
+test("has the Moon ribbon with the days tab current", async () => {
+  const markup = renderToStaticMarkup(<Page />);
+  expect(markup).toContain('aria-label="Лунный раздел"');
+  expect(markup.indexOf('aria-label="Лунный раздел"')).toBeLessThan(markup.indexOf("moon-breadcrumb"));
+  expect(markup.match(/aria-current="page"[^>]*>Сутки</g)).toHaveLength(1);
+});

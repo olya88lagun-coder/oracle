@@ -53,6 +53,13 @@ test("the week bar marks the first and the last day of the week correctly", () =
   }
 });
 
+test("has the Moon ribbon with the weekday tab current", async () => {
+  const markup = html();
+  expect(markup).toContain('aria-label="Лунный раздел"');
+  expect(markup.indexOf('aria-label="Лунный раздел"')).toBeLessThan(markup.indexOf("moon-breadcrumb"));
+  expect(markup.match(/aria-current="page"[^>]*>Дни недели</g)).toHaveLength(1);
+});
+
 test("all seven planets use local raster artwork in the scene, navigation and cards", () => {
   const markup = html();
   for (const { glyph } of WEEKDAY_PLANETS) {

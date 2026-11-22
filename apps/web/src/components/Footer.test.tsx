@@ -19,3 +19,9 @@ test("the footer keeps its three link groups, the disclaimer and the legal links
   for (const text of ["Политика обработки данных", "Оферта", "Согласие", "Настройки cookie"]) expect(html).toContain(text);
   expect(html.match(/<footer/g)).toHaveLength(1);
 });
+
+test("the Moon section from the header list does not repeat the footer's own Moon today link", () => {
+  const html = renderToStaticMarkup(<Footer />);
+  expect(html.match(/href="\/luna-segodnya"/g)).toHaveLength(1);
+  expect(html).not.toMatch(/<a href="\/luna-segodnya">Луна<\/a>/);
+});

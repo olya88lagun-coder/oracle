@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MoonRibbon } from "@/components/moon/MoonRibbon";
+import { moonRibbonData } from "@/lib/moon-ribbon";
 import { MoonNatalBridge } from "@/components/moon/MoonNatalBridge";
 import { WeekdayCards } from "@/components/weekday/WeekdayCards";
 import { WeekdayStrip } from "@/components/weekday/WeekdayStrip";
@@ -41,6 +43,7 @@ export default function WeekdayPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }} />
       <main className="moon-page weekday-page">
+        <MoonRibbon current="weekday" now={new Date()} initial={moonRibbonData(new Date())} />
         <nav aria-label="Хлебные крошки" className="moon-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><span>Дни недели и планеты</span></nav>
         <header className="weekday-hero">
           <div className="weekday-hero__copy">

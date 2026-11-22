@@ -137,3 +137,10 @@ test("has the Moon album after the cards and before the natal bridge", () => {
   expect(markup.indexOf("moon-text-title")).toBeLessThan(markup.indexOf('id="moon-album"'));
   expect(markup.indexOf('id="moon-album"')).toBeLessThan(markup.indexOf("moon-bridge"));
 });
+
+test("has the Moon ribbon with the today tab current", async () => {
+  const markup = html();
+  expect(markup).toContain('aria-label="Лунный раздел"');
+  expect(markup.indexOf('aria-label="Лунный раздел"')).toBeLessThan(markup.indexOf("moon-breadcrumb"));
+  expect(markup.match(/aria-current="page"[^>]*>Сегодня</g)).toHaveLength(1);
+});

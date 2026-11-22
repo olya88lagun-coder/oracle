@@ -56,3 +56,10 @@ describe("a lunar day page", () => {
     expect(generateStaticParams().map((item) => item.day)).toEqual(Array.from({ length: 30 }, (_, index) => String(index + 1)));
   });
 });
+
+test("has the Moon ribbon with the days tab current", async () => {
+  const markup = await render("13");
+  expect(markup).toContain('aria-label="Лунный раздел"');
+  expect(markup.indexOf('aria-label="Лунный раздел"')).toBeLessThan(markup.indexOf("moon-breadcrumb"));
+  expect(markup.match(/aria-current="page"[^>]*>Сутки</g)).toHaveLength(1);
+});

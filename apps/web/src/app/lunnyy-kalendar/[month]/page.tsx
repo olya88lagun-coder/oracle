@@ -1,6 +1,7 @@
 import { monthIntro } from "@oracle/content/moon-calendar";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MoonRibbon } from "@/components/moon/MoonRibbon";
 import { notFound } from "next/navigation";
 import { MoonHub } from "@/components/moon/MoonHub";
 import { MoonCollection } from "@/components/moon/MoonCollection";
@@ -70,6 +71,7 @@ export default async function LunarMonthPage({ params }: Params) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }} />
       <main className="moon-month">
+        <MoonRibbon current="calendar" now={new Date()} />
         <NatalSprite />
         <nav aria-label="Хлебные крошки" className="moon-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href={MOON_PATH}>Луна сегодня</Link><span aria-hidden="true">/</span><span>{page.title}</span></nav>
         <header className="moon-month__head moon-month__head--compact">
