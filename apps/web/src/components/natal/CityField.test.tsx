@@ -169,3 +169,13 @@ describe("CityField (stateful)", () => {
     expect(markup).toContain('hidden=""');
   });
 });
+
+describe("CityFieldView: texts can be overridden by another page", () => {
+  test("a copy override changes the label, the placeholder and the hint, the natal texts stay the defaults", () => {
+    const custom = view({ copy: { label: "Ваш город", placeholder: "Начните вводить название", hint: "Подсказка для Луны" } });
+    expect(custom).toContain('<label for="t-input">Ваш город</label>');
+    expect(custom).toContain('placeholder="Начните вводить название"');
+    expect(custom).toContain("Подсказка для Луны");
+    expect(view()).toContain('<label for="t-input">Место рождения</label>');
+  });
+});
