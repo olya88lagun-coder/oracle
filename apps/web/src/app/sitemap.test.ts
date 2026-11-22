@@ -1,11 +1,12 @@
 import { describe, expect, test } from "vitest";
 import { BLOG_POSTS, blogPath } from "@/lib/blog";
 import { monthWindow } from "@/lib/lunar-calendar-paths";
-import { lunarMonthPath } from "@/lib/lunar-calendar-paths";
+import { lunarDayPaths, lunarMonthPath } from "@/lib/lunar-calendar-paths";
 import { PUBLIC_PATHS } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import sitemap from "./sitemap";
 
+const entriesOf = (prefix: string) => sitemap().map((item) => item.url).filter((url) => url.includes(prefix));
 const entry = (path: string) => sitemap().find((item) => item.url === (path === "/" ? SITE_URL : `${SITE_URL}${path}`));
 
 describe("sitemap.xml", () => {
@@ -35,5 +36,13 @@ describe("sitemap.xml", () => {
     expect(window).toHaveLength(15);
     for (const { year, month } of window) expect(entry(lunarMonthPath(year, month))?.priority, `${year}-${month}`).toBe(0.6);
     expect(entry("/lunnyy-kalendar")).toBeUndefined();
+  });
+
+  test("lists every date page of the window with the lowest priority of the lunar pages, and no date outside the window", () => {
+    const paths = lunarDayPaths(new Date());
+    expect(paths).toHaveLength(entriesOf("/lunnyy-kalendar/").filter((url) => /\/\d{1,2}-[a-z]+-\d{4}$/.test(url)).length);
+    expect(paths.length).toBeGreaterThanOrEqual(450);
+    for (const path of paths) expect(entry(path)?.priority, path).toBe(0.4);
+    expect(entry("/lunnyy-kalendar/24-noyabrya-2020")).toBeUndefined();
   });
 });

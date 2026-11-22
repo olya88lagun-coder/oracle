@@ -5,7 +5,7 @@ import { COMPAT_PATH } from "@/lib/compat";
 import { DOCUMENT_PATHS } from "@/lib/legal";
 import { THREAD_PATH } from "@/lib/life-thread";
 import { LILA_PATH } from "@/lib/lila-paths";
-import { LUNAR_CALENDAR_PATH } from "@/lib/lunar-calendar-paths";
+import { LUNAR_CALENDAR_PATH, parseDaySlug } from "@/lib/lunar-calendar-paths";
 import { MOON_PATH } from "@/lib/moon-paths";
 import { GLOSSARY_PATH } from "@/lib/natal-glossary";
 import { NATAL_PATH } from "@/lib/natal-paths";
@@ -24,7 +24,8 @@ const priorityOf = (path: string): number => {
   if (path === "/") return 1;
   if (PRACTICE_PATHS.has(path)) return 0.8;
   if (path === BLOG_PATH || path.startsWith(`${BLOG_PATH}/`)) return 0.6;
-  if (path.startsWith(`${LUNAR_CALENDAR_PATH}/`)) return 0.6;
+  // Страницы отдельных дней ниже месяцев: их около 450, и они не должны размывать главные лунные страницы
+  if (path.startsWith(`${LUNAR_CALENDAR_PATH}/`)) return parseDaySlug(path.slice(LUNAR_CALENDAR_PATH.length + 1)) ? 0.4 : 0.6;
   return REFERENCE_PATHS.has(path) ? 0.3 : 0.5;
 };
 
