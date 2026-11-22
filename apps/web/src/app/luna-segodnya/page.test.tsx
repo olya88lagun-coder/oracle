@@ -128,3 +128,12 @@ test("the cards carry the same small labels as the tiles", () => {
   expect(card(markup, "day")).toContain(">Лунные сутки<");
   expect(card(markup, "sign")).toContain(">Знак Луны<");
 });
+
+test("has the Moon album after the cards and before the natal bridge", () => {
+  const markup = html();
+  expect(markup).toMatch(/<h2[^>]*>Лунный альбом<\/h2>/);
+  expect(markup.match(/class="moon-album__bead[ "]/g)).toHaveLength(14);
+  expect(markup.match(/class="moon-album__slot[ "]/g)).toHaveLength(20);
+  expect(markup.indexOf("moon-text-title")).toBeLessThan(markup.indexOf('id="moon-album"'));
+  expect(markup.indexOf('id="moon-album"')).toBeLessThan(markup.indexOf("moon-bridge"));
+});

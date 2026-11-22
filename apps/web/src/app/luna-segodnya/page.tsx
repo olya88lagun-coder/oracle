@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { MoonAlbum } from "@/components/moon/MoonAlbum";
 import { MoonDayAsk } from "@/components/moon/MoonDayAsk";
 import { MoonExplorer, type MoonView } from "@/components/moon/MoonExplorer";
 import { MoonNatalBridge } from "@/components/moon/MoonNatalBridge";
@@ -11,6 +12,9 @@ import { weekdayPlanet } from "@/lib/weekday-planets";
 import type { MoonSnapshot } from "@oracle/core/moon";
 import { DISCLAIMER } from "@/lib/legal";
 import { currentMonth, currentMonthPath } from "@/lib/lunar-calendar-paths";
+import { collectionItems } from "@/lib/moon-collection-items";
+import { openedBy } from "@/lib/moon-collection";
+import { buildThreadDays } from "@/lib/moon-thread";
 import { lunarDayImage, phaseImage, signImage } from "@/lib/moon-images";
 import { buildMoonToday, MOON_FAQ, MOON_PATH, PHASE_NAMES } from "@/lib/moon-today";
 import { PHASES_PATH, yearMoonPath } from "@/lib/moon-year-paths";
@@ -50,7 +54,8 @@ function toMoonView(date: string, dateLabel: string, snapshot: MoonSnapshot): Mo
 }
 
 export default function MoonTodayPage() {
-  const today = buildMoonToday(new Date());
+  const now = new Date();
+  const today = buildMoonToday(now);
   const { snapshot } = today;
   const percent = Math.round(snapshot.illumination * 100);
   const hasTexts = Boolean(today.texts.phase || today.texts.day);
@@ -100,6 +105,7 @@ export default function MoonTodayPage() {
             {today.signSummary && <article className="moon-text__block" data-kind="sign"><CardArt src={signImage(snapshot.sign, 480)} /><p className="moon-text__eyebrow">Знак Луны</p><h3>Луна {today.signName}</h3><p>{today.signSummary.text}</p></article>}
           </section>
         )}
+        <MoonAlbum thread={buildThreadDays(now)} days={today.strip.map(({ date, snapshot: day }) => ({ date, sign: day.sign, phase: day.phase }))} items={collectionItems()} todayUnlock={openedBy(snapshot.sign, snapshot.phase)} />
         <MoonNatalBridge from="today" signName={today.signName} art={signImage(snapshot.sign, 160)} />
         <div className="weekday-today">
           <WeekdayStrip planet={weekdayPlanet(new Date())} />
