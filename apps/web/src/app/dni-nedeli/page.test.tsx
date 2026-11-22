@@ -42,7 +42,17 @@ test("the week bar has seven links to the card anchors, one of them marked as to
 test("every day card and the planet strip carry data-planet", () => {
   const markup = html();
   expect(markup.match(/class="weekday-card" data-planet="[a-z]+"/g)).toHaveLength(7);
-  expect(markup).toMatch(/class="weekday-strip"[^>]*data-planet="[a-z]+"/);
+  expect(markup).toMatch(/class="weekday-strip weekday-now"[^>]*data-planet="[a-z]+"/);
+});
+
+test("the first screen shows what day it is and does not repeat the question of the day; each card has an action and a name origin", () => {
+  const markup = html();
+  const hero = markup.slice(markup.indexOf('class="weekday-hero"'), markup.indexOf('class="weekday-bar"'));
+  expect(hero).toContain("weekday-now__actions");
+  expect(hero).not.toContain("weekday-strip__question");
+  expect(markup.match(/class="weekday-card__action"/g)).toHaveLength(7);
+  expect(markup.match(/class="weekday-card__etymology"/g)).toHaveLength(7);
+  expect(markup).toContain("weekday-how__icon");
 });
 
 test("the week bar marks the first and the last day of the week correctly", () => {

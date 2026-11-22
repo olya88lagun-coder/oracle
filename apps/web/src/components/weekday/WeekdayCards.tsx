@@ -1,8 +1,15 @@
 import Link from "next/link";
+import { Icon } from "@/components/Icon";
 import { WEEKDAY_PLANETS } from "@/lib/weekday-planets";
 import { PlanetArtwork } from "./PlanetArtwork";
 
-// Семь карточек дней: образ, вопрос для себя и ссылка на практику. Сегодняшний день отмечен рамкой и словом «Сегодня»; восьмой ячейкой — короткое «как этим пользоваться»
+const STEPS = [
+  { icon: "sunrise", when: "Утром", text: "прочитайте образ дня." },
+  { icon: "sun", when: "Днём", text: "заметьте, где он отзывается." },
+  { icon: "moon", when: "Вечером", text: "вернитесь к вопросу." },
+] as const;
+
+// Семь карточек дней: образ, вопрос для себя, маленькое действие, откуда название дня и ссылка на практику. Сегодняшний день отмечен рамкой и словом «Сегодня»; восьмой ячейкой — «как этим пользоваться»
 export function WeekdayCards({ today }: { today: number }) {
   return (
     <ol className="weekday-cards">
@@ -26,6 +33,11 @@ export function WeekdayCards({ today }: { today: number }) {
               <span className="weekday-card__label">Вопрос для себя</span>
               {planet.question}
             </p>
+            <p className="weekday-card__action">
+              <span className="weekday-card__label">Маленькое действие</span>
+              {planet.action}
+            </p>
+            <p className="weekday-card__etymology">{planet.etymology}</p>
             <p className="weekday-card__practice">
               {planet.practice.lead}{" "}
               <Link href={planet.practice.href}>
@@ -37,10 +49,13 @@ export function WeekdayCards({ today }: { today: number }) {
       })}
       <li className="weekday-card weekday-card--how">
         <h3>Как этим пользоваться</h3>
-        <ol>
-          <li>Утром прочитайте образ дня.</li>
-          <li>Днём заметьте, где он отзывается.</li>
-          <li>Вечером вернитесь к вопросу.</li>
+        <ol className="weekday-how">
+          {STEPS.map((step) => (
+            <li key={step.when}>
+              <span className="weekday-how__icon" aria-hidden="true"><Icon name={step.icon} size={22} /></span>
+              <span><strong>{step.when}</strong> {step.text}</span>
+            </li>
+          ))}
         </ol>
       </li>
     </ol>
