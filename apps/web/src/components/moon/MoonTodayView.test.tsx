@@ -20,6 +20,12 @@ describe("MoonTodayView", () => {
     expect(html).toContain("Что описывает этот день");
   });
 
+  test("leads to the page of today's date", () => {
+    const html = renderToStaticMarkup(<MoonTodayView today={today} headingDate="22 ноября 2026" />);
+    expect(html).toContain('href="/lunnyy-kalendar/22-noyabrya-2026"');
+    expect(html).toContain("Страница дня");
+  });
+
   test("with a city the place line and the rise tile say so and the note is shown", () => {
     const html = renderToStaticMarkup(<MoonTodayView today={today} headingDate="22 ноября 2026" placeLabel="Новосибирск" placeNote="Сейчас в Новосибирске — 23 ноября" />);
     expect(html).toContain('<p class="moon-hero__place">Для города Новосибирск</p>');

@@ -77,6 +77,12 @@ describe("buildDayPage", () => {
     for (const item of page.dates) expect(item.label).not.toBe("");
   });
 
+  test("each coming date leads to the page of its first day, not to the month", () => {
+    const page = buildDayPage(3, new Date("2026-11-10T09:00:00Z"));
+    expect(page.dates[0]!.href).toBe("/lunnyy-kalendar/11-noyabrya-2026");
+    for (const item of page.dates) expect(item.href).toMatch(/^\/lunnyy-kalendar\/\d{1,2}-[a-z]+-\d{4}$/);
+  });
+
   test("the note waits for the owner", () => {
     expect(buildDayPage(8, NOW).note).toBeNull();
   });
