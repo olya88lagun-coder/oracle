@@ -53,7 +53,7 @@ const MANUAL_POSTS: readonly BlogPost[] = [
     published: "2026-09-30",
     image: cellPreview(12),
     topic: "lila",
-    readingMinutes: 2,
+    readingMinutes: 3,
   },
   {
     slug: "kak-sformulirovat-namerenie-dlya-lily",
