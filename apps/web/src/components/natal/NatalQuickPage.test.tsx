@@ -56,7 +56,7 @@ describe("NatalAnswer", () => {
   test("without the time the ascendant is not named and the Moon is warned about", () => {
     expect(text(renderToStaticMarkup(<NatalAnswer chart={noTime} variant="ascendant" registry={{}} />))).toContain("Асцендент определить нельзя");
     const moon = renderToStaticMarkup(<NatalAnswer chart={{ ...noTime, uncertainSigns: ["moon"] }} variant="moon" registry={{}} />);
-    expect(text(moon)).toContain("мог быть другим");
+    expect(text(moon)).toContain("Луна в Раке или Льве");
     expect(moon).not.toContain("natal-answer__detail");
   });
 });

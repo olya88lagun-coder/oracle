@@ -37,7 +37,7 @@ describe("CityFieldView: closed list (state 1)", () => {
   test("the list is an empty hidden listbox with a label, followed by the hint", () => {
     expect(markup).toContain('<ul class="natal-city__list" id="t-list" role="listbox" aria-label="Города" hidden=""></ul>');
     expect(markup.indexOf("</ul>")).toBeLessThan(markup.indexOf('<p class="natal-field__help" id="t-help">'));
-    expect(markup).toContain('<p class="natal-field__help" id="t-help">Нет вашего города? Выберите ближайший крупный: часовой пояс и долгота почти не изменятся.</p>');
+    expect(markup).toContain('<p class="natal-field__help" id="t-help">Нет вашего города? Попробуйте другое написание или выберите ближайший к месту рождения. Это приближение: если он в другом часовом поясе или заметно севернее или южнее, время, асцендент и дома могут сдвинуться.</p>');
   });
 
   test("keeps a live region for the number of matches, empty while closed", () => {
@@ -115,7 +115,7 @@ describe("CityFieldView: nothing found (state 3)", () => {
 
   test("shows the empty row in an expanded listbox", () => {
     expect(markup).toContain('aria-expanded="true"');
-    expect(markup).toContain('<li role="presentation"><p class="natal-city__empty">Такого города не нашлось. Попробуйте другое написание или ближайший крупный город.</p></li>');
+    expect(markup).toContain('<li role="presentation"><p class="natal-city__empty">Такого города не нашлось. Попробуйте другое написание или ближайший к месту рождения: результат тогда приблизительный.</p></li>');
     expect(markup).not.toContain("natal-city__option");
   });
 

@@ -1,5 +1,5 @@
 import type { NatalChart } from "@oracle/core/natal";
-import { ANGLE_NAMES, BODY_NAMES, SIGN_NAMES, formatDegrees, inSign } from "./natal-copy";
+import { ANGLE_NAMES, BODY_NAMES, MOON_EITHER_TEXT, SIGN_NAMES, formatDegrees, inSign, inSigns, moonSignRange } from "./natal-copy";
 import { NATAL_PATH } from "./natal-paths";
 import { NATAL_KEY_TEXTS, keyTextFor, type NatalKeyRegistry } from "./natal-texts";
 import { ANGLE_KEYWORDS, BODY_KEYWORDS, SIGN_KEYWORDS } from "./natal-wheel-card";
@@ -104,7 +104,7 @@ export const QUICK_PAGES: Readonly<Record<QuickVariant, QuickPage>> = {
         title: "Когда достаточно даты, а когда нужно время",
         paragraphs: [
           "Луна — самое быстрое тело карты: за сутки она проходит около 13°. Если в день вашего рождения Луна оставалась в одном знаке, достаточно одной даты. Если в этот день она переходила из знака в знак, знак зависит от часа и минуты рождения.",
-          "Когда вы не вводите время, калькулятор считает на местный полдень. Если в этот день Луна меняла знак, он отметит, что знак мог быть другим, и предложит указать время.",
+          "Когда вы не вводите время, калькулятор считает на местный полдень. Если в этот день Луна меняла знак, он покажет оба возможных знака и предложит указать время.",
         ],
       },
       {
@@ -119,7 +119,7 @@ export const QUICK_PAGES: Readonly<Record<QuickVariant, QuickPage>> = {
     faq: [
       {
         question: "Можно ли узнать лунный знак только по дате?",
-        answer: "Часто да, но не в каждом случае: если в день рождения Луна переходила в другой знак, нужно время. Калькулятор сообщит, мог ли знак быть другим.",
+        answer: "Часто да, но не в каждом случае: если в день рождения Луна переходила в другой знак, нужно время. Если в этот день Луна меняла знак, калькулятор покажет оба возможных знака.",
       },
       {
         question: "Какое время вводить: местное или по Гринвичу?",
@@ -156,7 +156,6 @@ export function quickFaqJsonLd(variant: QuickVariant): Record<string, unknown> {
 export type QuickAnswer = { title: string; detail: string | null; text: string; note: string | null; link: { href: string; label: string } | null };
 
 const ASCENDANT_NEEDS_TIME_TEXT = "Асцендент определяется по времени рождения: он меняется примерно каждые два часа. Укажите время рождения и рассчитайте карту заново.";
-const MOON_UNCERTAIN_NOTE = "Луна за сутки проходит около 13°, поэтому без времени рождения её знак мог быть другим. Укажите время, чтобы определить его точно.";
 const MOON_STABLE_NOTE = "В этот день Луна не меняла знак, поэтому по одной дате знак определён.";
 
 function ascendantAnswer(chart: NatalChart, registry: NatalKeyRegistry): QuickAnswer {
@@ -176,9 +175,20 @@ function ascendantAnswer(chart: NatalChart, registry: NatalKeyRegistry): QuickAn
 function moonAnswer(chart: NatalChart, registry: NatalKeyRegistry): QuickAnswer {
   const moon = chart.points.find((point) => point.id === "moon");
   if (!moon) throw new RangeError("В карте нет Луны");
+  const range = moonSignRange(chart);
+  if (range) {
+    const [first, second] = range;
+    return {
+      title: `${BODY_NAMES.moon} ${inSigns(first, second)}`,
+      detail: null,
+      text: `${capitalize(BODY_KEYWORDS.moon)}. Ключевые слова знака ${SIGN_NAMES[first]}: ${SIGN_KEYWORDS[first]}. Ключевые слова знака ${SIGN_NAMES[second]}: ${SIGN_KEYWORDS[second]}.`,
+      note: MOON_EITHER_TEXT,
+      link: null,
+    };
+  }
   const published = keyTextFor("moon", moon.sign, registry);
   const name = `${BODY_NAMES.moon} ${inSign(moon.sign)}`;
-  const note = chart.timeKnown ? null : chart.uncertainSigns.includes("moon") ? MOON_UNCERTAIN_NOTE : MOON_STABLE_NOTE;
+  const note = chart.timeKnown ? null : MOON_STABLE_NOTE;
   return {
     title: name,
     detail: chart.timeKnown ? formatDegrees(moon.degree) : null,

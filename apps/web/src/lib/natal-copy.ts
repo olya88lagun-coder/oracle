@@ -14,7 +14,7 @@ export const LABEL_TIME = "Время рождения";
 export const LABEL_UNKNOWN_TIME = "Время рождения неизвестно";
 export const LABEL_CITY = "Место рождения";
 export const CITY_PLACEHOLDER = "Начните вводить город";
-export const CITY_HINT = "Нет вашего города? Выберите ближайший крупный: часовой пояс и долгота почти не изменятся.";
+export const CITY_HINT = "Нет вашего города? Попробуйте другое написание или выберите ближайший к месту рождения. Это приближение: если он в другом часовом поясе или заметно севернее или южнее, время, асцендент и дома могут сдвинуться.";
 export const BUTTON_CALCULATE = "Рассчитать карту";
 export const BUTTON_CALCULATING = "Считаем карту…";
 export const PRIVACY_LINE = "Считается в вашем браузере. Дата, время и место нигде не сохраняются, пока вы сами не нажмёте «Сохранить в портрет».";
@@ -28,7 +28,7 @@ export const ERROR_CITY_REQUIRED = "Выберите город из списк�
 
 // Список городов
 export const CITY_LIST_LABEL = "Города";
-export const CITY_LIST_EMPTY = "Такого города не нашлось. Попробуйте другое написание или ближайший крупный город.";
+export const CITY_LIST_EMPTY = "Такого города не нашлось. Попробуйте другое написание или ближайший к месту рождения: результат тогда приблизительный.";
 export const CITY_LIST_ERROR = "Не удалось загрузить список городов. Проверьте соединение и попробуйте ещё раз.";
 
 // Уведомления над результатом
@@ -187,14 +187,24 @@ export function formatOrb(orb: number): string {
 
 export type ChartSummary = { sun: string; moon: string; ascendant: string };
 
+// Знаки Луны без времени рождения: в день смены знака их два («Раке или Льве»)
+export function moonSignRange(chart: NatalChart): readonly [SignId, SignId] | null {
+  return (!chart.timeKnown && chart.signRanges.moon) || null;
+}
+export const inSigns = (first: SignId, second: SignId): string => `${inSign(first)} или ${SIGN_NAMES_PREPOSITIONAL[second]}`;
+export const TABLE_SIGN_EITHER = (first: SignId, second: SignId): string => `${SIGN_NAMES[first]} или ${SIGN_NAMES[second]}`;
+export const TABLE_NOON_DEGREES = (degrees: string): string => `на полдень: ${degrees}`;
+export const MOON_EITHER_TEXT = "В этот день Луна сменила знак, поэтому без времени рождения нельзя назвать один. Ниже оба варианта; чтобы выбрать, укажите время рождения.";
+
 // Три подписи сводки: «Солнце в Рыбах», «Луна в Раке», «Асцендент в Раке» (без времени — «Асцендент: нужно время рождения»)
 export function sunMoonAscSummary(chart: NatalChart): ChartSummary {
   const sun = chart.points.find((point) => point.id === "sun");
   const moon = chart.points.find((point) => point.id === "moon");
   if (!sun || !moon) throw new RangeError("В карте нет Солнца или Луны");
+  const range = moonSignRange(chart);
   return {
     sun: `${BODY_NAMES.sun} ${inSign(sun.sign)}`,
-    moon: `${BODY_NAMES.moon} ${inSign(moon.sign)}`,
+    moon: `${BODY_NAMES.moon} ${range ? inSigns(...range) : inSign(moon.sign)}`,
     ascendant: chart.timeKnown && chart.ascendant ? `${ANGLE_NAMES.ascendant} ${inSign(chart.ascendant.sign)}` : ASCENDANT_NEEDS_TIME,
   };
 }

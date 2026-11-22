@@ -30,6 +30,9 @@ export function squareVariant(cell: number, count: number): { title: string; anc
   return { title: count >= 5 ? `${digits} и больше` : digits, anchor: digits };
 }
 
+// В личном результате нет чужих учебных дат: предложения с датой остаются на страницах ячеек
+export const withoutExampleDates = (paragraph: string): string => paragraph.split(/(?<=[.!?])\s+/).filter((sentence) => !/\d{2}\.\d{2}\.\d{4}/.test(sentence)).join(" ");
+
 export type SquareOutcome = { ok: true; iso: string; square: PythagorasSquare } | { ok: false; error: string };
 
 export function squareOutcome(iso: string, today: Date): SquareOutcome {

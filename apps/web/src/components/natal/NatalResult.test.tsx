@@ -180,9 +180,10 @@ describe("NatalKeys", () => {
     expect(markup).toContain("Читать полностью");
   });
 
-  test("a chart without a time links only the Sun and the Moon: the ascendant block asks for the time", () => {
+  test("a chart without a time links the Sun and both possible Moon signs: the ascendant block asks for the time", () => {
     const markup = stableIds(renderToStaticMarkup(<NatalKeys chart={noTime} />));
-    expect(count(markup, /class="natal-key__link"/g)).toBe(2);
+    expect(count(markup, /class="natal-key__link"/g)).toBe(3);
+    expect(markup).toContain("Луна в Раке или Льве");
     expect(markup).toContain("Асцендент: нужно время рождения");
   });
 });

@@ -11,7 +11,7 @@ const CALC_STRINGS = [
   "Время рождения неизвестно",
   "Место рождения",
   "Начните вводить город",
-  "Нет вашего города? Выберите ближайший крупный: часовой пояс и долгота почти не изменятся.",
+  "Нет вашего города? Попробуйте другое написание или выберите ближайший к месту рождения. Это приближение: если он в другом часовом поясе или заметно севернее или южнее, время, асцендент и дома могут сдвинуться.",
   "Рассчитать карту",
   "Считается в вашем браузере. Дата, время и место нигде не сохраняются, пока вы сами не нажмёте «Сохранить в портрет».",
   "Ваша натальная карта",
@@ -25,7 +25,7 @@ const CALC_STRINGS = [
   "Ростов-на-Дону",
   "Ростовская область, Россия",
   "Ярославская область, Россия",
-  "Такого города не нашлось. Попробуйте другое написание или ближайший крупный город.",
+  "Такого города не нашлось. Попробуйте другое написание или ближайший к месту рождения: результат тогда приблизительный.",
   "Не удалось загрузить список городов. Проверьте соединение и попробуйте ещё раз.",
   "Укажите дату рождения",
   "Дата должна быть между 1 января 1900 и сегодняшним днём",
@@ -92,6 +92,7 @@ const makeChart = (overrides: Partial<NatalChart> = {}): NatalChart => ({
   houses: null,
   aspects: [],
   uncertainSigns: [],
+  signRanges: {},
   timeKnown: true,
   ...overrides,
 });
@@ -234,6 +235,12 @@ describe("summary and lines", () => {
   test("without time the Ascendant label asks for the birth time", () => {
     const chart = makeChart({ ascendant: null, midheaven: null, timeKnown: false });
     expect(copy.sunMoonAscSummary(chart).ascendant).toBe("Асцендент: нужно время рождения");
+  });
+
+  test("without time on a Moon sign-change day the label names both signs; with a time it names one", () => {
+    const unsure = makeChart({ ascendant: null, midheaven: null, timeKnown: false, uncertainSigns: ["moon"], signRanges: { moon: ["cancer", "leo"] } });
+    expect(copy.sunMoonAscSummary(unsure).moon).toBe("Луна в Раке или Льве");
+    expect(copy.sunMoonAscSummary({ ...unsure, timeKnown: true }).moon).toBe("Луна в Раке");
   });
 
   test("a chart without the Sun or the Moon is a programming error", () => {
