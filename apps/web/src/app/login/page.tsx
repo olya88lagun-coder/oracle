@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { Scene } from "@/components/Scene";
 import { loginErrorMessage } from "@/lib/login-errors";
 import { safeNextPath } from "@/lib/next-path";
@@ -18,7 +19,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <div className="card login-card stack">
         <p className="eyebrow eyebrow--line">Мой портрет</p>
         <h1 className="display">Вход</h1>
-        <p className="lead">Войдите, чтобы сохранить дату рождения и открывать практики без повторного ввода.</p>
+        <p className="lead">Войдите, чтобы сохранить дату рождения, партии Лилы и купленные разборы и возвращаться к ним. Вход нужен и для покупки: разбор привязывается к вашему профилю. Какие данные получает сайт, написано в <Link href="/privacy">политике</Link>.</p>
         {message && (
           <p className="error" role="alert">
             {message}

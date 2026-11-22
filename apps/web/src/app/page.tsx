@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT, MATRIX_REPORT_PRICE_KOPECKS } from "@oracle/core";
+import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT, MATRIX_REPORT_PRICE_KOPECKS, NATAL_REPORT_PRICE_KOPECKS, NATAL_REPORT_PRODUCT, THREAD_REPORT_PRICE_KOPECKS, THREAD_REPORT_PRODUCT } from "@oracle/core";
 import { HomeDateStart } from "@/components/HomeDateStart";
 import { MoonTile } from "@/components/moon/MoonTile";
 import { ThreadPromo } from "@/components/numerology/ThreadPromo";
@@ -37,6 +37,8 @@ function freePaidLine(): string {
   const paid = [
     salesEnabled() ? `полный разбор матрицы — ${formatRubles(MATRIX_REPORT_PRICE_KOPECKS)}` : null,
     salesEnabled(LILA_SESSION_PRODUCT) ? `Лила с ИИ-проводником — ${formatRubles(LILA_SESSION_PRICE_KOPECKS)}` : null,
+    salesEnabled(NATAL_REPORT_PRODUCT) ? `разбор натальной карты — ${formatRubles(NATAL_REPORT_PRICE_KOPECKS)}` : null,
+    salesEnabled(THREAD_REPORT_PRODUCT) ? `разбор нити — ${formatRubles(THREAD_REPORT_PRICE_KOPECKS)}` : null,
   ].filter((item): item is string => item !== null);
   return paid.length === 0 ? FREE_LINE : `${FREE_LINE} По желанию: ${paid.join(", ")}.`;
 }
