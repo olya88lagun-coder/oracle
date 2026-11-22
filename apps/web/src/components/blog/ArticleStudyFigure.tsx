@@ -23,7 +23,7 @@ const MATRIX_EXAMPLES: Readonly<Record<string, MatrixExample>> = {
   "lichnost-i-tsentr-v-matritse-sudby": { date: { day: 15, month: 3, year: 1990 }, title: "Личность A и центр E на одной схеме", points: ["A", "E"] },
   "zadacha-v-matritse-sudby": { date: { day: 29, month: 11, year: 2001 }, title: "Точка D — задача в примере статьи", points: ["A", "B", "C", "D"] },
   "liniya-deneg-v-matritse-sudby": { date: { day: 29, month: 3, year: 1988 }, title: "Внутренние точки и денежная линия", points: ["E", "C2", "D2", "heart", "money", "love"] },
-  "liniya-lyubvi-v-matritse-sudby": { date: { day: 14, month: 3, year: 1992 }, title: "Где находится линия отношений", points: ["D2", "heart", "love"] },
+  "liniya-lyubvi-v-matritse-sudby": { date: { day: 29, month: 3, year: 1988 }, title: "Где находится линия отношений", points: ["D2", "heart", "love"] },
 };
 const shortName = (point: MatrixPoint) => ({ heart: "♥", money: "₽", love: "Л" }[point as "heart" | "money" | "love"] ?? point);
 function letterPosition(point: (typeof DIAGRAM_POINTS)[number]) {

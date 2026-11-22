@@ -18,6 +18,13 @@ describe("article teaching figures", () => {
     expect(html).toContain('data-point="money" data-value="8"');
     expect(html).toContain('data-point="heart" data-value="19"');
   });
+  test("relationship diagram matches the article's revised worked example", () => {
+    const html = renderToStaticMarkup(<ArticleStudyFigure slug="liniya-lyubvi-v-matritse-sudby" />);
+    expect(html).toContain("29.03.1988");
+    expect(html).toContain('data-point="D2" data-value="3"');
+    expect(html).toContain('data-point="heart" data-value="19"');
+    expect(html).toContain('data-point="love" data-value="22"');
+  });
   test("court comparison includes each of the sixteen original cards once and links to its meaning", () => {
     const html = renderToStaticMarkup(<ArticleStudyFigure slug="pridvornye-karty-taro" />);
     expect(html.match(/href="\/taro\/karty\//g)).toHaveLength(16);

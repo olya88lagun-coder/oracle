@@ -2,7 +2,7 @@
 
 ## Implemented
 
-Presentation-only changes in 13 files. The original artwork, typography and dark bronze palette remain.
+Presentation-only changes. The original artwork, typography and dark bronze palette remain.
 
 - Seven Matrix teaching figures use `calculateMatrix` and existing diagram coordinates. Point letters and arcana values are separated; focused positions have a textual legend. Diagrams retain a readable minimum width inside their own keyboard-accessible scroll region.
 - Tarot suit and court articles show four aces and all sixteen court cards. All images retain their aspect ratios and link to the relevant meaning. Existing author credit is displayed.
@@ -29,7 +29,7 @@ Tested locally with a browser viewport override; this is not a real-device test.
 ## Checks and limitations
 
 - Workspace typecheck passed after rebasing on master through PR #313.
-- 42 targeted tests passed in six files, including six new tests verifying example numbers, card completeness/links and the house/sign distinction.
+- 43 targeted tests passed in six files, including seven new tests verifying example numbers, card completeness/links and the house/sign distinction.
 - Initial broad local test runs experienced resource/time failures and were stopped. The full CI coverage run must be checked before acceptance.
 - Final shared Matrix figure width rules were reviewed against the already checked full diagram; each of the seven focused variants was not individually re-captured after that last shared CSS adjustment.
 - Real devices, authenticated account flows, real payments and production deployment were not tested by this visual package.
