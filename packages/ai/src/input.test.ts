@@ -43,3 +43,16 @@ describe("chapter inputs", () => {
     expect(all).not.toMatch(/"(userId|purchaseId|email|birthDate|displayName)"/);
   });
 });
+
+describe("repeated arcana", () => {
+  test("blocks already shown earlier are marked, so the fallback does not repeat them", () => {
+    const inputs = buildChapterInputs(EXAMPLE_MATRIX);
+    const family = inputs.find((input) => input.chapter === "family")!;
+    const purpose = inputs.find((input) => input.chapter === "purpose")!;
+    // Суть 11 впервые в центре, Суть 18 — в личности; дальше они повторяются в роду и в предназначении
+    expect(family.arcana[0]!.seen).toEqual({ "Суть": "центр" });
+    expect(family.arcana[1]!.seen).toEqual({ "Суть": "личность" });
+    expect(purpose.arcana[0]!.seen).toEqual({ "Суть": "центр" });
+    expect(inputs[0]!.arcana[0]!.seen).toBeUndefined();
+  });
+});

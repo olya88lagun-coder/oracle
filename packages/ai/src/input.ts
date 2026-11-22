@@ -3,7 +3,8 @@ import { arcanumByNumber, POSITIONS, SECTION_TITLES, type Arcanum } from "@oracl
 
 type BlockKey = "essence" | "personality" | "center" | "task" | "love" | "money" | "resource" | "distortion" | "action" | "question";
 
-export type ChapterArcanum = { role: string; number: number; name: string; blocks: Record<string, readonly string[]> };
+// seen — блоки этого аркана, уже разобранные выше (в предыдущих главах или в этой же): заголовок блока → роль, в которой он был
+export type ChapterArcanum = { role: string; number: number; name: string; blocks: Record<string, readonly string[]>; seen?: Record<string, string> };
 // Всё, что уходит модели: описание позиции, номера и названия арканов, готовые блоки. Имени, даты и идентификаторов здесь нет
 export type ChapterInput = { chapter: ChapterId; title: string; position: string; arcana: ChapterArcanum[]; previous?: string[] };
 
@@ -60,7 +61,19 @@ function chapterInput(matrix: Matrix, chapter: ChapterId): ChapterInput {
 
 // Главы 1–6 не зависят друг от друга и пишутся параллельно
 export function buildChapterInputs(matrix: Matrix): ChapterInput[] {
-  return (["core", "task", "love", "money", "family", "purpose"] as const).map((chapter) => chapterInput(matrix, chapter));
+  const seen = new Map<string, string>();
+  return (["core", "task", "love", "money", "family", "purpose"] as const).map((chapter) => {
+    const input = chapterInput(matrix, chapter);
+    for (const arcanum of input.arcana) {
+      for (const title of Object.keys(arcanum.blocks)) {
+        const key = `${arcanum.number}|${title}`;
+        const earlier = seen.get(key);
+        if (earlier) (arcanum.seen ??= {})[title] = earlier;
+        else seen.set(key, arcanum.role);
+      }
+    }
+    return input;
+  });
 }
 
 // Итоговая глава опирается на то, что уже написано в главах 1–6: модель получает их первые абзацы
