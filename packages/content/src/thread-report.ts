@@ -2,6 +2,7 @@ import { personalMonthsOf, type LifeThread, type ThreadBlock, type ThreadChapter
 import type { NumerologySection, NumerologyText } from "./numerology";
 import type { NumerologyKind } from "./numerology-manifest";
 import {
+  THREAD_MONTH_AGAIN,
   THREAD_MONTHS_GENITIVE,
   THREAD_NOW_INTRO,
   THREAD_PAST_INTRO,
@@ -49,6 +50,18 @@ const itemsOf = (text: NumerologyText, title: string): string[] => {
   return s.items.length ? [...s.items] : [...s.paragraphs];
 };
 
+// Число месяца в течение года повторяется (девять чисел на двенадцать месяцев): тот же абзац второй раз не печатаем, а отсылаем к первому месяцу с этим числом
+function monthBlocks(thread: LifeThread, current: ThreadYear, read: ThreadTextReader): ThreadBlock[] {
+  const firstHeading = new Map<number, string>();
+  return personalMonthsOf(thread.birth, current).map((m): ThreadBlock => {
+    const heading = `${day(m.start)} — ${day(m.end)}`;
+    const earlier = firstHeading.get(m.value);
+    if (earlier) return { heading, paragraphs: [THREAD_MONTH_AGAIN(m.value, earlier)] };
+    firstHeading.set(m.value, heading);
+    return { heading, paragraphs: paragraphsOf(need(read, "month", String(m.value)), "Тема месяца") };
+  });
+}
+
 export function buildThreadReport(thread: LifeThread, read: ThreadTextReader): ThreadChapter[] {
   const current = thread.years.find((y) => y.year === thread.currentYear);
   if (!current) throw new Error("thread report: no current year");
@@ -58,7 +71,7 @@ export function buildThreadReport(thread: LifeThread, read: ThreadTextReader): T
   const now: ThreadBlock[] = [
     { paragraphs: [THREAD_NOW_INTRO(current.value, dayYear(current.start), dayYear(current.end))] },
     { heading: yearHeading(current), paragraphs: [...paragraphsOf(yearText, "Тема года"), ...paragraphsOf(yearText, "На что опереться")] },
-    ...personalMonthsOf(thread.birth, current).map((m): ThreadBlock => ({ heading: `${day(m.start)} — ${day(m.end)}`, paragraphs: paragraphsOf(need(read, "month", String(m.value)), "Тема месяца") })),
+    ...monthBlocks(thread, current, read),
   ];
 
   const years: ThreadBlock[] = [];

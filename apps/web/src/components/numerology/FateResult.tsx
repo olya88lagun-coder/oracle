@@ -30,7 +30,7 @@ export function FateResult({ iso, result, summary }: { iso: string; result: Fate
         ? <><p>{summary.text}</p><p><Link className="touch-link" href={summary.href}>Подробнее о числе {result.value}</Link></p></>
         : <p className="muted">Описание появится позже.</p>}
       <div className="year-action stack">
-        <p>Число судьбы — одна цифра. Матрица судьбы по той же дате показывает целую схему: личность, центр и задачу.</p>
+        <p>Число судьбы — число от 1 до 9 или одно из мастер-чисел 11, 22 и 33: на них сложение останавливается. Матрица судьбы по той же дате показывает целую схему: личность, центр и задачу.</p>
         <p><Link className="button" href={MATRIX_PATH} prefetch={false} onClick={() => {
           prepareMatrixHandoff(sessionStore(), iso);
           reachNumerologyGoal("numerology_to_matrix");

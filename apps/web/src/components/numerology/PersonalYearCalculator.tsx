@@ -21,7 +21,7 @@ export function PersonalYearCalculator({ summaries }: { summaries: Readonly<Reco
       <div className="year-hero__copy stack">
         <p className="eyebrow">Нумерология · 2027</p>
         <h1 className="display" id="personal-year-title">Личный год <span>2027</span></h1>
-        <p className="lead">Какой по счёту год девятилетнего цикла начинается для вас в 2027 году? Узнайте по дню и месяцу рождения — с открытой формулой.</p>
+        <p className="lead">Какой по счёту год девятилетнего цикла начинается для вас в 2027 году? Узнайте по дню и месяцу рождения — с открытой формулой. Период — календарный год, с 1 января по 31 декабря 2027; в «нити судьбы» личный год считается иначе, от дня рождения.</p>
         <form className="year-form" onSubmit={calculate} noValidate>
           <div className="field"><label htmlFor="personal-year-birth-date">Дата рождения</label>
             <input ref={input} id="personal-year-birth-date" className="input" type="date" min="1900-01-01" required aria-invalid={Boolean(error)} aria-describedby={error ? "personal-year-date-error personal-year-privacy" : "personal-year-privacy"} onChange={() => setOutcome(null)} />

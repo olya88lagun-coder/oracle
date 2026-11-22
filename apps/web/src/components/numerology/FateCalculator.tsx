@@ -21,7 +21,7 @@ export function FateCalculator({ summaries }: { summaries: Readonly<Record<numbe
       <div className="year-hero__copy stack">
         <p className="eyebrow">Нумерология · по дате рождения</p>
         <h1 className="display" id="numerology-title">Число судьбы <span>по дате рождения</span></h1>
-        <p className="lead">Одна цифра из вашей даты рождения — и тема, к которой можно примерить свой опыт. Расчёт открытый: видно каждое сложение.</p>
+        <p className="lead">Число, которое получается из всех цифр вашей даты рождения, — и тема, к которой можно примерить свой опыт. Расчёт открытый: видно каждое сложение.</p>
         <form className="year-form" onSubmit={calculate} noValidate>
           <div className="field"><label htmlFor="fate-birth-date">Дата рождения</label>
             <input ref={input} id="fate-birth-date" className="input" type="date" min="1900-01-01" required aria-invalid={Boolean(error)} aria-describedby={error ? "fate-date-error fate-privacy" : "fate-privacy"} onChange={() => setOutcome(null)} />
