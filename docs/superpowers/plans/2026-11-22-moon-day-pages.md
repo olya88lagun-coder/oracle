@@ -47,7 +47,7 @@
   - `lunarDayPaths(now: Date): string[]` — адреса всех дней всех месяцев `monthWindow(now)` по порядку.
   - `parseMonthSlug` и остальное не меняются.
 
-- [ ] **Step 1: Write the failing tests** in `lunar-calendar-paths.test.ts`: адрес `lunarDayPath(2026, 11, 24)` равен `/lunnyy-kalendar/24-noyabrya-2026`, `lunarDayPath(2027, 3, 1)` равен `/lunnyy-kalendar/1-marta-2027`; круговой тест: для всех 12 месяцев и первого/последнего дня `parseDaySlug(slug)` возвращает исходное; `parseDaySlug` даёт `null` для `31-noyabrya-2026`, `0-noyabrya-2026`, `024-noyabrya-2026`, `24-noyabr-2026`, `noyabr-2026`, `24-Noyabrya-2026`, `24-noyabrya-26`, `29-fevralya-2027`, а `29-fevralya-2028` разбирает; `parseMonthSlug("24-noyabrya-2026")` равен `null`; `lunarDayPathOfDate("2026-11-24")` равен адресу дня; `lunarDayPaths(new Date("2026-11-17T09:00:00Z"))` содержит 450 адресов без повторов, первый `/lunnyy-kalendar/1-oktyabrya-2026`, последний `/lunnyy-kalendar/31-dekabrya-2027`, и содержит `.../31-dekabrya-2026` и `.../1-yanvarya-2027`.
+- [ ] **Step 1: Write the failing tests** in `lunar-calendar-paths.test.ts`: адрес `lunarDayPath(2026, 11, 24)` равен `/lunnyy-kalendar/24-noyabrya-2026`, `lunarDayPath(2027, 3, 1)` равен `/lunnyy-kalendar/1-marta-2027`; круговой тест: для всех 12 месяцев и первого/последнего дня `parseDaySlug(slug)` возвращает исходное; `parseDaySlug` даёт `null` для `31-noyabrya-2026`, `0-noyabrya-2026`, `024-noyabrya-2026`, `24-noyabr-2026`, `noyabr-2026`, `24-Noyabrya-2026`, `24-noyabrya-26`, `29-fevralya-2027`, а `29-fevralya-2028` разбирает; `parseMonthSlug("24-noyabrya-2026")` равен `null`; `lunarDayPathOfDate("2026-11-24")` равен адресу дня; `lunarDayPaths(new Date("2026-11-17T09:00:00Z"))` содержит 457 адресов без повторов, первый `/lunnyy-kalendar/1-oktyabrya-2026`, последний `/lunnyy-kalendar/31-dekabrya-2027`, и содержит `.../31-dekabrya-2026` и `.../1-yanvarya-2027`.
 - [ ] **Step 2: Run** `pnpm vitest run apps/web/src/lib/lunar-calendar-paths.test.ts`. Expected: FAIL (функций нет).
 - [ ] **Step 3: Implement** интерфейсы выше в `lunar-calendar-paths.ts`.
 - [ ] **Step 4: Run** тот же файл. Expected: PASS.
@@ -158,7 +158,7 @@
 - Consumes: `lunarDayPaths`, `parseDaySlug`.
 - Produces: `priorityOf` возвращает 0,4 для адреса, где `parseDaySlug` разбирает последний сегмент после `/lunnyy-kalendar/`, и прежние 0,6 для месяцев.
 
-- [ ] **Step 1: Write the failing tests**: `sitemap.test.ts` — каждый адрес из `lunarDayPaths(now)` есть в карте с приоритетом 0,4, число адресов дней равно 450, адреса месяцев остаются с 0,6, нет адресов дней вне окна (`/lunnyy-kalendar/24-noyabrya-2020`); тест маршрута разделов — `luna.xml` содержит месяцы и дни, а `obshchee.xml` их уже не содержит (поправить ожидания существующего теста раздела под новый раздел, не ослабляя их).
+- [ ] **Step 1: Write the failing tests**: `sitemap.test.ts` — каждый адрес из `lunarDayPaths(now)` есть в карте с приоритетом 0,4, число адресов дней равно 457, адреса месяцев остаются с 0,6, нет адресов дней вне окна (`/lunnyy-kalendar/24-noyabrya-2020`); тест маршрута разделов — `luna.xml` содержит месяцы и дни, а `obshchee.xml` их уже не содержит (поправить ожидания существующего теста раздела под новый раздел, не ослабляя их).
 - [ ] **Step 2: Run** `pnpm vitest run apps/web/src/app/sitemap.test.ts apps/web/src/app/sitemaps`. Expected: FAIL.
 - [ ] **Step 3: Implement** по интерфейсам; обновить `AGENTS.md`.
 - [ ] **Step 4: Run** `pnpm typecheck` и `pnpm test`. Expected: typecheck чистый, все тесты PASS.

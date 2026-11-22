@@ -8812,3 +8812,55 @@ main:has(> .natal-intro)::before {
   .moon-day-cards .moon-day-card { transition: transform 200ms var(--ease-out), border-color 200ms var(--ease-out); }
   .moon-day-cards .moon-day-card:hover { transform: translateY(-3px); }
 }
+
+/* Страница одной даты лунного календаря: ответ на запрос сразу под заголовком, события дня, ряд соседних дней */
+.moon-date__answer {
+  max-width: 66ch;
+  margin: 4px 0 20px;
+  padding-inline-start: 16px;
+  border-inline-start: 2px solid var(--accent);
+  color: var(--ink);
+  font: 400 clamp(17px, 2.2vw, 20px)/1.6 var(--font-body);
+  text-wrap: pretty;
+}
+
+/* Плитки «Луны сегодня» на широком экране расходятся от диска; здесь диска рядом нет, поэтому плитки собираются в обычную сетку */
+.moon-date__tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; }
+.moon-date__tiles .moon-tile { position: static; grid-area: auto; align-self: stretch; padding: 14px 16px; background: var(--surface); text-align: start; }
+.moon-date__tiles .moon-tile[data-kind] { grid-area: auto; text-align: start; }
+.moon-date__tiles .moon-tile::after { content: none; }
+.moon-date__tiles .moon-tile__value { font: 400 clamp(20px, 2.4vw, 26px)/1.2 var(--font-display); }
+.moon-date__tiles .moon-tile[data-kind="phase"] .moon-tile__value { color: var(--accent-hover); }
+
+.moon-date__section { min-width: 0; padding-block: 25px; border-top: 1px solid var(--line); }
+.moon-date__section > h2 { margin-bottom: 14px; }
+.moon-date__quiet { margin: 0 0 12px; color: var(--ink-soft); }
+
+.moon-date-events { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.moon-date-event { display: grid; grid-template-columns: 4.2em minmax(0, 1fr); align-items: baseline; gap: 4px 14px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.moon-date-event time { color: var(--accent-hover); font: 400 26px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.moon-date-event strong { display: block; color: var(--ink); font-weight: 600; }
+.moon-date-event p { margin: 4px 0 0; color: var(--ink-soft); font-size: 15px; }
+.moon-date-event--phase { border-color: var(--accent-line); background: linear-gradient(165deg, var(--surface-3), var(--surface) 70%); box-shadow: 0 0 28px rgba(203, 166, 118, 0.12); }
+
+.moon-date-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin: 0 0 4px; padding: 0; list-style: none; }
+.moon-date-days__item a { display: grid; justify-items: center; align-content: center; gap: 4px; min-height: 76px; padding: 8px 2px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink-soft); font-size: 14px; font-variant-numeric: tabular-nums; text-decoration: none; }
+.moon-date-days__item img { display: block; width: min(100%, 44px); height: auto; aspect-ratio: 1; border-radius: 50%; object-fit: cover; }
+.moon-date-days__item a:hover { border-color: var(--accent-line); color: var(--ink); }
+.moon-date-days__item a[aria-current="date"] { border-color: var(--accent); background: linear-gradient(165deg, var(--surface-3), var(--surface)); color: var(--ink); box-shadow: 0 0 22px rgba(203, 166, 118, 0.22); }
+
+@media (min-width: 700px) {
+  .moon-date-days { gap: 10px; }
+  .moon-date-days__item a { min-height: 96px; font-size: 15px; }
+  .moon-date-days__item img { width: min(100%, 56px); }
+  .moon-date-event { grid-template-columns: 5em minmax(0, 1fr); }
+}
+
+@media (min-width: 860px) {
+  .moon-date__tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .moon-date-days__item a { transition: transform 200ms var(--ease-out), border-color 200ms var(--ease-out); }
+  .moon-date-days__item a:hover { transform: translateY(-2px); }
+}

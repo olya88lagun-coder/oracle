@@ -5,13 +5,17 @@ import { MoonRibbon } from "@/components/moon/MoonRibbon";
 import { notFound } from "next/navigation";
 import { MoonHub } from "@/components/moon/MoonHub";
 import { MoonCollection } from "@/components/moon/MoonCollection";
+import { MoonDatePage } from "@/components/moon/MoonDatePage";
+import { moonJsonLd } from "@/components/moon/MoonPageParts";
 import { MoonMonthPlace, MoonMonthRowsPlace, MoonPlaceLine } from "@/components/moon/MoonMonthPlace";
 import { MoonNatalBridge } from "@/components/moon/MoonNatalBridge";
 import { NatalSprite } from "@/components/natal/NatalSprite";
 import { WeekdayRibbon } from "@/components/weekday/WeekdayRibbon";
 import { DISCLAIMER } from "@/lib/legal";
 import { buildMonthPage, isInWindow, MONTH_NAMES, monthWindow } from "@/lib/lunar-calendar";
-import { lunarMonthPath, parseMonthSlug } from "@/lib/lunar-calendar-paths";
+import { lunarDayPath, lunarMonthPath, parseDaySlug, parseMonthSlug } from "@/lib/lunar-calendar-paths";
+import { dateDescription, dateFaq, dateTitle } from "@/lib/lunar-day-copy";
+import { buildDatePage } from "@/lib/lunar-day-page";
 import { collectionItems } from "@/lib/moon-collection-items";
 import { phaseImage } from "@/lib/moon-images";
 import { MOON_PATH } from "@/lib/moon-paths";
@@ -28,6 +32,15 @@ export function generateStaticParams() {
   return monthWindow(new Date()).map(({ year, month }) => ({ month: lunarMonthPath(year, month).split("/").pop()! }));
 }
 
+// Дата («24-noyabrya-2026») или месяц («noyabr-2026»): страницы дней строятся по запросу и обновляются раз в сутки
+// Только дни месяцев окна: иначе настоящий 404
+function resolveDay(slug: string): { year: number; month: number; day: number } | null {
+  const parsed = parseDaySlug(slug);
+  if (!parsed) return null;
+  if (!isInWindow(parsed.year, parsed.month, new Date())) notFound();
+  return parsed;
+}
+
 // Только точный слаг и только месяцы окна: иначе настоящий 404
 function resolve(slug: string): { year: number; month: number } {
   const parsed = parseMonthSlug(slug);
@@ -36,7 +49,19 @@ function resolve(slug: string): { year: number; month: number } {
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const { year, month } = resolve((await params).month);
+  const slug = (await params).month;
+  const date = resolveDay(slug);
+  if (date) {
+    const page = buildDatePage(date.year, date.month, date.day, new Date());
+    const preview = phaseImage(page.phase);
+    return publicMetadata({
+      ...(preview && { image: { url: preview, alt: `Луна ${page.dateLabel}: ${page.phaseName}` } }),
+      title: dateTitle(page),
+      description: dateDescription(page),
+      path: lunarDayPath(date.year, date.month, date.day),
+    });
+  }
+  const { year, month } = resolve(slug);
   const name = `${MONTH_NAMES[month - 1]} ${year}`;
   const art = phaseImage("full");
   return publicMetadata({
@@ -48,7 +73,19 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 }
 
 export default async function LunarMonthPage({ params }: Params) {
-  const { year, month } = resolve((await params).month);
+  const slug = (await params).month;
+  const date = resolveDay(slug);
+  if (date) {
+    const now = new Date();
+    const page = buildDatePage(date.year, date.month, date.day, now);
+    return (
+      <>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(moonJsonLd(dateTitle(page), lunarDayPath(date.year, date.month, date.day), dateFaq(page))) }} />
+        <MoonDatePage page={page} now={now} />
+      </>
+    );
+  }
+  const { year, month } = resolve(slug);
   const page = buildMonthPage(year, month, new Date());
   const intro = monthIntro();
   const path = lunarMonthPath(year, month);
