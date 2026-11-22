@@ -6730,7 +6730,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
 
 @media (prefers-reduced-motion: no-preference) {
   .moon-month__art img { transition: transform 200ms var(--ease-out); }
-  .moon-month__pick:hover .moon-month__art img { transform: scale(1.62); }
+  .moon-month__pick:is(:hover, [aria-pressed="true"]) .moon-month__art img { transform: scale(1.62); }
 }
 
 .moon-month__lunar,
@@ -6854,8 +6854,14 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
 .moon-stage { display: grid; gap: 18px; min-width: 0; }
 .moon-stage__bar { display: none; }
 .moon-stage__legend { margin: 10px 0 0; color: var(--ink-soft); font-size: 14px; }
+.moon-stage :is(.moon-diary__count, .moon-diary__stats, .moon-diary__note, .moon-scrub__sign) { font-size: 14px; }
+.moon-stage :is(button, a):focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 3px; }
+.moon-month__pick { isolation: isolate; }
+.moon-month__pick:is(:hover, :focus-visible) { border-color: var(--accent); }
+.moon-month__art { background: var(--bg); }
+.moon-collection__tile[data-open="true"] img { filter: contrast(1.05); }
 
-.moon-scene { position: relative; isolation: isolate; display: grid; gap: 18px; min-width: 0; padding: 16px; overflow: hidden; border: 1px solid var(--accent-line); border-radius: 20px; background: radial-gradient(circle at 18% 8%, rgba(185, 164, 232, 0.16), transparent 55%), linear-gradient(180deg, var(--surface), var(--bg)); }
+.moon-scene { position: relative; isolation: isolate; display: grid; gap: 18px; min-width: 0; padding: 16px; overflow: hidden; border: 1px solid var(--accent-line); border-radius: 20px; background: radial-gradient(ellipse at 18% 38%, var(--moon-glow), transparent 55%), linear-gradient(140deg, var(--surface-2), var(--bg) 80%); }
 .moon-scene__art { position: absolute; z-index: -1; top: -10px; right: -30px; width: min(86%, 440px); height: auto; opacity: 0.2; pointer-events: none; -webkit-mask-image: radial-gradient(circle, #000 35%, transparent 72%); mask-image: radial-gradient(circle, #000 35%, transparent 72%); }
 .moon-scene__moon { display: grid; justify-items: center; align-content: start; gap: 12px; min-width: 0; }
 .moon-scene .moon-disc { width: min(100%, 280px); margin-inline: auto; }
@@ -6889,7 +6895,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
 .moon-diary__stats { margin: 0; }
 
 .moon-scrub { display: grid; gap: 8px; min-width: 0; }
-.moon-scrub__stage { position: relative; }
+.moon-scrub__stage { position: relative; margin-inline: 14px; }
 .moon-scrub__plot { position: relative; height: clamp(110px, 18vw, 170px); overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); cursor: ew-resize; touch-action: pan-y; user-select: none; }
 .moon-scrub__plot:focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 2px; }
 .moon-scrub__svg { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -6905,8 +6911,8 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
 .moon-scrub__event[data-kind="firstQuarter"]::before { background: linear-gradient(90deg, var(--bg) 50%, var(--moon-disc-ivory) 50%); }
 .moon-scrub__event[data-kind="lastQuarter"]::before { background: linear-gradient(90deg, var(--moon-disc-ivory) 50%, var(--bg) 50%); }
 .moon-scrub__event:hover::before, .moon-scrub__event:focus-visible::before { box-shadow: 0 0 0 5px rgba(203, 166, 118, 0.3); }
-.moon-scrub__ribbon { display: flex; gap: 2px; margin: 0; padding: 0; list-style: none; }
-.moon-scrub__ribbon li { flex-basis: 0; min-width: 0; container-type: inline-size; }
+.moon-scrub__ribbon { display: flex; gap: 2px; margin: 0; padding: 3px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-color: var(--line-strong) var(--surface); list-style: none; }
+.moon-scrub__ribbon li { flex-basis: 0; min-width: 44px; flex-shrink: 0; container-type: inline-size; }
 .moon-scrub__sign { display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; min-height: 44px; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink-soft); font-size: 13px; white-space: nowrap; cursor: pointer; }
 .moon-scrub__sign[aria-current="true"] { border-color: var(--accent); color: var(--ink); }
 .moon-scrub__glyph { flex: none; width: 16px; height: 16px; }
@@ -6926,8 +6932,8 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
 .moon-collection__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
 .moon-collection__tile { display: grid; justify-items: center; gap: 4px; padding: 10px 6px 12px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); text-align: center; }
 .moon-collection__tile img { width: 100%; max-width: 112px; height: auto; border-radius: 10px; }
-.moon-collection__tile[data-open="false"] img { filter: brightness(0.22) saturate(0.4); }
-.moon-collection__tile[data-open="true"] { border-color: var(--accent-line); background: linear-gradient(165deg, var(--surface-3), var(--surface)); box-shadow: 0 0 26px rgba(203, 166, 118, 0.12); }
+.moon-collection__tile[data-open="false"] img { filter: brightness(0.28) saturate(0.35); }
+.moon-collection__tile[data-open="true"] { border-color: var(--accent-line); background: linear-gradient(165deg, var(--surface-3), var(--surface)); box-shadow: 0 8px 28px var(--moon-glow); }
 .moon-collection__tile[data-open="true"] .moon-collection__hint { color: var(--accent-hover); }
 .moon-collection__name { font-size: 14px; }
 .moon-collection__hint { color: var(--ink-soft); font-size: 14px; line-height: 1.3; }
@@ -6966,7 +6972,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
   @keyframes moon-scene-art { from { opacity: 0; transform: scale(1.06); } }
   @keyframes moon-scrub-draw { to { stroke-dashoffset: 0; } }
   @keyframes moon-arc-pulse { 50% { opacity: 0.55; } }
-  @keyframes moon-tile-open { 0% { box-shadow: 0 0 0 0 rgba(203, 166, 118, 0.9); } 100% { box-shadow: 0 0 0 22px rgba(203, 166, 118, 0); } }
+  @keyframes moon-tile-open { from { opacity: 0.4; translate: 0 8px; } }
 }
 .moon-day-facts { display: grid; gap: 2px; margin: 0; }
 .moon-day-facts dt { margin-top: 10px; color: var(--ink-soft); font-size: 14px; }
@@ -7057,7 +7063,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
   .moon-curve__event:nth-child(n + 5) { --event-order: 4; }
 
   .moon-month__cell[data-date] {
-    animation: moon-calendar-cell-in 260ms var(--ease-out) calc(var(--i, 0) * 10ms) backwards;
+    animation: moon-calendar-cell-in 560ms var(--ease-out) calc(var(--i, 0) * 18ms) backwards;
   }
 
   .moon-month__pick { transition: transform 150ms var(--ease-out); }
@@ -7072,7 +7078,17 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 90; pointer-event
 
   @keyframes moon-calendar-panel-in { from { opacity: 0; } }
   @keyframes moon-calendar-reveal { from { clip-path: inset(-6px 100% -6px -6px); } to { clip-path: inset(-6px -6px -6px -6px); } }
-  @keyframes moon-calendar-cell-in { from { opacity: 0; transform: translateY(6px); } }
+  .moon-month__cell.is-today .moon-month__pick::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 0 20px var(--moon-glow);
+    animation: moon-calendar-today 9s ease-in-out infinite;
+  }
+  @keyframes moon-calendar-today { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+  @keyframes moon-calendar-cell-in { from { opacity: 0.55; } }
 }
 
 /* Выбор ключевой позиции — «Ночной атлас», этап 1. */
@@ -7876,7 +7892,7 @@ main:has(> .natal-intro)::before {
   --planet-moon: #c9ccd6;
   --planet-mars: #c27b5e;
   --planet-mercury: #6fa6a3;
-  --planet-jupiter: #5f7fc4;
+  --planet-jupiter: #809bda;
   --planet-venus: #d7a99c;
   --planet-saturn: #9a9aa6;
   --planet-sun: #e0a84f;
@@ -8010,14 +8026,27 @@ main:has(> .natal-intro)::before {
   color: var(--planet);
 }
 
-.weekday-wheel[data-planet] { max-width: 500px; filter: drop-shadow(0 0 34px color-mix(in srgb, var(--planet) 26%, transparent)); }
+.weekday-wheel[data-planet] {
+  max-width: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--planet) 8%, transparent), transparent 68%);
+}
+.weekday-wheel[data-planet] .weekday-wheel__centre { filter: drop-shadow(0 0 12px color-mix(in srgb, var(--planet) 28%, transparent)); }
+.weekday-wheel[data-planet] .weekday-wheel__node[data-today] { filter: drop-shadow(0 4px 14px color-mix(in srgb, var(--planet) 24%, transparent)); }
+.weekday-wheel[data-planet] .weekday-wheel__ring { stroke: color-mix(in srgb, var(--planet) 25%, var(--line)); }
+.weekday-wheel[data-planet] .weekday-wheel__ring--inner { stroke: var(--line-strong); }
 .weekday-wheel[data-planet] .weekday-wheel__centre path { stroke: var(--planet); stroke-width: 0.8; opacity: 0.85; }
 .weekday-wheel[data-planet] .weekday-wheel__halo { stroke: var(--planet); }
 .weekday-wheel[data-planet] .weekday-wheel__node[data-today] .weekday-wheel__disc { stroke: var(--planet); }
 .weekday-wheel[data-planet] .weekday-wheel__node[data-today] .weekday-wheel__glyph path { stroke: var(--planet); }
-.weekday-wheel[data-planet] .weekday-wheel__star { stroke: color-mix(in srgb, var(--planet) 55%, transparent); }
+.weekday-wheel[data-planet] .weekday-wheel__star { stroke: color-mix(in srgb, var(--planet) 46%, transparent); fill: color-mix(in srgb, var(--planet) 3%, transparent); }
 
-.weekday-hero .weekday-strip { border-color: var(--line-strong); }
+.weekday-hero .weekday-strip {
+  border-color: color-mix(in srgb, var(--planet) 32%, var(--line));
+  background: radial-gradient(ellipse at 0 0, color-mix(in srgb, var(--planet) 9%, transparent), transparent 70%), var(--surface);
+}
+.weekday-hero .weekday-strip__eyebrow { color: var(--planet); }
+.weekday-hero .weekday-strip__question { color: var(--ink); }
 .weekday-hero .weekday-strip__question { font: italic 400 clamp(19px, 2.2vw, 24px)/1.35 var(--font-display); border-inline-start-color: var(--planet); }
 
 .weekday-bar { min-width: 0; padding-block: 4px 22px; }
@@ -8026,16 +8055,25 @@ main:has(> .natal-intro)::before {
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 4px;
   margin: 0;
-  padding: 10px 6px;
+  padding: 10px 4px;
   border: 1px solid var(--line);
   border-radius: 24px;
-  background: var(--surface);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
   list-style: none;
 }
 .weekday-bar__day { display: grid; justify-items: center; align-content: center; gap: 6px; min-height: 44px; padding: 4px 0; color: var(--ink-soft); font-size: 14px; text-decoration: none; }
 .weekday-bar__day .weekday-mark { width: 40px; height: 40px; }
 .weekday-bar__day:is(:hover, :focus-visible) { color: var(--ink); }
+.weekday-bar__day { position: relative; min-width: 44px; }
 .weekday-bar__day[aria-current="true"] { color: var(--ink); font-weight: 600; }
+.weekday-bar__day[aria-current="true"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 28% -5px;
+  height: 1px;
+  background: var(--planet);
+}
+.weekday-bar__day:is(:hover, :focus-visible) .weekday-mark { border-color: var(--planet); background-color: color-mix(in srgb, var(--planet) 12%, var(--surface)); }
 .weekday-bar__day[aria-current="true"] .weekday-mark { width: 48px; height: 48px; box-shadow: inset 0 0 0 4px var(--bg), inset 0 0 0 5px color-mix(in srgb, var(--planet) 45%, transparent), 0 0 26px color-mix(in srgb, var(--planet) 38%, transparent); }
 @media (min-width: 720px) {
   .weekday-bar ol { gap: 10px; padding: 14px 18px; }
@@ -8044,20 +8082,30 @@ main:has(> .natal-intro)::before {
 }
 
 .weekday-card[data-planet] {
-  overflow: hidden;
+  overflow: visible;
   background: linear-gradient(180deg, color-mix(in srgb, var(--planet) 9%, var(--surface-2)), var(--surface));
 }
-.weekday-card[data-planet]::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--planet); opacity: 0.85; }
+.weekday-card[data-planet]::before { content: ""; position: absolute; inset: 0 0 auto; height: 1px; background: linear-gradient(90deg, transparent, var(--planet), transparent); opacity: 0.85; }
 .weekday-card[data-planet] .weekday-card__planet { color: var(--planet); }
-.weekday-card[data-planet] .weekday-card__question { padding: 12px 14px; border: 0; border-inline-start: 2px solid var(--planet); border-radius: 0 14px 14px 0; background: color-mix(in srgb, var(--planet) 8%, transparent); font-size: 20px; }
-.weekday-card[data-planet][data-today] { border-color: var(--planet); box-shadow: 0 0 0 1px color-mix(in srgb, var(--planet) 40%, transparent), 0 20px 60px color-mix(in srgb, var(--planet) 14%, transparent); }
+.weekday-card[data-planet] .weekday-card__question { padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--planet) 20%, transparent); border-inline-start-color: var(--planet); border-radius: 0 12px 12px 0; background: color-mix(in srgb, var(--planet) 8%, transparent); font-size: 20px; }
+.weekday-card[data-planet][data-today] { border-color: var(--planet); box-shadow: 0 14px 38px color-mix(in srgb, var(--planet) 8%, transparent); }
 .weekday-ribbon li[data-planet] a { border-color: color-mix(in srgb, var(--planet) 35%, var(--line-strong)); }
 
 @media (prefers-reduced-motion: no-preference) {
   .weekday-card[data-planet] { transition: transform 200ms var(--ease-out), border-color 200ms var(--ease-out); }
-  .weekday-card[data-planet]:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--planet) 60%, var(--line)); }
+  @media (hover: hover) and (pointer: fine) {
+    .weekday-card[data-planet]:hover { transform: translateY(-3px) rotate(-0.4deg); border-color: color-mix(in srgb, var(--planet) 60%, var(--line)); }
+  }
+  @supports (animation-timeline: view()) {
+    .weekday-card[data-planet] {
+      animation: weekday-card-reveal linear backwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry 28%;
+    }
+  }
+  @keyframes weekday-card-reveal { from { opacity: 0.5; translate: 0 10px; } }
   .weekday-bar__day .weekday-mark { transition: transform 200ms var(--ease-out); }
-  .weekday-bar__day:hover .weekday-mark { transform: translateY(-2px); }
+  .weekday-bar__day:is(:hover, [aria-current="true"]) .weekday-mark { transform: translateY(-2px); }
 }
 
 .weekday-ribbon { min-width: 0; }
@@ -8088,7 +8136,39 @@ main:has(> .natal-intro)::before {
   --moon-ring: rgba(203, 166, 118, 0.3);
   --moon-ring-faint: rgba(203, 166, 118, 0.14);
   --moon-glow: rgba(203, 166, 118, 0.16);
+  --moon-aura-warm: #cba676;
+  --moon-aura-cool: #a58fc7;
+  --moon-depth: #060509;
 }
+
+.moon-hero .moon-disc,
+.moon-scene .moon-disc {
+  --moon-aura: var(--moon-aura-warm);
+}
+
+.moon-disc[data-phase="new"],
+.moon-disc[data-phase="waningCrescent"] { --moon-aura: var(--moon-aura-cool); }
+
+.moon-hero .moon-disc::before,
+.moon-scene .moon-disc::before {
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 64% 48%, color-mix(in srgb, var(--moon-aura) 19%, transparent), transparent 64%),
+    radial-gradient(ellipse at 38% 62%, var(--moon-light-ambient), transparent 72%);
+}
+
+.moon-hero .moon-disc > .moon-disc__svg,
+.moon-scene .moon-disc > .moon-disc__svg {
+  background: radial-gradient(circle closest-side, transparent 78.4%, var(--moon-ring-faint) 78.7%, transparent 79.1%),
+    radial-gradient(circle closest-side, transparent 90.6%, var(--moon-ring) 91%, transparent 91.4%);
+}
+
+.moon-hero .moon-disc__base,
+.moon-scene .moon-disc__base { filter: drop-shadow(0 12px 16px var(--moon-depth)); }
+.moon-hero .moon-disc__relief,
+.moon-scene .moon-disc__relief { filter: contrast(1.08) brightness(1.05); }
+.moon-hero .moon-disc__rim,
+.moon-scene .moon-disc__rim { stroke: var(--moon-ring); }
+.moon-hero .moon-disc__tick.is-current { filter: drop-shadow(0 0 5px var(--accent)); }
 
 .moon-ask {
   display: grid;
@@ -8134,7 +8214,8 @@ main:has(> .natal-intro)::before {
   border-radius: 50%;
   border: 1px solid var(--moon-ring);
   transform: scale(1.1);
-  box-shadow: 0 0 80px 4px var(--moon-glow);
+  box-shadow: inset 0 0 36px color-mix(in srgb, var(--moon-aura, var(--accent)) 5%, transparent),
+    0 0 70px 4px var(--moon-glow);
 }
 
 @media (min-width: 900px) {
@@ -8166,11 +8247,23 @@ main:has(> .natal-intro)::before {
   }
 
   .moon-tile {
+    position: relative;
     padding: 0;
     background: none;
     align-self: center;
   }
 
+  .moon-tile::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: clamp(12px, 2vw, 28px);
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(90deg, var(--moon-ring), transparent);
+  }
+  .moon-tile:is([data-kind="phase"], [data-kind="day"])::after { left: calc(100% + 10px); }
+  .moon-tile:is([data-kind="sign"], [data-kind="rise"])::after { right: calc(100% + 10px); rotate: 180deg; }
   .moon-tile[data-kind="phase"] { grid-area: 3 / 1; text-align: end; }
   .moon-tile[data-kind="day"] { grid-area: 4 / 1; text-align: end; }
   .moon-tile[data-kind="sign"] { grid-area: 3 / 3; }
@@ -8209,11 +8302,21 @@ main:has(> .natal-intro)::before {
 
 @media (prefers-reduced-motion: no-preference) {
   .moon-disc::after { animation: moon-ring-arrive 1100ms var(--ease-out) both; }
+  .moon-hero .moon-disc::before,
+  .moon-scene .moon-disc::before { animation: moon-aura-arrive 1400ms var(--ease-out) both, moon-aura-breathe 12s ease-in-out 1400ms infinite; }
+  .moon-ask__question { animation: moon-question-arrive 900ms var(--ease-out) 180ms backwards; }
+  .moon-ask > .button { transition: box-shadow 240ms var(--ease-out), background 240ms var(--ease-out); }
+
+  @keyframes moon-aura-arrive { from { opacity: 0.2; } }
+  @keyframes moon-aura-breathe { 0%, 100% { opacity: 0.72; } 50% { opacity: 1; } }
+  @keyframes moon-question-arrive { from { opacity: 0.35; translate: 0 10px; } }
 
   @keyframes moon-ring-arrive {
     from { opacity: 0; transform: scale(0.94); }
   }
 }
+
+.moon-ask > .button:is(:hover, :focus-visible) { box-shadow: 0 8px 28px var(--moon-glow); }
 
 /* Луна сегодня — карточки дня с гравюрами, лента и планета дня */
 .moon-text { gap: 18px; }
@@ -8232,6 +8335,8 @@ main:has(> .natal-intro)::before {
 .moon-text__block > :not(.moon-text__art) { margin-inline: 20px; }
 
 .moon-text__art {
+  position: relative;
+  isolation: isolate;
   display: grid;
   place-items: center;
   aspect-ratio: 1;
@@ -8247,7 +8352,17 @@ main:has(> .natal-intro)::before {
 }
 
 .moon-text__art:has(.moon-text__numeral) {
-  background: radial-gradient(circle at 50% 46%, var(--surface-3), var(--surface-2) 72%);
+  background: radial-gradient(circle at 50% 46%, var(--moon-glow), transparent 64%), var(--surface-2);
+}
+
+.moon-text__art:has(.moon-text__numeral)::before {
+  content: "";
+  position: absolute;
+  inset: 16%;
+  border: 1px solid var(--moon-ring);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 9px var(--surface-2), inset 0 0 0 10px var(--moon-ring-faint);
+  pointer-events: none;
 }
 
 .moon-text__numeral {
@@ -8266,8 +8381,12 @@ main:has(> .natal-intro)::before {
 }
 
 .moon-text__block .moon-text__question {
-  font: italic 400 18px/1.35 var(--font-display);
+  font: italic 400 20px/1.4 var(--font-display);
 }
+
+.moon-text__block[data-kind] { border-color: var(--line); }
+.moon-text__block[data-kind]:is(:hover, :focus-within) { border-color: var(--accent-line); }
+.moon-strip__day.is-today { border-radius: 16px; background: linear-gradient(180deg, var(--moon-glow), transparent 85%); }
 
 .moon-strip__day.is-today .moon-mini { box-shadow: 0 0 18px 1px var(--moon-glow); }
 
@@ -8277,8 +8396,19 @@ main:has(> .natal-intro)::before {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .moon-text__block { transition: transform 200ms var(--ease-out), border-color 200ms var(--ease-out); }
-  .moon-text__block:hover { transform: translateY(-3px); border-color: var(--accent-line); }
+  .moon-text__block { transition: border-color 240ms var(--ease-out); }
+  .moon-text__art img { transition: transform 650ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .moon-text__block:hover .moon-text__art img { transform: scale(1.035); }
+  }
+  @supports (animation-timeline: view()) {
+    .moon-text__block[data-kind] {
+      animation: moon-card-reveal linear backwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry 32%;
+    }
+  }
+  @keyframes moon-card-reveal { from { opacity: 0.45; translate: 0 12px; } }
 }
 
 /* Мост «Ваша Луна» с лунных страниц к натальной карте: карточка с рамкой, гравюра знака слева (если есть) */
