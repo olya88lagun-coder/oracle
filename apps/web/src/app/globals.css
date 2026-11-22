@@ -7948,31 +7948,9 @@ main:has(> .natal-intro)::before {
 }
 
 .weekday-wheel { display: block; width: 100%; max-width: 460px; height: auto; margin-inline: auto; overflow: visible; }
-.weekday-wheel :is(.weekday-wheel__ring, .weekday-wheel__disc, .weekday-wheel__halo) { fill: none; }
-.weekday-wheel__ring { stroke: var(--line-strong); stroke-width: 1; }
-.weekday-wheel__ring--inner { stroke: var(--line); stroke-dasharray: 2 7; stroke-linecap: round; }
-.weekday-wheel__ticks line { stroke: var(--line-strong); stroke-width: 1; }
-.weekday-wheel__ticks line[data-long] { stroke: var(--accent-line); stroke-width: 1.6; }
-.weekday-wheel__star { fill: rgba(203, 166, 118, 0.05); stroke: var(--accent-line); stroke-width: 1.2; stroke-linejoin: round; }
-.weekday-wheel :is(.weekday-wheel__glyph, .weekday-wheel__centre) path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.weekday-wheel__centre path { stroke: var(--accent); stroke-width: 0.7; opacity: 0.55; }
-.weekday-wheel__disc { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.2; }
-.weekday-wheel__glyph path { stroke: var(--accent-soft); stroke-width: 1.5; }
-.weekday-wheel__halo { stroke: var(--accent-line); stroke-width: 1; }
-.weekday-wheel__node[data-today] .weekday-wheel__disc { fill: var(--surface-3); stroke: var(--accent); stroke-width: 1.6; }
-.weekday-wheel__node[data-today] .weekday-wheel__glyph path { stroke: var(--accent-hover); stroke-width: 1.7; }
 
-@media (prefers-reduced-motion: no-preference) {
-  .weekday-wheel__star { stroke-dasharray: 1; animation: weekday-draw 2.6s var(--ease-out) both; }
-  .weekday-wheel__ticks { transform-box: view-box; transform-origin: 50% 50%; animation: weekday-turn 280s linear infinite; }
-  .weekday-wheel__halo { transform-box: fill-box; transform-origin: center; animation: weekday-pulse 3.4s ease-in-out infinite; }
-  .weekday-card[data-today] .weekday-mark { animation: weekday-glow 4.2s ease-in-out infinite; }
-}
 
-@keyframes weekday-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-@keyframes weekday-turn { to { transform: rotate(360deg); } }
-@keyframes weekday-pulse { 0%, 100% { opacity: 0.85; transform: scale(1); } 50% { opacity: 0.2; transform: scale(1.22); } }
-@keyframes weekday-glow { 0%, 100% { box-shadow: inset 0 0 0 4px var(--bg), inset 0 0 0 5px rgba(203, 166, 118, 0.2), 0 0 0 0 rgba(203, 166, 118, 0); } 50% { box-shadow: inset 0 0 0 4px var(--bg), inset 0 0 0 5px rgba(203, 166, 118, 0.5), 0 0 28px 2px rgba(203, 166, 118, 0.28); } }
+
 
 .moon-page :is(.weekday-week, .weekday-today) { min-width: 0; padding-block: 25px; border-top: 1px solid var(--line); }
 .weekday-week__lead { max-width: 62ch; margin: 0 0 24px; color: var(--ink-soft); line-height: 1.65; }
@@ -8035,15 +8013,6 @@ main:has(> .natal-intro)::before {
   border-radius: 50%;
   background: radial-gradient(circle, color-mix(in srgb, var(--planet) 8%, transparent), transparent 68%);
 }
-.weekday-wheel[data-planet] .weekday-wheel__centre { filter: drop-shadow(0 0 12px color-mix(in srgb, var(--planet) 28%, transparent)); }
-.weekday-wheel[data-planet] .weekday-wheel__node[data-today] { filter: drop-shadow(0 4px 14px color-mix(in srgb, var(--planet) 24%, transparent)); }
-.weekday-wheel[data-planet] .weekday-wheel__ring { stroke: color-mix(in srgb, var(--planet) 25%, var(--line)); }
-.weekday-wheel[data-planet] .weekday-wheel__ring--inner { stroke: var(--line-strong); }
-.weekday-wheel[data-planet] .weekday-wheel__centre path { stroke: var(--planet); stroke-width: 0.8; opacity: 0.85; }
-.weekday-wheel[data-planet] .weekday-wheel__halo { stroke: var(--planet); }
-.weekday-wheel[data-planet] .weekday-wheel__node[data-today] .weekday-wheel__disc { stroke: var(--planet); }
-.weekday-wheel[data-planet] .weekday-wheel__node[data-today] .weekday-wheel__glyph path { stroke: var(--planet); }
-.weekday-wheel[data-planet] .weekday-wheel__star { stroke: color-mix(in srgb, var(--planet) 46%, transparent); fill: color-mix(in srgb, var(--planet) 3%, transparent); }
 
 .weekday-hero .weekday-strip {
   border-color: color-mix(in srgb, var(--planet) 32%, var(--line));
@@ -8134,6 +8103,125 @@ main:has(> .natal-intro)::before {
 .weekday-ribbon__day { color: var(--ink); font-weight: 600; }
 .weekday-ribbon__planet { color: var(--ink-soft); font-size: 14px; }
 .moon-month .weekday-ribbon { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+
+/* Дни недели — объёмные изображения планет. Остальные страницы сохраняют свои знаки. */
+.weekday-page .planet-artwork {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.weekday-page .weekday-system {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 1;
+  margin: 20px auto;
+  background: none;
+}
+
+.weekday-system__orbit {
+  position: absolute;
+  inset: 10%;
+  z-index: -1;
+  border: 1px solid var(--moon-ring-faint);
+  border-radius: 50%;
+  transform: rotate(-22deg) scaleY(0.78);
+}
+
+.weekday-system__orbit::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border: 1px solid var(--line);
+  border-radius: inherit;
+}
+
+.weekday-system__centre {
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  width: 58%;
+  transform: translate(-50%, -50%);
+}
+
+.weekday-system__companion {
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  gap: 0;
+  width: 18%;
+  transform: translate(-50%, -50%);
+}
+
+.weekday-system__label { color: var(--ink-soft); font-size: 14px; line-height: 1.4; }
+
+.weekday-page .weekday-mark,
+.weekday-page [data-planet] .weekday-mark,
+.weekday-page .weekday-bar__day[aria-current="true"] .weekday-mark {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.weekday-page .weekday-strip .weekday-mark { width: 76px; height: 76px; }
+.weekday-page .weekday-bar__day .weekday-mark { width: clamp(38px, 5vw, 64px); height: auto; aspect-ratio: 1; }
+.weekday-page .weekday-bar__day[aria-current="true"] .weekday-mark { width: clamp(44px, 5.5vw, 72px); }
+.weekday-page .weekday-bar__day { gap: 2px; }
+.weekday-page .weekday-bar__day[aria-current="true"] { background: radial-gradient(ellipse at 50% 38%, var(--moon-glow), transparent 70%); }
+
+.weekday-page .weekday-card { gap: 16px; }
+.weekday-card__art {
+  display: grid;
+  place-items: center;
+  height: 194px;
+  margin-top: -8px;
+  background: radial-gradient(ellipse at 50% 54%, color-mix(in srgb, var(--planet) 7%, transparent), transparent 68%);
+}
+.weekday-card__art .planet-artwork { width: min(100%, 224px); max-height: 224px; }
+.weekday-page .weekday-card__head h3 { font-size: 30px; }
+.weekday-page .weekday-card__question { line-height: 1.5; }
+.weekday-page .weekday-card__practice a { display: inline-flex; align-items: center; min-width: 44px; min-height: 44px; }
+.weekday-page .weekday-card[data-planet] { scroll-margin-top: 28px; }
+
+@media (min-width: 1100px) {
+  .weekday-page .weekday-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  .weekday-page .weekday-card--how { grid-column: span 2; padding: 36px; }
+  .weekday-page .weekday-card--how ol { max-width: 48ch; gap: 16px; }
+  .weekday-page .weekday-card__art { height: 214px; }
+}
+
+@media (max-width: 899px) {
+  .weekday-page .weekday-hero { gap: 20px; }
+  .weekday-page .weekday-hero__copy { display: contents; }
+  .weekday-page .weekday-hero__copy > .eyebrow { grid-row: 1; }
+  .weekday-page .weekday-hero h1 { grid-row: 2; }
+  .weekday-page .weekday-system { grid-row: 3; max-width: 480px; margin-block: 12px 0; }
+  .weekday-page .weekday-hero__lead { grid-row: 4; }
+  .weekday-page .weekday-hero .weekday-strip { grid-row: 5; }
+  .weekday-page .weekday-strip .weekday-mark { width: 60px; height: 60px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .weekday-system__centre .planet-artwork {
+    animation: planet-scene-arrive 1000ms var(--ease-out) both, planet-hover 12s ease-in-out 1000ms infinite;
+  }
+  .weekday-system__companion .planet-artwork {
+    animation: planet-companion-arrive 850ms var(--ease-out) calc(var(--order) * 80ms) backwards,
+      planet-hover 16s ease-in-out calc(1s + var(--order) * -2s) infinite;
+  }
+  .weekday-card__art .planet-artwork { transition: transform 650ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .weekday-card:hover .weekday-card__art .planet-artwork { transform: translateY(-4px) scale(1.06); }
+  }
+  @keyframes planet-scene-arrive { from { opacity: 0.4; scale: 0.94; } }
+  @keyframes planet-companion-arrive { from { opacity: 0.3; scale: 0.9; } }
+  @keyframes planet-hover { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+}
 
 /* Луна сегодня — сцена: диск по центру в кольцах, факты по бокам, вопрос дня под Луной */
 :root {

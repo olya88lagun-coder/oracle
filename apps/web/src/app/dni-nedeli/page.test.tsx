@@ -59,3 +59,14 @@ test("has the Moon ribbon with the weekday tab current", async () => {
   expect(markup.indexOf('aria-label="Лунный раздел"')).toBeLessThan(markup.indexOf("moon-breadcrumb"));
   expect(markup.match(/aria-current="page"[^>]*>Дни недели</g)).toHaveLength(1);
 });
+
+test("all seven planets use local raster artwork in the scene, navigation and cards", () => {
+  const markup = html();
+  for (const { glyph } of WEEKDAY_PLANETS) {
+    expect(markup).toContain(`/images/weekday/${glyph}-160.webp`);
+    expect(markup).toContain(`/images/weekday/${glyph}-384.webp`);
+  }
+  expect(markup.match(/weekday-system__centre/g)).toHaveLength(1);
+  expect(markup.match(/weekday-system__companion/g)).toHaveLength(6);
+  expect(markup).not.toContain("weekday-wheel__glyph");
+});
