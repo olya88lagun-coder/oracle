@@ -65,6 +65,7 @@ export default async function LunarDayPage({ params }: Params) {
             {page.note && <p className="moon-month__intro">{page.note}</p>}
           </div>
         </header>
+        <div className="moon-day-reading">
         {page.text && (
           <section className="moon-text" aria-labelledby="moon-day-text-title">
             <h2 id="moon-day-text-title">Образ суток</h2>
@@ -94,6 +95,7 @@ export default async function LunarDayPage({ params }: Params) {
             </dd>
           </dl>
         </section>
+        </div>
         <nav className="moon-links moon-links--pager" aria-label="Соседние сутки">
           <ul>
             {page.prev && <li><Link href={page.prev.href} rel="prev">← {page.prev.label}</Link></li>}

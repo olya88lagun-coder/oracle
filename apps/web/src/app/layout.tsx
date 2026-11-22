@@ -9,6 +9,7 @@ import { PurchaseAnalytics } from "@/components/PurchaseAnalytics";
 import { YANDEX_VERIFICATION } from "@/lib/analytics";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
+import "./audit-visual.css";
 
 // Шрифты лежат в репозитории (src/app/fonts, лицензия OFL): сборка не ходит на fonts.google.com и не зависит от внешней сети.
 // Manrope — вариативный по весу; заголовки — тонкая контрастная антиква Noto Serif Display, веса 300–400.

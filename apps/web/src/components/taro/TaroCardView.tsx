@@ -29,7 +29,9 @@ function SpreadsForSection({ sectionKey }: { sectionKey: SectionKey }) {
   });
   if (uses.length === 0) return null;
   return (
-    <p className="taro-card-spreads">
+    <details className="taro-card-uses">
+      <summary>В каких раскладах читается этот раздел</summary>
+      <p className="taro-card-spreads">
       {uses.length === 1 ? "Этот раздел читается в раскладе " : "Этот раздел читается в раскладах "}
       {uses.map(({ spread, position }, index) => (
         <span key={spread.slug}>
@@ -37,7 +39,8 @@ function SpreadsForSection({ sectionKey }: { sectionKey: SectionKey }) {
         </span>
       ))}
       .
-    </p>
+      </p>
+    </details>
   );
 }
 const COMBOS_ID = "sochetaniya";
