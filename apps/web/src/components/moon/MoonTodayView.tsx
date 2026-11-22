@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import type { MoonSnapshot } from "@oracle/core/moon";
+import Link from "next/link";
 import { PosterButton } from "@/components/PosterButton";
+import { lunarDayPathOfDate } from "@/lib/lunar-calendar-paths";
 import { lunarDayImage, phaseImage, signImage } from "@/lib/moon-images";
 import { PHASE_NAMES } from "@/lib/moon-names";
 import type { MoonToday } from "@/lib/moon-today";
@@ -56,7 +58,7 @@ export function MoonTodayView({ today, headingDate, placeLabel = null, placeNote
             <li className="moon-tile" data-kind="rise"><span className="moon-tile__label">Восход и заход</span><span className="moon-tile__value">{today.rise ?? "—"} / {today.set ?? "—"}</span><span className="moon-tile__note">{where}</span></li>
           </ul>
           <p className="moon-next">Ближайшая смена: {today.next.label}</p>
-          <p className="moon-poster"><PosterButton spec={moonPosterSpec(today)} /></p>
+          <p className="moon-poster moon-poster--pair"><PosterButton spec={moonPosterSpec(today)} /><Link className="button button--ghost" href={lunarDayPathOfDate(today.strip[0]!.date)} prefetch={false}>Страница дня →</Link></p>
         </>}
       />
       {hasTexts && (

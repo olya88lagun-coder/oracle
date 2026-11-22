@@ -7,6 +7,7 @@ import { MoonDisc } from "@/components/moon/MoonDisc";
 import { MoonHead, MoonFaq, moonJsonLd } from "@/components/moon/MoonPageParts";
 import { MoonHub } from "@/components/moon/MoonHub";
 import { DISCLAIMER } from "@/lib/legal";
+import { lunarDayPathOfDate } from "@/lib/lunar-calendar-paths";
 import { buildEclipsePage, buildRetroPage, type EclipsePage, type RetroPage } from "@/lib/moon-events";
 import { phaseImage } from "@/lib/moon-images";
 import { buildPhasesPage, buildYearPage, type PhasesPage, type YearPage } from "@/lib/moon-year";
@@ -80,7 +81,7 @@ function YearView({ page }: { page: YearPage }) {
             <tbody>
               {page.rows.map((row) => (
                 <tr key={row.date} className="moon-days__row" data-date={row.date}>
-                  <th scope="row"><time dateTime={row.date}>{row.label}</time></th>
+                  <th scope="row">{row.monthHref ? <Link href={lunarDayPathOfDate(row.date)} prefetch={false}><time dateTime={row.date}>{row.label}</time></Link> : <time dateTime={row.date}>{row.label}</time>}</th>
                   <td>{row.signName}</td>
                   <td>{row.distance}{row.superMoon && " · суперлуние"}</td>
                   <td>{row.monthHref ? <Link href={row.monthHref}>Открыть месяц</Link> : "—"}</td>
@@ -194,7 +195,7 @@ function PhasesView({ page }: { page: PhasesPage }) {
         <ol className="moon-events__list">
           {page.upcoming.map((item) => (
             <li key={item.date + item.name} className="moon-events__item moon-events__item--phase">
-              <time dateTime={item.date}>{item.label}</time>
+              <Link href={lunarDayPathOfDate(item.date)} prefetch={false}><time dateTime={item.date}>{item.label}</time></Link>
               <span>{item.name}</span>
             </li>
           ))}

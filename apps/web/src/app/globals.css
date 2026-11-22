@@ -8864,3 +8864,6 @@ main:has(> .natal-intro)::before {
   .moon-date-days__item a { transition: transform 200ms var(--ease-out), border-color 200ms var(--ease-out); }
   .moon-date-days__item a:hover { transform: translateY(-2px); }
 }
+
+/* «Луна сегодня»: кнопка картинки для сторис и ссылка на страницу сегодняшней даты рядом */
+.moon-poster--pair { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; }

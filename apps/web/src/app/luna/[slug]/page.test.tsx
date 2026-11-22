@@ -22,6 +22,19 @@ beforeEach(() => {
 });
 afterEach(() => vi.useRealTimers());
 
+describe("links to the pages of dates", () => {
+  test("a full moon of the window leads to its date page, one of a month outside the window has no link", async () => {
+    const markup = await render("polnoluniya-2026");
+    expect(markup).toContain('href="/lunnyy-kalendar/24-noyabrya-2026"');
+    expect(markup).not.toContain('href="/lunnyy-kalendar/3-yanvarya-2026"');
+  });
+
+  test("the four coming main phases lead to their date pages", async () => {
+    const markup = await render("fazy-luny");
+    expect(markup.match(/href="\/lunnyy-kalendar\/\d{1,2}-[a-z]+-\d{4}"/g)?.length).toBeGreaterThanOrEqual(4);
+  });
+});
+
 describe("year pages", () => {
   test("the full moon page has one h1, a table of 13 rows with times, signs and distances, and a supermoon mark", async () => {
     const markup = await render("polnoluniya-2026");

@@ -3,7 +3,7 @@ import { DAY_PAGE_NOTE, DAYS_HUB_FAQ, DAYS_HUB_INTRO, eclipseFaq, eclipseIntro, 
 import { eclipsesOfYear, moonMonth, phaseOf, retrogradePeriods, type EclipseKind, type EclipseVisibility, type RetrogradePlanet } from "@oracle/core/moon";
 import { dayOrdinal } from "./day-ordinal";
 import { momentLabel, SIGN_NAMES } from "./lunar-calendar";
-import { currentMonth, isInWindow, lunarMonthPath, monthFromIndex, monthIndex, moscowDate } from "./lunar-calendar-paths";
+import { currentMonth, isInWindow, lunarDayPathOfDate, monthFromIndex, monthIndex, moscowDate } from "./lunar-calendar-paths";
 import { PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-today";
 import { dayPath, LUNAR_DAYS, yearMoonPath, yearWindow, type YearPageKind } from "./moon-year-paths";
 
@@ -136,7 +136,8 @@ function nextDates(day: number, now: Date): DayPage["dates"] {
   const label = (iso: string) => dayMonthFormat.format(new Date(`${iso}T12:00:00Z`));
   return runs.slice(0, 3).map((run) => ({
     label: run.first === run.last ? label(run.first) : `${Number(run.first.slice(8))}–${label(run.last)}`,
-    href: isInWindow(run.month.year, run.month.month, now) ? lunarMonthPath(run.month.year, run.month.month) : null,
+    // Ссылка ведёт на страницу первой даты ряда: страницы дат есть в тех же месяцах окна, что и страницы месяцев
+    href: isInWindow(run.month.year, run.month.month, now) ? lunarDayPathOfDate(run.first) : null,
   }));
 }
 
