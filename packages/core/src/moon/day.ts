@@ -1,9 +1,14 @@
 import * as Astronomy from "astronomy-engine";
+import { localToUtc, utcOffsetMinutes } from "../natal/time";
 import { previousNewMoon } from "./phase";
 
-// Москва для всех: у сайта нет региональной привязки. Сдвиг постоянный, летнего времени в России нет
-export const MOSCOW = { latitude: 55.7558, longitude: 37.6173, utcOffsetMinutes: 180 } as const;
-type Place = typeof MOSCOW;
+// Место наблюдателя: координаты и часовой пояс (IANA, например Asia/Novosibirsk). Фаза и знак Луны от места не зависят;
+// от него зависят восход, заход, границы суток и номера лунных суток
+export type Place = { latitude: number; longitude: number; zone: string };
+
+// Москва по умолчанию: без выбора города все лунные страницы считаются по Москве. Сдвиг постоянный, летнего времени в России нет
+// (eclipses.ts и year.ts читают utcOffsetMinutes)
+export const MOSCOW = { latitude: 55.7558, longitude: 37.6173, zone: "Europe/Moscow", utcOffsetMinutes: 180 } as const;
 
 const DAY_MS = 86_400_000;
 
@@ -11,6 +16,13 @@ const DAY_MS = 86_400_000;
 export function moscowDayStart(at: Date): Date {
   const offset = MOSCOW.utcOffsetMinutes * 60_000;
   return new Date(Math.floor((at.getTime() + offset) / DAY_MS) * DAY_MS - offset);
+}
+
+// Начало местных суток (00:00 в зоне места) для момента `at`; границу суток считаем по зоне, а не по часовому поясу сервера.
+// В сутки перевода часов они длятся 23 или 25 часов
+export function dayStart(at: Date, place: Place = MOSCOW): Date {
+  const local = new Date(at.getTime() + utcOffsetMinutes(place.zone, at.getTime()) * 60_000);
+  return localToUtc(place.zone, { year: local.getUTCFullYear(), month: local.getUTCMonth() + 1, day: local.getUTCDate(), hour: 0, minute: 0 }).utc;
 }
 
 // Все события восхода (+1) или захода (-1) Луны в окне [from, from + limitDays], по возрастанию

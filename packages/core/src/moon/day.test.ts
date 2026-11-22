@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { lunarDay, lunarDayFromRises, moonRises, moonSets, moscowDayStart } from "./day";
+import { dayStart, lunarDay, lunarDayFromRises, moonRises, moonSets, moscowDayStart, type Place } from "./day";
 
 const HOUR = 3_600_000;
 const T0 = new Date("2026-11-09T07:02:00Z"); // новолуние
@@ -87,5 +87,40 @@ describe("lunar month boundary", () => {
     const before = lunarDay(new Date("2026-12-08T23:51:00Z")).number;
     expect(before === 29 || before === 30).toBe(true);
     expect(lunarDay(new Date("2026-12-09T01:51:00Z")).number).toBe(1);
+  });
+});
+
+const NOVOSIBIRSK: Place = { latitude: 54.99, longitude: 82.9, zone: "Asia/Novosibirsk" };
+const BERLIN: Place = { latitude: 52.52, longitude: 13.405, zone: "Europe/Berlin" };
+
+describe("dayStart", () => {
+  test("for Moscow equals moscowDayStart over 400 days in 2026-2027", () => {
+    const first = Date.parse("2026-01-01T00:00:00Z");
+    for (let step = 0; step < 400 * 24 / 7; step++) {
+      const at = new Date(first + step * 7 * HOUR);
+      expect(dayStart(at).getTime(), at.toISOString()).toBe(moscowDayStart(at).getTime());
+    }
+  });
+
+  test("for Novosibirsk is the local midnight", () => {
+    expect(dayStart(new Date("2026-11-22T09:00:00Z"), NOVOSIBIRSK).toISOString()).toBe("2026-11-21T17:00:00.000Z");
+  });
+
+  test("on the Berlin spring change a local day starts at local midnight and lasts 23 hours", () => {
+    const start = dayStart(new Date("2027-03-28T12:00:00Z"), BERLIN);
+    const next = dayStart(new Date("2027-03-29T12:00:00Z"), BERLIN);
+    expect(start.toISOString()).toBe("2027-03-27T23:00:00.000Z");
+    expect(next.toISOString()).toBe("2027-03-28T22:00:00.000Z");
+    expect((next.getTime() - start.getTime()) / HOUR).toBe(23);
+  });
+});
+
+describe("a Place without utcOffsetMinutes", () => {
+  test("moonRises and lunarDay accept it", () => {
+    const at = new Date("2026-11-22T09:00:00Z");
+    expect(moonRises(at, 2, NOVOSIBIRSK).length).toBeGreaterThan(0);
+    const day = lunarDay(at, NOVOSIBIRSK);
+    expect(day.number).toBeGreaterThanOrEqual(1);
+    expect(day.number).toBeLessThanOrEqual(30);
   });
 });
