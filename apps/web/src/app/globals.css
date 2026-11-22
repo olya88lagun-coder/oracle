@@ -1792,12 +1792,13 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
 /* Карта дня: текст под выбором карты (что это, как пользоваться, значения по арканам, вопросы) */
 body .stack > .taro-day-info { display: grid; gap: 44px; margin-top: 56px; padding-top: 44px; border-top: 1px solid var(--line); }
 .taro-day-info h2 { margin: 0 0 14px; font-size: clamp(26px, 4vw, 36px); line-height: 1.2; }
+.taro-day-info h3 { margin: 24px 0 12px; }
 .taro-day-info p { margin: 0 0 14px; max-width: 46em; color: var(--ink-soft); }
 .taro-day-info .matrix-faq h2 { margin: 0; }
 .taro-day-steps { display: grid; gap: 12px; max-width: 46em; margin: 0; padding-left: 22px; color: var(--ink-soft); }
 .taro-day-steps strong { color: var(--ink); font-weight: 500; }
 .taro-day-arcana { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin: 18px 0 8px; padding: 0; list-style: none; }
-.taro-day-arcana a { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink); text-decoration: none; }
+.taro-day-arcana a { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
 .taro-day-arcana a:hover { border-color: var(--accent-line); }
 .taro-day-arcana a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .taro-day-arcana span { min-width: 2.4em; color: var(--accent); font-family: var(--font-display); font-size: 14px; }
@@ -3980,6 +3981,26 @@ body .report-waiting--natal > * { min-width: 0; margin: 0; }
   .natal-guide h2 {
     font-size:26px;
   }
+}
+
+/* Учебный пример остаётся открытым текстом под формой, отдельно от личного результата. */
+.natal-reading-example > p { max-width: 76ch; }
+.natal-reading-example > p + p { margin-top: 16px; }
+.natal-reading-example a { color: var(--accent); text-underline-offset: 4px; }
+.natal-reading-example__points {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+.natal-reading-example__points li { min-width: 0; border-top: 1px solid var(--line); padding-top: 18px; }
+.natal-reading-example__points h3 { font: 400 24px/1.3 var(--font-display); }
+.natal-reading-example__position { color: var(--accent); padding-block: 8px 12px; }
+.natal-reading-example__points .touch-link { margin-top: 8px; }
+@media (max-width: 760px) {
+  .natal-reading-example__points { grid-template-columns: minmax(0, 1fr); gap: 16px; }
 }
 
 /* «Сферы жизни» (NatalSpheres) и группы аспектов (NatalAspects): рабочая вёрстка; вид доводит Codex */
