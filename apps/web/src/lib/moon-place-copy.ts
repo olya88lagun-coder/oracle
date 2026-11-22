@@ -1,3 +1,5 @@
+import type { MoonPlace } from "./moon-place";
+
 // Тексты выбора города на лунных страницах: без оценок дней и без обещаний
 export const PLACE_DIALOG_TITLE = "Город для лунных данных";
 export const PLACE_LABEL = "Ваш город";
@@ -7,6 +9,9 @@ export const PLACE_LIST_LABEL = "Города";
 export const PLACE_RESET = "Вернуться к Москве";
 export const PLACE_CLOSE = "Закрыть";
 export const PLACE_ZONE_ERROR = "Не удалось определить часовой пояс этого города в вашем браузере. Выберите другой город.";
+
+// Ярлык под заголовком: город называем, только когда пересчитанные данные для него готовы (пока считается или расчёт упал, на экране московские)
+export const placeLineFor = (place: MoonPlace | null, ready: boolean): string => (place && ready ? `Для города ${place.name}` : "По Москве");
 
 export const placeChipAria = (label: string): string => `Город для лунных данных: ${label}. Изменить`;
 

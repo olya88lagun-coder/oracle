@@ -77,7 +77,7 @@ export default async function LunarMonthPage({ params }: Params) {
         <nav aria-label="Хлебные крошки" className="moon-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><Link href={MOON_PATH}>Луна сегодня</Link><span aria-hidden="true">/</span><span>{page.title}</span></nav>
         <header className="moon-month__head moon-month__head--compact">
           <h1>{page.title}</h1>
-          <MoonPlaceLine />
+          <MoonPlaceLine year={year} month={month} />
         </header>
         <nav className="moon-month__nav" aria-label="Месяцы">
           {page.prev && <Link className="moon-month__prev" href={page.prev.href}>← {page.prev.label}</Link>}

@@ -23,7 +23,7 @@ describe("MoonMonthPlace without a chosen city", () => {
   });
 
   test("the place line says Moscow and contains none of FORBIDDEN_MOON_WORDS", () => {
-    const html = renderToStaticMarkup(<MoonPlaceLine />);
+    const html = renderToStaticMarkup(<MoonPlaceLine year={2026} month={11} />);
     expect(html).toBe('<p class="moon-hero__place">По Москве</p>');
     for (const word of FORBIDDEN_MOON_WORDS) expect(text(html), word).not.toContain(word);
   });
