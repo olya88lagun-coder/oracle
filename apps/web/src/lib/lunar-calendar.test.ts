@@ -231,6 +231,15 @@ describe("buildMonthPage for a Place", () => {
   });
 });
 
+describe("phase names of the days", () => {
+  test("the days around a main phase are «около», the day of the phase carries its name, in the grid and in the table", () => {
+    const page = buildMonthPage(2026, 11, NOW);
+    expect([23, 24, 25].map((day) => page.cells[day - 1]!.phaseName)).toEqual(["Около полнолуния", "Полнолуние", "Около полнолуния"]);
+    expect([23, 24, 25].map((day) => page.rows[day - 1]!.phaseName)).toEqual(["Около полнолуния", "Полнолуние", "Около полнолуния"]);
+    expect(page.cells[8]!.phaseName).toBe("Новолуние");
+  });
+});
+
 describe("the day of a sign change", () => {
   const november = buildMonthPage(2026, 11, NOW);
   const cell = (page: typeof november, day: number) => page.cells[day - 1]!;

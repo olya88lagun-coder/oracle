@@ -7,7 +7,8 @@ import { dayOrdinal } from "./day-ordinal";
 import { EVENT_NAMES, labelsFor, MONTH_NAMES, SIGN_NAMES } from "./lunar-calendar";
 import { isInWindow, lunarDayPathOfDate, lunarMonthPath, monthFromIndex, monthIndex } from "./lunar-calendar-paths";
 import { phaseImage } from "./moon-images";
-import { PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-today";
+import { dayPhaseName } from "./moon-names";
+import { SIGN_NAMES_LOCATIVE } from "./moon-today";
 
 // Страница одной даты лунного календаря: все числа берутся из расчёта месяца (по Москве), здесь они собраны для показа и текстов
 export type DayEvent = { at: number; time: string; kind: "phase" | "sign" | "lunar"; text: string; note: string | null };
@@ -64,7 +65,8 @@ function monthOf(year: number, month: number): MoonMonth {
 // Дни месяца и двух соседних, если те входят в окно страниц: из них набираются ряд соседей и ссылки «вчера» и «завтра»
 function surroundingDays(year: number, month: number, now: Date) {
   const around = [-1, 0, 1].map((shift) => monthFromIndex(monthIndex({ year, month }) + shift)).filter((item) => (item.year === year && item.month === month) || isInWindow(item.year, item.month, now));
-  return around.flatMap((item) => monthOf(item.year, item.month).days);
+  const months = around.map((item) => monthOf(item.year, item.month));
+  return { days: months.flatMap((item) => item.days), kindByDate: new Map(months.flatMap((item) => item.events).map((event) => [labels.dateOf(event.at), event.kind] as const)) };
 }
 
 const dayLabel = (date: Date): string => labels.dayMonth(date);
@@ -83,10 +85,10 @@ export function buildDatePage(year: number, month: number, day: number, now: Dat
   const first = data.events.find((event) => labels.dateOf(event.at) === entry.date);
   const run = signRuns[0];
 
-  const all = surroundingDays(year, month, now);
+  const { days: all, kindByDate } = surroundingDays(year, month, now);
   const index = all.findIndex((item) => item.date === entry.date);
   const link = (item: (typeof all)[number]) => ({ href: lunarDayPathOfDate(item.date), label: dayLabel(new Date(item.snapshot.at)) });
-  const neighbours = all.slice(Math.max(0, index - 3), index + 4).map((item): DayNeighbour => ({ href: lunarDayPathOfDate(item.date), label: `${item.date.slice(8)}.${item.date.slice(5, 7)}`, longLabel: dayLabel(new Date(item.snapshot.at)), percent: Math.round(item.snapshot.illumination * 100), phase: item.snapshot.phase, phaseName: PHASE_NAMES[item.snapshot.phase], image: phaseImage(item.snapshot.phase, 160), current: item.date === entry.date }));
+  const neighbours = all.slice(Math.max(0, index - 3), index + 4).map((item): DayNeighbour => ({ href: lunarDayPathOfDate(item.date), label: `${item.date.slice(8)}.${item.date.slice(5, 7)}`, longLabel: dayLabel(new Date(item.snapshot.at)), percent: Math.round(item.snapshot.illumination * 100), phase: item.snapshot.phase, phaseName: dayPhaseName(item.snapshot.phase, kindByDate.get(item.date) ?? null), image: phaseImage(item.snapshot.phase, 160), current: item.date === entry.date }));
 
   const lunarText = lunarDayText(entry.lunarDay.number);
   return {
@@ -97,7 +99,7 @@ export function buildDatePage(year: number, month: number, day: number, now: Dat
     dateLabel: `${dayLabel(new Date(snapshot.at))} ${year}`,
     weekday: WEEKDAYS[entry.weekday]!,
     phase: snapshot.phase,
-    phaseName: PHASE_NAMES[snapshot.phase],
+    phaseName: dayPhaseName(snapshot.phase, first?.kind ?? null),
     illumination: snapshot.illumination,
     waxing: snapshot.waxing,
     sign: snapshot.sign,

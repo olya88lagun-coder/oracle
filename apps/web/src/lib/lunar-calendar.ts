@@ -9,7 +9,8 @@ import { dayOrdinal } from "./day-ordinal";
 import { signImage } from "./moon-images";
 import { zoneDate } from "./moon-zone";
 import { dayPath } from "./moon-year-paths";
-import { PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-today";
+import { dayPhaseName } from "./moon-names";
+import { SIGN_NAMES_LOCATIVE } from "./moon-today";
 import { TARO_SPREADS_PATH } from "./taro-paths";
 
 export { isInWindow, monthWindow };
@@ -215,6 +216,7 @@ export function buildMonthPage(year: number, month: number, now: Date, place: Pl
   data.signRuns.forEach((run, index) => {
     if (index > 0) moves.set(labels.dateOf(run.from), { from: SIGN_NAMES[data.signRuns[index - 1]!.sign], to: SIGN_NAMES[run.sign], time: labels.clock(run.from) });
   });
+  const kindByDate = new Map(data.events.map((event) => [labels.dateOf(event.at), event.kind]));
   const keyPoints = keyPointsOf(data.events, MOON_EXTRA_TEXTS_ACCEPTED, labels);
   const cells = data.days.map((day, position): CalendarDay => {
     const change = day.lunarDay.changeAt && day.lunarDay.changeTo ? `с ${labels.clock(day.lunarDay.changeAt)} — ${day.lunarDay.changeTo}-е` : null;
@@ -226,7 +228,7 @@ export function buildMonthPage(year: number, month: number, now: Date, place: Pl
       day: day.day,
       label: labels.dayMonth(new Date(day.snapshot.at)),
       phase: day.snapshot.phase,
-      phaseName: PHASE_NAMES[day.snapshot.phase],
+      phaseName: dayPhaseName(day.snapshot.phase, kindByDate.get(day.date) ?? null),
       illumination: day.snapshot.illumination,
       waxing: day.snapshot.waxing,
       lunarNumber: day.lunarDay.number,

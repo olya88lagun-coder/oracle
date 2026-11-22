@@ -29,7 +29,7 @@ export function MoonDatePage({ page, now }: { page: DatePage; now: Date }) {
       <header className="moon-month__head moon-month__head--compact moon-day-head moon-date__head">
         {art && (
           <div className="moon-day-head__art">
-            <Image src={art} alt={`Луна ${page.dateLabel}: ${page.phaseName}, освещено ${percent} %`} width={480} height={480} unoptimized priority sizes="(min-width: 700px) 220px, 180px" />
+            <Image src={art} alt={`${page.phaseName}: Луна ${page.dateLabel}, освещено ${percent} %`} width={480} height={480} unoptimized priority sizes="(min-width: 700px) 220px, 180px" />
           </div>
         )}
         <div className="moon-day-head__text">
