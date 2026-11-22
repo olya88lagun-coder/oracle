@@ -17,12 +17,13 @@ export const ALBUM_REWARDS: Record<number, string> = {
 const dayMonth = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", timeZone: "UTC" });
 export const albumDate = (iso: string): string => dayMonth.format(new Date(`${iso}T12:00:00Z`));
 
-export function daysInRow(count: number): string {
+export function dayWord(count: number): string {
   const last = count % 10;
   const tens = count % 100;
-  const word = tens >= 11 && tens <= 14 ? "дней" : last === 1 ? "день" : last >= 2 && last <= 4 ? "дня" : "дней";
-  return `${count} ${word} подряд`;
+  return tens >= 11 && tens <= 14 ? "дней" : last === 1 ? "день" : last >= 2 && last <= 4 ? "дня" : "дней";
 }
+
+export const daysInRow = (count: number): string => `${count} ${dayWord(count)} подряд`;
 
 export const albumNext = (date: string, name: string): string => `Следующая откроется ${albumDate(date)}: ${name}`;
 export const albumOpened = (open: number, total: number): string => `открыто ${open} из ${total}`;
