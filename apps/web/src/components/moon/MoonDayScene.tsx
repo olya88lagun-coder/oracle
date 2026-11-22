@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRef, type TouchEvent } from "react";
 import { PosterButton } from "@/components/PosterButton";
 import type { CalendarDay } from "@/lib/lunar-calendar";
+import { lunarDayPathOfDate } from "@/lib/lunar-calendar-paths";
 import type { MoonPosterSpec } from "@/lib/poster-moon";
 import { AnimatedDisc, type MoonView } from "./AnimatedDisc";
 import { MoonDiary } from "./MoonDiary";
@@ -87,6 +88,7 @@ export function MoonDayScene({ day, view, year, started, isToday, progress, coun
           <strong>{day.signLine}</strong>
           <span>{day.dayLine}{day.lunarSymbol ? ` · «${day.lunarSymbol}»` : ""}{day.lunarChange ? ` (${day.lunarChange})` : ""}</span>
           <Link href={day.dayHref}>О лунных сутках →</Link>
+          <Link href={lunarDayPathOfDate(day.date)}>Страница дня →</Link>
         </p>
         {countdown && <p className="moon-scene__countdown" role="timer" aria-live="off">{countdown}</p>}
         <MoonPathArc rise={rise} set={set} progress={progress} />
