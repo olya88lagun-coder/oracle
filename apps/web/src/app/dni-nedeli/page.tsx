@@ -47,7 +47,7 @@ export default function WeekdayPage() {
             <p className="eyebrow eyebrow--line">Ритм недели</p>
             <h1>Дни недели и планеты</h1>
             <p className="weekday-hero__lead">В классической традиции каждому дню недели покровительствует своя планета. Её образ не разрешает и не запрещает вам ничего, он служит мягкой подсказкой: на чём сегодня можно задержать внимание.</p>
-            <WeekdayStrip planet={planet} link={false} />
+            <WeekdayStrip planet={planet} link={false} artwork />
           </div>
           <WeekdayWheel today={today} />
         </header>

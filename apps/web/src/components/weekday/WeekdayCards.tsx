@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { WEEKDAY_PLANETS } from "@/lib/weekday-planets";
-import { PlanetGlyph } from "./PlanetGlyph";
+import { PlanetArtwork } from "./PlanetArtwork";
 
 // Семь карточек дней: образ, вопрос для себя и ссылка на практику. Сегодняшний день отмечен рамкой и словом «Сегодня»; восьмой ячейкой — короткое «как этим пользоваться»
 export function WeekdayCards({ today }: { today: number }) {
@@ -10,10 +10,8 @@ export function WeekdayCards({ today }: { today: number }) {
         const isToday = index === today;
         return (
           <li key={planet.slug} id={planet.slug} className="weekday-card" data-planet={planet.glyph} data-today={isToday || undefined} aria-current={isToday ? "date" : undefined}>
+            <div className="weekday-card__art" aria-hidden="true"><PlanetArtwork glyph={planet.glyph} size="card" /></div>
             <div className="weekday-card__head">
-              <span className="weekday-mark" aria-hidden="true">
-                <PlanetGlyph glyph={planet.glyph} size={28} />
-              </span>
               <div>
                 <p className="weekday-card__planet">{planet.planet}</p>
                 <h3>{planet.day}</h3>

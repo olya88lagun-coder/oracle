@@ -1,5 +1,5 @@
 import { WEEKDAY_PLANETS } from "@/lib/weekday-planets";
-import { PlanetGlyph } from "./PlanetGlyph";
+import { PlanetArtwork } from "./PlanetArtwork";
 
 // Лента семи дней под героем: знак планеты своего цвета, сокращённое название дня, ссылка на якорь карточки. Сегодняшний день крупнее
 export function WeekdayWeekBar({ today }: { today: number }) {
@@ -10,7 +10,7 @@ export function WeekdayWeekBar({ today }: { today: number }) {
           <li key={planet.slug}>
             <a className="weekday-bar__day" href={`#${planet.slug}`} data-planet={planet.glyph} aria-current={index === today ? "true" : undefined}>
               <span className="weekday-mark" aria-hidden="true">
-                <PlanetGlyph glyph={planet.glyph} size={26} />
+                <PlanetArtwork glyph={planet.glyph} eager />
               </span>
               <span className="weekday-bar__name">{planet.dayShort}</span>
             </a>
