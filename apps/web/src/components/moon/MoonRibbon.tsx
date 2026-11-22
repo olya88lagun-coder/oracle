@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { openedBy } from "@/lib/moon-collection";
-import { placeKey, placeLabel } from "@/lib/moon-place";
+import { localFor, placeKey, placeLabel } from "@/lib/moon-place";
 import { placeChipAria } from "@/lib/moon-place-copy";
 import { loadRibbonData } from "@/lib/moon-place-compute";
 import { usePlace } from "@/lib/moon-place-store";
@@ -29,7 +29,7 @@ export function MoonRibbon({ current, now, initial, albumHref = `${MOON_PATH}#mo
   const visit = useMoonVisit(data ? openedBy(data.sign, data.phase) : []);
   const tabsRef = useRef<HTMLUListElement>(null);
   const place = usePlace();
-  const [placeData, setPlaceData] = useState<{ key: string; data: MoonRibbonData } | null>(null);
+  const [placeData, setPlaceData] = useState<{ key: string; value: MoonRibbonData } | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export function MoonRibbon({ current, now, initial, albumHref = `${MOON_PATH}#mo
     let current = true;
     loadRibbonData(place, new Date())
       .then((value) => {
-        if (current) setPlaceData({ key: placeKey(place), data: value });
+        if (current) setPlaceData({ key: placeKey(place), value });
       })
       .catch(() => undefined);
     return () => {
@@ -69,7 +69,7 @@ export function MoonRibbon({ current, now, initial, albumHref = `${MOON_PATH}#mo
     if (list && tab) list.scrollLeft = tab.offsetLeft - (list.clientWidth - tab.clientWidth) / 2;
   }, [current]);
 
-  const shown = place && placeData?.key === placeKey(place) ? placeData.data : data;
+  const shown = localFor(place, placeData) ?? data;
   const frame = visit && visit.rewards.length > 0 ? Math.max(...visit.rewards) : 0;
   const streak = visit?.streak.current ?? 0;
   return (

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { PLACE_CLOSE, PLACE_DIALOG_TITLE, PLACE_HINT, PLACE_LABEL, PLACE_LIST_LABEL, PLACE_PLACEHOLDER, PLACE_RESET } from "@/lib/moon-place-copy";
-import { placeFromCity, type MoonPlace } from "@/lib/moon-place";
+import { PLACE_CLOSE, PLACE_DIALOG_TITLE, PLACE_HINT, PLACE_LABEL, PLACE_LIST_LABEL, PLACE_PLACEHOLDER, PLACE_RESET, PLACE_ZONE_ERROR } from "@/lib/moon-place-copy";
+import { placeChoice, type MoonPlace } from "@/lib/moon-place";
 import { setPlace } from "@/lib/moon-place-store";
 import { CityField } from "../natal/CityField";
 
@@ -12,12 +12,14 @@ export function MoonPlaceDialog({ open, onClose, current }: { open: boolean; onC
   const titleId = useId();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [text, setText] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
     if (open && !dialog.open) {
       setText("");
+      setError(null);
       dialog.showModal();
     }
     if (!open && dialog.open) dialog.close();
@@ -30,10 +32,18 @@ export function MoonPlaceDialog({ open, onClose, current }: { open: boolean; onC
         copy={{ label: PLACE_LABEL, placeholder: PLACE_PLACEHOLDER, hint: PLACE_HINT, listLabel: PLACE_LIST_LABEL }}
         value={text}
         selected={null}
-        error={null}
-        onTextChange={setText}
+        error={error}
+        onTextChange={(value) => {
+          setText(value);
+          setError(null);
+        }}
         onSelect={(city) => {
-          setPlace(placeFromCity(city));
+          const choice = placeChoice(city);
+          if (choice.kind === "invalid") {
+            setError(PLACE_ZONE_ERROR);
+            return;
+          }
+          setPlace(choice.kind === "place" ? choice.place : null);
           onClose();
         }}
       />

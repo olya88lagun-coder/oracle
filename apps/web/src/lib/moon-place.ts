@@ -44,3 +44,19 @@ export const placeLabel = (place: MoonPlace | null): string => place?.name ?? "�
 
 // Стабильный ключ для кеша расчётов: у Москвы по умолчанию своего города нет
 export const placeKey = (place: MoonPlace | null): string => (place ? String(place.id) : "moscow");
+
+// Пересчитанное значение годится, только если оно посчитано для выбранного сейчас места (устаревший ответ не показываем)
+export function localFor<T>(place: MoonPlace | null, live: { key: string; value: T } | null): T | null {
+  return place && live && live.key === placeKey(place) ? live.value : null;
+}
+
+// Что делать с городом, выбранным в списке: Москва сбрасывает выбор (данные сервера и так московские), город с часовым поясом,
+// который браузер не знает, не сохраняем (расчёт для него не заработает), остальные сохраняем
+export type PlaceChoice = { kind: "reset" } | { kind: "invalid" } | { kind: "place"; place: MoonPlace };
+const MOSCOW_GEONAMES_ID = 524901;
+
+export function placeChoice(city: City): PlaceChoice {
+  if (city.id === MOSCOW_GEONAMES_ID || (city.zone === "Europe/Moscow" && city.name === "Москва")) return { kind: "reset" };
+  if (!knownZone(city.zone)) return { kind: "invalid" };
+  return { kind: "place", place: placeFromCity(city) };
+}
