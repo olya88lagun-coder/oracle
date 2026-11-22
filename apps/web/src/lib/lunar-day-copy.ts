@@ -7,14 +7,11 @@ import type { DatePage } from "./lunar-day-page";
 const lowerFirst = (text: string): string => text.charAt(0).toLowerCase() + text.slice(1);
 const percentOf = (page: DatePage): number => Math.round(page.illumination * 100);
 
-const MAIN_PHASES: ReadonlySet<string> = new Set(["new", "firstQuarter", "full", "lastQuarter"]);
-
-// Чем ведёт день: главная фаза, вход Луны в новый знак или просто фаза. У суток рядом с главной фазой название «фазы» совпадает с ней,
-// хотя самой фазы в этот день нет, поэтому такой день называем по росту или убыванию Луны
+// Чем ведёт день: главная фаза, вход Луны в новый знак или просто фаза. Название фазы уже учитывает события дня: рядом с главной фазой это «около полнолуния»
 function lead(page: DatePage): string {
   if (page.mainEvent) return lowerFirst(page.mainEvent.name);
   if (page.signChange) return `переход в знак ${page.signChange.signName}`;
-  return MAIN_PHASES.has(page.phase) ? `${page.waxing ? "растущая" : "убывающая"} Луна` : lowerFirst(page.phaseName);
+  return lowerFirst(page.phaseName);
 }
 
 // «Луна входит в знак Близнецы в 14:09»: знак называем в момент перехода, а не на полдень

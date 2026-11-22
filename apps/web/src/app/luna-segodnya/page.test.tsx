@@ -20,6 +20,12 @@ test("metadata: canonical path, title and description within snippet limits", ()
   expect(String(metadata.description).length).toBeLessThanOrEqual(175);
 });
 
+test("the link to the sign page says it is about the birth chart, not about today's Moon", () => {
+  const markup = html();
+  expect(markup).toMatch(/<a [^>]*href="\/natalnaya-karta\/luna-v-[a-z]+"[^>]*>Что означает Луна [^<]+ в карте рождения<\/a>/);
+  expect(markup).not.toContain("Значение: Луна");
+});
+
 test("the title carries today's date and stays within 60 characters on the longest date", () => {
   vi.useFakeTimers();
   try {

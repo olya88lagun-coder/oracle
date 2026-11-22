@@ -48,6 +48,20 @@ describe("the page of 24 November 2026: full moon and the Moon entering Gemini o
   });
 });
 
+describe("the name of the phase on a date", () => {
+  test("the day of the full moon is the full moon, the days next to it are «около»", () => {
+    expect(buildDatePage(2026, 11, 24, NOW).phaseName).toBe("Полнолуние");
+    expect(buildDatePage(2026, 11, 23, NOW).phaseName).toBe("Около полнолуния");
+    expect(buildDatePage(2026, 10, 31, NOW).phaseName).toBe("Около последней четверти");
+    expect(buildDatePage(2026, 11, 1, NOW).phaseName).toBe("Последняя четверть");
+  });
+
+  test("the neighbours carry the same names", () => {
+    const names = buildDatePage(2026, 11, 24, NOW).neighbours.map((item) => item.phaseName);
+    expect(names.slice(2, 5)).toEqual(["Около полнолуния", "Полнолуние", "Около полнолуния"]);
+  });
+});
+
 describe("the edges of the window", () => {
   test("the first day of the earliest month has no day before and no neighbours outside the window", () => {
     const page = buildDatePage(2026, 10, 1, NOW);

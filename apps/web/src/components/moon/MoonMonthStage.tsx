@@ -132,7 +132,7 @@ export function MoonMonthStage({ year, month, days, weeks, events, curve, ribbon
                   const cell = days[index]!;
                   const today = todayIndex === index;
                   const hasNote = Boolean(notes[cell.date]);
-                  const label = `${cell.label}: ${cell.phaseName}, освещено ${percent(cell)} %${cell.keyPoint ? `, ${cell.keyPoint.title.toLowerCase()}` : ""}${cell.signChange ? `, Луна переходит в знак ${cell.signName}` : ""}${hasNote ? ", есть запись" : ""}`;
+                  const label = `${cell.label}: ${cell.phaseName}, освещено ${percent(cell)} %${cell.keyPoint ? `, ${cell.keyPoint.title.toLowerCase()}` : ""}${cell.signMove ? `, Луна переходит из знака ${cell.signMove.from} в знак ${cell.signMove.to} в ${cell.signMove.time}` : ""}${hasNote ? ", есть запись" : ""}`;
                   return (
                     <td
                       key={column}
@@ -160,7 +160,7 @@ export function MoonMonthStage({ year, month, days, weeks, events, curve, ribbon
             ))}
           </tbody>
         </table>
-        <p className="moon-stage__legend">Кружок на ленте и значок в ячейке — главная фаза; фиолетовый знак — день, когда Луна в него перешла; точка — запись в вашем дневнике.</p>
+        <p className="moon-stage__legend">Кружок на ленте и значок в ячейке — главная фаза; фиолетовый знак — день, когда Луна перешла в другой знак (какой и во сколько — в описании дня); точка — запись в вашем дневнике.</p>
       </section>
     </div>
   );

@@ -32,6 +32,14 @@ describe("the day with a main phase and a sign change at once", () => {
   });
 });
 
+describe("a day next to the full moon", () => {
+  test("is titled «около полнолуния», not as the full moon itself", () => {
+    const page = buildDatePage(2026, 11, 23, NOW);
+    expect(dateTitle(page)).toBe("Луна 23 ноября 2026: около полнолуния, 14-е лунные сутки");
+    expect(dateAnswer(page).startsWith("23 ноября 2026 — около полнолуния.")).toBe(true);
+  });
+});
+
 describe("the kinds of days", () => {
   const pages = allPages();
 
@@ -65,7 +73,8 @@ describe("honesty of the lead", () => {
 
   test("a day without a main phase is never led by the name of a main phase, even when its phase bucket is called so", () => {
     const day = pages.filter((page) => !page.mainEvent);
-    expect(day.some((page) => /^(Новолуние|Полнолуние|Первая четверть|Последняя четверть)$/.test(page.phaseName))).toBe(true);
+    expect(day.some((page) => /^Около /.test(page.phaseName))).toBe(true);
+    expect(day.some((page) => /^(Новолуние|Полнолуние|Первая четверть|Последняя четверть)$/.test(page.phaseName))).toBe(false);
     for (const page of day) for (const text of [dateTitle(page), dateDescription(page), dateAnswer(page)]) expect(text.toLowerCase(), `${page.date}: ${text}`).not.toMatch(/новолуние|полнолуние|четверть/);
   });
 

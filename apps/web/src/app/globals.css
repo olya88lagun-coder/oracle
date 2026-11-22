@@ -8867,3 +8867,7 @@ main:has(> .natal-intro)::before {
 
 /* «Луна сегодня»: кнопка картинки для сторис и ссылка на страницу сегодняшней даты рядом */
 .moon-poster--pair { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; }
+
+/* Лунная сцена месяца: переход Луны в другой знак в этот день */
+.moon-scene__move { color: var(--accent-hover); font-variant-numeric: tabular-nums; }
+.moon-scene__slice { color: var(--ink-soft); font-size: 14px; }

@@ -8,7 +8,7 @@ import { TARO_DAY_PATH } from "./taro-paths";
 
 export { MOON_PATH };
 
-import { PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-names";
+import { dayPhaseName, PHASE_NAMES, SIGN_NAMES_LOCATIVE } from "./moon-names";
 
 export { PHASE_NAMES, SIGN_NAMES_LOCATIVE };
 
@@ -46,7 +46,15 @@ function whenLabel(date: Date, now: Date, place: Place): string {
   return `${formats.dayMonth.format(date)}, ${clock}`;
 }
 
-export type MoonDayCell = { date: string; label: string; isToday: boolean; snapshot: MoonSnapshot };
+// phaseName — название суток: «Полнолуние» только в день самого события, рядом с ним «Около полнолуния»
+export type MoonDayCell = { date: string; label: string; isToday: boolean; phaseName: string; snapshot: MoonSnapshot };
+
+// Главные фазы, моменты которых лежат в промежутке [from, to)
+function eventsWithin(from: Date, to: Date): MoonEvent[] {
+  const found: MoonEvent[] = [];
+  for (let event = nextMoonEvent(new Date(from.getTime() - 1)); event.at.getTime() < to.getTime(); event = nextMoonEvent(event.at)) found.push(event);
+  return found;
+}
 
 export type MoonToday = {
   dateLabel: string;
@@ -78,21 +86,25 @@ export function buildMoonToday(now: Date, place: Place = MOSCOW): MoonToday {
   // Начала местных суток: 30 часов от начала попадают внутрь следующих суток при любом переводе часов
   const starts = [start];
   for (let index = 1; index <= STRIP_DAYS; index++) starts.push(dayStart(new Date(starts[index - 1]!.getTime() + 30 * 3_600_000), place));
+  const events = eventsWithin(starts[0]!, starts[STRIP_DAYS]!);
+  const kindOn = (index: number) => events.find((event) => event.at.getTime() >= starts[index]!.getTime() && event.at.getTime() < starts[index + 1]!.getTime())?.kind ?? null;
+  const strip = Array.from({ length: STRIP_DAYS }, (_, index): MoonDayCell => {
+    // «Полдень» суток — середина между началами местных суток (в сутки перевода часов это не +12 часов)
+    const noon = new Date(starts[index]!.getTime() + (starts[index + 1]!.getTime() - starts[index]!.getTime()) / 2);
+    const noonSnapshot = moonSnapshot(noon);
+    return { date: formats.isoDate.format(noon), label: formats.shortDate.format(noon).replace(/\.$/, ""), isToday: index === 0, phaseName: dayPhaseName(noonSnapshot.phase, kindOn(index)), snapshot: noonSnapshot };
+  });
   return {
     dateLabel: formats.longDate.format(now).replace(/\s*г\.$/, ""),
     snapshot,
-    phaseName: PHASE_NAMES[snapshot.phase],
+    phaseName: dayPhaseName(snapshot.phase, kindOn(0)),
     signName: SIGN_NAMES_LOCATIVE[snapshot.sign],
     signSummary: summary ? { text: summary.summary, href: natalPagePath({ slug: summary.slug }) } : null,
     lunarDay: { number: day.number, startsLabel: whenLabel(day.startsAt, now, place), endsLabel: whenLabel(day.endsAt, now, place) },
     rise: rise ? formats.time.format(rise) : null,
     set: set ? formats.time.format(set) : null,
     next: { kind: nextEvent.kind, label: `${EVENT_NAMES[nextEvent.kind]} ${whenLabel(nextEvent.at, now, place)}` },
-    strip: Array.from({ length: STRIP_DAYS }, (_, index) => {
-      // «Полдень» суток — середина между началами местных суток (в сутки перевода часов это не +12 часов)
-      const noon = new Date(starts[index]!.getTime() + (starts[index + 1]!.getTime() - starts[index]!.getTime()) / 2);
-      return { date: formats.isoDate.format(noon), label: formats.shortDate.format(noon).replace(/\.$/, ""), isToday: index === 0, snapshot: moonSnapshot(noon) };
-    }),
+    strip,
     texts: { phase: phaseText(snapshot.phase) ?? null, day: lunarDayText(day.number) ?? null },
     links: { cardOfDay: TARO_DAY_PATH, natal: NATAL_PATH },
   };

@@ -28,6 +28,16 @@ describe("buildMoonToday", () => {
     expect(buildMoonToday(new Date("2026-11-18T09:00:00Z")).next.label).toMatch(/^Полнолуние 24 ноября, 17:5[234]$/);
   });
 
+  test("names the days around the full moon «около полнолуния» and only the day of the full moon «Полнолуние»", () => {
+    const { strip, phaseName } = buildMoonToday(new Date("2026-11-22T09:00:00Z"));
+    const names = Object.fromEntries(strip.map((cell) => [cell.date, cell.phaseName]));
+    expect(names["2026-11-23"]).toBe("Около полнолуния");
+    expect(names["2026-11-24"]).toBe("Полнолуние");
+    expect(names["2026-11-25"]).toBe("Около полнолуния");
+    expect(phaseName).toBe("Растущая Луна");
+    expect(buildMoonToday(new Date("2026-11-23T09:00:00Z")).phaseName).toBe("Около полнолуния");
+  });
+
   test("has a 14-day strip starting today, one calendar day per cell, with the Moon at noon", () => {
     const { strip } = buildMoonToday(NOON_MOSCOW);
     expect(strip).toHaveLength(14);

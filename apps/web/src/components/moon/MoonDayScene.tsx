@@ -86,6 +86,8 @@ export function MoonDayScene({ day, view, year, started, isToday, progress, coun
         <h2 id="moon-scene-title" className="moon-scene__title">{isToday ? "Сегодня" : day.label} · {day.phaseName}</h2>
         <p className="moon-scene__line">
           <strong>{day.signLine}</strong>
+          <span className="moon-scene__slice">на полдень</span>
+          {day.signMove && <span className="moon-scene__move">{day.signMove.from} → {day.signMove.to}, {day.signMove.time}</span>}
           <span>{day.dayLine}{day.lunarSymbol ? ` · «${day.lunarSymbol}»` : ""}{day.lunarChange ? ` (${day.lunarChange})` : ""}</span>
           <Link href={day.dayHref}>О лунных сутках →</Link>
           <Link href={lunarDayPathOfDate(day.date)} prefetch={false}>Страница дня →</Link>
@@ -95,6 +97,7 @@ export function MoonDayScene({ day, view, year, started, isToday, progress, coun
         {point && (
           <div className="moon-scene__moment" data-kind={point.kind}>
             <strong>{point.title} · {point.label}</strong>
+            <p>В этот момент Луна {point.signLocative}.</p>
             <p>{point.astronomy}</p>
             <p>{point.symbol}</p>
             {point.action && <Link className="button button--ghost" href={point.action.href}>{point.action.label}</Link>}

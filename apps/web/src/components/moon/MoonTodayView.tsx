@@ -6,7 +6,6 @@ import Link from "next/link";
 import { PosterButton } from "@/components/PosterButton";
 import { lunarDayPathOfDate } from "@/lib/lunar-calendar-paths";
 import { lunarDayImage, phaseImage, signImage } from "@/lib/moon-images";
-import { PHASE_NAMES } from "@/lib/moon-names";
 import type { MoonToday } from "@/lib/moon-today";
 import { moonPosterSpec } from "@/lib/poster-moon";
 import { MoonDayAsk } from "./MoonDayAsk";
@@ -26,9 +25,9 @@ function CardArt({ src, fallback }: { src: string | null; fallback?: string }) {
   );
 }
 
-function toMoonView(date: string, dateLabel: string, snapshot: MoonSnapshot): MoonView {
+function toMoonView(date: string, dateLabel: string, snapshot: MoonSnapshot, phaseName: string): MoonView {
   const { illumination, waxing, phase } = snapshot;
-  return { date, dateLabel, illumination, waxing, phase, phaseName: PHASE_NAMES[phase] };
+  return { date, dateLabel, illumination, waxing, phase, phaseName };
 }
 
 // headingDate — дата в `<h1>` (всегда серверная, московская: её видят поисковики); placeLabel — выбранный город;
@@ -42,9 +41,9 @@ export function MoonTodayView({ today, headingDate, placeLabel = null, placeNote
   return (
     <>
       <MoonExplorer
-        today={toMoonView(today.strip[0]!.date, today.dateLabel, snapshot)}
-        days={today.strip.map(({ date, label, isToday, snapshot: daySnapshot }) => ({
-          ...toMoonView(date, dayMonth.format(new Date(`${date}T12:00:00+03:00`)), daySnapshot),
+        today={toMoonView(today.strip[0]!.date, today.dateLabel, snapshot, today.phaseName)}
+        days={today.strip.map(({ date, label, isToday, phaseName, snapshot: daySnapshot }) => ({
+          ...toMoonView(date, dayMonth.format(new Date(`${date}T12:00:00+03:00`)), daySnapshot, phaseName),
           label,
           isToday,
         }))}
