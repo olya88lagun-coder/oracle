@@ -23,6 +23,7 @@ export function dayWord(count: number): string {
   return tens >= 11 && tens <= 14 ? "дней" : last === 1 ? "день" : last >= 2 && last <= 4 ? "дня" : "дней";
 }
 
+export const daysCount = (count: number): string => `${count} ${dayWord(count)}`;
 export const daysInRow = (count: number): string => `${count} ${dayWord(count)} подряд`;
 
 export const albumNext = (date: string, name: string): string => `Следующая откроется ${albumDate(date)}: ${name}`;

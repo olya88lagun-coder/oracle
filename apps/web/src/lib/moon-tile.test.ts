@@ -28,6 +28,7 @@ describe("buildMoonTile", () => {
     const tile = buildMoonTile(NOW);
     expect(tile.illumination).toBeGreaterThan(0);
     expect(tile.signName).toMatch(/^в /);
+    expect(typeof tile.sign).toBe("string");
     expect(tile.lunarDay.number).toBeGreaterThanOrEqual(1);
     expect(tile.discImage).toMatch(/^\/luna\/phases\/[A-Za-z]+-480\.webp$/);
   });

@@ -1,6 +1,7 @@
 import { lunarDayText } from "@oracle/content/moon";
+import type { SignId } from "@oracle/core/natal";
 import { moonSnapshot, moscowDayStart, nextMoonEvent, type MoonEvent, type PhaseId } from "@oracle/core/moon";
-import { dayWord } from "./moon-album-copy";
+import { daysCount } from "./moon-album-copy";
 import { moscowDate } from "./lunar-calendar-paths";
 import { phaseImage } from "./moon-images";
 import { buildMoonToday } from "./moon-today";
@@ -11,6 +12,7 @@ export type MoonTileData = {
   phase: PhaseId;
   phaseName: string;
   illumination: number; // 0..1
+  sign: SignId;
   signName: string; // «в Овне»
   lunarDay: { number: number; symbol: string | null };
   until: { kind: MoonEvent["kind"]; days: number; label: string }; // «До полнолуния 2 дня»
@@ -23,7 +25,7 @@ const DAY_MS = 86_400_000;
 const dayMonth = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", timeZone: "Europe/Moscow" });
 const weekday = new Intl.DateTimeFormat("ru-RU", { weekday: "short", timeZone: "Europe/Moscow" });
 
-export const daysCount = (count: number): string => `${count} ${dayWord(count)}`;
+export { daysCount };
 
 // Родительный падеж для «До …»; «сегодня» — когда событие в эти же сутки по Москве
 const BEFORE: Record<MoonEvent["kind"], string> = { new: "До новолуния", firstQuarter: "До первой четверти", full: "До полнолуния", lastQuarter: "До последней четверти" };
@@ -39,6 +41,7 @@ export function buildMoonTile(now: Date): MoonTileData {
     phase: today.snapshot.phase,
     phaseName: today.phaseName,
     illumination: today.snapshot.illumination,
+    sign: today.snapshot.sign,
     signName: today.signName,
     lunarDay: { number: today.lunarDay.number, symbol: lunarDayText(today.lunarDay.number)?.symbol ?? null },
     until: { kind: event.kind, days, label: days <= 0 ? TODAY[event.kind] : `${BEFORE[event.kind]} ${daysCount(days)}` },
