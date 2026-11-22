@@ -3,11 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT, MATRIX_REPORT_PRICE_KOPECKS } from "@oracle/core";
 import { HomeDateStart } from "@/components/HomeDateStart";
+import { MoonTile } from "@/components/moon/MoonTile";
 import { ThreadPromo } from "@/components/numerology/ThreadPromo";
 import { YearPromo } from "@/components/year-arcana/YearPromo";
 import { BLOG_PATH, BLOG_POSTS, blogPath } from "@/lib/blog";
 import { formatRubles } from "@/lib/legal";
 import { HOME_PRINCIPLES, HOME_PRINCIPLES_TITLE } from "@/lib/home-principles";
+import { buildMoonTile } from "@/lib/moon-tile";
 import { acceptedThreadPaths } from "@/lib/numerology-pages";
 import { FREE_RESULT_PROMISE, FREE_RESULT_TERMS, PRACTICES } from "@/lib/practices";
 import { jsonLdScript, publicMetadata, SITE_PREVIEW_IMAGE, websiteJsonLd } from "@/lib/seo";
@@ -80,6 +82,7 @@ export default function HomePage() {
       </section>
 
       <div className="page page--wide stack">
+        <MoonTile data={buildMoonTile(new Date())} />
         <section className="stack" aria-labelledby="practices">
           <h2 id="practices">Практики</h2>
           <p className="practices-note">{freePaidLine()}</p>

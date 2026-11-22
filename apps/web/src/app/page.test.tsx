@@ -22,6 +22,13 @@ describe("home page", () => {
     expect(markup).toContain('href="/metodika"');
   });
 
+  test("has the Moon tile after the hero and before the practices, linking to the Moon today page once", () => {
+    expect(markup).toMatch(/<h2 id="moon-portal-title">/);
+    expect(markup.indexOf('id="moon-portal"')).toBeGreaterThan(markup.indexOf('class="hero"'));
+    expect(markup.indexOf('id="moon-portal"')).toBeLessThan(markup.indexOf('id="practices"'));
+    expect(markup.match(/href="\/luna-segodnya"/g)).toHaveLength(1);
+  });
+
   test("numerology is one of the practice cards on the home page", () => {
     const practices = markup.slice(markup.indexOf('id="practices"'), markup.indexOf('id="home-principles"'));
     expect(practices).toContain('href="/numerologiya"');

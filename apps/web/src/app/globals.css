@@ -856,7 +856,7 @@ a.report-toc__title:hover { color: var(--accent); }
 .site-header { position: relative; z-index: 10; border-bottom: 1px solid rgba(241, 233, 223, 0.08); background: var(--bg); }
 .site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: var(--container); min-height: 70px; margin: 0 auto; padding: 0 16px; }
 .site-nav { display: none; align-items: center; gap: 26px; font-size: 13px; }
-.site-nav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-soft); text-decoration: none; }
+.site-nav a { display: inline-flex; align-items: center; min-height: 44px; white-space: nowrap; color: var(--ink-soft); text-decoration: none; }
 .site-nav a:hover, .site-nav a[aria-current] { color: var(--ink); }
 .site-nav a[aria-current] { box-shadow: 0 1px 0 var(--accent); }
 .site-nav__moon { flex: none; margin-inline-end: 6px; color: var(--accent); }
@@ -873,11 +873,14 @@ a.report-toc__title:hover { color: var(--accent); }
 .site-mobile-nav a:last-child { border-bottom: 0; }
 @media (min-width: 860px) {
   .site-header__inner { min-height: 84px; padding: 0 28px; }
-  .site-nav { display: flex; }
-  .site-header__menu, .site-mobile-nav { display: none; }
   .site-header__account-label { display: inline; }
 }
 @media (min-width: 860px) and (max-width: 1099px) { .site-nav { gap: 18px; } .site-header__account-label { display: none; } }
+/* Восемь пунктов («Луна» добавлена восьмой) помещаются в одну строку с 960 px; ниже — меню-«бургер» */
+@media (min-width: 960px) {
+  .site-nav { display: flex; }
+  .site-header__menu, .site-mobile-nav { display: none; }
+}
 .footer { max-width: var(--container); margin: 0 auto; padding: 40px 16px 28px; font-size: 14px; color: var(--ink-faint); border-top: 1px solid transparent; border-image: linear-gradient(90deg, transparent, var(--accent-line), transparent) 1; }
 .footer__main { display: grid; gap: 28px; }
 .footer__brand { display: grid; gap: 14px; align-content: start; }
@@ -8680,3 +8683,52 @@ main:has(> .natal-intro)::before {
 }
 
 @keyframes moon-rail-breathe { 50% { transform: scale(1.045); filter: brightness(1.12); } }
+
+/* Плитка «Луна сегодня» на главной («Портал»): дышащая Луна с бегущей точкой, факты дня, неделя фазами */
+.moon-portal {
+  --portal-glow: rgba(203, 166, 118, 0.35);
+  position: relative;
+  display: grid;
+  gap: 22px;
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  padding: 26px 20px;
+  overflow: hidden;
+  border: 1px solid var(--accent-line);
+  border-radius: 26px;
+  background: linear-gradient(160deg, var(--surface-2), var(--surface) 70%);
+  text-align: center;
+}
+
+.moon-portal::before { content: ""; position: absolute; top: -160px; right: -120px; width: 380px; height: 380px; border-radius: 50%; background: radial-gradient(circle, var(--lavender-glow), transparent 65%); pointer-events: none; }
+.moon-portal__halo { position: relative; flex: none; width: 150px; height: 150px; }
+.moon-portal__halo img { position: absolute; inset: 14px; width: 122px; height: 122px; border-radius: 50%; box-shadow: 0 0 46px var(--portal-glow); }
+.moon-portal__orbit { position: absolute; inset: 0; border: 1px dashed var(--accent-line); border-radius: 50%; }
+.moon-portal__orbit::after { content: ""; position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--accent-hover); box-shadow: 0 0 12px var(--accent); }
+.moon-portal__body { position: relative; min-width: 0; display: grid; gap: 10px; justify-items: center; }
+.moon-portal__eyebrow { margin: 0; color: var(--accent); font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase; }
+.moon-portal h2 { font-size: clamp(24px, 4vw, 32px); }
+.moon-portal__text, .moon-portal__streak { margin: 0; color: var(--ink-soft); }
+.moon-portal__streak { color: var(--accent-hover); font-size: 14px; }
+.moon-portal__chips, .moon-portal__week { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.moon-portal__chips li { padding: 6px 12px; border: 1px solid var(--line-strong); border-radius: 12px; color: var(--ink-soft); font-size: 14px; }
+.moon-portal__week { align-items: flex-end; gap: 8px 6px; margin-top: 4px; }
+.moon-portal__day { display: grid; justify-items: center; gap: 4px; color: var(--ink-soft); font-size: 14px; }
+.moon-portal__day img { width: 34px; height: 34px; border-radius: 50%; opacity: 0.6; }
+.moon-portal__day.is-today img { width: 44px; height: 44px; opacity: 1; box-shadow: 0 0 18px var(--portal-glow); }
+.moon-portal__cta { margin: 8px 0 0; }
+
+@media (min-width: 760px) {
+  .moon-portal { grid-template-columns: auto minmax(0, 1fr); gap: 32px; padding: 30px 34px; justify-items: start; text-align: left; }
+  .moon-portal__body { justify-items: start; }
+  .moon-portal__chips, .moon-portal__week { justify-content: flex-start; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .moon-portal__halo img { animation: moon-portal-breathe 6s ease-in-out infinite; }
+  .moon-portal__orbit { animation: moon-portal-spin 60s linear infinite; }
+}
+
+@keyframes moon-portal-breathe { 50% { transform: scale(1.045); filter: brightness(1.12); } }
+@keyframes moon-portal-spin { to { transform: rotate(360deg); } }
