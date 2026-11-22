@@ -1,7 +1,7 @@
 import type { NatalChart } from "@oracle/core/natal";
 import { FOCUS_REPORT_LINE, FOCUS_TITLE, focusItems } from "@/lib/natal-focus";
 
-// «Главная точка карты»: самый тесный аспект и стеллиум, выбранные из самих данных карты (lib/natal-focus.ts).
+// «Самое заметное в данных карты»: самый тесный аспект и стеллиум, выбранные из самих данных карты (lib/natal-focus.ts).
 // Нет ни аспекта, ни скопления планет — блока нет. Строка про платный разбор стоит, только когда блок продажи показан под результатом
 export function NatalFocus({ chart, reportShown = false }: { chart: NatalChart; reportShown?: boolean }) {
   const items = focusItems(chart);

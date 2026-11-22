@@ -11,7 +11,7 @@ describe("NatalFocus", () => {
   const markup = renderToStaticMarkup(<NatalFocus chart={chart} />);
 
   test("is a section with its own heading, the aspect and the stellium", () => {
-    expect(markup).toMatch(/^<section class="natal-focus"><h3>Главная точка карты<\/h3>/);
+    expect(markup).toMatch(/^<section class="natal-focus"><h3>Самое заметное в данных карты<\/h3>/);
     expect(markup).toContain('data-kind="aspect"');
     expect(markup).toContain("Солнце — Плутон: трин");
     expect(markup).toContain("точность 1°11′");
