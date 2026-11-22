@@ -22,3 +22,12 @@ test("has the Moon ribbon with the days tab current", async () => {
   expect(markup.indexOf('aria-label="Лунный раздел"')).toBeLessThan(markup.indexOf("moon-breadcrumb"));
   expect(markup.match(/aria-current="page"[^>]*>Сутки</g)).toHaveLength(1);
 });
+
+test("the thirty days are cards with engravings: one picture and one link each, the label stays «N · symbol»", () => {
+  const markup = renderToStaticMarkup(<Page />);
+  expect(markup.match(/class="moon-day-card"/g)).toHaveLength(30);
+  expect(markup.match(/\/luna\/days\/\d{2}-[a-z-]+-480\.webp/g)).toHaveLength(30);
+  expect(markup).toContain("/luna/days/01-svetilnik-480.webp");
+  expect(markup).toContain("/luna/days/30-lebed-480.webp");
+  expect(markup.match(/<img[^>]*alt=""/g)).toHaveLength(30);
+});

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { MoonRibbon } from "@/components/moon/MoonRibbon";
 import { MoonHub } from "@/components/moon/MoonHub";
 import { MoonFaq, MoonHead, moonJsonLd } from "@/components/moon/MoonPageParts";
 import { DISCLAIMER } from "@/lib/legal";
 import { buildDaysHub } from "@/lib/moon-events";
+import { lunarDayImage } from "@/lib/moon-images";
 import { DAYS_PATH } from "@/lib/moon-year-paths";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 
@@ -28,14 +30,20 @@ export default function LunarDaysPage() {
       <main className="moon-month">
         <MoonRibbon current="days" now={now} />
         <MoonHead title={TITLE} intro={hub.intro} />
-        <section className="moon-links moon-links--days" aria-labelledby="moon-days-list-title">
+        <section className="moon-day-cards" aria-labelledby="moon-days-list-title">
           <h2 id="moon-days-list-title">Сутки по номерам</h2>
-          <ol>
-            {hub.items.map((item) => (
-              <li key={item.day}>
-                <Link href={item.href}>{item.day} · {item.symbol}</Link>
-              </li>
-            ))}
+          <ol className="moon-day-cards__grid">
+            {hub.items.map((item) => {
+              const art = lunarDayImage(item.day, 480);
+              return (
+                <li key={item.day}>
+                  <Link className="moon-day-card" href={item.href}>
+                    {art && <Image src={art} alt="" width={480} height={480} unoptimized loading="lazy" sizes="(min-width: 860px) 190px, (min-width: 560px) 30vw, 46vw" />}
+                    <span className="moon-day-card__label">{item.day} · {item.symbol}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ol>
         </section>
         <MoonFaq id="moon-days-faq-title" title="Вопросы о лунных сутках" items={hub.faq} />
