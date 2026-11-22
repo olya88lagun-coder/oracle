@@ -230,3 +230,37 @@ describe("buildMonthPage for a Place", () => {
     }
   });
 });
+
+describe("the day of a sign change", () => {
+  const november = buildMonthPage(2026, 11, NOW);
+  const cell = (page: typeof november, day: number) => page.cells[day - 1]!;
+
+  test("is the day on which the Moon really enters the sign, also when that happens after noon", () => {
+    // Овен → Телец 22 ноября в 13:09, Телец → Близнецы 24 ноября в 14:09: срез на полдень отстаёт от события на сутки
+    expect(cell(november, 22).signChange).toBe(true);
+    expect(cell(november, 22).signMove).toEqual({ from: "Овен", to: "Телец", time: "13:09" });
+    expect(cell(november, 23).signChange).toBe(false);
+    expect(cell(november, 23).signMove).toBeNull();
+    expect(cell(november, 24).signMove).toEqual({ from: "Телец", to: "Близнецы", time: "14:09" });
+    expect(cell(november, 25).signChange).toBe(false);
+  });
+
+  test("is the same day also when the Moon enters the sign before noon or right before midnight", () => {
+    expect(cell(buildMonthPage(2026, 10, NOW), 26).signMove).toMatchObject({ to: "Телец", time: "02:34" });
+    expect(cell(november, 12).signMove).toMatchObject({ to: "Козерог", time: "23:27" });
+    expect(cell(november, 13).signChange).toBe(false);
+  });
+
+  test("every change of the month is marked once, on the date of the entry in the ribbon", () => {
+    const marked = november.cells.filter((item) => item.signChange);
+    expect(marked.map((item) => item.date)).toEqual(marked.map((item) => item.date).filter((date, index, all) => all.indexOf(date) === index));
+    expect(marked.length).toBe(november.ribbon.length - 1);
+  });
+
+  test("follows the time zone of the chosen city: the entry at 23:27 Moscow time is already the next day in Novosibirsk", () => {
+    const novosibirsk: Place = { latitude: 55.03, longitude: 82.92, zone: "Asia/Novosibirsk" };
+    const page = buildMonthPage(2026, 11, NOW, novosibirsk);
+    expect(cell(page, 12).signChange).toBe(false);
+    expect(cell(page, 13).signMove).toMatchObject({ to: "Козерог", time: "03:27" });
+  });
+});

@@ -97,6 +97,12 @@ describe("the November 2026 page", () => {
     expect(html).toContain('<a href="/lunnyy-kalendar/1-noyabrya-2026">1 ноября</a>');
   });
 
+  test("the scene of the day of a sign change says which sign the Moon leaves and enters, and when", async () => {
+    const html = await render();
+    expect(html).toContain("Телец → Близнецы, 14:09");
+    expect(html).toContain("какой и во сколько");
+  });
+
   test("the diary and the collection wait for the browser: no notes on the server, the collection starts closed", async () => {
     const html = await render();
     expect(html).not.toContain("moon-diary");

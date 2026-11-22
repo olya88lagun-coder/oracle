@@ -102,7 +102,9 @@ export type CalendarDay = {
   signImageLarge: string | null;
   riseMin: number | null;
   setMin: number | null;
+  // День, когда Луна входит в другой знак (по местной дате события), и сам переход: «Овен → Телец, 13:09». Знак в ячейке при этом остаётся знаком на полдень
   signChange: boolean;
+  signMove: { from: string; to: string; time: string } | null;
   keyPoint: KeyPoint | null;
 };
 // Событие ленты «События месяца»: главная фаза или переход Луны в другой знак; at — миллисекунды, по ним лента упорядочена
@@ -208,6 +210,11 @@ export function buildMonthPage(year: number, month: number, now: Date, place: Pl
   const count = daysInMonth(year, month);
   const { start, end } = data.range;
 
+  // Переходы по дате самого события, а не по сравнению полуденных срезов соседних дней: после полудня срез отстаёт на сутки
+  const moves = new Map<string, NonNullable<CalendarDay["signMove"]>>();
+  data.signRuns.forEach((run, index) => {
+    if (index > 0) moves.set(labels.dateOf(run.from), { from: SIGN_NAMES[data.signRuns[index - 1]!.sign], to: SIGN_NAMES[run.sign], time: labels.clock(run.from) });
+  });
   const keyPoints = keyPointsOf(data.events, MOON_EXTRA_TEXTS_ACCEPTED, labels);
   const cells = data.days.map((day, position): CalendarDay => {
     const change = day.lunarDay.changeAt && day.lunarDay.changeTo ? `с ${labels.clock(day.lunarDay.changeAt)} — ${day.lunarDay.changeTo}-е` : null;
@@ -236,7 +243,8 @@ export function buildMonthPage(year: number, month: number, now: Date, place: Pl
       signImageLarge: signImage(day.snapshot.sign, 960),
       riseMin: minutes(day.rise),
       setMin: minutes(day.set),
-      signChange: position > 0 && data.days[position - 1]!.snapshot.sign !== day.snapshot.sign,
+      signChange: moves.has(day.date),
+      signMove: moves.get(day.date) ?? null,
       keyPoint: keyPoints.find((point) => point.date === day.date) ?? null,
     };
   });
