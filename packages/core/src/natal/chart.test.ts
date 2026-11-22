@@ -31,6 +31,12 @@ describe("computeNatalChart", () => {
     expect(chart.uncertainSigns).toContain("sun"); // 20 марта 2024 Солнце перешло из Рыб в Овен
   });
 
+  test("without a time the Moon on a sign-change day gets both signs, in order", () => {
+    const chart = computeNatalChart({ instant: new Date("1990-03-07T09:00:00Z"), ...MOSCOW, timeKnown: false });
+    expect(chart.uncertainSigns).toContain("moon");
+    expect(chart.signRanges.moon).toEqual(["cancer", "leo"]);
+  });
+
   test("with a known time nothing is reported as uncertain", () => {
     expect(computeNatalChart({ instant: new Date("2024-03-20T09:00:00Z"), ...MOSCOW, timeKnown: true }).uncertainSigns).toEqual([]);
   });

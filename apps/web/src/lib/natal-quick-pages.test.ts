@@ -85,7 +85,7 @@ describe("quickAnswer", () => {
   });
 
   test("moon without the time and with a stable sign: says the date is enough this time", () => {
-    const stable = { ...noTime, uncertainSigns: [] };
+    const stable = { ...noTime, uncertainSigns: [], signRanges: {} };
     expect(quickAnswer(stable, "moon", {}).note).toMatch(/по одной дате|достаточно/);
   });
 });

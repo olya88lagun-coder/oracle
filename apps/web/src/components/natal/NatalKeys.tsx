@@ -1,7 +1,7 @@
 import type { NatalChart } from "@oracle/core/natal";
 import Link from "next/link";
 import { useId } from "react";
-import { KEYS_TITLE, NOTICE_NO_TIME, READ_FULL, TEXT_SOON, sunMoonAscSummary } from "@/lib/natal-copy";
+import { BODY_NAMES, KEYS_TITLE, MOON_EITHER_TEXT, NOTICE_NO_TIME, READ_FULL, TEXT_SOON, inSign, moonSignRange, sunMoonAscSummary } from "@/lib/natal-copy";
 import { NATAL_KEY_TEXTS, keyTextFor, type NatalKeyBody, type NatalKeyRegistry } from "@/lib/natal-texts";
 
 // «Что это значит»: Солнце, Луна и асцендент. Если для положения опубликован текст, показываем начало и ссылку «Читать полностью»,
@@ -30,10 +30,23 @@ function KeyBlock(props: { idPrefix: string; body: NatalKeyBody; title: string; 
   );
 }
 
+// Луна в день смены знака без времени рождения: один блок с двумя вариантами вместо единственной безусловной характеристики
+function MoonEitherBlock(props: { idPrefix: string; title: string; signs: readonly [NatalChart["points"][number]["sign"], NatalChart["points"][number]["sign"]]; registry: NatalKeyRegistry }) {
+  const variants = props.signs.map((sign) => ({ sign, published: keyTextFor("moon", sign, props.registry) }));
+  return (
+    <article className="natal-key" id={`${props.idPrefix}-moon`}>
+      <h4 className="natal-key__title">{props.title}</h4>
+      <p>{MOON_EITHER_TEXT}</p>
+      {variants.map(({ sign, published }) => (published ? <p key={sign}><Link className="natal-key__link" href={published.href} prefetch={false}>{READ_FULL}: {BODY_NAMES.moon} {inSign(sign)}</Link></p> : null))}
+    </article>
+  );
+}
+
 // Идентификаторы блоков уникальны у каждого экземпляра (useId): на странице может быть больше одного результата
 export function NatalKeys({ chart, registry = NATAL_KEY_TEXTS }: { chart: NatalChart; registry?: NatalKeyRegistry }) {
   const idPrefix = `${useId()}-meaning`;
   const summary = sunMoonAscSummary(chart);
+  const moonRange = moonSignRange(chart);
   const sun = chart.points.find((point) => point.id === "sun");
   const moon = chart.points.find((point) => point.id === "moon");
   if (!sun || !moon) return null;
@@ -43,7 +56,7 @@ export function NatalKeys({ chart, registry = NATAL_KEY_TEXTS }: { chart: NatalC
       <h3>{KEYS_TITLE}</h3>
       <div className="natal-keys__grid">
         <KeyBlock idPrefix={idPrefix} body="sun" title={summary.sun} sign={sun.sign} registry={registry} />
-        <KeyBlock idPrefix={idPrefix} body="moon" title={summary.moon} sign={moon.sign} registry={registry} />
+        {moonRange ? <MoonEitherBlock idPrefix={idPrefix} title={summary.moon} signs={moonRange} registry={registry} /> : <KeyBlock idPrefix={idPrefix} body="moon" title={summary.moon} sign={moon.sign} registry={registry} />}
         {chart.timeKnown && chart.ascendant ? (
           <KeyBlock idPrefix={idPrefix} body="ascendant" title={summary.ascendant} sign={chart.ascendant.sign} registry={registry} />
         ) : (

@@ -115,6 +115,7 @@ function sampleChart(withTime: boolean): NatalChart {
     houses: withTime ? { system: "placidus", cusps: contract.cusps as Cusps } : null,
     aspects: findAspects(longitudes, aspectBodies),
     uncertainSigns: withTime ? [] : ["moon"],
+    signRanges: withTime ? {} : { moon: ["cancer", "leo"] },
     timeKnown: withTime,
   };
 }

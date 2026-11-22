@@ -14,9 +14,12 @@ import {
   TABLE_HEAD_SIGN,
   TABLE_LABEL,
   TABLE_NO_HOUSE,
+  TABLE_NOON_DEGREES,
+  TABLE_SIGN_EITHER,
   formatDegrees,
   houseLinkHint,
   housesCaption,
+  moonSignRange,
 } from "@/lib/natal-copy";
 import { housePageHref, NATAL_KEY_TEXTS, keyTextFor, type NatalHouseRegistry, type NatalKeyBody, type NatalKeyRegistry } from "@/lib/natal-texts";
 import { NatalGlyph, bodyGlyphId } from "./NatalGlyph";
@@ -72,6 +75,7 @@ function HouseText({ row, registry }: { row: Row; registry: NatalHouseRegistry |
 
 export function NatalTable({ chart, registry = NATAL_KEY_TEXTS, houseRegistry }: { chart: NatalChart; registry?: NatalKeyRegistry; houseRegistry?: NatalHouseRegistry }) {
   const showHouses = chart.timeKnown && chart.houses !== null;
+  const moonRange = moonSignRange(chart);
   const rows: Row[] = chart.points.map(pointRow);
   if (chart.timeKnown && chart.ascendant) rows.push(angleRow("ascendant", chart.ascendant));
   if (chart.timeKnown && chart.midheaven) rows.push(angleRow("midheaven", chart.midheaven));
@@ -104,13 +108,12 @@ export function NatalTable({ chart, registry = NATAL_KEY_TEXTS, houseRegistry }:
               </td>
               <td>
                 <span className="natal-table__sign-name">
-                  <NatalGlyph id={row.sign} variant="table" />
-                  <span>{SIGN_NAMES[row.sign]}</span>
+                  {row.key === "moon" && moonRange ? <span>{TABLE_SIGN_EITHER(...moonRange)}</span> : <><NatalGlyph id={row.sign} variant="table" /><span>{SIGN_NAMES[row.sign]}</span></>}
                 </span>
               </td>
               <td>
                 <span className="natal-table__degree">
-                  {formatDegrees(row.degree)}
+                  {row.key === "moon" && moonRange ? TABLE_NOON_DEGREES(formatDegrees(row.degree)) : formatDegrees(row.degree)}
                   {row.retrograde && (
                     <>
                       <NatalGlyph id="retro" variant="retro" />
