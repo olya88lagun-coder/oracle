@@ -8557,7 +8557,7 @@ main:has(> .natal-intro)::before {
 .moon-rail__text b { font: 400 18px/1.2 var(--font-display); color: var(--ink); }
 .moon-rail__text span { color: var(--ink-soft); font-size: 14px; }
 
-.moon-rail__tabs { grid-area: tabs; display: flex; justify-content: flex-end; gap: 4px; min-width: 0; margin: 0; padding: 0; list-style: none; overflow-x: auto; scrollbar-width: none; }
+.moon-rail__tabs { grid-area: tabs; display: flex; justify-content: safe flex-end; gap: 4px; min-width: 0; margin: 0; padding: 0; list-style: none; overflow-x: auto; scrollbar-width: none; }
 .moon-rail__tabs::-webkit-scrollbar { display: none; }
 .moon-rail .moon-rail__tab { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid transparent; border-radius: 999px; color: var(--ink-soft); font-size: 14px; text-decoration: none; white-space: nowrap; }
 .moon-rail .moon-rail__tab:hover { border-color: var(--accent-line); color: var(--ink); }
@@ -8572,12 +8572,18 @@ main:has(> .natal-intro)::before {
 .moon-rail[data-frame="7"] .moon-rail__orbit img, .moon-rail[data-frame="14"] .moon-rail__orbit img { box-shadow: 0 0 26px var(--accent); }
 .moon-rail[data-frame="30"] .moon-rail__orbit img { box-shadow: 0 0 30px var(--accent), 0 0 0 2px var(--accent-hover); }
 
-@media (max-width: 820px) {
+@media (max-width: 1000px) {
   .moon-rail { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "now streak" "tabs tabs"; padding: 6px 12px; gap: 2px 10px; }
   .moon-rail__orbit { width: 44px; height: 44px; }
   .moon-rail__orbit img { inset: 6px; width: 32px; height: 32px; }
   .moon-rail__text b { font-size: 16px; }
   .moon-rail__tabs { justify-content: flex-start; margin-inline: -4px; }
+}
+
+/* Телефон: строка с подписью знака уходит, чтобы лента не выше ~112 px и не съедала первый экран */
+@media (max-width: 560px) {
+  .moon-rail__text span { display: none; }
+  .moon-rail__text b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
