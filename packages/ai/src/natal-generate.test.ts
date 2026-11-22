@@ -131,6 +131,15 @@ describe("validateNatalChapter", () => {
     expect(validateNatalChapter(core, raw)).toEqual({ ok: false, reason });
   });
 
+  test("the scenario may not talk about professions, a career or «your work»; other chapters may", () => {
+    const withWork = JSON.stringify({ ...JSON.parse(SCENARIO), pattern: "Вы можете преуспеть в профессиях, связанных с заботой о людях." });
+    expect(validateNatalChapter(inputOf("scenario"), withWork)).toEqual({ ok: false, reason: "occupation" });
+    expect(validateNatalChapter(inputOf("scenario"), JSON.stringify({ ...JSON.parse(SCENARIO), tension: "Это заметно в вашей работе." }))).toEqual({ ok: false, reason: "occupation" });
+    expect(validateNatalChapter(inputOf("work"), `${prose(3)}
+
+Карьера и профессиональный путь связаны с десятым домом.`).ok).toBe(true);
+  });
+
   test("rejects the filler phrases from two on, and lets one through", () => {
     const one = `${prose(3)}
 

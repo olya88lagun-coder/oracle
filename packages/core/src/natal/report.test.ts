@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "vitest";
 import { computeNatalChart } from "./chart";
-import { mainAspects, NATAL_CHAPTER_IDS, NATAL_CHAPTER_TITLES, natalChapterOutline } from "./report";
+import { mainAspects, NATAL_CHAPTER_IDS, NATAL_CHAPTER_TITLES, natalChapterOutline, SIGN_RULERS } from "./report";
 
 // Москва, 7 марта 1990, 12:00 (08:00 UTC): образец из макета калькулятора
 const moscow = (timeKnown: boolean) => computeNatalChart({ instant: new Date("1990-03-07T08:00:00Z"), latitude: 55.7558, longitude: 37.6173, timeKnown });
@@ -56,5 +56,31 @@ describe("the light entry @oracle/core/natal-report", () => {
     const imports = source.split("\n").filter((line) => line.startsWith("import "));
     expect(imports.length).toBeGreaterThan(0);
     for (const line of imports) expect(line, line).toMatch(/^import type /);
+  });
+});
+
+describe("house details", () => {
+  const chart = computeNatalChart({ instant: new Date("1990-03-07T09:25:00Z"), latitude: 55.7558, longitude: 37.6173, timeKnown: true });
+  const outline = natalChapterOutline(chart);
+
+  test("every sign has a modern ruler", () => {
+    expect(Object.keys(SIGN_RULERS)).toHaveLength(12);
+    expect(SIGN_RULERS.scorpio).toBe("pluto");
+    expect(SIGN_RULERS.aquarius).toBe("uranus");
+    expect(SIGN_RULERS.pisces).toBe("neptune");
+  });
+
+  test("work gets the second, sixth and tenth house with the sign on the edge and the ruler's position", () => {
+    const work = outline.find((chapter) => chapter.id === "work")!;
+    expect(work.houseDetails.map((detail) => detail.house)).toEqual([2, 6, 10]);
+    for (const detail of work.houseDetails) {
+      expect(SIGN_RULERS[detail.cuspSign]).toBe(detail.ruler);
+      expect(detail.rulerSign).toBe(chart.points.find((point) => point.id === detail.ruler)?.sign);
+      expect(detail.rulerHouse).toBe(chart.points.find((point) => point.id === detail.ruler)?.house);
+    }
+  });
+
+  test("chapters without extra houses have no details", () => {
+    expect(outline.find((chapter) => chapter.id === "core")!.houseDetails).toEqual([]);
   });
 });

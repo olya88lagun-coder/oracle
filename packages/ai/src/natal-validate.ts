@@ -36,6 +36,9 @@ const GENDERED = [
   /(?<![а-яё])вы\s+(не\s+)?[а-яё]{2,}(ла|л)(?![а-яё])/i,
 ];
 
+// В итоговом сценарии профессии и работа — утверждения о жизни человека, которых в тексте быть не должно: «преуспеете в профессиях, связанных с…», «ваша работа…»
+const OCCUPATION = /(?<![а-яё])(професси[а-яё]*|карьер[а-яё]*|ваш[а-яё]*\s+работ[а-яё]*)(?![а-яё])/i;
+
 export type NatalValidation = { ok: true; chapter: NatalChapter } | { ok: false; reason: ValidationFailure };
 
 // Проверка ответа модели: форма (текст нужной длины или JSON сценария), объём и обороты-предсказания из общего стоп-списка
@@ -55,6 +58,7 @@ export function validateNatalChapter(input: NatalChapterInput, raw: string): Nat
   }
   const text = [...(chapter.paragraphs ?? []), ...Object.values(chapter.scenario ?? {})].join("\n");
   if (findStopPhrases(text).length > 0) return { ok: false, reason: "stop_words" };
+  if (input.chapter === "scenario" && OCCUPATION.test(text)) return { ok: false, reason: "occupation" };
   if (MISSING_DATA.test(text)) return { ok: false, reason: "missing_data" };
   if (GENDERED.some((pattern) => pattern.test(text))) return { ok: false, reason: "gendered" };
   if ((text.match(FILLER) ?? []).length > FILLER_LIMIT) return { ok: false, reason: "filler" };

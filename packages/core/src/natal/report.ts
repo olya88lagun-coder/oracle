@@ -20,8 +20,22 @@ export const NATAL_CHAPTER_TITLES: Readonly<Record<NatalChapterId, string>> = {
 };
 
 export type ChapterPoint = { body: BodyId | "ascendant"; sign: SignId; house: number | null };
-// points — положения, о которых глава; houses — дома, чьё описание глава добавляет сверх домов своих точек
-export type NatalChapterOutline = { id: NatalChapterId; title: string; points: ChapterPoint[]; houses: number[] };
+
+// Порядок знаков по эклиптике: здесь, а не из ./zodiac, потому что этот файл — лёгкий вход и импортирует только типы
+const SIGN_ORDER: readonly SignId[] = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+const signOfLongitude = (longitude: number): SignId => SIGN_ORDER[Math.floor((((longitude % 360) + 360) % 360) / 30)] as SignId;
+
+// Управители знаков — современные (Скорпионом правит Плутон, Водолеем — Уран, Рыбами — Нептун); у каждой школы свой выбор, он назван в /metodika
+export const SIGN_RULERS: Readonly<Record<SignId, BodyId>> = {
+  aries: "mars", taurus: "venus", gemini: "mercury", cancer: "moon", leo: "sun", virgo: "mercury",
+  libra: "venus", scorpio: "pluto", sagittarius: "jupiter", capricorn: "saturn", aquarius: "uranus", pisces: "neptune",
+};
+
+// Что говорит сама карта о доме, в котором может не быть планет: знак на его границе и положение управителя этого знака
+export type HouseDetail = { house: number; cuspSign: SignId; ruler: BodyId; rulerSign: SignId; rulerHouse: number | null };
+
+// points — положения, о которых глава; houses — дома, чьё описание глава добавляет сверх домов своих точек; houseDetails — данные карты об этих домах
+export type NatalChapterOutline = { id: NatalChapterId; title: string; points: ChapterPoint[]; houses: number[]; houseDetails: HouseDetail[] };
 
 const BODIES_OF: Readonly<Record<NatalChapterId, readonly (BodyId | "ascendant")[]>> = {
   core: ["sun", "moon", "ascendant"],
@@ -49,7 +63,21 @@ function pointOf(chart: NatalChart, body: BodyId | "ascendant"): ChapterPoint {
 // Разбор строится по домам и асцеденту, поэтому без времени рождения он невозможен
 export function natalChapterOutline(chart: NatalChart): NatalChapterOutline[] {
   if (!chart.timeKnown || !chart.ascendant || !chart.houses) throw new RangeError("Нужно время рождения");
-  return NATAL_CHAPTER_IDS.map((id) => ({ id, title: NATAL_CHAPTER_TITLES[id], points: BODIES_OF[id].map((body) => pointOf(chart, body)), houses: [...HOUSES_OF[id]] }));
+  const cusps = chart.houses.cusps;
+  const detailOf = (house: number): HouseDetail => {
+    const cuspSign = signOfLongitude(cusps[house - 1] as number);
+    const ruler = SIGN_RULERS[cuspSign];
+    const rulerPoint = chart.points.find((item) => item.id === ruler);
+    if (!rulerPoint) throw new RangeError(`Нет тела ${ruler}`);
+    return { house, cuspSign, ruler, rulerSign: rulerPoint.sign, rulerHouse: rulerPoint.house };
+  };
+  return NATAL_CHAPTER_IDS.map((id) => ({
+    id,
+    title: NATAL_CHAPTER_TITLES[id],
+    points: BODIES_OF[id].map((body) => pointOf(chart, body)),
+    houses: [...HOUSES_OF[id]],
+    houseDetails: HOUSES_OF[id].map(detailOf),
+  }));
 }
 
 const MAIN_ASPECTS = 7;

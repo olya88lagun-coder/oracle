@@ -30,6 +30,12 @@ describe("fallbackNatalReport", () => {
     for (const house of [2, 6, 10]) expect(text("work")).toContain(HOUSE_TEXTS[house]);
   });
 
+  test("every house of the work and love chapters names the sign on its edge and where its ruler stands", () => {
+    for (const [id, houses] of [["love", [7]], ["work", [2, 6, 10]]] as const) {
+      for (const house of houses) expect(text(id)).toMatch(new RegExp(`Дом ${house} начинается в знаке [А-Яа-я]+; его управитель — [А-Яа-я]+ — стоит (в|во) [А-Яа-я]+(, в (\d+|этом же) дом(е|а)?)?\.`));
+    }
+  });
+
   test("the aspects chapter lists exact aspects with the orb and the kind of aspect", () => {
     const aspects = text("aspects");
     expect(aspects).toMatch(/ — .* — .* \(орбис \d+,\d°\)\./);
