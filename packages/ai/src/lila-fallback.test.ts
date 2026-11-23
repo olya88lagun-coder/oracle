@@ -50,4 +50,15 @@ describe("fallbackConclusionChapter", () => {
     expect(withTop).toContain("Чему я завидую?");
     expect(fallbackConclusionChapter(base("outcome")).paragraphs.join(" ")).toContain("Шаг на 7 дней");
   });
+
+  test("the outcome ties the most visited cell to the note written on it and to the intention, with a way to check the step", () => {
+    const repeated = [{ cell: "Зависть", visits: 3, about: "О.", question: "Чему я завидую?" }];
+    const notes = [{ n: 4, cell: "Зависть", text: "Сравниваю свой темп с чужим." }, { n: 7, cell: "Гнев", text: "Другая клетка." }];
+    const text = fallbackConclusionChapter(base("outcome", { repeated, notes })).paragraphs.join(" ");
+    expect(text).toContain("вы возвращались 3 раза");
+    expect(text).toContain("на ходе 4 записали: «Сравниваю свой темп с чужим.»");
+    expect(text).not.toContain("Другая клетка.");
+    expect(text).toContain("Это предположение, а не вывод");
+    expect(text).toContain("Проверка:");
+  });
 });

@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { ReactNode, Ref } from "react";
 import { arcanumImage, arcanumPath } from "@/lib/arcana-paths";
 import { compatArcanumPath, compatSummary, POINT_LABELS } from "@/lib/compat";
+import { CompatContext } from "./CompatContext";
 
 type Props = { compat: Compatibility; headingRef?: Ref<HTMLHeadingElement>; actions: ReactNode };
 
@@ -111,6 +112,7 @@ export function CompatResult({ compat, headingRef, actions }: Props) {
           <p key={line}>{line}</p>
         ))}
       </section>
+      <CompatContext />
       <div className="row compat-actions">{actions}</div>
     </section>
   );
