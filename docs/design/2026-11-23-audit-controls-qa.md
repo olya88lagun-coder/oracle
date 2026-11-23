@@ -31,4 +31,4 @@ Browser viewport checks, not physical-device testing. Screenshots were inspected
 
 Local typecheck and targeted tests are recorded in the PR description. Full CI coverage must pass before owner acceptance. Physical phones, payments and production publication are outside this visual package.
 
-Merge PR #318 first, then this visual follow-up. Owner handles merge and publication.
+PR #318 has merged. This visual follow-up now targets master and includes the updated base through PR #317. Owner handles merge and publication.
