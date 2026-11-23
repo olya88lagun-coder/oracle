@@ -1,6 +1,7 @@
 "use client";
 
 import { formatBirthDateRu, type LifeThread } from "@oracle/core";
+import { useMemo, useState } from "react";
 import { PosterButton } from "@/components/PosterButton";
 import { PERIOD_POSITIONS, type ThreadCard, type ThreadTexts } from "@/lib/life-thread";
 import { YEAR_NAMES } from "@/lib/life-thread-curve";
@@ -33,7 +34,11 @@ function CardSections({ card }: { card: ThreadCard }) {
   </div>)}</>;
 }
 
-export function ThreadResult({ thread, texts, iso, offer }: { thread: LifeThread; texts: ThreadTexts; iso?: string; offer?: ThreadOffer }) {
+export function ThreadResult({ thread: actual, texts, iso, offer }: { thread: LifeThread; texts: ThreadTexts; iso?: string; offer?: ThreadOffer }) {
+  // Год просмотра: по умолчанию текущий; выбор меняет только то, на какой год смотрит страница (график, карточка, формула), расчёт остаётся в браузере
+  const [focus, setFocus] = useState(actual.currentYear);
+  const thread = useMemo(() => ({ ...actual, currentYear: focus }), [actual, focus]);
+  const other = focus !== actual.currentYear;
   const current = thread.years.find((item) => item.year === thread.currentYear) ?? thread.years[0];
   const yearCard = current ? texts.years[current.value] : undefined;
   const digits = current ? `${thread.birth.day}${String(thread.birth.month).padStart(2, "0")}${thread.currentYear}`.split("") : [];
@@ -42,13 +47,21 @@ export function ThreadResult({ thread, texts, iso, offer }: { thread: LifeThread
   return <section className="thread-result" aria-labelledby="thread-result-title">
     <div className="thread-now stack">
       <p className="eyebrow">Ваша нить</p>
-      <h2 id="thread-result-title" tabIndex={-1}>Где вы сейчас</h2>
+      <h2 id="thread-result-title" tabIndex={-1}>{other ? `Личный год ${focus}` : "Где вы сейчас"}</h2>
+      <div className="field thread-focus">
+        <label htmlFor="thread-focus-year">Посмотреть другой год</label>
+        <select id="thread-focus-year" className="input" value={focus} onChange={(event) => setFocus(Number(event.target.value))}>
+          {actual.years.map((item) => <option key={item.year} value={item.year}>{`${item.year} · год ${item.value} · ${YEAR_NAMES[item.value]}${item.year === actual.currentYear ? " · сейчас" : ""}`}</option>)}
+        </select>
+        {other && <button type="button" className="button button--ghost" onClick={() => setFocus(actual.currentYear)}>Вернуться к текущему году</button>}
+        <p role="status" className="muted">{other ? `Показан ${focus} год: личный год ${current?.value ?? ""}.` : ""}</p>
+      </div>
       {current && <p className="thread-now__year"><strong>{`Год ${current.value}`}</strong> · {YEAR_NAMES[current.value]} <span className="muted">{`· с ${endDateRu(current.start)} до ${endDateRu(current.end)}`}</span></p>}
       {yearCard ? <div className="thread-card stack"><CardSections card={yearCard} /></div> : <p className="muted">Описание появится позже.</p>}
     </div>
 
-    <ThreadChart thread={thread} />
-    <div className="thread-actions" onClickCapture={() => { reachNumerologyGoal("thread_poster"); }}><PosterButton spec={threadPosterSpec(thread)} /></div>
+    <ThreadChart thread={thread} markLabel={other ? (year, value) => `${year} · год ${value}` : undefined} />
+    <div className="thread-actions" onClickCapture={() => { reachNumerologyGoal("thread_poster"); }}><PosterButton spec={threadPosterSpec(actual)} /></div>
 
     <div className="thread-periods stack">
       <p className="eyebrow">Четыре периода</p>

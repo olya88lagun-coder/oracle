@@ -28,7 +28,8 @@ function visibleBands(periods: readonly ThreadPeriod[], first: number, last: num
   });
 }
 
-export function ThreadChart({ thread, initialMode = "window" }: { thread: LifeThread; initialMode?: Mode }) {
+// markLabel: подпись метки; по умолчанию «Вы здесь», при просмотре другого года страница передаёт свою («2031 · год 5»)
+export function ThreadChart({ thread, initialMode = "window", markLabel }: { thread: LifeThread; initialMode?: Mode; markLabel?: (year: number, value: number) => string }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const [mode, setMode] = useState<Mode>(initialMode);
   const [width, setWidth] = useState(1000);
@@ -218,7 +219,7 @@ export function ThreadChart({ thread, initialMode = "window" }: { thread: LifeTh
         <circle cx={nowPoint.x} cy={nowPoint.y} r="3.6" className="thread-now__dot" />
         <g transform={`translate(${clamp(nowPoint.x, 84, g.width - 84)},${nowPoint.y + pillOffset})`}>
           <rect x="-80" y="-15" width="160" height="30" rx="15" className="thread-now__pill" />
-          <text y="5" className="thread-now__text" textAnchor="middle">{`Вы здесь · год ${nowValue}`}</text>
+          <text y="5" className="thread-now__text" textAnchor="middle">{markLabel ? markLabel(thread.currentYear, nowValue) : `Вы здесь · год ${nowValue}`}</text>
         </g>
       </g>
 

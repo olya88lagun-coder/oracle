@@ -54,3 +54,12 @@ test("the offer block is absent without the offer prop and stands after the peri
   expect(html).toContain("Разбор нити — ");
   expect(html.indexOf("Разбор нити — ")).toBeGreaterThan(html.indexOf("Большие отрезки жизни"));
 });
+
+test("year picker lists every year of the thread, marks the current one and starts on it", () => {
+  const html = renderToStaticMarkup(<ThreadResult thread={thread} texts={TEXTS} />);
+  expect(html).toContain("Посмотреть другой год");
+  expect((html.match(/<option /g) ?? []).length).toBe(thread.years.length);
+  expect(html).toContain("2026 · год 5 · перемены · сейчас");
+  expect(html).toMatch(/<option value="2026" selected/);
+  expect(html).not.toContain("Вернуться к текущему году");
+});
