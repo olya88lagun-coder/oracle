@@ -43,3 +43,21 @@ describe("validateConclusionChapter", () => {
     expect(validateConclusionChapter(`${paragraph}\n\n${paragraph} Это неизбежно.`)).toEqual({ ok: false, reason: "stop_words" });
   });
 });
+
+describe("filler and hypothetical-notes checks", () => {
+  const body = SENTENCE.repeat(4).trim();
+  const chapter = (first: string) => `${first} ${body}
+
+${body}`;
+  test("two connectives are rejected, one is fine", () => {
+    expect(validateConclusionChapter(chapter("Стоит заметить, что вы вернулись. Таким образом, тема важна.")).ok).toBe(false);
+    expect(validateConclusionChapter(chapter("Стоит заметить, что вы вернулись.")).ok).toBe(true);
+  });
+  test("a sentence about what would be with fewer notes is rejected", () => {
+    const text = chapter("Если бы заметок было меньше или их не было совсем, можно было бы напомнить о дневнике.");
+    expect(validateConclusionChapter(text)).toEqual({ ok: false, reason: "filler" });
+  });
+  test("the guide paragraph gets the same check", () => {
+    expect(validateGuideText(`${SENTENCE.repeat(3)} Стоит заметить, это важно. Таким образом, вывод ясен.`)).toEqual({ ok: false, reason: "filler" });
+  });
+});
