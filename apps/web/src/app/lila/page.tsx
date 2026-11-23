@@ -92,14 +92,14 @@ export default function LilaPage() {
           <div className="stack"><h3>С проводником · {formatRubles(LILA_SESSION_PRICE_KOPECKS)}</h3><p>Одна новая партия. ИИ связывает ходы с намерением. После завершения — четыре главы: «Намерение и путь», «Что повторялось», «Что вы замечали», «Вывод и шаг на неделю», а также PDF.</p><p>Вход через VK ID и разовая оплата до начала. Намерение и записи передаются GigaChat для подготовки текста.</p><p><Link className="button button--lavender" href={LILA_GAME_PATH}>Играть с проводником · {formatRubles(LILA_SESSION_PRICE_KOPECKS)}</Link></p><p className="muted">Сначала формулируете вопрос, оплата — на следующем шаге.</p><Link className="text-link" href="/lila/primer">Посмотреть пример итога и PDF</Link></div>
         </div>
         <div className="lila-modes-table-wrap">
-          <table className="lila-modes-table">
+          <table className="lila-modes-table" role="table">
             <caption>Что вы получите в каждом режиме</caption>
             <thead>
               <tr><th scope="col">Что</th><th scope="col">Без проводника</th><th scope="col">С проводником</th></tr>
             </thead>
             <tbody>
               {LILA_MODE_ROWS.map((row) => (
-                <tr key={row.what}><th scope="row">{row.what}</th><td>{row.free}</td><td>{row.guided}</td></tr>
+                <tr key={row.what}><th scope="row">{row.what}</th><td data-label="Без проводника">{row.free}</td><td data-label="С проводником">{row.guided}</td></tr>
               ))}
             </tbody>
           </table>
