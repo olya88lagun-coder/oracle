@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Board } from "@/components/lila/Board";
 import { CellArt } from "@/components/lila/CellArt";
+import { LilaCellSearch } from "@/components/lila/LilaCellSearch";
 import { LilaFaq, lilaFaqJsonLd } from "@/components/lila/LilaFaq";
 import { LilaTryDice } from "@/components/lila/LilaTryDice";
 import { Scene } from "@/components/Scene";
@@ -128,9 +129,12 @@ export default function LilaPage() {
 
       <section className="card stack" aria-labelledby="cells">
         <h2 id="cells">72 клетки</h2>
-        <ul className="lila-cell-grid">
-          {LILA_CELLS.map((cell) => (
-            <li key={cell.number}>
+        <LilaCellSearch
+          cells={LILA_CELLS.map((cell) => ({
+            number: cell.number,
+            name: cell.name,
+            text: cell.about,
+            tile: (
               <Link className="lila-tile" href={lilaCellPath(cell)}>
                 <span className="lila-tile__art">
                   <CellArt cell={cell} size="thumb" available={images} decorative />
@@ -139,9 +143,9 @@ export default function LilaPage() {
                 <span className="lila-tile__sep"> · </span>
                 <span className="lila-tile__name">{cell.name}</span>
               </Link>
-            </li>
-          ))}
-        </ul>
+            ),
+          }))}
+        />
       </section>
 
       <LilaFaq guided={guided} />

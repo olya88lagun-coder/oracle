@@ -7,8 +7,8 @@ import { MATRIX_FAQ, matrixFaqJsonLd, MatrixGuide } from "./MatrixGuide";
 const text = (html: string) => html.replace(/<[^>]+>/g, " ");
 
 describe("MatrixGuide", () => {
-  test("publishes the same questions as FAQPage markup and has twelve of them", () => {
-    expect(MATRIX_FAQ).toHaveLength(12);
+  test("publishes the same questions as FAQPage markup and has thirteen of them", () => {
+    expect(MATRIX_FAQ).toHaveLength(13);
     const names = (matrixFaqJsonLd().mainEntity as { name: string }[]).map((entity) => entity.name);
     expect(names).toEqual(MATRIX_FAQ.map((item) => item.question));
   });
