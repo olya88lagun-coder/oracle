@@ -9,6 +9,7 @@ import { WHEEL_PALETTE as P } from "./pdf-natal-wheel";
 import { buildTextReportPdf } from "./text-report-pdf";
 
 const THREAD_LEAD = "Шесть глав о вашей нити. Это материал для размышления, а не предсказание.";
+const THREAD_DEMO_LEAD = "Вымышленная дата. Шесть глав собраны из готовых описаний по рассчитанным периодам. Ваш разбор будет другим.";
 const LEGEND = "Высота кривой — символический уровень этапа цикла личного года, а не оценка года. Золотая точка отмечает текущий год.";
 const LEGEND_Y = 718;
 
@@ -63,15 +64,15 @@ function drawThreadPage(doc: Doc, thread: LifeThread, birthDate: string) {
   doc.font("body").fontSize(9.5).fillColor(COLORS.muted).text(LEGEND, MARGIN.left, LEGEND_Y, { width: CONTENT_WIDTH, lineGap: 2.5 });
 }
 
-export type ThreadPdfInput = { chapters: readonly StoredThreadChapter[]; birthDate: string; today: Date; assetsDir: string };
+export type ThreadPdfInput = { chapters: readonly StoredThreadChapter[]; birthDate: string; today: Date; assetsDir: string; demo?: boolean };
 
-export function buildThreadReportPdf({ chapters, birthDate, today, assetsDir }: ThreadPdfInput): Promise<Buffer> {
+export function buildThreadReportPdf({ chapters, birthDate, today, assetsDir, demo }: ThreadPdfInput): Promise<Buffer> {
   const thread = calculateLifeThread(birthDate, today);
   const ordered = THREAD_CHAPTER_IDS.flatMap((id) => chapters.filter((chapter) => chapter.id === id));
   return buildTextReportPdf({
     title: THREAD_REPORT_TITLE,
-    eyebrow: `${THREAD_REPORT_TITLE} · по дате ${formatIsoDate(birthDate)}`,
-    lead: THREAD_LEAD,
+    eyebrow: `${demo ? "Демонстрационный пример" : THREAD_REPORT_TITLE} · по дате ${formatIsoDate(birthDate)}`,
+    lead: demo ? THREAD_DEMO_LEAD : THREAD_LEAD,
     chapters: ordered.map((chapter) => ({ title: THREAD_CHAPTER_TITLES[chapter.id], blocks: chapter.blocks })),
     assetsDir,
     coverImage: path.join(/*turbopackIgnore: true*/ assetsDir, "thread", "hero.jpg"),
