@@ -40,7 +40,7 @@ export function ReportView({ matrix, birthDate, chapters, purchaseId, demo = fal
         <div className="stack">
           <p className="eyebrow">{demo ? "Демонстрационная дата" : "Разбор матрицы судьбы · по дате"} {formatIsoDate(birthDate)}</p>
           <h1 className="display report-cover__title">{demo ? "Пример полного разбора" : `Ваш центр — ${center.name}`}</h1>
-          {demo && <p className="muted">Вымышленный пример, семь глав. Текст собран из готовых описаний тем же способом, который используется, когда ИИ недоступен. Персональный текст с ИИ может отличаться. Пример не использует вашу дату и не является отзывом.</p>}
+          {demo && <p className="muted">Вымышленный пример, семь глав. Главы написал ИИ по вымышленной дате, текст приведён как есть. Ваш разбор будет другим: он строится на вашей дате. Пример не использует вашу дату и не является отзывом.</p>}
           <p className="lead">Семь глав о том, как устроена ваша матрица. Это материал для размышления, а не предсказание.</p>
           <p>
             {demo ? <a className="button button--ghost" href="/examples/matrix.pdf" download>Скачать пример PDF</a> : <ReportPdfLink purchaseId={purchaseId!} />}

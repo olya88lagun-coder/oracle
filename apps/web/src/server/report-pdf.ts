@@ -37,7 +37,7 @@ function drawCover(doc: Doc, input: ReportPdfInput) {
   doc.font("display").fontSize(34).fillColor(COLORS.coverInk);
   doc.text(`Ваш центр — ${center.name}`, 80, doc.y + 18, { width, align: "center", lineGap: 4 });
   doc.font("body").fontSize(12).fillColor(COLORS.coverSoft);
-  doc.text(input.demo ? "Вымышленная дата. Семь глав собраны из готовых описаний без ИИ. Персональный текст может отличаться." : "Семь глав о том, как устроена ваша матрица. Это материал для размышления, а не предсказание.", 80, doc.y + 16, { width, align: "center", lineGap: 4 });
+  doc.text(input.demo ? "Вымышленная дата. Семь глав написал ИИ, текст приведён как есть. Ваш разбор будет другим." : "Семь глав о том, как устроена ваша матрица. Это материал для размышления, а не предсказание.", 80, doc.y + 16, { width, align: "center", lineGap: 4 });
   // Без нулевого нижнего поля подпись у края страницы уходит на новую страницу
   doc.page.margins.bottom = 0;
   doc.font("bodyBold").fontSize(9).fillColor(COLORS.gold);
