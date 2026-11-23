@@ -63,7 +63,7 @@ const MANUAL_POSTS: readonly BlogPost[] = [
     published: "2026-09-30",
     image: cellPreview(68),
     topic: "lila",
-    readingMinutes: 2,
+    readingMinutes: 3,
   },
   {
     slug: "chto-takoe-matritsa-sudby",
