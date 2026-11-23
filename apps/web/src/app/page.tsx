@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@/app/home-intents.css";
 import Image from "next/image";
 import Link from "next/link";
 import { LILA_SESSION_PRICE_KOPECKS, LILA_SESSION_PRODUCT, MATRIX_REPORT_PRICE_KOPECKS, NATAL_REPORT_PRICE_KOPECKS, NATAL_REPORT_PRODUCT, THREAD_REPORT_PRICE_KOPECKS, THREAD_REPORT_PRODUCT } from "@oracle/core";
@@ -85,22 +86,30 @@ export default function HomePage() {
       </section>
 
       <div className="page page--wide stack">
-        <MoonTile data={buildMoonTile(new Date())} />
-        <section className="stack home-principles" aria-labelledby="home-intents">
-          <h2 id="home-intents">{HOME_INTENTS_TITLE}</h2>
-          <p className="practices-note">{HOME_INTENTS_LEAD}</p>
-          <ul className="home-principles__list">
+        <section className="home-intents" aria-labelledby="home-intents">
+          <div className="home-intents__intro">
+            <h2 id="home-intents">{HOME_INTENTS_TITLE}</h2>
+            <p>{HOME_INTENTS_LEAD}</p>
+          </div>
+          <ul className="home-intents__list">
             {HOME_INTENTS.map((intent) => (
-              <li key={intent.title} className="home-principles__item">
-                <h3>{intent.title}</h3>
-                <p>{intent.text}</p>
-                <Link className="matrix-link" href={intent.href}>
-                  Начать<span className="visually-hidden">: {intent.title.toLowerCase()}</span>
+              <li key={intent.title}>
+                <Link className="home-intents__link" href={intent.href} aria-label={`Начать: ${intent.title.toLowerCase()}`}>
+                  <h3>{intent.title}</h3>
+                  <p>{intent.text}</p>
+                  <span className="home-intents__action" aria-hidden="true">
+                    Начать
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true" focusable="false">
+                      <path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
                 </Link>
               </li>
             ))}
           </ul>
         </section>
+
+        <MoonTile data={buildMoonTile(new Date())} />
 
         <section className="stack" aria-labelledby="practices">
           <h2 id="practices">Практики</h2>
