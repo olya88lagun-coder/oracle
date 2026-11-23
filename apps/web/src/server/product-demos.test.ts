@@ -14,8 +14,8 @@ describe("public product examples", () => {
   test("the matrix example uses all seven chapters with the calculated points", () => {
     expect(DEMO_MATRIX).toMatchObject({ A: 15, E: 7, D: 8 });
     expect(DEMO_REPORT.map((chapter) => chapter.id)).toEqual(CHAPTER_IDS);
-    expect(DEMO_REPORT.every((chapter) => chapter.source === "fallback")).toBe(true);
-    expect(DEMO_REPORT[6]?.scenario?.experiment).toContain("Семь дней");
+    expect(DEMO_REPORT.every((chapter) => chapter.source === "ai")).toBe(true);
+    expect(Object.keys(DEMO_REPORT[6]?.scenario ?? {})).toHaveLength(7);
   });
   test("the Lila example uses a legal ten-turn path and four chapters", () => {
     const replay = replayLila(DEMO_MOVES.map((move) => move.roll));

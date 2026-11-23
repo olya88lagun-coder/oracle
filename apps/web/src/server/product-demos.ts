@@ -2,16 +2,16 @@
 // платежей или вызовов модели. Используется тот же режим сборки, что в воркере.
 import { calculateMatrix, LILA_CONCLUSION_CHAPTERS, replayLila } from "@oracle/core";
 import { lilaCellByNumber } from "@oracle/content/lila";
-import { buildChapterInputs, buildScenarioInput, fallbackChapter } from "@oracle/ai";
 import { computeNatalChart } from "@oracle/core/natal";
 import type { StoredChapter, StoredConclusionChapter, StoredNatalChapter } from "@oracle/db";
 import { DEMO_LILA_AI_CHAPTERS } from "./lila-demo-ai";
+import { DEMO_MATRIX_AI_CHAPTERS } from "./matrix-demo-ai";
 import { DEMO_NATAL_AI_CHAPTERS } from "./natal-demo-ai";
 
 export const DEMO_DATE = "1990-01-15";
 export const DEMO_MATRIX = calculateMatrix({ year: 1990, month: 1, day: 15 });
-const prose = buildChapterInputs(DEMO_MATRIX).map(fallbackChapter);
-export const DEMO_REPORT: readonly StoredChapter[] = [...prose, fallbackChapter(buildScenarioInput(DEMO_MATRIX, prose.map((chapter) => chapter.paragraphs?.[0] ?? "")))];
+// Настоящий разбор от ИИ по вымышленной дате (снимок в matrix-demo-ai.ts), а не сборка из готовых текстов
+export const DEMO_REPORT: readonly StoredChapter[] = DEMO_MATRIX_AI_CHAPTERS;
 
 export const DEMO_INTENTION = "Как спокойнее планировать рабочую неделю?";
 const rolls = [6, 5, 6, 4, 4, 4, 2, 1, 3, 2];
