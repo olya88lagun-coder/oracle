@@ -16,8 +16,8 @@ describe("buildLilaPdf", () => {
       finishedAt: new Date("2026-10-05T10:00:00Z"),
       chapters,
       moves: [
-        { n: 1, cell: "Рождение", note: null },
-        { n: 2, cell: "Алчность", note: "Заметила сравнение." },
+        { n: 1, from: 0, landed: 1, to: 1, transition: "none", note: null },
+        { n: 2, from: 1, landed: 12, to: 8, transition: "snake", note: "Заметила сравнение." },
       ],
       assetsDir: pdfAssetsDir(),
     });
@@ -26,7 +26,7 @@ describe("buildLilaPdf", () => {
   });
 
   test("copes with a long game of 120 moves with notes", async () => {
-    const moves = Array.from({ length: 120 }, (_, i) => ({ n: i + 1, cell: "Клетка", note: i % 3 === 0 ? "Запись мысли. ".repeat(10) : null }));
+    const moves = Array.from({ length: 120 }, (_, i) => ({ n: i + 1, from: i + 1, landed: (i % 68) + 2, to: (i % 68) + 2, transition: "none" as const, note: i % 3 === 0 ? "Запись мысли. ".repeat(10) : null }));
     const pdf = await buildLilaPdf({ intention: "Я".repeat(300), movesCount: 120, finishedAt: new Date("2026-10-05T10:00:00Z"), chapters, moves, assetsDir: pdfAssetsDir() });
     expect(pdf.subarray(0, 5).toString()).toBe("%PDF-");
   });

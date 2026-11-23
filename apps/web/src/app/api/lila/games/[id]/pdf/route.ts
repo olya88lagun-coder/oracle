@@ -1,4 +1,3 @@
-import { lilaCellByNumber } from "@oracle/content/lila";
 import { getLilaConclusion, getLilaGameForUser } from "@oracle/db";
 import { NextResponse, type NextRequest } from "next/server";
 import { getDb } from "@/server/db";
@@ -29,7 +28,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       movesCount: game.movesCount,
       finishedAt: game.finishedAt ?? conclusion.createdAt,
       chapters: conclusion.chapters,
-      moves: game.moves.filter((move) => move.landed !== move.from).map((move) => ({ n: move.n, cell: lilaCellByNumber(move.to).name, note: move.note })),
+      moves: game.moves,
       assetsDir: pdfAssetsDir(),
     });
     return new NextResponse(new Uint8Array(pdf), {

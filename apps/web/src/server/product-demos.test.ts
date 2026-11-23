@@ -6,7 +6,6 @@ import { DEMO_CONCLUSION, DEMO_INTENTION, DEMO_MATRIX, DEMO_MOVES, DEMO_REPORT }
 import { buildReportPdf } from "./report-pdf";
 import { buildLilaPdf } from "./lila-pdf";
 import { pdfAssetsDir } from "./pdf-assets";
-import { lilaCellByNumber } from "@oracle/content/lila";
 
 // От папки теста, а не от рабочей папки: тест одинаково работает из корня репозитория и из apps/web
 const EXAMPLES = fileURLToPath(new URL("../../public/examples/", import.meta.url));
@@ -29,7 +28,7 @@ describe("public product examples", () => {
   test("the normal PDF builders accept both complete examples", async () => {
     const assetsDir = pdfAssetsDir();
     const report = await buildReportPdf({ matrix: DEMO_MATRIX, birthDate: "1990-01-15", chapters: DEMO_REPORT, assetsDir, demo: true });
-    const lila = await buildLilaPdf({ intention: DEMO_INTENTION, movesCount: DEMO_MOVES.length, finishedAt: new Date("2026-11-23T10:00:00Z"), chapters: DEMO_CONCLUSION, moves: DEMO_MOVES.map((move) => ({ n: move.n, cell: lilaCellByNumber(move.to).name, note: move.note })), assetsDir, demo: true });
+    const lila = await buildLilaPdf({ intention: DEMO_INTENTION, movesCount: DEMO_MOVES.length, finishedAt: new Date("2026-11-23T10:00:00Z"), chapters: DEMO_CONCLUSION, moves: DEMO_MOVES, assetsDir, demo: true });
     expect(report.subarray(0, 5).toString()).toBe("%PDF-");
     expect(lila.subarray(0, 5).toString()).toBe("%PDF-");
     // Явный локальный экспорт после правок контента; обычный запуск не изменяет файлы.
