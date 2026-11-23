@@ -31,6 +31,19 @@ describe("generateGuideText", () => {
     expect(await generateGuideText(null, input)).toBeNull();
   });
 
+  test("after a rejection the next prompt carries the hint", async () => {
+    let attempt = 0;
+    const fake = writer(async () => {
+      attempt += 1;
+      return attempt === 1 ? `${GUIDE} Вы не достойны большего.` : GUIDE;
+    });
+    expect(await generateGuideText(fake, input)).toBe(GUIDE);
+    expect(fake.calls).toHaveLength(2);
+    expect(fake.calls[0]?.system).not.toContain("Прошлый ответ отклонён");
+    expect(fake.calls[1]?.system).toContain("Прошлый ответ отклонён");
+    expect(fake.calls[1]!.system.indexOf("350–550")).toBeLessThan(fake.calls[1]!.system.indexOf("Прошлый ответ отклонён"));
+  });
+
   test("returns a valid paragraph", async () => {
     const fake = writer(async () => GUIDE);
     expect(await generateGuideText(fake, input)).toBe(GUIDE);

@@ -87,6 +87,15 @@ describe("buildNatalPrompt", () => {
     expect(system).toContain("Не начинай предложения со слова «Важно»");
   });
 
+  test("the depth chapter is told that the sign is shared by a generation, and the missing phrase is added instead of rejected", () => {
+    expect(buildNatalPrompt(inputOf("depth")).system).toContain("общий для поколения");
+    expect(buildNatalPrompt(inputOf("core")).system).not.toContain("Это глава об Уране");
+    const added = validateNatalChapter(inputOf("depth"), prose());
+    expect(added.ok && added.chapter.paragraphs?.[0]).toContain("общий для поколения");
+    const already = validateNatalChapter(inputOf("depth"), `${prose(3)}\n\nЗнак Плутона общий для поколения, дом задаёт личное звучание.`);
+    expect(already.ok && already.chapter.paragraphs?.join(" ").match(/общий для поколения/g)).toHaveLength(1);
+  });
+
   test("the aspects chapter gets its own wider format and the order to cover every aspect", () => {
     const aspects = buildNatalPrompt(inputOf("aspects")).system;
     expect(aspects).toContain(`${NATAL_ASPECTS_LIMITS.minParagraphs}–${NATAL_ASPECTS_LIMITS.maxParagraphs} абзацев`);
@@ -135,6 +144,8 @@ describe("validateNatalChapter", () => {
     const withWork = JSON.stringify({ ...JSON.parse(SCENARIO), pattern: "Вы можете преуспеть в профессиях, связанных с заботой о людях." });
     expect(validateNatalChapter(inputOf("scenario"), withWork)).toEqual({ ok: false, reason: "occupation" });
     expect(validateNatalChapter(inputOf("scenario"), JSON.stringify({ ...JSON.parse(SCENARIO), tension: "Это заметно в вашей работе." }))).toEqual({ ok: false, reason: "occupation" });
+    expect(validateNatalChapter(inputOf("scenario"), JSON.stringify({ ...JSON.parse(SCENARIO), pattern: "Вас привлекает работа, связанная с анализом и управлением финансами." }))).toEqual({ ok: false, reason: "occupation" });
+    expect(validateNatalChapter(inputOf("scenario"), JSON.stringify({ ...JSON.parse(SCENARIO), experiment: "Семь дней подряд выполняйте одно простое действие." }))).toEqual({ ok: false, reason: "vague" });
     expect(validateNatalChapter(inputOf("work"), `${prose(3)}
 
 Карьера и профессиональный путь связаны с десятым домом.`).ok).toBe(true);
@@ -160,7 +171,10 @@ describe("validateNatalChapter", () => {
   test("rejects «Важно…» sentences from two on and three paragraphs that start with «Однако»", () => {
     expect(validateNatalChapter(core, `${prose(3)}
 
-Важно помнить о границах.`).ok).toBe(true);
+Важно присмотреться к этому положению.`).ok).toBe(true);
+    expect(validateNatalChapter(core, `${prose(3)}
+
+Однако важно помнить о границах.`)).toEqual({ ok: false, reason: "filler" });
     expect(validateNatalChapter(core, `${prose(3)}
 
 Важно помнить о границах. Важно осознавать усталость.`)).toEqual({ ok: false, reason: "filler" });

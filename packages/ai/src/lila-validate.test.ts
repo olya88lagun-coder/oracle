@@ -60,4 +60,14 @@ ${body}`;
   test("the guide paragraph gets the same check", () => {
     expect(validateGuideText(`${SENTENCE.repeat(3)} Стоит заметить, это важно. Таким образом, вывод ясен.`)).toEqual({ ok: false, reason: "filler" });
   });
+  test("a claim that the player is unworthy is rejected", () => {
+    expect(validateConclusionChapter(chapter("Это глубинное убеждение, что вы не достойны большего."))).toEqual({ ok: false, reason: "overreach" });
+    expect(validateGuideText(`${SENTENCE.repeat(3)} Вы недостойны большего дохода.`)).toEqual({ ok: false, reason: "overreach" });
+  });
+  test("drops a closing recap the way the natal report does", () => {
+    const recap = "Таким образом, эти ходы складываются в один вывод и ничего нового не добавляют.";
+    const result = validateConclusionChapter(`${body}\n\n${body}\n\n${recap}`);
+    expect(result.ok && result.paragraphs).toHaveLength(2);
+    expect(result.ok && result.paragraphs?.join(" ")).not.toContain("Таким образом");
+  });
 });

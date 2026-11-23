@@ -14,6 +14,8 @@ const FILLER_LIMIT = 1;
 const SENTENCE_START = (word: string) => new RegExp(String.raw`(?:^|[.!?…]\s+|\n)${word}(?![а-яё])`, "gi");
 const IMPORTANT_OPENERS = SENTENCE_START("важно");
 const HOWEVER_OPENERS = SENTENCE_START("однако");
+// «Однако важно помнить…» не начинается со слова «Важно», поэтому отдельная проверка на саму формулу
+const IMPORTANT_FORMULA = /(?<![а-яё])важно\s+(?:помнить|осознавать|отметить|понимать)(?![а-яё])/i;
 const IMPORTANT_LIMIT = 1;
 const HOWEVER_LIMIT = 2;
 // Последний абзац, который пересказывает главу («Вместе эти элементы создают образ…», «Таким образом…», «В целом…»): читателю он ничего не добавляет
@@ -36,8 +38,19 @@ const GENDERED = [
   /(?<![а-яё])вы\s+(не\s+)?[а-яё]{2,}(ла|л)(?![а-яё])/i,
 ];
 
-// В итоговом сценарии профессии и работа — утверждения о жизни человека, которых в тексте быть не должно: «преуспеете в профессиях, связанных с…», «ваша работа…»
-const OCCUPATION = /(?<![а-яё])(професси[а-яё]*|карьер[а-яё]*|ваш[а-яё]*\s+работ[а-яё]*)(?![а-яё])/i;
+// В итоговом сценарии профессии и работа — утверждения о жизни человека, которых в тексте быть не должно: «преуспеете в профессиях, связанных с…», «ваша работа…», «работа, связанная с…»
+const OCCUPATION = /(?<![а-яё])(?:професси[а-яё]*|карьер[а-яё]*|ваш[а-яё]*\s+работ[а-яё]*|работ[а-яё]*\s*,?\s*связанн[а-яё]*)(?![а-яё])/i;
+// «Выполняйте одно простое действие» и «одно небольшое действие» не говорят, что делать
+const VAGUE_EXPERIMENT = /одно\s+(?:простое|небольшое)\s+действие|выполняйте\s+одно/i;
+const GENERATION_NOTE = "Знак Урана, Нептуна и Плутона общий для поколения, а личное звучание задают дом и аспекты.";
+const HAS_GENERATION_NOTE = /общий\s+для\s+поколен/i;
+
+// Глава 7 часто читает Плутон как личную историю. Если оговорки про поколение нет, она добавляется, а не отклоняет главу
+function withGenerationNote(paragraphs: string[]): string[] {
+  if (HAS_GENERATION_NOTE.test(paragraphs.join("\n"))) return paragraphs;
+  const [first, ...rest] = paragraphs;
+  return first ? [`${first} ${GENERATION_NOTE}`, ...rest] : paragraphs;
+}
 
 export type NatalValidation = { ok: true; chapter: NatalChapter } | { ok: false; reason: ValidationFailure };
 
@@ -54,14 +67,16 @@ export function validateNatalChapter(input: NatalChapterInput, raw: string): Nat
     const limits = natalProseLimits(input.chapter);
     const read = readProse(raw, limits);
     if (!read.ok) return read;
-    chapter = { id: input.chapter, source: "ai", paragraphs: dropRecap(read.paragraphs, limits) };
+    const paragraphs = input.chapter === "depth" ? withGenerationNote(dropRecap(read.paragraphs, limits)) : dropRecap(read.paragraphs, limits);
+    chapter = { id: input.chapter, source: "ai", paragraphs };
   }
   const text = [...(chapter.paragraphs ?? []), ...Object.values(chapter.scenario ?? {})].join("\n");
   if (findStopPhrases(text).length > 0) return { ok: false, reason: "stop_words" };
   if (input.chapter === "scenario" && OCCUPATION.test(text)) return { ok: false, reason: "occupation" };
+  if (input.chapter === "scenario" && chapter.scenario && VAGUE_EXPERIMENT.test(chapter.scenario.experiment)) return { ok: false, reason: "vague" };
   if (MISSING_DATA.test(text)) return { ok: false, reason: "missing_data" };
   if (GENDERED.some((pattern) => pattern.test(text))) return { ok: false, reason: "gendered" };
   if ((text.match(FILLER) ?? []).length > FILLER_LIMIT) return { ok: false, reason: "filler" };
-  if ((text.match(IMPORTANT_OPENERS) ?? []).length > IMPORTANT_LIMIT || (text.match(HOWEVER_OPENERS) ?? []).length > HOWEVER_LIMIT) return { ok: false, reason: "filler" };
+  if (IMPORTANT_FORMULA.test(text) || (text.match(IMPORTANT_OPENERS) ?? []).length > IMPORTANT_LIMIT || (text.match(HOWEVER_OPENERS) ?? []).length > HOWEVER_LIMIT) return { ok: false, reason: "filler" };
   return { ok: true, chapter };
 }

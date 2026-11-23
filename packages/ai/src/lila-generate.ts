@@ -3,7 +3,7 @@ import { completeWithTimeout, TimeoutError, type GenerateOptions } from "./gener
 import { fallbackConclusionChapter, type GeneratedConclusionChapter } from "./lila-fallback";
 import { type buildConclusionInputs, type ConclusionInput, type GuideInput } from "./lila-input";
 import { buildConclusionPrompt, buildGuidePrompt } from "./lila-prompt";
-import { validateConclusionChapter, validateGuideText } from "./lila-validate";
+import { lilaRetryHint, validateConclusionChapter, validateGuideText, type LilaValidationFailure } from "./lila-validate";
 import type { ReportWriter } from "./writer";
 
 const GUIDE_TIMEOUT_MS = 25_000;
@@ -13,15 +13,18 @@ const CONCLUSION_ATTEMPTS = 3;
 
 export async function generateGuideText(writer: ReportWriter | null, input: GuideInput, options: GenerateOptions = {}): Promise<string | null> {
   if (!writer) return null;
-  const prompt = buildGuidePrompt(input);
   const attempts = options.attempts ?? GUIDE_ATTEMPTS;
+  let failure: LilaValidationFailure | undefined;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const prompt = buildGuidePrompt(input, failure ? lilaRetryHint(failure) : undefined);
+    failure = undefined;
     let reason: string;
     try {
       const raw = await completeWithTimeout(writer, prompt, options.timeoutMs ?? GUIDE_TIMEOUT_MS);
       const checked = validateGuideText(raw);
       if (checked.ok) return checked.text;
       reason = checked.reason;
+      failure = checked.reason;
     } catch (error) {
       reason = error instanceof TimeoutError ? "timeout" : `error: ${String(error)}`;
     }
@@ -33,15 +36,18 @@ export async function generateGuideText(writer: ReportWriter | null, input: Guid
 
 async function generateChapter(writer: ReportWriter | null, input: ConclusionInput, options: GenerateOptions): Promise<GeneratedConclusionChapter> {
   if (!writer) return fallbackConclusionChapter(input);
-  const prompt = buildConclusionPrompt(input);
   const attempts = options.attempts ?? CONCLUSION_ATTEMPTS;
+  let failure: LilaValidationFailure | undefined;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const prompt = buildConclusionPrompt(input, failure ? lilaRetryHint(failure) : undefined);
+    failure = undefined;
     let reason: string;
     try {
       const raw = await completeWithTimeout(writer, prompt, options.timeoutMs ?? CONCLUSION_TIMEOUT_MS);
       const checked = validateConclusionChapter(raw);
       if (checked.ok) return { id: input.chapter, source: "ai", paragraphs: checked.paragraphs };
       reason = checked.reason;
+      failure = checked.reason;
     } catch (error) {
       reason = error instanceof TimeoutError ? "timeout" : `error: ${String(error)}`;
     }

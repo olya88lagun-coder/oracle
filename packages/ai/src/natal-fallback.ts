@@ -73,7 +73,7 @@ function scenario(chart: NatalChart): Record<ScenarioField, string> {
     resource: first(ascText?.manifestation),
     blindSpot: first(sunText?.pitfalls),
     turningPoint: first(ascText?.pitfalls),
-    experiment: `Семь дней подряд — одно небольшое действие. Перед ним задайте себе вопрос: ${first(moonText?.questions, 1)}`.trim(),
+    experiment: `Каждый вечер в 21:00, за столом, запишите одну строку ответа на вопрос: ${first(moonText?.questions, 1)}`.trim(),
     question: first(sunText?.questions),
   };
 }
