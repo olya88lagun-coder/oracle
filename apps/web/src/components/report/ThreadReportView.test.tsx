@@ -29,6 +29,11 @@ describe("ThreadReportView", () => {
     }
   });
 
+  test("a bought report links to its PDF, the example links to the sample file", () => {
+    expect(renderToStaticMarkup(<ThreadReportView chapters={chapters} birthDate="1990-07-15" purchaseId="abc" />)).toContain('href="/api/reports/abc/pdf"');
+    expect(html).toContain('href="/examples/thread.pdf"');
+  });
+
   test("shows the thread picture", () => {
     expect(html).toContain("thread-chart");
   });

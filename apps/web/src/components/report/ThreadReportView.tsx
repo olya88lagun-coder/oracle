@@ -17,11 +17,9 @@ export function ThreadReportView({ chapters, birthDate, today, purchaseId }: { p
     <article className="report thread-report stack">
       <header className="stack">
         <h1 className="display">{THREAD_REPORT_TITLE}</h1>
-        {purchaseId && (
-          <p>
-            <ReportPdfLink purchaseId={purchaseId} />
-          </p>
-        )}
+        <p>
+          {purchaseId ? <ReportPdfLink purchaseId={purchaseId} /> : <a className="button button--ghost report-pdf" href="/examples/thread.pdf" download>Скачать пример PDF</a>}
+        </p>
         {thread && <ThreadChart thread={thread} initialMode="all" />}
         {ordered.length > 0 && (
           <nav className="card report-contents thread-report__contents" aria-labelledby="thread-report-contents">
