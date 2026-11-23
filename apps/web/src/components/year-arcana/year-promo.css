@@ -1,0 +1,18 @@
+/* The annual arcana banner has its own artwork; shared .home-year layout also serves the thread. */
+.home-year--arcana {
+  background-color: var(--surface);
+  background-image:
+    linear-gradient(90deg, var(--scrim) 0%, color-mix(in srgb, var(--scrim) 85%, transparent) 48%, color-mix(in srgb, var(--scrim) 15%, transparent) 78%),
+    image-set(url("/images/home/year-2027-960.webp") 1x, url("/images/home/year-2027-1920.webp") 2x);
+  background-position: center, right center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+@media (max-width: 759px) {
+  .home-year--arcana {
+    background-image:
+      linear-gradient(90deg, var(--scrim) 0%, color-mix(in srgb, var(--scrim) 90%, transparent) 52%, color-mix(in srgb, var(--scrim) 75%, transparent) 100%),
+      image-set(url("/images/home/year-2027-960.webp") 1x, url("/images/home/year-2027-1920.webp") 2x);
+  }
+}
