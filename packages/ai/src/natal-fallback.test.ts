@@ -38,7 +38,7 @@ describe("fallbackNatalReport", () => {
 
   test("the aspects chapter lists exact aspects with the orb and the kind of aspect", () => {
     const aspects = text("aspects");
-    expect(aspects).toMatch(/ — .* — .* \(орбис \d+,\d°\)\./);
+    expect(aspects).toMatch(/в [А-Яа-яЁё]+, \d+ дом — .* — .*в [А-Яа-яЁё]+.*\(орбис \d+,\d°\)\./);
     expect(Object.values(ASPECT_TEXTS).some((description) => aspects.includes(description))).toBe(true);
   });
 

@@ -87,6 +87,15 @@ describe("validateChapter", () => {
     expect(validateChapter(core, raw)).toEqual({ ok: false, reason });
   });
 
+  test("rejects a scenario experiment without a time and a place, and a chapter that copies the source", () => {
+    const vague = { ...JSON.parse(SCENARIO_ANSWER), experiment: "Семь дней подряд записывать одно чувство за день." };
+    expect(validateChapter(scenario, JSON.stringify(vague))).toEqual({ ok: false, reason: "vague" });
+    const source = core.arcana.flatMap((arcanum) => Object.values(arcanum.blocks).flat()).find((line) => line.split(" ").length > 12);
+    expect(source).toBeTruthy();
+    const copied = [source!, "б".repeat(400), "в".repeat(400)].join("\n\n");
+    expect(validateChapter(core, copied)).toEqual({ ok: false, reason: "repeat" });
+  });
+
   test("accepts the seven scenario fields", () => {
     const result = validateChapter(scenario, SCENARIO_ANSWER);
 

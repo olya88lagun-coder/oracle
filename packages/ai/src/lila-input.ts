@@ -45,10 +45,14 @@ export function buildGuideInput(p: { intention: string; moves: readonly GuideMov
   };
 }
 
+export type LilaVisitedMove = { n: number; cell: string; from: string | null; passage: "змея" | "стрела" | null; note: string | null };
+
 export type ConclusionInput = {
   chapter: LilaConclusionChapterId;
   intention: string;
   facts: { moves: number; waits: number; snakes: number; arrows: number; openedCells: number; reachedGoal: boolean; stoppedAt: string | null };
+  // Клетки в порядке ходов: без этого итог видит только числа и не может назвать путь
+  visited: LilaVisitedMove[];
   repeated: { cell: string; visits: number; about: string; question: string }[];
   notes: { n: number; cell: string; text: string }[];
   earlier: string[];
@@ -71,6 +75,13 @@ export function buildConclusionInputs(p: { intention: string; moves: readonly Gu
       const cell = p.cellOf(item.cell);
       return { cell: cell.name, visits: item.visits, about: cell.about, question: cell.questions[0] };
     }),
+    visited: p.moves.filter((move) => !wasted(move)).map((move) => ({
+      n: move.n,
+      cell: p.cellOf(move.to).name,
+      from: move.transition === "none" ? null : p.cellOf(move.landed).name,
+      passage: passage(move.transition),
+      note: clip(move.note),
+    })),
     notes: p.moves
       .filter((move) => move.note)
       .slice(-RECENT_NOTES)

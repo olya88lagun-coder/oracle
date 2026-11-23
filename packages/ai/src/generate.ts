@@ -2,7 +2,7 @@ import type { Matrix } from "@oracle/core";
 import { fallbackChapter } from "./fallback";
 import { buildChapterInputs, buildScenarioInput, type ChapterInput } from "./input";
 import { buildPrompt } from "./prompt";
-import { describeAnswer, validateChapter } from "./validate";
+import { describeAnswer, validateChapter, type ValidationFailure } from "./validate";
 import type { GeneratedChapter, Prompt, ReportWriter } from "./writer";
 
 export type GenerateLog = (message: string, extra: Record<string, unknown>) => void;
@@ -34,9 +34,11 @@ export async function completeWithTimeout(writer: ReportWriter, prompt: Prompt, 
 
 export async function generateChapter(writer: ReportWriter | null, input: ChapterInput, options: GenerateOptions = {}): Promise<GeneratedChapter> {
   if (!writer) return fallbackChapter(input);
-  const prompt = buildPrompt(input);
   const attempts = options.attempts ?? GENERATION_ATTEMPTS;
+  let failure: ValidationFailure | undefined;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const prompt = buildPrompt(input, failure);
+    failure = undefined;
     let reason: string;
     let facts: Record<string, unknown> = {};
     try {
@@ -44,6 +46,7 @@ export async function generateChapter(writer: ReportWriter | null, input: Chapte
       const checked = validateChapter(input, raw);
       if (checked.ok) return checked.chapter;
       reason = checked.reason;
+      failure = checked.reason;
       facts = describeAnswer(raw);
     } catch (error) {
       reason = error instanceof TimeoutError ? "timeout" : `error: ${String(error)}`;

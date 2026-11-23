@@ -52,9 +52,9 @@ describe("сборщик глав разбора нити (15.07.1990, сего�
     expect(blocks[0]?.heading).toBeUndefined();
     expect(blocks[1]?.heading).toBe("2026 · год 5 · перемены");
     const year = textOf([blocks[1] ?? { paragraphs: [] }]);
-    expect(year).toContain("thread-5 · Тема года · 2");
-    expect(year).toContain("thread-5 · На что опереться · 2");
-    expect(year).not.toContain("Где осторожнее");
+    expect(year).toContain("бесплатный расчёт уже показывает");
+    expect(year).not.toContain("Тема года");
+    expect(year).not.toContain("На что опереться");
     const months = blocks.slice(2);
     expect(months[0]?.heading).toBe("15 июля — 14 августа");
     expect(months[11]?.heading).toBe("15 июня — 14 июля");
@@ -77,7 +77,7 @@ describe("сборщик глав разбора нити (15.07.1990, сего�
     const { blocks } = chapterOf("1990-07-15", "years");
     expect(blocks.map((b) => b.heading?.slice(0, 4))).toEqual(["2027", "2028", "2029", "2030", "2031", "2032", "2033"]);
     expect(blocks[0]?.heading).toBe("2027 · год 6 · забота");
-    expect(blocks[0]?.paragraphs).toEqual(["thread-6 · Тема года · 1", "thread-6 · Где осторожнее · 1"]);
+    expect(blocks[0]?.paragraphs).toEqual(["thread-6 · Где осторожнее · 1", "thread-6 · Где осторожнее · 2"]);
   });
 
   test("past: четыре прошлых года с вопросами из past", () => {
@@ -95,8 +95,9 @@ describe("сборщик глав разбора нити (15.07.1990, сего�
     const has = (i: number) => blocks[i]?.paragraphs.join("\n").includes("Как пройти границу");
     expect([has(0), has(1), has(2), has(3)]).toEqual([false, true, true, false]);
     expect(blocks[0]?.paragraphs).toHaveLength(2);
-    expect(blocks[0]?.paragraphs[0]).toMatch(/^period-\d · Сила периода · 1$/);
-    expect(blocks[0]?.paragraphs[1]).toMatch(/^period-\d · Трудность периода · 1$/);
+    expect(blocks[0]?.paragraphs[0]).toMatch(/^period-\d · Трудность периода · 1$/);
+    expect(blocks[0]?.paragraphs[1]).toMatch(/^period-\d · Трудность периода · 2$/);
+    expect(textOf(blocks)).not.toContain("Сила периода");
   });
 
   test("rhythm: прошлая и ближайшая вершина, срок, длина цикла", () => {
@@ -105,6 +106,8 @@ describe("сборщик глав разбора нити (15.07.1990, сего�
     expect(text).toContain("2029");
     expect(text).toContain("три года");
     expect(text).toContain("девять лет");
+    expect(text).toContain("Годы от 2020 до 2029");
+    expect(text).toContain("2026 — год 5");
   });
 
   test("rules: три пункта правил года 5 и вопрос", () => {

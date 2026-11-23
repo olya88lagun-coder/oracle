@@ -5,7 +5,7 @@ import { PROSE_LIMITS, SCENARIO_FIELD_MAX_CHARS } from "./prompt";
 import type { GeneratedChapter } from "./writer";
 
 export type ProseLimits = { minParagraphs: number; maxParagraphs: number; minChars: number; maxChars: number };
-export type ValidationFailure = "not_json" | "schema" | "length" | "stop_words" | "missing_data" | "gendered" | "filler" | "occupation" | "vague";
+export type ValidationFailure = "not_json" | "schema" | "length" | "stop_words" | "missing_data" | "gendered" | "filler" | "occupation" | "vague" | "repeat";
 export type Validation = { ok: true; chapter: GeneratedChapter } | { ok: false; reason: ValidationFailure };
 
 // Модель часто пишет абзацы с настоящими переводами строки внутри строк JSON; для JSON.parse это ошибка
@@ -122,5 +122,36 @@ export function validateChapter(input: ChapterInput, raw: string): Validation {
     "scenario" in read ? { id: input.chapter, source: "ai", scenario: read.scenario } : { id: input.chapter, source: "ai", paragraphs: read.paragraphs };
   const text = [...(chapter.paragraphs ?? []), ...Object.values(chapter.scenario ?? {})].join("\n");
   if (findStopPhrases(text).length > 0) return { ok: false, reason: "stop_words" };
+  if ((text.match(FILLER) ?? []).length > 0 || IMPORTANT_FORMULA.test(text)) return { ok: false, reason: "filler" };
+  if (input.chapter === "scenario" && chapter.scenario && !concreteExperiment(chapter.scenario.experiment)) return { ok: false, reason: "vague" };
+  const sources = input.arcana.flatMap((arcanum) => Object.values(arcanum.blocks).flat());
+  if (input.chapter !== "scenario" && repeatsSource(sources, text)) return { ok: false, reason: "repeat" };
   return { ok: true, chapter };
+}
+
+const FILLER = /(?<![а-яё])(стоит|следует|важно|интересно|необходимо)\s+(заметить|отметить)(?![а-яё])|(?<![а-яё])таким\s+образом(?![а-яё])/i;
+const IMPORTANT_FORMULA = /(?<![а-яё])важно\s+(?:помнить|осознавать|отметить|понимать|замечать)(?![а-яё])/i;
+const EXPERIMENT_TIME = /\d{1,2}[:.]\d{2}|утр|вечер|перед сном/;
+const EXPERIMENT_PLACE = /стол|кроват|кухн|дорог|душ|прогул|окн|блокнот|тетрад|телефон|кресл|комнат/;
+const VAGUE_EXPERIMENT = /одно\s+(?:простое|небольшое)\s+действие|выполняйте\s+одно|семь\s+дней\s+подряд\s+—\s+одно/i;
+
+export function concreteExperiment(text: string): boolean {
+  return EXPERIMENT_TIME.test(text) && EXPERIMENT_PLACE.test(text) && !VAGUE_EXPERIMENT.test(text);
+}
+
+function normWords(text: string): string[] {
+  return text.toLowerCase().replace(/[^a-zа-яё0-9]+/gi, " ").split(" ").filter((word) => word.length > 3);
+}
+
+// Восемь подряд идущих слов из готового текста: глава пересказывает бесплатную страницу, а не собирает свой вывод
+export function repeatsSource(sources: readonly string[], answer: string): boolean {
+  const haystack = ` ${normWords(answer).join(" ")} `;
+  for (const source of sources) {
+    const words = normWords(source);
+    for (let index = 0; index + 8 <= words.length; index += 1) {
+      const slice = words.slice(index, index + 8).join(" ");
+      if (slice.length >= 40 && haystack.includes(` ${slice} `)) return true;
+    }
+  }
+  return false;
 }

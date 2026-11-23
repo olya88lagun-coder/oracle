@@ -5,8 +5,8 @@ import { buildConclusionInputs, type GuideInput } from "./lila-input";
 import type { Prompt, ReportWriter } from "./writer";
 
 const SENTENCE = "На этой клетке может проявляться тема, которая связана с вашим вопросом о работе и решении. ";
-const GUIDE = SENTENCE.repeat(3).trim();
-const CHAPTER = `${SENTENCE.repeat(4).trim()}\n\n${SENTENCE.repeat(4).trim()}`;
+const GUIDE = `На клетке Рождение ${SENTENCE.repeat(3)}`.trim();
+const CHAPTER = `Клетка 1 остаётся в поле зрения. ${SENTENCE.repeat(4).trim()}\n\nКаждый вечер в 21:00, за столом, запишите одну строку. ${SENTENCE.repeat(3).trim()}`;
 
 const input: GuideInput = {
   intention: "Что мне важно?",
@@ -82,7 +82,7 @@ describe("generateConclusion", () => {
     const last = JSON.parse(fake.calls.at(-1)!.user);
     expect(last.chapter).toBe("outcome");
     expect(last.earlier).toHaveLength(3);
-    expect(last.earlier[0]).toBe(SENTENCE.repeat(4).trim());
+    expect(last.earlier[0]).toContain("Клетка 1");
   });
 
   test("falls back chapter by chapter when the model fails, and entirely without a writer", async () => {

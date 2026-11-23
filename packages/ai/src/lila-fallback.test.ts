@@ -8,6 +8,7 @@ const base = (chapter: ConclusionInput["chapter"], extra: Partial<ConclusionInpu
   chapter,
   intention: "Что мне важно?",
   facts: { moves: 12, waits: 2, snakes: 3, arrows: 1, openedCells: 9, reachedGoal: false, stoppedAt: "Зависть" },
+  visited: [],
   repeated: [],
   notes: [],
   earlier: [],
@@ -27,6 +28,9 @@ describe("fallbackConclusionChapter", () => {
     expect(text).toContain("12 ходов");
     expect(text).toContain("змей: 3");
     expect(text).toContain("«Зависть»");
+    const withRoute = base("path", { visited: [{ n: 1, cell: "Рождение", from: null, passage: null, note: null }, { n: 2, cell: "Зависть", from: "Гнев", passage: "змея", note: null }] });
+    expect(fallbackConclusionChapter(withRoute).paragraphs.join(" ")).toContain("1. «Рождение»");
+    expect(fallbackConclusionChapter(withRoute).paragraphs.join(" ")).toContain("2. «Зависть» (змея, с «Гнев»)");
     const reached = base("path", { facts: { moves: 21, waits: 0, snakes: 0, arrows: 0, openedCells: 21, reachedGoal: true, stoppedAt: null } });
     expect(fallbackConclusionChapter(reached).paragraphs.join(" ")).toContain("дошли до клетки 68");
   });

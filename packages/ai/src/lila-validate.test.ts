@@ -63,6 +63,10 @@ ${body}`;
   test("a claim that the player is unworthy is rejected", () => {
     expect(validateConclusionChapter(chapter("Это глубинное убеждение, что вы не достойны большего."))).toEqual({ ok: false, reason: "overreach" });
     expect(validateGuideText(`${SENTENCE.repeat(3)} Вы недостойны большего дохода.`)).toEqual({ ok: false, reason: "overreach" });
+    const named = `На клетке Рождение может проявляться тема, которая связана с вашим вопросом о работе и решении. ${SENTENCE.repeat(2)}`.trim();
+    expect(validateGuideText(named, { cell: "Рождение", note: null }).ok).toBe(true);
+    expect(validateGuideText(SENTENCE.repeat(3), { cell: "Рождение", note: null })).toEqual({ ok: false, reason: "missing_cell" });
+    expect(validateGuideText(`${named} Как вы обычно справляетесь с чувством одиночества?`, { cell: "Рождение", note: null })).toEqual({ ok: false, reason: "overreach" });
   });
   test("drops a closing recap the way the natal report does", () => {
     const recap = "Таким образом, эти ходы складываются в один вывод и ничего нового не добавляют.";

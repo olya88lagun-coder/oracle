@@ -35,6 +35,11 @@ describe("buildConclusionInputs", () => {
     expect(base.path.facts).toMatchObject({ moves: 3, snakes: 2, reachedGoal: false });
     expect(base.repeats.repeated[0]).toMatchObject({ cell: "Клетка 8", visits: 2 });
     expect(base.noticed.notes).toEqual([{ n: 2, cell: "Клетка 8", text: "Первая запись" }]);
+    expect(base.path.visited.map((move) => [move.n, move.cell, move.passage, move.from])).toEqual([
+      [1, "Клетка 1", null, null],
+      [2, "Клетка 8", "змея", "Клетка 12"],
+      [3, "Клетка 8", "змея", "Клетка 12"],
+    ]);
   });
 
   test("keeps at most twenty notes, the most recent ones", () => {

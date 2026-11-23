@@ -35,7 +35,7 @@ function scenario(input: ChapterInput): GeneratedChapter {
       resource: `На что можно опереться: ${resource.join(", ")}.`,
       blindSpot: `Легко не замечать, как перекос становится нормой. Например: «${distortion[1] ?? distortion[0] ?? ""}».`,
       turningPoint: `Точка изменения — заметить момент, когда появляется «${distortion[0] ?? ""}», и сделать один шаг к опоре: «${resource[0] ?? ""}».`,
-      experiment: `Семь дней подряд — одно небольшое действие. ${block(center, SECTION_TITLES.action)[0] ?? ""}`.trim(),
+      experiment: `Каждый вечер в 21:00, за столом, запишите одну строку: ${(block(center, SECTION_TITLES.action)[0] ?? "что сегодня получилось сделать иначе").slice(0, 240)}`,
       question: block(center, SECTION_TITLES.question)[0] ?? "Что для вас сейчас важнее всего?",
     },
   };

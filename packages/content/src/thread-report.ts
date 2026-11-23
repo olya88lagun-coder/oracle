@@ -5,6 +5,7 @@ import {
   THREAD_MONTH_AGAIN,
   THREAD_MONTHS_GENITIVE,
   THREAD_NOW_INTRO,
+  THREAD_NOW_YEAR,
   THREAD_PAST_INTRO,
   THREAD_PAST_INTRO_SHORT,
   THREAD_PERIOD_POSITIONS,
@@ -43,7 +44,6 @@ function section(text: NumerologyText, title: string): NumerologySection {
 }
 
 const paragraphsOf = (text: NumerologyText, title: string): string[] => [...section(text, title).paragraphs];
-const firstOf = (text: NumerologyText, title: string): string[] => paragraphsOf(text, title).slice(0, 1);
 // Пункты списка важнее абзацев: в «Вопросах себе» и «Трёх правилах» суть лежит в них
 const itemsOf = (text: NumerologyText, title: string): string[] => {
   const s = section(text, title);
@@ -70,7 +70,7 @@ export function buildThreadReport(thread: LifeThread, read: ThreadTextReader): T
   const yearText = need(read, "thread", String(current.value));
   const now: ThreadBlock[] = [
     { paragraphs: [THREAD_NOW_INTRO(current.value, dayYear(current.start), dayYear(current.end))] },
-    { heading: yearHeading(current), paragraphs: [...paragraphsOf(yearText, "Тема года"), ...paragraphsOf(yearText, "На что опереться")] },
+    { heading: yearHeading(current), paragraphs: [THREAD_NOW_YEAR(current.value)] },
     ...monthBlocks(thread, current, read),
   ];
 
@@ -79,7 +79,7 @@ export function buildThreadReport(thread: LifeThread, read: ThreadTextReader): T
     const y = year(n);
     if (!y) continue;
     const text = need(read, "thread", String(y.value));
-    years.push({ heading: yearHeading(y), paragraphs: [...firstOf(text, "Тема года"), ...firstOf(text, "Где осторожнее")] });
+    years.push({ heading: yearHeading(y), paragraphs: [...paragraphsOf(text, "Где осторожнее")] });
   }
 
   const pastBlocks: ThreadBlock[] = [];
@@ -96,7 +96,7 @@ export function buildThreadReport(thread: LifeThread, read: ThreadTextReader): T
     const border = currentPeriod !== undefined && (p.index === currentPeriod.index || p.index === currentPeriod.index + 1);
     return {
       heading: `${THREAD_PERIOD_ROMAN[p.index]} период · ${THREAD_PERIOD_POSITIONS[p.index]} · ${p.toYear === null ? `с ${p.fromYear}` : `${p.fromYear}–${p.toYear}`}`,
-      paragraphs: [...firstOf(text, "Сила периода"), ...firstOf(text, "Трудность периода"), ...(border ? paragraphsOf(text, "Как пройти границу") : [])],
+      paragraphs: [...paragraphsOf(text, "Трудность периода"), ...(border ? paragraphsOf(text, "Как пройти границу") : [])],
     };
   });
 
@@ -108,6 +108,12 @@ export function buildThreadReport(thread: LifeThread, read: ThreadTextReader): T
   if (current.value === PEAK) rhythm.push(THREAD_RHYTHM_NOW_PEAK);
   if (lastPeak) rhythm.push(THREAD_RHYTHM_PAST(lastPeak.year));
   if (nextPeak) rhythm.push(THREAD_RHYTHM_NEXT(nextPeak.year, nextPeak.year - current.year));
+  const fromYear = lastPeak?.year ?? current.year;
+  const toYear = nextPeak?.year ?? current.year;
+  const span = thread.years.filter((item) => item.year >= fromYear && item.year <= toYear);
+  if (span.length > 1) {
+    rhythm.push(`Годы от ${span[0]!.year} до ${span.at(-1)!.year}: ${span.map((item) => `${item.year} — год ${item.value}, «${THREAD_YEAR_NAMES[item.value] ?? ""}»`).join("; ")}.`);
+  }
   rhythm.push(THREAD_RHYTHM_CYCLE);
 
   const rulesText = need(read, "rules", String(current.value));

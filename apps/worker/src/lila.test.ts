@@ -15,8 +15,13 @@ import {
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { runConclusion, runGuideMove } from "./lila";
 
-const GUIDE = "На этой клетке может проявляться тема, которая связана с вашим вопросом о работе и решении. ".repeat(3).trim();
-const CHAPTER = `${"Глава о вашем пути и вашем намерении, которая связывает клетки и записи в одну картину. ".repeat(4).trim()}\n\n${"Вторая часть главы: что может повторяться и что с этим можно делать. ".repeat(4).trim()}`;
+const GUIDE = `На клетке Рождение ${"может проявляться тема, которая связана с вашим вопросом о работе и решении. ".repeat(3)} Это гипотеза.`.trim();
+const chapterFor = (prompt: Prompt): string => {
+  const input = JSON.parse(prompt.user) as { visited?: { cell: string }[] };
+  const names = [...new Set((input.visited ?? []).map((move) => move.cell))].join(", ");
+  const body = "Глава связывает клетки и записи в одну картину и не приписывает чужих чувств. ".repeat(6).trim();
+  return `${names}. ${body}\n\nКаждый вечер в 21:00, за столом, запишите одну строку о намерении. ${body}`;
+};
 
 let db: Database;
 let userId: string;
@@ -35,13 +40,13 @@ beforeEach(async () => {
   for (const roll of [3, 6, 3]) await addLilaMove(db, { gameId, userId, roll, customDie: false });
 });
 
-const writer = (answer: string): ReportWriter & { prompts: Prompt[] } => {
+const writer = (answer: string | ((prompt: Prompt) => string)): ReportWriter & { prompts: Prompt[] } => {
   const w = {
     name: "fake",
     prompts: [] as Prompt[],
     async complete(prompt: Prompt) {
       w.prompts.push(prompt);
-      return answer;
+      return typeof answer === "function" ? answer(prompt) : answer;
     },
   };
   return w;
@@ -96,7 +101,7 @@ describe("runConclusion", () => {
 
   test("writes four chapters from the model for a finished guided game, once", async () => {
     await finish();
-    await runConclusion({ gameId }, { db, writer: writer(CHAPTER), log: vi.fn() });
+    await runConclusion({ gameId }, { db, writer: writer(chapterFor), log: vi.fn() });
     const saved = await getLilaConclusion(db, gameId);
     expect(saved!.chapters.map((c) => [c.id, c.source])).toEqual([
       ["path", "ai"],
@@ -104,7 +109,7 @@ describe("runConclusion", () => {
       ["noticed", "ai"],
       ["outcome", "ai"],
     ]);
-    const second = writer(CHAPTER);
+    const second = writer(chapterFor);
     await runConclusion({ gameId }, { db, writer: second, log: vi.fn() });
     expect(second.prompts).toHaveLength(0);
   });

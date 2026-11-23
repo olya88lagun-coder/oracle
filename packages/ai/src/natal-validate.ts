@@ -2,7 +2,7 @@ import { findStopPhrases } from "@oracle/content";
 import type { NatalChapterInput } from "./natal-input";
 import { natalProseLimits } from "./natal-prompt";
 import type { NatalChapter } from "./natal-fallback";
-import { extractJson, readProse, readScenario, type ValidationFailure } from "./validate";
+import { concreteExperiment, extractJson, readProse, readScenario, type ValidationFailure } from "./validate";
 
 // Модель иногда пишет, что данных о доме нет («информация о положении планет в этом доме отсутствует»): читателю это не нужно
 const MISSING_DATA = /отсутству|нет\s+(данных|информации|сведений)|недостаточно\s+(данных|информации)|(данных|информации|сведений)[^.]{0,40}недостаточно|не\s+(указан|известн)/i;
@@ -15,7 +15,7 @@ const SENTENCE_START = (word: string) => new RegExp(String.raw`(?:^|[.!?…]\s+|
 const IMPORTANT_OPENERS = SENTENCE_START("важно");
 const HOWEVER_OPENERS = SENTENCE_START("однако");
 // «Однако важно помнить…» не начинается со слова «Важно», поэтому отдельная проверка на саму формулу
-const IMPORTANT_FORMULA = /(?<![а-яё])важно\s+(?:помнить|осознавать|отметить|понимать)(?![а-яё])/i;
+const IMPORTANT_FORMULA = /(?<![а-яё])важно\s+(?:помнить|осознавать|отметить|понимать|замечать)(?![а-яё])/i;
 const IMPORTANT_LIMIT = 1;
 const HOWEVER_LIMIT = 2;
 // Последний абзац, который пересказывает главу («Вместе эти элементы создают образ…», «Таким образом…», «В целом…»): читателю он ничего не добавляет
@@ -41,7 +41,6 @@ const GENDERED = [
 // В итоговом сценарии профессии и работа — утверждения о жизни человека, которых в тексте быть не должно: «преуспеете в профессиях, связанных с…», «ваша работа…», «работа, связанная с…»
 const OCCUPATION = /(?<![а-яё])(?:професси[а-яё]*|карьер[а-яё]*|ваш[а-яё]*\s+работ[а-яё]*|работ[а-яё]*\s*,?\s*связанн[а-яё]*)(?![а-яё])/i;
 // «Выполняйте одно простое действие» и «одно небольшое действие» не говорят, что делать
-const VAGUE_EXPERIMENT = /одно\s+(?:простое|небольшое)\s+действие|выполняйте\s+одно/i;
 const GENERATION_NOTE = "Знак Урана, Нептуна и Плутона общий для поколения, а личное звучание задают дом и аспекты.";
 const HAS_GENERATION_NOTE = /общий\s+для\s+поколен/i;
 
@@ -73,7 +72,7 @@ export function validateNatalChapter(input: NatalChapterInput, raw: string): Nat
   const text = [...(chapter.paragraphs ?? []), ...Object.values(chapter.scenario ?? {})].join("\n");
   if (findStopPhrases(text).length > 0) return { ok: false, reason: "stop_words" };
   if (input.chapter === "scenario" && OCCUPATION.test(text)) return { ok: false, reason: "occupation" };
-  if (input.chapter === "scenario" && chapter.scenario && VAGUE_EXPERIMENT.test(chapter.scenario.experiment)) return { ok: false, reason: "vague" };
+  if (input.chapter === "scenario" && chapter.scenario && !concreteExperiment(chapter.scenario.experiment)) return { ok: false, reason: "vague" };
   if (MISSING_DATA.test(text)) return { ok: false, reason: "missing_data" };
   if (GENDERED.some((pattern) => pattern.test(text))) return { ok: false, reason: "gendered" };
   if ((text.match(FILLER) ?? []).length > FILLER_LIMIT) return { ok: false, reason: "filler" };

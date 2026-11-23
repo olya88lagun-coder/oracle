@@ -13,6 +13,7 @@ const conclusion = (chapter: ConclusionInput["chapter"]): ConclusionInput => ({
   intention: "Что мне важно?",
   facts: { moves: 3, waits: 0, snakes: 1, arrows: 0, openedCells: 3, reachedGoal: false, stoppedAt: null },
   repeated: [],
+  visited: [],
   notes: [],
   earlier: [],
 });

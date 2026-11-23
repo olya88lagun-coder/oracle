@@ -21,7 +21,7 @@ export async function generateGuideText(writer: ReportWriter | null, input: Guid
     let reason: string;
     try {
       const raw = await completeWithTimeout(writer, prompt, options.timeoutMs ?? GUIDE_TIMEOUT_MS);
-      const checked = validateGuideText(raw);
+      const checked = validateGuideText(raw, { cell: input.current.cell, note: input.current.note });
       if (checked.ok) return checked.text;
       reason = checked.reason;
       failure = checked.reason;
@@ -44,7 +44,7 @@ async function generateChapter(writer: ReportWriter | null, input: ConclusionInp
     let reason: string;
     try {
       const raw = await completeWithTimeout(writer, prompt, options.timeoutMs ?? CONCLUSION_TIMEOUT_MS);
-      const checked = validateConclusionChapter(raw);
+      const checked = validateConclusionChapter(raw, { chapter: input.chapter, visited: input.visited });
       if (checked.ok) return { id: input.chapter, source: "ai", paragraphs: checked.paragraphs };
       reason = checked.reason;
       failure = checked.reason;

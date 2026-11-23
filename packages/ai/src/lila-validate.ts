@@ -1,11 +1,16 @@
 import { findStopPhrases } from "@oracle/content";
+import type { LilaConclusionChapterId } from "@oracle/core";
 import { CONCLUSION_LIMITS, GUIDE_LIMITS } from "./lila-prompt";
+import type { LilaVisitedMove } from "./lila-input";
 import { dropRecap } from "./natal-validate";
-import { MARKDOWN_START, splitParagraphs } from "./validate";
+import { concreteExperiment, MARKDOWN_START, splitParagraphs } from "./validate";
 
-export type LilaValidationFailure = "empty" | "format" | "length" | "stop_words" | "filler" | "overreach";
+export type LilaValidationFailure = "empty" | "format" | "length" | "stop_words" | "filler" | "overreach" | "missing_cell" | "vague";
+
+export type GuideCheck = { cell: string; note: string | null };
 
 const OVERREACH = /(?<![а-яё])(?:не\s*достой|недостой|глубинн[а-яё]+\s+убежд)/i;
+const INVENTED_FEELING = /вы\s+(?:обычно\s+|часто\s+)?(?:чувствуете|испытываете|боитесь|сталкиваетесь|исследовали)|справляетесь с чувством|страх(?:е|а)?\s+перед|желание\s+избежать/i;
 
 export const lilaRetryHint = (reason: LilaValidationFailure): string => ({
   empty: "Прошлый ответ отклонён: он был пустым. Верни текст.",
@@ -13,7 +18,9 @@ export const lilaRetryHint = (reason: LilaValidationFailure): string => ({
   length: "Прошлый ответ отклонён по объёму: выдержи число абзацев и знаков из формата.",
   stop_words: "Прошлый ответ отклонён: в нём были обороты-предсказания. Пиши только как гипотезы для размышления.",
   filler: "Прошлый ответ отклонён: в нём были слова-связки («стоит заметить», «таким образом») или рассуждение о том, что было бы при другом числе записей. Напиши сразу по фактам партии.",
-  overreach: "Прошлый ответ отклонён: в нём был вывод о достоинстве или самооценке («не достойны», «глубинное убеждение»). Не оценивай, чего человек достоин, и не приписывай ему чувства и поступки на клетках без записи.",
+  overreach: "Прошлый ответ отклонён: в нём был вывод о достоинстве или чувство, которого нет в записи («не достойны», «вы чувствуете», «страх перед»). Не оценивай достоинство и не приписывай переживания на клетках без записи.",
+  missing_cell: "Прошлый ответ отклонён: в нём не названа клетка. Первое предложение должно содержать имя клетки из входа.",
+  vague: "Прошлый ответ отклонён: шаг на 7 дней слишком общий. Назови время по часам, место и что именно сделать.",
 })[reason];
 
 // Слова-связки («стоит заметить», «таким образом»): один раз допустим, два и больше — штамп. Так же устроена проверка разбора натальной карты
@@ -25,7 +32,7 @@ const fillerFailure = (text: string): boolean => (text.match(FILLER) ?? []).leng
 const clean = (raw: string) => raw.replace(/^```\w*\s*$/gm, "").trim();
 const looksFormatted = (paragraphs: readonly string[], raw: string) => raw.startsWith("{") || paragraphs.some((item) => MARKDOWN_START.test(item) || item.includes("**"));
 
-export function validateGuideText(raw: string): { ok: true; text: string } | { ok: false; reason: LilaValidationFailure } {
+export function validateGuideText(raw: string, check?: GuideCheck): { ok: true; text: string } | { ok: false; reason: LilaValidationFailure } {
   const text = clean(raw);
   if (!text) return { ok: false, reason: "empty" };
   const paragraphs = splitParagraphs(text);
@@ -34,11 +41,20 @@ export function validateGuideText(raw: string): { ok: true; text: string } | { o
   if (joined.length < GUIDE_LIMITS.minChars || joined.length > GUIDE_LIMITS.maxChars) return { ok: false, reason: "length" };
   if (findStopPhrases(joined).length > 0) return { ok: false, reason: "stop_words" };
   if (fillerFailure(joined)) return { ok: false, reason: "filler" };
-  if (OVERREACH.test(joined)) return { ok: false, reason: "overreach" };
+  if (OVERREACH.test(joined) || (check && !check.note && INVENTED_FEELING.test(joined))) return { ok: false, reason: "overreach" };
+  if (check && !joined.toLowerCase().includes(check.cell.toLowerCase())) return { ok: false, reason: "missing_cell" };
   return { ok: true, text: joined };
 }
 
-export function validateConclusionChapter(raw: string): { ok: true; paragraphs: string[] } | { ok: false; reason: LilaValidationFailure } {
+function namesEnoughCells(paragraphs: readonly string[], visited: readonly LilaVisitedMove[]): boolean {
+  const text = paragraphs.join("\n");
+  const names = [...new Set(visited.map((move) => move.cell))];
+  const hits = names.filter((name) => text.includes(name)).length;
+  const need = Math.min(names.length, Math.max(3, Math.ceil(names.length * 0.6)));
+  return hits >= need;
+}
+
+export function validateConclusionChapter(raw: string, check?: { chapter: LilaConclusionChapterId; visited: readonly LilaVisitedMove[] }): { ok: true; paragraphs: string[] } | { ok: false; reason: LilaValidationFailure } {
   const text = clean(raw);
   if (!text) return { ok: false, reason: "empty" };
   const paragraphs = splitParagraphs(text);
@@ -50,6 +66,8 @@ export function validateConclusionChapter(raw: string): { ok: true; paragraphs: 
   if (chars < CONCLUSION_LIMITS.minChars || chars > CONCLUSION_LIMITS.maxChars) return { ok: false, reason: "length" };
   if (findStopPhrases(paragraphs.join("\n")).length > 0) return { ok: false, reason: "stop_words" };
   if (fillerFailure(paragraphs.join("\n"))) return { ok: false, reason: "filler" };
-  if (OVERREACH.test(paragraphs.join("\n"))) return { ok: false, reason: "overreach" };
+  if (OVERREACH.test(paragraphs.join("\n")) || INVENTED_FEELING.test(paragraphs.join("\n"))) return { ok: false, reason: "overreach" };
+  if (check?.chapter === "path" && check.visited.length > 0 && !namesEnoughCells(paragraphs, check.visited)) return { ok: false, reason: "missing_cell" };
+  if (check?.chapter === "outcome" && !concreteExperiment(paragraphs.join("\n"))) return { ok: false, reason: "vague" };
   return { ok: true, paragraphs: dropRecap(paragraphs, CONCLUSION_LIMITS) };
 }
