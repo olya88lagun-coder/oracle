@@ -1,0 +1,29 @@
+/* Choice labels and personal reflection keep the original spread table and bronze palette. */
+.taro-spread-variants { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding-top: 20px; border-top: 1px solid var(--line); }
+.taro-spread-variants > .muted { grid-column: 1 / -1; margin: 0; font-size: 14px; line-height: 1.65; }
+.taro-spread-variants > .field { min-width: 0; gap: 8px; }
+.taro-spread-variants label, .taro-spread-summary label { color: var(--ink); font-size: 14px; font-weight: 600; line-height: 1.5; }
+.taro-spread-variants .input { min-width: 0; min-height: 52px; padding: 12px 14px; font-size: 16px; }
+.taro-spread-slot__variant { display: block; margin-top: 6px; color: var(--accent-hover); line-height: 1.55; overflow-wrap: anywhere; }
+.taro-spread-panel__variant { display: block; margin-top: 8px; color: var(--ink-soft); font: 400 16px/1.6 var(--font-body); letter-spacing: normal; text-transform: none; overflow-wrap: anywhere; }
+
+.taro-spread-reading .taro-spread-summary { gap: 24px; min-width: 0; padding: clamp(20px, 4vw, 32px); border-color: var(--accent-line); background: var(--surface); }
+.taro-spread-summary > * { margin: 0; }
+.taro-spread-summary > h2 { font-size: clamp(26px, 4vw, 34px); }
+.taro-spread-summary > .muted { max-width: 68ch; font-size: 15px; line-height: 1.7; }
+.taro-spread-summary .field { display: grid; gap: 8px; min-width: 0; max-width: none; }
+.taro-spread-summary textarea.input { width: 100%; min-width: 0; min-height: 112px; padding: 14px 16px; font: 400 16px/1.65 var(--font-body); color: var(--ink); background: var(--input-bg); border-color: var(--line-strong); resize: vertical; }
+.taro-spread-summary > .taro-spread-summary__lifetime { padding: 12px 16px; border-inline-start: 2px solid var(--accent-line); color: var(--ink-soft); background: var(--surface-2); font-size: 14px; line-height: 1.6; }
+.taro-spread-summary__actions { position: relative; align-items: center; gap: 12px 20px; }
+.taro-spread-summary__actions .button { min-height: 52px; border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+.taro-spread-summary .taro-spread-summary__status { max-width: 48ch; margin: 0; font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+.taro-spread-summary__status:empty { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.taro-spread-summary__status[data-state="ok"] { color: var(--good); }
+.taro-spread-summary__status[data-state="fail"] { flex-basis: 100%; padding-inline-start: 12px; border-inline-start: 2px solid var(--accent-line); color: var(--ink); }
+.taro-spread-variants input:focus-visible, .taro-spread-summary textarea:focus-visible, .taro-spread-summary .button:focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 3px; }
+@media (hover: hover) { .taro-spread-summary__actions .button:hover { border-color: var(--accent-hover); background: var(--accent-hover); } }
+@media (max-width: 599px) {
+  .taro-spread-variants { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .taro-spread-summary__actions { align-items: stretch; }
+  .taro-spread-summary__actions .button { width: 100%; }
+}
