@@ -112,7 +112,7 @@ export function NatalTable({ chart, registry = NATAL_KEY_TEXTS, houseRegistry }:
                 </span>
               </td>
               <td>
-                <span className="natal-table__degree">
+                <span className={`natal-table__degree${row.key === "moon" && moonRange ? " natal-table__degree--estimate" : ""}`}>
                   {row.key === "moon" && moonRange ? TABLE_NOON_DEGREES(formatDegrees(row.degree)) : formatDegrees(row.degree)}
                   {row.retrograde && (
                     <>

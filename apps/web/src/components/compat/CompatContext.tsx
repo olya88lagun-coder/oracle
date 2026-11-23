@@ -17,9 +17,9 @@ export function CompatContext() {
           </button>
         ))}
       </div>
-      <p>{context.note}</p>
+      <p className="compat-context__note">{context.note}</p>
       <h3>Вопросы для разговора</h3>
-      <ul>
+      <ul className="compat-context__questions">
         {context.questions.map((question) => (
           <li key={question}>{question}</li>
         ))}

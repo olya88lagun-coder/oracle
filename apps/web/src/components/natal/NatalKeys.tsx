@@ -34,10 +34,21 @@ function KeyBlock(props: { idPrefix: string; body: NatalKeyBody; title: string; 
 function MoonEitherBlock(props: { idPrefix: string; title: string; signs: readonly [NatalChart["points"][number]["sign"], NatalChart["points"][number]["sign"]]; registry: NatalKeyRegistry }) {
   const variants = props.signs.map((sign) => ({ sign, published: keyTextFor("moon", sign, props.registry) }));
   return (
-    <article className="natal-key" id={`${props.idPrefix}-moon`}>
+    <article className="natal-key natal-key--either" id={`${props.idPrefix}-moon`}>
       <h4 className="natal-key__title">{props.title}</h4>
       <p>{MOON_EITHER_TEXT}</p>
-      {variants.map(({ sign, published }) => (published ? <p key={sign}><Link className="natal-key__link" href={published.href} prefetch={false}>{READ_FULL}: {BODY_NAMES.moon} {inSign(sign)}</Link></p> : null))}
+      <div className="natal-key__variants">
+        {variants.map(({ sign, published }) => published ? (
+          <p key={sign}>
+            <Link className="natal-key__link" href={published.href} prefetch={false}>
+              <span>
+                {READ_FULL}:{" "}
+                <strong className="natal-key__variant-name">{BODY_NAMES.moon} {inSign(sign)}</strong>
+              </span>
+            </Link>
+          </p>
+        ) : null)}
+      </div>
     </article>
   );
 }

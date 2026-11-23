@@ -28,11 +28,11 @@ export function ClockLookup({ times }: { times: readonly ClockLookupTime[] }) {
     <form className="stack clock-lookup" onSubmit={find} noValidate>
       <div className="field">
         <label htmlFor="clock-lookup-input">{CLOCK_LOOKUP_LABEL}</label>
-        <input id="clock-lookup-input" className="input" inputMode="numeric" autoComplete="off" placeholder="11:11" value={value} onChange={(event) => { setValue(event.target.value); setOutcome(null); }} aria-invalid={outcome?.kind === "error"} />
+        <input id="clock-lookup-input" className="input" inputMode="numeric" autoComplete="off" placeholder="11:11" value={value} onChange={(event) => { setValue(event.target.value); setOutcome(null); }} aria-invalid={outcome?.kind === "error"} aria-describedby={outcome?.kind === "error" ? "clock-lookup-error" : undefined} />
       </div>
       <button className="button" type="submit">Найти значение</button>
-      {outcome?.kind === "error" && <p className="error" role="alert">{CLOCK_LOOKUP_ERROR}</p>}
-      <div role="status">
+      {outcome?.kind === "error" && <p id="clock-lookup-error" className="error" role="alert">{CLOCK_LOOKUP_ERROR}</p>}
+      <div className="clock-lookup__result" data-outcome={outcome?.kind} role="status">
         {outcome?.kind === "found" && <p><Link className="touch-link" href={outcome.href}>Открыть значение {outcome.label}</Link></p>}
         {outcome?.kind === "soon" && <p className="muted">Описание времени {outcome.label} появится позже.</p>}
         {outcome?.kind === "ordinary" && (
