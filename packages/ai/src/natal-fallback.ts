@@ -74,7 +74,15 @@ function aspectParagraphs(chart: NatalChart, blocks: NatalBlocks): string[] {
   ])];
 }
 
-// Поля сценария — из текстов страниц Солнца, Луны и асцендента этой карты: они уже вычитаны владелицей
+// «роли, связанные с…» и «ваша работа» — та же формула, которую проверка не пускает в ответ модели
+const OCCUPATION_SENTENCE = /(?<![а-яё])(?:професси[а-яё]*|карьер[а-яё]*|ваш[а-яё]*\s+работ[а-яё]*|работ[а-яё]*\s*,?\s*связанн[а-яё]*|рол[а-яё]*\s*,?\s*связанн[а-яё]*)(?![а-яё])/i;
+const withoutOccupation = (text: string): string => {
+  const kept = text.split(/(?<=[.!?])\s+/).filter((sentence) => sentence.trim() && !OCCUPATION_SENTENCE.test(sentence));
+  return kept.join(" ").trim();
+};
+
+// Поля сценария — из текстов страниц Солнца, Луны и асцендента этой карты: они уже вычитаны владелицей.
+// Предложения про профессии из этих страниц в платный итог не попадают: это пересказ «вашей работы», а не сценарий
 function scenario(chart: NatalChart): Record<ScenarioField, string> {
   const sun = chart.points.find((point) => point.id === "sun");
   const moon = chart.points.find((point) => point.id === "moon");
@@ -83,12 +91,13 @@ function scenario(chart: NatalChart): Record<ScenarioField, string> {
   const moonText = pageOf("moon", moon.sign);
   const ascText = pageOf("ascendant", chart.ascendant.sign);
   const first = (values: readonly string[] | undefined, index = 0) => values?.[index] ?? "";
+  const keep = (text: string, spare: string) => withoutOccupation(text) || spare;
   return {
-    pattern: first(sunText?.manifestation),
-    tension: first(moonText?.pitfalls),
-    resource: first(ascText?.manifestation),
-    blindSpot: first(sunText?.pitfalls),
-    turningPoint: first(ascText?.pitfalls),
+    pattern: keep(first(sunText?.manifestation), "Может повторяться привычка уходить в глубину там, где другим достаточно поверхности."),
+    tension: keep(first(moonText?.pitfalls), "Чужое напряжение легко принять за своё, и тогда силы уходят быстрее, чем заметно."),
+    resource: keep(first(ascText?.manifestation), "Опора — пауза перед ответом и право не объяснять себя сразу."),
+    blindSpot: keep(first(sunText?.pitfalls), "Легко не заметить, как проверка ситуации превращается в проверку человека."),
+    turningPoint: keep(first(ascText?.pitfalls), "Ход меняет короткая теплота в начале разговора: вопрос, а не вывод."),
     experiment: `Каждый вечер в 21:00, за столом, запишите одну строку ответа на вопрос: ${first(moonText?.questions, 1)}`.trim(),
     question: first(sunText?.questions),
   };

@@ -42,9 +42,19 @@ describe("fallbackNatalReport", () => {
     expect(Object.values(ASPECT_TEXTS).some((description) => aspects.includes(description))).toBe(true);
   });
 
-  test("the scenario has all seven fields and no empty value", () => {
+  test("the scenario has all seven fields, no empty value and no job formula", () => {
     const scenario = chapters.find((chapter) => chapter.id === "scenario")?.scenario;
     for (const field of SCENARIO_FIELDS) expect(scenario?.[field]?.length, field).toBeGreaterThan(10);
+    expect(Object.values(scenario ?? {}).join("\n")).not.toMatch(/рол[а-яё]*\s*,?\s*связанн|професси|карьер/i);
+  });
+
+  test("18 November 1988 drops the sentence about job roles and keeps a timed experiment", () => {
+    const chart = computeNatalChart({ instant: new Date("1988-11-18T09:00:00Z"), latitude: 55.7558, longitude: 37.6173, timeKnown: true });
+    const scenario = fallbackNatalReport(chart).find((chapter) => chapter.id === "scenario")?.scenario;
+    const text = Object.values(scenario ?? {}).join("\n");
+    expect(text).not.toMatch(/связанн/i);
+    expect(scenario?.experiment).toMatch(/21:00/);
+    expect(scenario?.pattern.length).toBeGreaterThan(10);
   });
 
   test("never prints undefined, and needs the birth time", () => {
