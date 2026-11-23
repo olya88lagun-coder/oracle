@@ -75,7 +75,7 @@ function aspectParagraphs(chart: NatalChart, blocks: NatalBlocks): string[] {
 }
 
 // «роли, связанные с…» и «ваша работа» — та же формула, которую проверка не пускает в ответ модели
-const OCCUPATION_SENTENCE = /(?<![а-яё])(?:професси[а-яё]*|карьер[а-яё]*|ваш[а-яё]*\s+работ[а-яё]*|работ[а-яё]*\s*,?\s*связанн[а-яё]*|рол[а-яё]*\s*,?\s*связанн[а-яё]*)(?![а-яё])/i;
+const OCCUPATION_SENTENCE = /(?<![а-яё])(?:професси[а-яё]*|карьер[а-яё]*|психолог[а-яё]*|в\s+работе|ваш[а-яё]*\s+работ[а-яё]*|работ[а-яё]*\s*,?\s*связанн[а-яё]*|рол[а-яё]*\s*,?\s*(?:связанн[а-яё]*|где)|могут\s+подход[а-яё]*)(?![а-яё])/i;
 const withoutOccupation = (text: string): string => {
   const kept = text.split(/(?<=[.!?])\s+/).filter((sentence) => sentence.trim() && !OCCUPATION_SENTENCE.test(sentence));
   return kept.join(" ").trim();
