@@ -23,12 +23,13 @@ describe("public product examples", () => {
     expect(replay.results.map((move) => move.to)).toEqual(DEMO_MOVES.map((move) => move.to));
     expect(DEMO_MOVES).toHaveLength(10);
     expect(DEMO_CONCLUSION.map((chapter) => chapter.id)).toEqual(LILA_CONCLUSION_CHAPTERS);
-    expect(DEMO_CONCLUSION[0]?.paragraphs.join(" ")).toContain(DEMO_INTENTION);
+    expect(DEMO_CONCLUSION[0]?.paragraphs.join(" ")).toContain(DEMO_INTENTION.replace(/^К/, "к").replace(/\?$/, ""));
+    expect(DEMO_CONCLUSION.every((chapter) => chapter.source === "ai")).toBe(true);
   });
   test("the normal PDF builders accept both complete examples", async () => {
     const assetsDir = pdfAssetsDir();
     const report = await buildReportPdf({ matrix: DEMO_MATRIX, birthDate: "1990-01-15", chapters: DEMO_REPORT, assetsDir, demo: true });
-    const lila = await buildLilaPdf({ intention: DEMO_INTENTION, movesCount: DEMO_MOVES.length, finishedAt: new Date("2026-10-11T10:00:00Z"), chapters: DEMO_CONCLUSION, moves: DEMO_MOVES.map((move) => ({ n: move.n, cell: lilaCellByNumber(move.to).name, note: move.note })), assetsDir, demo: true });
+    const lila = await buildLilaPdf({ intention: DEMO_INTENTION, movesCount: DEMO_MOVES.length, finishedAt: new Date("2026-11-23T10:00:00Z"), chapters: DEMO_CONCLUSION, moves: DEMO_MOVES.map((move) => ({ n: move.n, cell: lilaCellByNumber(move.to).name, note: move.note })), assetsDir, demo: true });
     expect(report.subarray(0, 5).toString()).toBe("%PDF-");
     expect(lila.subarray(0, 5).toString()).toBe("%PDF-");
     // Явный локальный экспорт после правок контента; обычный запуск не изменяет файлы.

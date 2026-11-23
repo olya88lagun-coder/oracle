@@ -2,9 +2,10 @@
 // платежей или вызовов модели. Используется тот же режим сборки, что в воркере.
 import { calculateMatrix, LILA_CONCLUSION_CHAPTERS, replayLila } from "@oracle/core";
 import { lilaCellByNumber } from "@oracle/content/lila";
-import { buildChapterInputs, buildScenarioInput, fallbackChapter, buildConclusionInputs, fallbackConclusionChapter } from "@oracle/ai";
+import { buildChapterInputs, buildScenarioInput, fallbackChapter } from "@oracle/ai";
 import { computeNatalChart } from "@oracle/core/natal";
 import type { StoredChapter, StoredConclusionChapter, StoredNatalChapter } from "@oracle/db";
+import { DEMO_LILA_AI_CHAPTERS } from "./lila-demo-ai";
 import { DEMO_NATAL_AI_CHAPTERS } from "./natal-demo-ai";
 
 export const DEMO_DATE = "1990-01-15";
@@ -16,8 +17,8 @@ export const DEMO_INTENTION = "Как спокойнее планировать 
 const rolls = [6, 5, 6, 4, 4, 4, 2, 1, 3, 2];
 const notes: Readonly<Record<number, string>> = { 2: "Сравниваю свой темп с чужим.", 3: "Вижу, как сравнение отвлекает от моего плана.", 5: "Можно попросить коллегу уточнить срок.", 8: "Хочу оставить в плане место для отдыха." };
 export const DEMO_MOVES = replayLila(rolls).results.map((move, index) => ({ ...move, n: index + 1, note: notes[index + 1] ?? null }));
-const inputs = buildConclusionInputs({ intention: DEMO_INTENTION, moves: DEMO_MOVES, cellOf: lilaCellByNumber });
-export const DEMO_CONCLUSION: readonly StoredConclusionChapter[] = LILA_CONCLUSION_CHAPTERS.map((id) => fallbackConclusionChapter({ ...inputs[id], earlier: [] }));
+// Настоящий итог от ИИ по этой партии (снимок в lila-demo-ai.ts), а не сборка из готовых текстов
+export const DEMO_CONCLUSION: readonly StoredConclusionChapter[] = DEMO_LILA_AI_CHAPTERS;
 
 // Пример натального разбора: условный момент (Москва, 7 марта 1990, 12:25) и настоящий разбор, который по нему написал ИИ-редактор (снимок в natal-demo-ai.ts)
 export const DEMO_NATAL_DATE = "1990-03-07";
