@@ -3,6 +3,7 @@ import Link from "next/link";
 import { COMPAT_PATH } from "@/lib/compat";
 import { PYTHAGORAS_PATH, SQUARE_CELL_NAMES, SQUARE_LINE_NAMES, SQUARE_LINES_PATH, squareCellPath, squareVariant } from "@/lib/pythagoras";
 import { LINE_LEVEL_NAMES, type CellRelation, type PairCell, type PairOutcome } from "@/lib/pythagoras-compat";
+import { CompatContext } from "../compat/CompatContext";
 import { SquareWorking } from "./SquareWorking";
 
 // Первые абзацы разделов партии 8: ячейка → отношение → текст; линия → «один / разный уровень» → текст
@@ -56,6 +57,7 @@ export function PythagorasCompatResult({ outcome, texts }: { outcome: Extract<Pa
       <p className="eyebrow">Совместимость по квадрату Пифагора</p>
       <h2 id="pair-result-title" tabIndex={-1}>Ваши квадраты Пифагора</h2>
       <p className="muted">Вы — {dateOf(youIso)}, партнёр — {dateOf(partnerIso)}.</p>
+      <p className="muted">«Похоже» и «по-разному» — это сравнение количества цифр по правилам сайта, а не знание о двух людях. Читайте их как гипотезы и сверяйте с примерами из жизни.</p>
     </div>
     <ul className="numerology-pair__legend" aria-label="Обозначения">
       <li className="numerology-pair__you">Вы</li>
@@ -113,6 +115,7 @@ export function PythagorasCompatResult({ outcome, texts }: { outcome: Extract<Pa
           <p><Link className="touch-link" href={`${SQUARE_LINES_PATH}#${line.id}`}>Подробнее о линии</Link></p>
         </li>;
       })}</ul>
+      <CompatContext />
       <div className="year-action stack numerology-pair__next">
         <p><Link className="touch-link" href={PYTHAGORAS_PATH}>Квадрат Пифагора по одной дате</Link></p>
         <p><Link className="touch-link" href={COMPAT_PATH}>Совместимость по матрице судьбы</Link></p>

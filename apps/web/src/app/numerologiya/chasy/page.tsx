@@ -2,6 +2,7 @@ import { acceptedNumerologyPages } from "@oracle/content/numerology";
 import { CLOCK_TIMES, type ClockTime } from "@oracle/core";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ClockLookup } from "@/components/numerology/ClockLookup";
 import { CLOCK_FAQ, CLOCK_PATH, clockPath, NUMEROLOGY_PATH } from "@/lib/numerology";
 import { jsonLdScript, publicMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
@@ -41,6 +42,7 @@ export default function ClockHubPage() {
         <h1 className="display" id="clock-title">Одинаковое и зеркальное время на часах</h1>
         <p className="lead">Заметили на часах 11:11 или 12:21? Выберите время — на странице его значение в нумерологии: из каких чисел оно состоит, какую тему можно в нём прочитать и вопрос для себя. Это символы для размышления, а не знаки и не прогнозы.</p>
       </section>
+      <ClockLookup times={CLOCK_TIMES.map((time) => ({ label: time.label, href: accepted.has(time.slug) ? clockPath(time.slug) : null }))} />
       {GROUPS.map((group) => <section key={group.id} id={group.id} className="year-catalog numerology-catalog" aria-labelledby={`${group.id}-title`}>
         <h2 id={`${group.id}-title`}>{group.title}</h2>
         <p className="muted">{group.lead}</p>
