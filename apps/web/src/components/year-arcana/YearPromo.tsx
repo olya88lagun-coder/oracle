@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { YEAR_PATH } from "@/lib/year-arcana";
 import { YEAR_PROMO } from "@/lib/year-arcana-promo";
+import "./year-promo.css";
 
 // Мягкая ссылка на бесплатный расчёт аркана года: на главной — отдельная полоса, в таро — на готовых классах моста к матрице
 export function YearPromo({ context, id }: { context: "home" | "taro"; id: string }) {
@@ -20,7 +21,7 @@ export function YearPromo({ context, id }: { context: "home" | "taro"; id: strin
     );
   }
   return (
-    <section className="home-year" aria-labelledby={id}>
+    <section className="home-year home-year--arcana" aria-labelledby={id}>
       <div className="home-year__copy">
         <p className="eyebrow">{YEAR_PROMO.home.eyebrow}</p>
         <h2 id={id}>{copy.title}</h2>
