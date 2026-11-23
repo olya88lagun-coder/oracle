@@ -14,7 +14,7 @@ export function HowToPlayLila() {
       </p>
 
       <h2>Паспорт правил</h2>
-      <div className="blog-table-wrap">
+      <div className="blog-table-wrap lila-rules">
         <table className="blog-table">
           <caption>Правила Лилы на нашем сайте</caption>
           <tbody>
