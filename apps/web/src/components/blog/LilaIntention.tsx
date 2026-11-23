@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { INTENTION_EXAMPLES } from "@/lib/lila-intent-examples";
 import { LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
+import { IntentionExample } from "./IntentionExample";
 
 const REPHRASE: readonly (readonly [string, string])[] = [
   ["«Как мне жить?»", "«Что для меня сейчас важнее всего?»"],
@@ -33,25 +35,19 @@ export function LilaIntention() {
       </ul>
 
       <h2>Примеры удачных формулировок</h2>
+      <p>Нажмите «Взять в игру», и формулировка появится в поле намерения: её можно подправить под себя.</p>
       <ul>
-        <li>
-          <strong>Отношения:</strong> «Что мешает мне говорить близким о своих чувствах?»; «Чего я жду от отношений и чего боюсь?»
-        </li>
-        <li>
-          <strong>Работа:</strong> «Почему мне трудно принять решение о работе?»; «Что для меня важно в деле, которым я занимаюсь?»
-        </li>
-        <li>
-          <strong>Деньги:</strong> «Что происходит со мной, когда я думаю о деньгах?»; «Что мешает мне двигаться в вопросе денег?»
-        </li>
-        <li>
-          <strong>Выбор:</strong> «Что мне важно учесть перед решением, которое я откладываю?»
-        </li>
-        <li>
-          <strong>Перемены:</strong> «Что я боюсь потерять, если изменю привычный порядок?»
-        </li>
-        <li>
-          <strong>О себе:</strong> «Что во мне сейчас просит внимания?»
-        </li>
+        {INTENTION_EXAMPLES.map(({ theme, items }) => (
+          <li key={theme}>
+            <strong>{theme}:</strong>{" "}
+            {items.map((text, index) => (
+              <span key={text}>
+                {index > 0 && " "}
+                <IntentionExample text={text} />
+              </span>
+            ))}
+          </li>
+        ))}
       </ul>
 
       <h2>Что лучше переформулировать</h2>
