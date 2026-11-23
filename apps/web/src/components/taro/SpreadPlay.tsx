@@ -91,14 +91,14 @@ export function SpreadPlay({ name, positions, cards, next }: { name: string; pos
               disabled={!ready}
               aria-describedby="spread-question-note"
               value={question}
-              onChange={(event) => setQuestion(event.target.value)}
+              onChange={(event) => { setQuestion(event.target.value); setCopied(null); }}
             />
             <p id="spread-question-note" className="muted">
               Вопрос остаётся в вашем браузере и никуда не отправляется.
             </p>
           </div>
           {hasVariants && (
-            <div className="field">
+            <div className="field taro-spread-variants">
               <p id="spread-variants-note" className="muted">
                 Назовите варианты своими словами, если хотите: они появятся в подписях к картам. Это необязательно.
               </p>
@@ -114,7 +114,7 @@ export function SpreadPlay({ name, positions, cards, next }: { name: string; pos
                     disabled={!ready}
                     aria-describedby="spread-variants-note"
                     value={variants[variant]}
-                    onChange={(event) => setVariants((current) => ({ ...current, [variant]: event.target.value }))}
+                    onChange={(event) => { setVariants((current) => ({ ...current, [variant]: event.target.value })); setCopied(null); }}
                   />
                 </div>
               ))}
@@ -138,7 +138,7 @@ export function SpreadPlay({ name, positions, cards, next }: { name: string; pos
                   )}
                   <p className="taro-spread-slot__title">
                     {index + 1}. {position.title}
-                    {variantName(position) && <span className="muted"> — {variantName(position)}</span>}
+                    {variantName(position) && <span className="muted taro-spread-slot__variant"> {variantName(position)}</span>}
                   </p>
                 </li>
               );
@@ -186,7 +186,7 @@ export function SpreadPlay({ name, positions, cards, next }: { name: string; pos
               <article key={position.title} className="taro-panel taro-spread-panel">
                 <p className="eyebrow">
                   {index + 1}. {position.title}
-                  {variantName(position) && ` — ${variantName(position)}`}
+                  {variantName(position) && <span className="taro-spread-panel__variant"> {variantName(position)}</span>}
                 </p>
                 <h3>
                   <Link href={card.path} target="_blank" rel="noopener">
@@ -211,6 +211,7 @@ export function SpreadPlay({ name, positions, cards, next }: { name: string; pos
             <section className="taro-panel stack taro-spread-summary" aria-labelledby="spread-summary-title">
               <h2 id="spread-summary-title">Ваша сводка</h2>
               <p className="muted">Несколько слов своими словами: что отозвалось, что осталось вопросом и какой шаг можно сделать. Поля необязательны и остаются в вашем браузере.</p>
+              <p id="spread-summary-lifetime" className="taro-spread-summary__lifetime">После обновления страницы сводка исчезнет.</p>
               {SUMMARY_FIELDS.map((field) => (
                 <div key={field.id} className="field">
                   <label htmlFor={`spread-summary-${field.id}`}>{field.label}</label>
@@ -218,17 +219,18 @@ export function SpreadPlay({ name, positions, cards, next }: { name: string; pos
                     id={`spread-summary-${field.id}`}
                     className="input"
                     rows={2}
+                    aria-describedby="spread-summary-lifetime"
                     maxLength={MAX_SUMMARY}
                     value={summary[field.id]}
-                    onChange={(event) => setSummary((current) => ({ ...current, [field.id]: event.target.value }))}
+                    onChange={(event) => { setSummary((current) => ({ ...current, [field.id]: event.target.value })); setCopied(null); }}
                   />
                 </div>
               ))}
-              <div className="row">
+              <div className="row taro-spread-summary__actions">
                 <button type="button" className="button button--ghost" onClick={copySummary}>
                   Скопировать итог
                 </button>
-                <p role="status" className="muted">
+                <p role="status" className="muted taro-spread-summary__status" data-state={copied ?? "idle"}>
                   {copied === "ok" ? "Итог скопирован." : copied === "fail" ? "Не удалось скопировать: выделите текст вручную." : ""}
                 </p>
               </div>
