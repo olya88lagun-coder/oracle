@@ -1,5 +1,5 @@
 import { calculateMatrix, parseBirthDate } from "@oracle/core";
-import { getReport } from "@oracle/db";
+import { getReport, getThreadReport } from "@oracle/db";
 import { NextResponse, type NextRequest } from "next/server";
 import { getDb } from "@/server/db";
 import { loginDeps } from "@/server/deps";
@@ -10,8 +10,10 @@ import { getPurchaseView } from "@/server/payments-service";
 import { pdfAssetsDir } from "@/server/pdf-assets";
 import { reportPdfLimiter } from "@/server/rate-limit";
 import { buildReportPdf } from "@/server/report-pdf";
+import { buildThreadPdf } from "@/server/thread-pdf";
 
 const REPORT_PDF_FILENAME = "razbor-matritsy-sudby.pdf";
+const THREAD_PDF_FILENAME = "razbor-niti.pdf";
 
 const notFound = () => NextResponse.json({ ok: false, error: "not_found" }, { status: 404 });
 
@@ -23,18 +25,28 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   const { id } = await params;
   const view = await getPurchaseView(purchaseViewDeps(), { purchaseId: id, userId: user.id });
-  // PDF есть только у разбора матрицы: натальный разбор в PDF не выпускается
-  if (!view || view.product !== "matrix_report" || view.status !== "ready" || view.duplicateOf) return notFound();
+  // PDF есть у разбора матрицы и разбора нити: натальный разбор в PDF не выпускается
+  if (!view || (view.product !== "matrix_report" && view.product !== "thread_report") || view.status !== "ready" || view.duplicateOf) return notFound();
   const birthDate = parseBirthDate(view.birthDate, new Date());
-  const report = birthDate ? await getReport(getDb(), view.id) : null;
-  if (!birthDate || !report) return notFound();
+  if (!birthDate) return notFound();
+  const isThread = view.product === "thread_report";
+  const assetsDir = pdfAssetsDir();
 
   try {
-    const pdf = await buildReportPdf({ matrix: calculateMatrix(birthDate), birthDate: view.birthDate, chapters: report.chapters, assetsDir: pdfAssetsDir() });
+    let pdf: Buffer;
+    if (isThread) {
+      const report = await getThreadReport(getDb(), view.id);
+      if (!report) return notFound();
+      pdf = await buildThreadPdf({ birthDate: view.birthDate, chapters: report.chapters, today: report.createdAt, assetsDir });
+    } else {
+      const report = await getReport(getDb(), view.id);
+      if (!report) return notFound();
+      pdf = await buildReportPdf({ matrix: calculateMatrix(birthDate), birthDate: view.birthDate, chapters: report.chapters, assetsDir });
+    }
     return new NextResponse(new Uint8Array(pdf), {
       headers: {
         "content-type": "application/pdf",
-        "content-disposition": `attachment; filename="${REPORT_PDF_FILENAME}"`,
+        "content-disposition": `attachment; filename="${isThread ? THREAD_PDF_FILENAME : REPORT_PDF_FILENAME}"`,
         "content-length": String(pdf.length),
         "cache-control": "private, no-store",
         "x-content-type-options": "nosniff",
