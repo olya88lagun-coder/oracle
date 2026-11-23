@@ -85,7 +85,7 @@ describe("runGenerateNatal with the AI editor", () => {
     resource: "Опора — спокойная настойчивость.",
     blindSpot: "Легко не замечать собственную усталость.",
     turningPoint: "Остановиться и спросить, чего хочется на самом деле.",
-    experiment: "Семь дней подряд записывать одно чувство за день.",
+    experiment: "Каждый вечер в 21:00, за столом, запишите одно чувство за день.",
     question: "Где я держу себя сильнее, чем нужно?",
   });
   const writerFor = (answer: (chapter: string) => string): ReportWriter & { prompts: Prompt[] } => {

@@ -11,7 +11,7 @@ const SCENARIO = JSON.stringify({
   resource: "Ресурс.",
   blindSpot: "Слепая зона.",
   turningPoint: "Точка изменения.",
-  experiment: "Эксперимент.",
+  experiment: "Каждый вечер в 21:00, за столом, запишите одну строку.",
   question: "Вопрос?",
 });
 
