@@ -113,6 +113,10 @@ describe("buildNatalPrompt", () => {
   test("a retry after filler words says what to remove", () => {
     expect(buildNatalPrompt(inputOf("core"), "filler").system).toContain("слова-связки");
   });
+
+  test("a retry after gendered endings names the forms to avoid", () => {
+    expect(buildNatalPrompt(inputOf("scenario"), "gendered").system).toContain("равнодушным");
+  });
 });
 
 describe("validateNatalChapter", () => {
@@ -135,6 +139,7 @@ describe("validateNatalChapter", () => {
     ["a remark that there is not enough data", `${prose(3)}\n\nДанных для вывода недостаточно, поэтому картина неполная.`, "missing_data"],
     ["a gendered adjective after «делает вас»", `${prose(3)}\n\nЭто делает вас мягким и внимательным собеседником.`, "gendered"],
     ["a gendered adjective after «быть»", `${prose(3)}\n\nВажно беречь силы, чтобы быть более эффективным в помощи другим.`, "gendered"],
+    ["a gendered adjective after «оставайтесь»", `${prose(3)}\n\nНе оставайтесь равнодушным к своим границам.`, "gendered"],
     ["a gendered past tense after «вы»", `${prose(3)}\n\nВозможно, вы чувствовала усталость.`, "gendered"],
   ])("rejects a chapter that is %s", (_title, raw, reason) => {
     expect(validateNatalChapter(core, raw)).toEqual({ ok: false, reason });

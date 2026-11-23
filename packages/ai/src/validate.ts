@@ -132,7 +132,7 @@ export function validateChapter(input: ChapterInput, raw: string): Validation {
 const FILLER = /(?<![а-яё])(стоит|следует|важно|интересно|необходимо)\s+(заметить|отметить)(?![а-яё])|(?<![а-яё])таким\s+образом(?![а-яё])/i;
 const IMPORTANT_FORMULA = /(?<![а-яё])важно\s+(?:помнить|осознавать|отметить|понимать|замечать)(?![а-яё])/i;
 const EXPERIMENT_TIME = /\d{1,2}[:.]\d{2}|утр|вечер|перед сном/;
-const EXPERIMENT_PLACE = /стол|кроват|кухн|дорог|душ|прогул|окн|блокнот|тетрад|телефон|кресл|комнат/;
+const EXPERIMENT_PLACE = /стол|кроват|кухн|дорог|душ|прогул|окн|блокнот|тетрад|телефон|кресл|комнат|дневник|бумаг|ноутбук|записн/;
 const VAGUE_EXPERIMENT = /одно\s+(?:простое|небольшое)\s+действие|выполняйте\s+одно|семь\s+дней\s+подряд\s+—\s+одно/i;
 
 export function concreteExperiment(text: string): boolean {

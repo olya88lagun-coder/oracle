@@ -121,6 +121,8 @@ describe("buildPrompt", () => {
     expect(JSON.parse(prompt.user)).toEqual(core);
     expect(buildPrompt(scenario).system).toMatch(/blindSpot/);
     expect(buildPrompt(scenario).system).toMatch(/JSON-объект/);
+    expect(buildPrompt(scenario).system).toMatch(/21:00 за столом/);
+    expect(buildPrompt(scenario, "vague").system).toMatch(/не было часа и места/);
   });
 });
 
