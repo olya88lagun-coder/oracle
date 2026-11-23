@@ -71,7 +71,7 @@ async function NatalReport({ view }: { view: PurchaseView }) {
   return (
     <main className="page page--wide">
       <ReportGoals purchaseId={view.id} paid opened product="natal_report" />
-      <NatalReportView chapters={report.chapters} date={view.birthDate} placeName={purchase?.natalInput?.placeName ?? null} chartData={natalReportChart(purchase?.natalInput)} />
+      <NatalReportView purchaseId={view.id} chapters={report.chapters} date={view.birthDate} placeName={purchase?.natalInput?.placeName ?? null} chartData={natalReportChart(purchase?.natalInput)} />
     </main>
   );
 }
@@ -90,7 +90,7 @@ async function ThreadReport({ view }: { view: PurchaseView }) {
   return (
     <main className="page page--wide">
       <ReportGoals purchaseId={view.id} paid opened product="thread_report" />
-      <ThreadReportView chapters={report.chapters} birthDate={view.birthDate} today={report.createdAt} />
+      <ThreadReportView purchaseId={view.id} chapters={report.chapters} birthDate={view.birthDate} today={report.createdAt} />
     </main>
   );
 }
