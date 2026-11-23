@@ -47,7 +47,7 @@ export default async function TaroSpreadPage({ params }: Params) {
             </div>
           )}
         </header>
-        <SpreadPlay positions={spread.positions} cards={spreadDeck(spread)} next={spread.next} />
+        <SpreadPlay name={spread.name} positions={spread.positions} cards={spreadDeck(spread)} next={spread.next} />
         <section aria-labelledby="spread-guide" className="taro-spread-info taro-spread-guide">
           <h2 id="spread-guide">Как читать расклад</h2>
           {spread.guide.map((block) => (
