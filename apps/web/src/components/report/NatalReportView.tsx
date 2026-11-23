@@ -11,6 +11,7 @@ import { EXAMPLE_CALCULATE, EXAMPLE_NOTE, EXAMPLE_TITLE, REPORT_PAGE_LEAD, REPOR
 import { NATAL_PATH } from "@/lib/natal-paths";
 import { housesLabel, pointLabel } from "@/lib/natal-report-offer";
 import { formatIsoDate } from "@/lib/report-offer";
+import { ReportPdfLink } from "./ReportPdfLink";
 import { Scenario } from "./ReportView";
 
 // Карта и данные рождения для обложки и положений в главах. Без них (данные рождения стёрты после удаления данных) разбор показывается только текстом
@@ -35,7 +36,7 @@ function outlineOf(chart: NatalChart | undefined): NatalChapterOutline[] {
 // Готовый разбор натальной карты: обложка с колесом, оглавление, девять глав, поля сценария и дисклеймер.
 // Главы идут в порядке оглавления; глава, которой почему-то нет, пропускается.
 // Классы natal-report__*: cover, wheel, big-three, placements, lead (первый абзац главы), takeaway (последний абзац, если абзацев три и больше), scenario
-export function NatalReportView({ chapters, date, placeName, demo = false, chartData }: { chapters: readonly StoredNatalChapter[]; date: string; placeName: string | null; demo?: boolean; chartData?: NatalReportChart | null }) {
+export function NatalReportView({ chapters, date, placeName, demo = false, chartData, purchaseId }: { purchaseId?: string; chapters: readonly StoredNatalChapter[]; date: string; placeName: string | null; demo?: boolean; chartData?: NatalReportChart | null }) {
   const byId = new Map(chapters.map((chapter) => [chapter.id, chapter]));
   const ordered = NATAL_CHAPTER_IDS.flatMap((id) => (byId.has(id) ? [byId.get(id)!] : []));
   const outlines = new Map(outlineOf(chartData?.chart).map((outline) => [outline.id, outline]));
@@ -50,6 +51,11 @@ export function NatalReportView({ chapters, date, placeName, demo = false, chart
         <h1 className="display">{demo ? EXAMPLE_TITLE : REPORT_PAGE_TITLE}</h1>
         <p className="lead">{REPORT_PAGE_LEAD}</p>
         {demo && <p className="muted">{EXAMPLE_NOTE}</p>}
+        {purchaseId && (
+          <p>
+            <ReportPdfLink purchaseId={purchaseId} />
+          </p>
+        )}
         {chartData && summary && (
           <div className="natal-report__cover">
             <NatalSprite />

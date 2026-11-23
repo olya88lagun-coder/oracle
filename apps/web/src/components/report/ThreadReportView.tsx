@@ -5,10 +5,11 @@ import "@/app/numerologiya/grafik-sudby/thread.css";
 import { ThreadChart } from "@/components/numerology/ThreadChart";
 import { DISCLAIMER } from "@/lib/legal";
 import { THREAD_REPORT_TITLE } from "@/lib/thread-copy";
+import { ReportPdfLink } from "./ReportPdfLink";
 
 // today нужен примеру: у него «сегодня» заморожено, чтобы картинка не менялась со временем.
 // Готовый разбор нити: картинка на всю жизнь, оглавление и главы в порядке THREAD_CHAPTER_IDS. Главы, которых нет в хранилище, пропускаются.
-export function ThreadReportView({ chapters, birthDate, today }: { chapters: readonly StoredThreadChapter[]; birthDate: string; today?: Date }) {
+export function ThreadReportView({ chapters, birthDate, today, purchaseId }: { purchaseId?: string; chapters: readonly StoredThreadChapter[]; birthDate: string; today?: Date }) {
   const byId = new Map(chapters.map((chapter) => [chapter.id, chapter]));
   const ordered = THREAD_CHAPTER_IDS.flatMap((id) => (byId.has(id) ? [byId.get(id)!] : []));
   const thread = calculateLifeThread(birthDate, today ?? new Date());
@@ -16,6 +17,11 @@ export function ThreadReportView({ chapters, birthDate, today }: { chapters: rea
     <article className="report thread-report stack">
       <header className="stack">
         <h1 className="display">{THREAD_REPORT_TITLE}</h1>
+        {purchaseId && (
+          <p>
+            <ReportPdfLink purchaseId={purchaseId} />
+          </p>
+        )}
         {thread && <ThreadChart thread={thread} initialMode="all" />}
         {ordered.length > 0 && (
           <nav className="card report-contents thread-report__contents" aria-labelledby="thread-report-contents">
