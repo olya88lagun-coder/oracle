@@ -4,18 +4,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { reachGoal } from "@/lib/analytics";
-import { pickDistinctIndexes, type SpreadNext, type SpreadPosition } from "@/lib/taro-spreads";
+import { pickDistinctIndexes, SUMMARY_FIELDS, spreadSummaryText, type SpreadNext, type SpreadPosition, type SpreadVariant, type SummaryValues } from "@/lib/taro-spreads";
 import { TaroBack } from "./TaroBack";
 import type { SpreadCardData } from "./spread-cards";
 
 const MAX_QUESTION = 200;
+const MAX_VARIANT = 80;
+const MAX_SUMMARY = 400;
+const VARIANTS: readonly SpreadVariant[] = ["А", "Б"];
+const NO_VARIANTS = { А: "", Б: "" };
+const NO_SUMMARY: SummaryValues = { noticed: "", open: "", step: "" };
 
 // Выбор карт расклада: по рубашке на позицию. Карты выбираются случайно без повторов при первом открытии.
 // Вопрос и карты живут только в состоянии страницы: ни в хранилище браузера, ни на сервер они не попадают
-export function SpreadPlay({ positions, cards, next }: { positions: readonly SpreadPosition[]; cards: readonly SpreadCardData[]; next: SpreadNext }) {
+export function SpreadPlay({ name, positions, cards, next }: { name: string; positions: readonly SpreadPosition[]; cards: readonly SpreadCardData[]; next: SpreadNext }) {
   const [picked, setPicked] = useState<readonly number[] | null>(null);
   const [opened, setOpened] = useState<readonly boolean[]>(() => positions.map(() => false));
   const [question, setQuestion] = useState("");
+  const [variants, setVariants] = useState(NO_VARIANTS);
+  const [summary, setSummary] = useState(NO_SUMMARY);
+  const [copied, setCopied] = useState<"ok" | "fail" | null>(null);
   const [ready, setReady] = useState(false);
   const finished = useRef(false);
   const readingRef = useRef<HTMLHeadingElement>(null);
@@ -45,12 +53,27 @@ export function SpreadPlay({ positions, cards, next }: { positions: readonly Spr
   function again() {
     finished.current = false;
     setPicked(null);
+    setSummary(NO_SUMMARY);
+    setCopied(null);
     setOpened(positions.map(() => false));
     requestAnimationFrame(() => slotsRef.current?.querySelector("button")?.focus());
   }
 
   const status = openedCount === 0 ? "" : complete ? "Расклад готов." : `Открыто карт: ${openedCount} из ${positions.length}.`;
   const trimmed = question.trim();
+  const hasVariants = positions.some((position) => position.variant);
+  const variantName = (position: SpreadPosition) => (position.variant ? variants[position.variant].trim() : "");
+
+  async function copySummary() {
+    if (!picked) return;
+    const text = spreadSummaryText({ name, question, variants, rows: positions.map((position, index) => ({ position, card: cards[picked[index]!]!.name })), summary });
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied("ok");
+    } catch {
+      setCopied("fail");
+    }
+  }
 
   return (
     <section className="taro-spread-play" aria-labelledby="spread-play-title">
@@ -74,6 +97,29 @@ export function SpreadPlay({ positions, cards, next }: { positions: readonly Spr
               Вопрос остаётся в вашем браузере и никуда не отправляется.
             </p>
           </div>
+          {hasVariants && (
+            <div className="field">
+              <p id="spread-variants-note" className="muted">
+                Назовите варианты своими словами, если хотите: они появятся в подписях к картам. Это необязательно.
+              </p>
+              {VARIANTS.map((variant) => (
+                <div key={variant} className="field">
+                  <label htmlFor={`spread-variant-${variant}`}>Вариант {variant} (необязательно)</label>
+                  <input
+                    id={`spread-variant-${variant}`}
+                    className="input"
+                    type="text"
+                    maxLength={MAX_VARIANT}
+                    autoComplete="off"
+                    disabled={!ready}
+                    aria-describedby="spread-variants-note"
+                    value={variants[variant]}
+                    onChange={(event) => setVariants((current) => ({ ...current, [variant]: event.target.value }))}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
           <p id="spread-pick-label">Откройте карты по очереди: нажмите на рубашку.</p>
           <ol className="taro-spread-slots" aria-labelledby="spread-pick-label" ref={slotsRef}>
             {positions.map((position, index) => {
@@ -92,6 +138,7 @@ export function SpreadPlay({ positions, cards, next }: { positions: readonly Spr
                   )}
                   <p className="taro-spread-slot__title">
                     {index + 1}. {position.title}
+                    {variantName(position) && <span className="muted"> — {variantName(position)}</span>}
                   </p>
                 </li>
               );
@@ -139,6 +186,7 @@ export function SpreadPlay({ positions, cards, next }: { positions: readonly Spr
               <article key={position.title} className="taro-panel taro-spread-panel">
                 <p className="eyebrow">
                   {index + 1}. {position.title}
+                  {variantName(position) && ` — ${variantName(position)}`}
                 </p>
                 <h3>
                   <Link href={card.path} target="_blank" rel="noopener">
@@ -159,6 +207,33 @@ export function SpreadPlay({ positions, cards, next }: { positions: readonly Spr
             );
           })}
           {complete && <p className="muted">Расклад — повод задать себе вопрос, а не прогноз. Полное значение карты открывается по её названию в новой вкладке.</p>}
+          {complete && (
+            <section className="taro-panel stack taro-spread-summary" aria-labelledby="spread-summary-title">
+              <h2 id="spread-summary-title">Ваша сводка</h2>
+              <p className="muted">Несколько слов своими словами: что отозвалось, что осталось вопросом и какой шаг можно сделать. Поля необязательны и остаются в вашем браузере.</p>
+              {SUMMARY_FIELDS.map((field) => (
+                <div key={field.id} className="field">
+                  <label htmlFor={`spread-summary-${field.id}`}>{field.label}</label>
+                  <textarea
+                    id={`spread-summary-${field.id}`}
+                    className="input"
+                    rows={2}
+                    maxLength={MAX_SUMMARY}
+                    value={summary[field.id]}
+                    onChange={(event) => setSummary((current) => ({ ...current, [field.id]: event.target.value }))}
+                  />
+                </div>
+              ))}
+              <div className="row">
+                <button type="button" className="button button--ghost" onClick={copySummary}>
+                  Скопировать итог
+                </button>
+                <p role="status" className="muted">
+                  {copied === "ok" ? "Итог скопирован." : copied === "fail" ? "Не удалось скопировать: выделите текст вручную." : ""}
+                </p>
+              </div>
+            </section>
+          )}
           {complete && (
             <aside className="taro-panel taro-spread-next" aria-labelledby="spread-next-title">
               <h2 id="spread-next-title">Если хочется глубже</h2>

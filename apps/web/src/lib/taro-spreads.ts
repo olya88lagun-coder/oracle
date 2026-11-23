@@ -11,7 +11,9 @@ import { YEAR_PATH } from "./year-arcana";
 // Расклады собираются из уже написанных текстов карт: каждой позиции соответствует раздел карты (source),
 // поэтому новых текстов по 78 картам не нужно, а толкование у каждой карты своё
 export type SpreadSource = "essence" | "love" | "money" | "resource" | "distortion" | "day" | "action" | "question";
-export type SpreadPosition = { readonly title: string; readonly hint: string; readonly source: SpreadSource };
+// variant: позиция относится к варианту выбора («А» или «Б») — человек может подписать вариант своими словами
+export type SpreadVariant = "А" | "Б";
+export type SpreadPosition = { readonly title: string; readonly hint: string; readonly source: SpreadSource; readonly variant?: SpreadVariant };
 export type FaqItem = { readonly question: string; readonly answer: string };
 // Блок «Как читать расклад»: заголовок и абзацы, свои у каждого расклада; нужен, чтобы страница была содержательной и без раскрытых карт
 export type SpreadGuideBlock = { readonly title: string; readonly paragraphs: readonly string[] };
@@ -141,10 +143,10 @@ export const FEATURED_SPREADS: readonly Spread[] = [
     teaser: "Если нужно решить между двумя вариантами: что даёт каждый и чего стоит остерегаться.",
     lead: "Расклад для ситуации, когда вы выбираете между двумя вариантами. Он не решает за вас, а помогает увидеть сильные стороны и риски каждого пути.",
     positions: [
-      { title: "Вариант А: что даёт", hint: "Ресурс первого варианта.", source: "resource" },
-      { title: "Вариант А: чего остерегаться", hint: "Где первый вариант может перекоситься.", source: "distortion" },
-      { title: "Вариант Б: что даёт", hint: "Ресурс второго варианта.", source: "resource" },
-      { title: "Вариант Б: чего остерегаться", hint: "Где второй вариант может перекоситься.", source: "distortion" },
+      { title: "Вариант А: что даёт", hint: "Ресурс первого варианта.", source: "resource", variant: "А" },
+      { title: "Вариант А: чего остерегаться", hint: "Где первый вариант может перекоситься.", source: "distortion", variant: "А" },
+      { title: "Вариант Б: что даёт", hint: "Ресурс второго варианта.", source: "resource", variant: "Б" },
+      { title: "Вариант Б: чего остерегаться", hint: "Где второй вариант может перекоситься.", source: "distortion", variant: "Б" },
       { title: "Вопрос для себя", hint: "Что стоит спросить себя перед решением.", source: "question" },
     ],
     guide: [
@@ -414,4 +416,31 @@ export function pickDistinctIndexes(count: number, deckSize: number, random?: ()
     picked.push(index!);
   }
   return picked;
+}
+
+// Своя сводка человека после расклада: три необязательных поля. Живёт только в состоянии страницы
+export const SUMMARY_FIELDS = [
+  { id: "noticed", label: "Что отозвалось" },
+  { id: "open", label: "Что осталось вопросом" },
+  { id: "step", label: "Один небольшой шаг" },
+] as const;
+export type SummaryValues = Readonly<Record<(typeof SUMMARY_FIELDS)[number]["id"], string>>;
+
+export type SpreadSummaryInput = {
+  readonly name: string;
+  readonly question: string;
+  readonly variants: Readonly<Record<SpreadVariant, string>>;
+  readonly rows: readonly { readonly position: SpreadPosition; readonly card: string }[];
+  readonly summary: SummaryValues;
+};
+
+// Текст для копирования: расклад, вопрос, варианты, карты по позициям и своя сводка; пустые части пропускаются
+export function spreadSummaryText({ name, question, variants, rows, summary }: SpreadSummaryInput): string {
+  const lines = [name];
+  if (question.trim()) lines.push(`Вопрос: ${question.trim()}`);
+  for (const variant of ["А", "Б"] as const) if (variants[variant].trim()) lines.push(`Вариант ${variant}: ${variants[variant].trim()}`);
+  lines.push("", ...rows.map(({ position, card }) => `${position.title} — ${card}`));
+  const own = SUMMARY_FIELDS.filter((field) => summary[field.id].trim());
+  if (own.length) lines.push("", ...own.map((field) => `${field.label}: ${summary[field.id].trim()}`));
+  return lines.join("\n");
 }
