@@ -25,3 +25,7 @@ export const pdfFontPath = (dir: string, font: keyof typeof PDF_FONT_FILES): str
 
 export const pdfArcanumImagePath = (dir: string, arcanum: Pick<Arcanum, "number" | "slug">): string =>
   path.join(/*turbopackIgnore: true*/ dir, "arcana", `${String(arcanum.number).padStart(2, "0")}-${arcanum.slug}.jpg`);
+
+// Иллюстрации клеток Лилы в jpg: pdfkit не читает webp (получаются скриптом scripts/lila-pdf-images.mjs)
+export const pdfLilaCellImagePath = (dir: string, cell: { number: number; slug: string }): string =>
+  path.join(/*turbopackIgnore: true*/ dir, "lila", `${String(cell.number).padStart(2, "0")}-${cell.slug}.jpg`);

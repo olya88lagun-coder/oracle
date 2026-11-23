@@ -47,13 +47,14 @@ export function paintPagesLight(doc: PdfDoc): void {
   });
 }
 
-export function drawFooters(doc: PdfDoc): void {
+// Тёмные страницы (например, последняя у Лилы) получают светлый колонтитул, иначе он не читается
+export function drawFooters(doc: PdfDoc, darkPages: ReadonlySet<number> = new Set()): void {
   const { count } = doc.bufferedPageRange();
   for (let index = 1; index < count; index += 1) {
     doc.switchToPage(index);
     // Без нулевого нижнего поля текст в колонтитуле вызвал бы добавление новой страницы
     doc.page.margins.bottom = 0;
-    doc.font("body").fontSize(8.5).fillColor(PDF_COLORS.muted);
+    doc.font("body").fontSize(8.5).fillColor(darkPages.has(index) ? PDF_COLORS.coverSoft : PDF_COLORS.muted);
     doc.text("Твой оракул · tvoy-orakul.ru", PDF_MARGIN.left, PDF_PAGE.height - 40, { width: PDF_CONTENT_WIDTH / 2, lineBreak: false });
     doc.text(String(index + 1), PDF_MARGIN.left + PDF_CONTENT_WIDTH / 2, PDF_PAGE.height - 40, { width: PDF_CONTENT_WIDTH / 2, align: "right", lineBreak: false });
   }
