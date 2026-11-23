@@ -8,6 +8,7 @@ import { ThreadPromo } from "@/components/numerology/ThreadPromo";
 import { YearPromo } from "@/components/year-arcana/YearPromo";
 import { BLOG_PATH, BLOG_POSTS, blogPath } from "@/lib/blog";
 import { formatRubles } from "@/lib/legal";
+import { HOME_INTENTS, HOME_INTENTS_LEAD, HOME_INTENTS_TITLE } from "@/lib/home-intents";
 import { HOME_PRINCIPLES, HOME_PRINCIPLES_TITLE } from "@/lib/home-principles";
 import { buildMoonTile } from "@/lib/moon-tile";
 import { acceptedThreadPaths } from "@/lib/numerology-pages";
@@ -85,6 +86,22 @@ export default function HomePage() {
 
       <div className="page page--wide stack">
         <MoonTile data={buildMoonTile(new Date())} />
+        <section className="stack home-principles" aria-labelledby="home-intents">
+          <h2 id="home-intents">{HOME_INTENTS_TITLE}</h2>
+          <p className="practices-note">{HOME_INTENTS_LEAD}</p>
+          <ul className="home-principles__list">
+            {HOME_INTENTS.map((intent) => (
+              <li key={intent.title} className="home-principles__item">
+                <h3>{intent.title}</h3>
+                <p>{intent.text}</p>
+                <Link className="matrix-link" href={intent.href}>
+                  Начать<span className="visually-hidden">: {intent.title.toLowerCase()}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <section className="stack" aria-labelledby="practices">
           <h2 id="practices">Практики</h2>
           <p className="practices-note">{freePaidLine()}</p>
