@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { addSeenCard, formatUntilNextCard, moscowDayKey, msUntilNextMoscowDay, pickCardIndex, readDayCard, readSeenCards, TARO_DAY_KEY, TARO_SEEN_KEY, writeDayCard } from "./taro-day";
+import { addSeenCard, formatUntilNextCard, moscowDayKey, msUntilNextMoscowDay, pickCardIndex, readDayCard, readDayNote, readSeenCards, TARO_DAY_KEY, writeDayNote, TARO_SEEN_KEY, writeDayCard } from "./taro-day";
 
 const memory = () => {
   const data = new Map<string, string>();
@@ -99,5 +99,25 @@ describe("day card storage", () => {
     expect(readDayCard(broken, now)).toBeNull();
     expect(() => writeDayCard(broken, now, "mag")).not.toThrow();
     expect(readDayCard(null, now)).toBeNull();
+  });
+});
+
+describe("day note", () => {
+  const noon = new Date("2026-10-05T09:00:00Z");
+  test("is kept for the same day and card only", () => {
+    const store = memory();
+    expect(writeDayNote(store, noon, "mag", "  мысль  ")).toBe(true);
+    expect(readDayNote(store, noon, "mag")).toBe("мысль");
+    expect(readDayNote(store, noon, "shut")).toBe("");
+    expect(readDayNote(store, new Date("2026-10-06T09:00:00Z"), "mag")).toBe("");
+  });
+  test("empty text clears it; broken storage reports failure", () => {
+    const store = memory();
+    writeDayNote(store, noon, "mag", "мысль");
+    writeDayNote(store, noon, "mag", "   ");
+    expect(readDayNote(store, noon, "mag")).toBe("");
+    expect(writeDayNote(null, noon, "mag", "x")).toBe(false);
+    expect(writeDayNote({ getItem: () => null, setItem: () => { throw new Error("quota"); } }, noon, "mag", "x")).toBe(false);
+    expect(readDayNote({ getItem: () => "{broken", setItem: () => undefined }, noon, "mag")).toBe("");
   });
 });

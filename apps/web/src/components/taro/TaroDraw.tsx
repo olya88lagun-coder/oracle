@@ -8,6 +8,7 @@ import { addSeenCard, formatUntilNextCard, msUntilNextMoscowDay, pickCardIndex, 
 import { PosterButton } from "@/components/PosterButton";
 import { WeekdayStrip } from "@/components/weekday/WeekdayStrip";
 import { weekdayPlanet } from "@/lib/weekday-planets";
+import { DayNote } from "./DayNote";
 import { TaroBack } from "./TaroBack";
 import { TaroShare } from "./TaroShare";
 
@@ -175,6 +176,7 @@ export function TaroDraw({ cards, children }: { cards: readonly DrawCard[]; chil
             <h2>Вопрос для себя</h2>
             <p>{drawn.question}</p>
           </article>
+          <DayNote card={drawn.slug} />
           {/* drawn появляется только после гидратации, поэтому «сегодня» из браузера не расходится с разметкой сервера */}
           <WeekdayStrip planet={weekdayPlanet(new Date())} />
         </section>
