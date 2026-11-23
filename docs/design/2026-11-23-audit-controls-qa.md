@@ -32,3 +32,16 @@ Browser viewport checks, not physical-device testing. Screenshots were inspected
 Local typecheck and targeted tests are recorded in the PR description. Full CI coverage must pass before owner acceptance. Physical phones, payments and production publication are outside this visual package.
 
 PR #318 has merged. This visual follow-up now targets master and includes the updated base through PR #317. Owner handles merge and publication.
+
+## Game-entry passport from merged PR #319
+
+| Before | After | Reason |
+|---|---|---|
+| Plain definition list below the intention form | Bronze-framed rule sheet; labels and definitions share a row on wide desktop and stack below 1200 px | The narrow intention column stays readable at tablet widths |
+| Unstyled footnote and article link | Separated version note, 44 px link target and visible keyboard focus | Rules can be read and followed before the first roll |
+
+This extension changes only CSS. The LilaPassport component, numbers from the engine, guest/member wording, page headings, form and game behaviour remain unchanged.
+
+The guest screen at `/lila/igra` was inspected at 320, 390, 768, 1024 and 1440 px. All five definitions remain visible; one h1 and the existing form h2 remain. No document overflow at 320/768/1440 px. The link receives keyboard focus and opens the rules article. Member wording is verified by the existing component tests, not by an authenticated browser session. No physical-device or e2e run is claimed. Temporary viewport override reset; no captured browser console errors.
+
+Local workspace typecheck passed. All 70 targeted tests passed in nine files, including the four passport tests. Full CI is checked in the PR. The branch includes merged PR #319; owner handles merge/publication.

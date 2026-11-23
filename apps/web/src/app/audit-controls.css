@@ -65,3 +65,66 @@
   .lila-rules .blog-table th, .lila-rules .blog-table td { padding: 0; border: 0; }
   .lila-rules .blog-table th { width: 100%; margin-bottom: 8px; }
 }
+
+/* Game entry: the same quiet rule sheet as the article, sized for the intention column. */
+.lila-passport {
+  min-width: 0;
+  margin-top: 28px;
+  padding: clamp(16px, 2.5vw, 24px);
+  border: 1px solid var(--accent-line);
+  border-radius: 20px;
+  background: var(--surface);
+}
+.lila-passport > h3 {
+  margin: 0 0 20px;
+  color: var(--ink);
+  font: 400 clamp(23px, 2.4vw, 28px)/1.25 var(--font-display);
+}
+.lila-passport dl { margin: 0; }
+.lila-passport dl > div {
+  display: grid;
+  grid-template-columns: minmax(104px, .7fr) minmax(0, 1.3fr);
+  gap: 12px;
+  padding-block: 16px;
+  border-top: 1px solid var(--line);
+}
+.lila-passport dt {
+  margin: 0;
+  color: var(--accent-hover);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.55;
+}
+.lila-passport dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.65;
+}
+.lila-passport > .hint {
+  display: block;
+  max-width: none;
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.lila-passport .hint a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-block: 8px;
+  color: var(--accent-hover);
+  text-underline-offset: 4px;
+  white-space: nowrap;
+}
+.lila-passport a:focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 3px; border-radius: 4px; }
+@media (max-width: 1199px) {
+  .lila-passport dl > div { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+}
+@media (max-width: 599px) {
+  .lila-passport { margin-top: 24px; }
+}
