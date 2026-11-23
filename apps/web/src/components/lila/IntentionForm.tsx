@@ -6,6 +6,7 @@ import { Icon } from "@/components/Icon";
 import { LILA_THEMES } from "@/lib/lila-themes";
 import { clearLilaDraft, readLilaDraft, writeLilaDraft } from "@/lib/lila-draft";
 import { GuidedOffer } from "./GuidedOffer";
+import { LilaPassport } from "./LilaPassport";
 
 type Props = { busy: boolean; error: string | null; onStart: (intention: string) => void; guided?: { signedIn: boolean; free?: boolean } | null; guest?: boolean };
 
@@ -100,6 +101,7 @@ export function IntentionForm({ busy, error, onStart, guided = null, guest = fal
         </button>
         {guest && <p className="hint">Партия хранится только в этом браузере.</p>}
       </form>
+      <LilaPassport guest={guest} />
       {guided && <GuidedOffer intention={text} signedIn={guided.signedIn} free={guided.free} />}
     </div>
   );
