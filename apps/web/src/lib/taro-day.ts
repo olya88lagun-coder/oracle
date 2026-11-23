@@ -68,3 +68,28 @@ export function writeDayCard(storage: StorageLike, now: Date, card: string): voi
     // Хранилище недоступно — карта просто не запомнится
   }
 }
+
+// Своя мысль к карте дня: пишется только по кнопке «Сохранить мысль», живёт в браузере, на сервер не уходит.
+// Хранится одна запись на сутки и карту; пустой текст стирает её. Новые сутки или другая карта — записи нет
+export const TARO_NOTE_KEY = "taro:note:v1";
+export const MAX_DAY_NOTE = 600;
+
+export function readDayNote(storage: StorageLike, now: Date, card: string): string {
+  try {
+    const stored = JSON.parse(storage?.getItem(TARO_NOTE_KEY) ?? "null") as { day?: unknown; card?: unknown; text?: unknown } | null;
+    return stored && stored.day === moscowDayKey(now) && stored.card === card && typeof stored.text === "string" ? stored.text : "";
+  } catch {
+    return "";
+  }
+}
+
+// Возвращает false, если хранилище недоступно: тогда страница честно говорит, что мысль не сохранилась
+export function writeDayNote(storage: StorageLike, now: Date, card: string, text: string): boolean {
+  try {
+    if (!storage) return false;
+    storage.setItem(TARO_NOTE_KEY, JSON.stringify({ day: moscowDayKey(now), card, text: text.trim().slice(0, MAX_DAY_NOTE) }));
+    return true;
+  } catch {
+    return false;
+  }
+}
