@@ -25,3 +25,7 @@ export const THREAD_RHYTHM_NEXT = (year: number, ahead: number): string => `Бл
 export const THREAD_RHYTHM_NOW_PEAK = "Нынешний год — сам год вершины цикла.";
 export const THREAD_RHYTHM_CYCLE = "Длина цикла — девять лет: за это время личные годы проходят от старта до завершения, и затем начинается новый круг.";
 export const THREAD_RHYTHM_POSITION = (value: number): string => `Сейчас вы в году ${value} из девяти.`;
+
+// Месяц с числом, которое уже было в этом году: тема та же, дословно её не повторяем
+export const THREAD_MONTH_AGAIN = (value: number, firstHeading: string): string =>
+  `Число месяца снова ${value}: тема та же, что в периоде ${firstHeading}. Посмотрите, чем этот месяц отличается от прошлого раза: что уже сделано, а что хочется сделать иначе.`;

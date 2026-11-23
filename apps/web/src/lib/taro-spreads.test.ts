@@ -134,7 +134,7 @@ describe("taro spreads", () => {
     expect(spread.title).toMatch(/^Расклад Таро на Новый год/);
     expect(spread.description).toContain("Новый год");
     expect(spread.description).toMatch(/не прогноз/);
-    expect(spread.positions.map((position) => position.title)).toEqual(["Главная тема года", "Что оставляю", "Что беру с собой", "Первый шаг", "Вопрос на год"]);
+    expect(spread.positions.map((position) => position.title)).toEqual(["Главная тема уходящего года", "Что оставляю", "Что беру с собой", "Первый шаг", "Вопрос на год"]);
     expect(spread.positions.map((position) => position.source)).toEqual(["essence", "distortion", "resource", "action", "question"]);
     expect(spread.lead).toMatch(/не говорит, каким будет год/);
     expect(spread.faq.some((item) => /каким будет год/.test(item.question) && /^Нет\./.test(item.answer))).toBe(true);

@@ -22,6 +22,7 @@ export function PersonalYearResult({ iso, result, summary }: { iso: string; resu
     <div className="year-result__header stack">
       <p className="eyebrow">Ваш личный год 2027</p>
       <h2 id="personal-year-result-title" tabIndex={-1}>Личный год <span className="fate-value">{result.value}</span></h2>
+      <p className="muted">Период: календарный год, с 1 января по 31 декабря 2027. В нити судьбы личный год отсчитывается от дня рождения, поэтому числа могут отличаться.</p>
       <p className="year-calculation muted"><span>{digits.join(" + ")} = {result.sum}{steps.length > 1 && ";"}</span>{steps.length > 1 && <>{" "}<span>{steps.join(" → ")}</span></>}</p>
     </div>
     <div className="stack year-reading">

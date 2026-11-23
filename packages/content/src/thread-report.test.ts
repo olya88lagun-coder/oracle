@@ -62,6 +62,17 @@ describe("сборщик глав разбора нити (15.07.1990, сего�
     expect(months.every((m) => !m.paragraphs.join().includes("Как его провести"))).toBe(true);
   });
 
+  test("now: a month number that comes again is not printed twice, it points back to the first month with it", () => {
+    const months = chapterOf("1990-07-15", "now").blocks.slice(2);
+    const full = months.filter((m) => m.paragraphs.join().includes("Тема месяца"));
+    const again = months.filter((m) => m.paragraphs.join().startsWith("Число месяца снова"));
+    expect(full.length + again.length).toBe(12);
+    expect(again.length).toBeGreaterThan(0);
+    const texts = full.map((m) => m.paragraphs.join("|"));
+    expect(new Set(texts).size).toBe(texts.length);
+    expect(again[0]?.paragraphs[0]).toContain("в периоде ");
+  });
+
   test("years: семь будущих лет, по первому абзацу двух разделов", () => {
     const { blocks } = chapterOf("1990-07-15", "years");
     expect(blocks.map((b) => b.heading?.slice(0, 4))).toEqual(["2027", "2028", "2029", "2030", "2031", "2032", "2033"]);
