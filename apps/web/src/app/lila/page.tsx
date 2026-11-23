@@ -10,6 +10,7 @@ import { LilaFaq, lilaFaqJsonLd } from "@/components/lila/LilaFaq";
 import { LilaTryDice } from "@/components/lila/LilaTryDice";
 import { Scene } from "@/components/Scene";
 import { DISCLAIMER, formatRubles } from "@/lib/legal";
+import { LILA_MODE_ROWS } from "@/lib/lila-modes";
 import { lilaCellPath, LILA_GAME_PATH, LILA_PATH } from "@/lib/lila-paths";
 import { jsonLdScript, lilaGameJsonLd, publicMetadata, SITE_PREVIEW_IMAGE } from "@/lib/seo";
 import { availableCellImages } from "@/server/lila-images";
@@ -89,6 +90,19 @@ export default function LilaPage() {
         <div className="lila-modes">
           <div className="stack"><h3>Без проводника · бесплатно</h3><p>Поле, кубик, тексты клеток, три вопроса для повторных визитов и ваши записи. Можно начать без регистрации. Гостевая партия хранится в браузере; через VK ID её можно сохранить в портрете.</p><p><Link className="button button--ghost" href={LILA_GAME_PATH}>Играть бесплатно</Link></p></div>
           <div className="stack"><h3>С проводником · {formatRubles(LILA_SESSION_PRICE_KOPECKS)}</h3><p>Одна новая партия. ИИ связывает ходы с намерением. После завершения — четыре главы: «Намерение и путь», «Что повторялось», «Что вы замечали», «Вывод и шаг на неделю», а также PDF.</p><p>Вход через VK ID и разовая оплата до начала. Намерение и записи передаются GigaChat для подготовки текста.</p><p><Link className="button button--lavender" href={LILA_GAME_PATH}>Играть с проводником · {formatRubles(LILA_SESSION_PRICE_KOPECKS)}</Link></p><p className="muted">Сначала формулируете вопрос, оплата — на следующем шаге.</p><Link className="text-link" href="/lila/primer">Посмотреть пример итога и PDF</Link></div>
+        </div>
+        <div className="lila-modes-table-wrap">
+          <table className="lila-modes-table">
+            <caption>Что вы получите в каждом режиме</caption>
+            <thead>
+              <tr><th scope="col">Что</th><th scope="col">Без проводника</th><th scope="col">С проводником</th></tr>
+            </thead>
+            <tbody>
+              {LILA_MODE_ROWS.map((row) => (
+                <tr key={row.what}><th scope="row">{row.what}</th><td>{row.free}</td><td>{row.guided}</td></tr>
+              ))}
+            </tbody>
+          </table>
         </div>
         <p className="muted">В обоих режимах одинаковые правила поля. Проводник предлагает гипотезы для размышления и не предсказывает исход вашего вопроса.</p>
       </section>}
