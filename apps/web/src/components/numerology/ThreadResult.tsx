@@ -7,6 +7,7 @@ import { YEAR_NAMES } from "@/lib/life-thread-curve";
 import { reachNumerologyGoal } from "@/lib/numerology";
 import { threadPosterSpec } from "@/lib/poster-thread";
 import { ThreadChart } from "./ThreadChart";
+import { ThreadLegend } from "./ThreadLegend";
 import { ThreadReportOffer } from "./ThreadReportOffer";
 
 // offer — только когда продажа включена (флаг, шлюз, принятая партия 10); без него результат прежний. iso — дата, для которой считается разбор
@@ -48,6 +49,7 @@ export function ThreadResult({ thread, texts, iso, offer }: { thread: LifeThread
     </div>
 
     <ThreadChart thread={thread} />
+    <ThreadLegend />
     <div className="thread-actions" onClickCapture={() => { reachNumerologyGoal("thread_poster"); }}><PosterButton spec={threadPosterSpec(thread)} /></div>
 
     <div className="thread-periods stack">
