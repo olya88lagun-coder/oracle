@@ -574,10 +574,19 @@ a.report-toc__title:hover { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) { .report-waiting__orbit::after { animation: none; } }
 
 /* Пакет конверсии: призыв на главной, обещание результата, начало главы в блоке продажи */
-.hero__cta { margin-top: 24px; gap: 12px; }
+/* display:grid + gap — иначе .hero__cta > * { margin: 0 } убивает отступы .stack, и кнопка слипается с текстом под ней */
+.hero__cta { display: grid; justify-items: start; gap: 14px; margin-top: 24px; }
 .hero__cta > * { margin: 0; }
-.hero__promise { font-size: 17px; color: var(--ink); }
-.hero-date { max-width: 320px; gap: 6px; }
+.hero__promise { max-width: 36em; font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
+.hero__promise .muted { display: inline-block; margin-top: 4px; color: var(--ink-faint); font-size: 14px; }
+.hero-date { max-width: 320px; width: 100%; gap: 6px; }
+.hero-date .input {
+  border-color: color-mix(in srgb, var(--accent) 48%, var(--line-strong));
+  border-radius: 999px;
+  background: var(--surface-3);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.hero__cta .button { min-height: 52px; }
 .practice-card__cta { width: fit-content; margin-top: 14px; white-space: nowrap; pointer-events: none; }
 /* Связка арканов в блоке продажи: число → общее значение → связка */
 /* Список точек связки арканов в блоке продажи (раньше назывался matrix-link и конфликтовал с одноимённой ссылкой ниже) */
@@ -1701,7 +1710,8 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 140px); }
   .hero__text { margin-top: -36px; }
   .hero__text > * + * { margin-top: 14px; }
   .hero .lead { font-size: 17px; }
-  .hero__cta { margin-top: 18px; }
+  .hero__cta { margin-top: 18px; gap: 16px; }
+  .hero__promise { font-size: 14px; }
 }
 /* Карта дня в одну колонку: вступление, затем сразу выбор карт; факты 1/78/0 — ниже сцены */
 @media (max-width: 899px) {
