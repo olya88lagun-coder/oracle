@@ -1,6 +1,4 @@
 import { ARTICLES, type Article } from "@oracle/content/articles";
-import { lilaCellByNumber } from "@oracle/content/lila";
-import { lilaCellImage } from "./lila-paths";
 import { SITE_URL } from "./site";
 
 export const BLOG_PATH = "/blog";
@@ -25,14 +23,37 @@ export const BLOG_TOPIC_LABELS: Readonly<Record<BlogTopic, string>> = { matrix: 
 // Тема Markdown-статьи берётся из поля cluster; незнакомое значение попадает в «Матрицу»
 const TOPIC_BY_CLUSTER: Readonly<Record<string, BlogTopic>> = { matrix: "matrix", compat: "compat", lila: "lila", taro: "taro", natal: "natal", numerology: "numerology" };
 
+// Единый стиль обложек блога: тёмная сцена практики (16:9), без сканов Таро и акварелей клеток.
+// Отдельная обложка статьи — `/images/blog/<slug>.webp` в DEDICATED_BLOG_COVERS.
+export const BLOG_TOPIC_COVERS: Readonly<Record<BlogTopic, string>> = {
+  matrix: "/images/blog/topic-matrix.webp",
+  compat: "/images/blog/topic-compat.webp",
+  lila: "/images/blog/topic-lila.webp",
+  taro: "/images/blog/topic-taro.webp",
+  natal: "/images/blog/topic-natal.webp",
+  numerology: "/images/blog/topic-numerology.webp",
+};
+const DEDICATED_BLOG_COVERS: Readonly<Record<string, string>> = {};
+const TOPIC_COVER_ALT: Readonly<Record<BlogTopic, string>> = {
+  matrix: "Каменные сферы и золотая астролябия на тёмной ткани — образ матрицы судьбы",
+  compat: "Два символа союза в тёплом бронзовом свете — образ совместимости",
+  lila: "Фишка на каменной тропе с золотыми кольцами — образ игры Лила",
+  taro: "Карта Таро с золотым солнцем на тёмном алтаре",
+  natal: "Лунный круг и каменная сфера — образ натальной карты",
+  numerology: "Бронзовые числа и монеты на тёмном камне — образ нумерологии",
+};
+
+export function blogCoverFor(topic: BlogTopic, slug?: string, fallbackAlt?: string): { url: string; alt: string } {
+  const dedicated = slug ? DEDICATED_BLOG_COVERS[slug] : undefined;
+  return {
+    url: dedicated ?? BLOG_TOPIC_COVERS[topic],
+    alt: fallbackAlt && dedicated ? fallbackAlt : TOPIC_COVER_ALT[topic],
+  };
+}
+
 const WORDS_PER_MINUTE = 180;
 export const readingMinutesFor = (wordCount: number): number => Math.max(1, Math.ceil(wordCount / WORDS_PER_MINUTE));
 export const countWords = (text: string): number => text.split(/\s+/).filter((word) => /[а-яёa-z0-9]/i.test(word)).length;
-
-const cellPreview = (number: number) => {
-  const cell = lilaCellByNumber(number);
-  return { url: lilaCellImage(cell, "page"), alt: `Клетка ${cell.number} «${cell.name}» в игре Лила` };
-};
 
 const MANUAL_POSTS: readonly BlogPost[] = [
   {
@@ -41,7 +62,7 @@ const MANUAL_POSTS: readonly BlogPost[] = [
     metaTitle: "Как играть в Лилу онлайн — правила игры по шагам",
     description: "Как устроена Лила: намерение, кубик, шестёрка для входа, змеи и стрелы, 72 клетки и цель — клетка 68. Простые правила и советы новичку.",
     published: "2026-09-30",
-    image: cellPreview(1),
+    image: blogCoverFor("lila", "kak-igrat-v-lilu-onlain"),
     topic: "lila",
     readingMinutes: 3,
   },
@@ -51,7 +72,7 @@ const MANUAL_POSTS: readonly BlogPost[] = [
     metaTitle: "Змеи и стрелы Лилы — полный список переходов на поле",
     description: "Десять змей и десять стрел Лилы: откуда и куда ведёт каждая, что означает переход и как с ним работать. Список по номерам клеток.",
     published: "2026-09-30",
-    image: cellPreview(12),
+    image: blogCoverFor("lila", "zmei-i-strely-lily"),
     topic: "lila",
     readingMinutes: 3,
   },
@@ -61,7 +82,7 @@ const MANUAL_POSTS: readonly BlogPost[] = [
     metaTitle: "Как сформулировать намерение для Лилы — примеры",
     description: "Как выбрать вопрос для игры в Лилу: чем хорошее намерение отличается от размытого, примеры формулировок для отношений, работы, денег и выбора.",
     published: "2026-09-30",
-    image: cellPreview(68),
+    image: blogCoverFor("lila", "kak-sformulirovat-namerenie-dlya-lily"),
     topic: "lila",
     readingMinutes: 3,
   },
@@ -71,23 +92,26 @@ const MANUAL_POSTS: readonly BlogPost[] = [
     metaTitle: "Что такое матрица судьбы — как читать и рассчитать по дате рождения",
     description: "Что такое матрица судьбы, как она строится по дате рождения, что значат личность, центр и задача, и почему это инструмент самопознания, а не предсказание.",
     published: "2026-09-30",
-    image: { url: "/hero.webp", alt: "Матрица судьбы — символическая схема по дате рождения" },
+    image: blogCoverFor("matrix", "chto-takoe-matritsa-sudby"),
     topic: "matrix",
     readingMinutes: 5,
   },
 ];
 
-const articlePost = (article: Article): BlogPost => ({
-  slug: article.slug,
-  title: article.title,
-  metaTitle: article.metaTitle,
-  description: article.description,
-  published: article.date,
-  ...(article.updated && { updated: article.updated }),
-  image: { url: article.image, alt: article.imageAlt },
-  topic: TOPIC_BY_CLUSTER[article.cluster] ?? "matrix",
-  readingMinutes: readingMinutesFor(countWords(`${article.body} ${article.faq.map((item) => `${item.question} ${item.answer}`).join(" ")}`)),
-});
+const articlePost = (article: Article): BlogPost => {
+  const topic = TOPIC_BY_CLUSTER[article.cluster] ?? "matrix";
+  return {
+    slug: article.slug,
+    title: article.title,
+    metaTitle: article.metaTitle,
+    description: article.description,
+    published: article.date,
+    ...(article.updated && { updated: article.updated }),
+    image: blogCoverFor(topic, article.slug, article.imageAlt),
+    topic,
+    readingMinutes: readingMinutesFor(countWords(`${article.body} ${article.faq.map((item) => `${item.question} ${item.answer}`).join(" ")}`)),
+  };
+};
 
 // Сначала новые; при одинаковой дате порядок объявления сохраняется (сортировка устойчива)
 export const BLOG_POSTS: readonly BlogPost[] = [...MANUAL_POSTS, ...ARTICLES.map(articlePost)].sort((a, b) => b.published.localeCompare(a.published));
