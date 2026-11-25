@@ -867,11 +867,9 @@ a.report-toc__title:hover { color: var(--accent); }
 .wordmark { display: inline-flex; align-items: center; gap: 0.26em; min-height: 44px; color: var(--ink); font-family: var(--font-display); font-size: clamp(24px, 3vw, 30px); font-weight: 400; line-height: 1.1; letter-spacing: 0; white-space: nowrap; text-decoration: none; }
 .wordmark em { font-style: normal; color: var(--accent); }
 .wordmark--small { font-size: 24px; }
-/* Знак сайта в шапке (иконка из icon.svg): зона нажатия ≥ 44 px, сам знак 32 px */
+/* Знак сайта: глаз, полумесяц и звезда; зона нажатия ≥ 44 px, сам знак 40 px. */
 .site-logo { display: inline-flex; flex: none; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; color: var(--accent); text-decoration: none; }
-.site-logo__mark { display: block; border-radius: 7px; }
-.site-logo__frame { transition: stroke var(--dur-base) var(--ease-out); }
-.site-logo:hover .site-logo__frame { stroke: var(--accent); }
+.site-logo__mark { display: block; }
 .site-header { position: relative; z-index: 10; border-bottom: 1px solid rgba(241, 233, 223, 0.08); background: var(--bg); }
 .site-header__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: var(--container); min-height: 70px; margin: 0 auto; padding: 0 16px; }
 .site-nav { display: none; align-items: center; gap: 26px; font-size: 13px; }
