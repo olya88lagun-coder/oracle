@@ -4,6 +4,7 @@ import { TAROT_DECK } from "./tarot-deck";
 
 const RANGES = {
   essence: { min: 400, max: 1600 },
+  contrast: { min: 500, max: 1800 },
   love: { min: 200, max: 900 },
   money: { min: 200, max: 900 },
   day: { min: 150, max: 800 },
@@ -16,7 +17,7 @@ const MIN_WORDS = 330;
 const chars = (parts: readonly string[]) => parts.join(" ").length;
 const inRange = (n: number, range: { min: number; max: number }) => n >= range.min && n <= range.max;
 const words = (card: TarotCard) =>
-  [...card.essence, ...card.love, ...card.money, ...card.resource, ...card.distortion, ...card.day, card.action, card.question].join(" ").split(/\s+/).filter(Boolean).length;
+  [...card.essence, ...card.contrast, ...card.love, ...card.money, ...card.resource, ...card.distortion, ...card.day, card.action, card.question].join(" ").split(/\s+/).filter(Boolean).length;
 
 function checkCard(card: TarotCard): string[] {
   const errors: string[] = [];
@@ -28,6 +29,10 @@ function checkCard(card: TarotCard): string[] {
     if (!inRange(chars(card[key]), RANGES[key])) at(`секция ${key}: от ${RANGES[key].min} до ${RANGES[key].max} знаков, сейчас ${chars(card[key])}`);
   }
   if (card.essence.length < 2) at("«Суть» — минимум два абзаца");
+  if (card.contrast.length > 0) {
+    if (card.contrast.length < 2) at("«С чем не путать» — минимум два абзаца");
+    if (!inRange(chars(card.contrast), RANGES.contrast)) at(`секция contrast: от ${RANGES.contrast.min} до ${RANGES.contrast.max} знаков, сейчас ${chars(card.contrast)}`);
+  }
   if (!inRange(card.action.length, RANGES.action)) at(`«Действие на сегодня»: от ${RANGES.action.min} до ${RANGES.action.max} знаков`);
   if (!card.question.endsWith("?")) at("«Вопрос для себя» должен заканчиваться знаком «?»");
   if (!inRange(card.question.length, RANGES.question)) at(`«Вопрос для себя»: от ${RANGES.question.min} до ${RANGES.question.max} знаков`);
@@ -35,7 +40,7 @@ function checkCard(card: TarotCard): string[] {
     if (!inRange(item.length, RANGES.item)) at(`пункт списка «${item.slice(0, 30)}…»: от ${RANGES.item.min} до ${RANGES.item.max} знаков`);
   }
   if (words(card) < MIN_WORDS) at(`слов ${words(card)}, нужно не меньше ${MIN_WORDS}`);
-  const stops = findStopPhrases([card.name, ...card.keywords, ...card.essence, ...card.love, ...card.money, ...card.resource, ...card.distortion, ...card.day, card.action, card.question].join("\n"));
+  const stops = findStopPhrases([card.name, ...card.keywords, ...card.essence, ...card.contrast, ...card.love, ...card.money, ...card.resource, ...card.distortion, ...card.day, card.action, card.question].join("\n"));
   if (stops.length > 0) at(`запрещённые обороты — ${stops.join(", ")}`);
   return errors;
 }

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { taroCardFromParam, taroCardImage, taroCardPath, taroShareUrl } from "./taro-paths";
+import { taroCardFromParam, taroCardImage, taroCardPath, taroCardPathsForSitemap, taroShareUrl } from "./taro-paths";
 
 describe("taro paths", () => {
   test("builds card paths and image names for three sizes", () => {
@@ -8,6 +8,14 @@ describe("taro paths", () => {
     expect(taroCardImage(mag)).toBe("/taro/02-mag.webp");
     expect(taroCardImage(mag, "card")).toBe("/taro/02-mag-480.webp");
     expect(taroCardImage(mag, "thumb")).toBe("/taro/02-mag-160.webp");
+  });
+
+  test("the sitemap lists only the 22 major arcana", () => {
+    const paths = taroCardPathsForSitemap();
+    expect(paths).toHaveLength(22);
+    expect(paths).toContain("/taro/karty/mag");
+    expect(paths).toContain("/taro/karty/shut");
+    expect(paths).not.toContain("/taro/karty/zhezly-tuz");
   });
 
   test("resolves only known slugs in exact form", () => {

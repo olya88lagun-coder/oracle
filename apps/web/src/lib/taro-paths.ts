@@ -10,6 +10,9 @@ export const taroCardPath = (card: Pick<TarotCardRef, "slug">): string => `${TAR
 export const taroCardImage = (card: Pick<TarotCardRef, "order" | "slug">, size: keyof typeof SUFFIX = "page"): string => `/taro/${tarotFileName(card)}${SUFFIX[size]}.webp`;
 export const taroCardFromParam = (param: string): TarotCardRef | null => TAROT_DECK.find((card) => card.slug === param) ?? null;
 
+// В sitemap — только старшие арканы: младшие остаются по ссылкам из каталога, без давления на crawl budget
+export const taroCardPathsForSitemap = (): string[] => TAROT_DECK.filter((card) => card.suit === "major").map(taroCardPath);
+
 export const TARO_SHARE_TEXT = (name: string): string => `Моя карта дня — ${name}. Вытяни свою`;
 export const taroShareUrl = (card: Pick<TarotCardRef, "slug">): string => `${SITE_URL}${taroCardPath(card)}?utm_source=share&utm_medium=card`;
 export const TARO_AUTHOR_CREDIT = "Рисунки Памелы Колман Смит, 1909 (общественное достояние)";

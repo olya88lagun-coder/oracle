@@ -5,7 +5,7 @@ import { COMPAT_PATH } from "@/lib/compat";
 import { DOCUMENT_PATHS, NOINDEX_DOCUMENT_PATHS } from "@/lib/legal";
 import { THREAD_PATH } from "@/lib/life-thread";
 import { LILA_PATH } from "@/lib/lila-paths";
-import { LUNAR_CALENDAR_PATH, parseDaySlug } from "@/lib/lunar-calendar-paths";
+import { LUNAR_CALENDAR_PATH, lunarDayPathsForSitemap, parseDaySlug } from "@/lib/lunar-calendar-paths";
 import { MOON_PATH } from "@/lib/moon-paths";
 import { GLOSSARY_PATH } from "@/lib/natal-glossary";
 import { NATAL_PATH } from "@/lib/natal-paths";
@@ -13,7 +13,7 @@ import { CLOCK_PATH, NUMEROLOGY_PATH, PERSONAL_YEAR_PATH } from "@/lib/numerolog
 import { PYTHAGORAS_PATH } from "@/lib/pythagoras";
 import { PUBLIC_PATHS } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
-import { TARO_DAY_PATH, TARO_PATH } from "@/lib/taro-paths";
+import { TARO_DAY_PATH, TARO_PATH, taroCardPathsForSitemap } from "@/lib/taro-paths";
 
 // Приоритет — подсказка, а не команда (Google его не учитывает, Яндекс учитывает как намёк), но разведём виды страниц:
 // входы в практики выше, справочные и юридические страницы ниже, остальные (значения арканов, карт, клеток, знаков) — посередине
@@ -41,8 +41,22 @@ const priorityOf = (path: string): number => {
 // а выдуманная (например, время сборки) заставила бы поисковик пересканировать неизменившееся и со временем перестать верить файлу
 const PUBLISHED = new Map(BLOG_POSTS.map((post) => [blogPath(post), new Date(post.updated ?? post.published)]));
 
+const noindexLegal = new Set<string>(NOINDEX_DOCUMENT_PATHS);
+const tarotCardPrefix = `${TARO_PATH}/karty/`;
+
+export function sitemapPaths(now = new Date()): string[] {
+  const nearDays = new Set(lunarDayPathsForSitemap(now));
+  const majorCards = new Set(taroCardPathsForSitemap());
+  return PUBLIC_PATHS.filter((path) => {
+    if (noindexLegal.has(path)) return false;
+    if (path.startsWith(`${LUNAR_CALENDAR_PATH}/`) && parseDaySlug(path.slice(LUNAR_CALENDAR_PATH.length + 1))) return nearDays.has(path);
+    if (path.startsWith(tarotCardPrefix)) return majorCards.has(path);
+    return true;
+  });
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  return PUBLIC_PATHS.filter((path) => !(NOINDEX_DOCUMENT_PATHS as readonly string[]).includes(path)).map((path) => {
+  return sitemapPaths().map((path) => {
     const lastModified = PUBLISHED.get(path);
     return {
       url: path === "/" ? SITE_URL : `${SITE_URL}${path}`,

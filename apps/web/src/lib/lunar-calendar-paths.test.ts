@@ -1,5 +1,14 @@
 import { describe, expect, test } from "vitest";
-import { lunarDayPath, lunarDayPathOfDate, lunarDayPaths, MONTH_GENITIVE_SLUGS, parseDaySlug, parseMonthSlug } from "./lunar-calendar-paths";
+import {
+  lunarDayPath,
+  lunarDayPathOfDate,
+  lunarDayPaths,
+  lunarDayPathsForSitemap,
+  MONTH_GENITIVE_SLUGS,
+  parseDaySlug,
+  parseMonthSlug,
+  SITEMAP_DAY_RADIUS,
+} from "./lunar-calendar-paths";
 
 const slugOf = (path: string) => path.split("/").pop()!;
 
@@ -40,5 +49,16 @@ describe("addresses of single dates", () => {
     expect(paths.at(-1)).toBe("/lunnyy-kalendar/31-dekabrya-2027");
     expect(paths).toContain("/lunnyy-kalendar/31-dekabrya-2026");
     expect(paths).toContain("/lunnyy-kalendar/1-yanvarya-2027");
+  });
+
+  test("the sitemap keeps only nearby days inside the month window", () => {
+    const now = new Date("2026-11-17T09:00:00Z");
+    const paths = lunarDayPathsForSitemap(now);
+    expect(paths).toHaveLength(SITEMAP_DAY_RADIUS * 2 + 1);
+    expect(paths[0]).toBe("/lunnyy-kalendar/18-oktyabrya-2026");
+    expect(paths.at(-1)).toBe("/lunnyy-kalendar/17-dekabrya-2026");
+    expect(paths).toContain("/lunnyy-kalendar/17-noyabrya-2026");
+    expect(paths).not.toContain("/lunnyy-kalendar/1-yanvarya-2027");
+    expect(paths.every((path) => lunarDayPaths(now).includes(path))).toBe(true);
   });
 });

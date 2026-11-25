@@ -54,8 +54,18 @@ describe("parseTarotCard", () => {
     const card = parseTarotCard(source(), "02-mag.md");
     expect(card).toMatchObject({ order: 2, name: "Маг", slug: "mag", suit: "major", keywords: ["инициатива", "воля", "умение воплощать"] });
     expect(card.essence).toHaveLength(2);
+    expect(card.contrast).toEqual([]);
     expect(card.resource).toEqual(["один", "два", "три"]);
     expect(card.question).toBe("Что вы начнёте сегодня?");
+  });
+
+  test("accepts the optional «С чем не путать» section after essence", () => {
+    const withContrast = source().replace(
+      "## В отношениях",
+      `## С чем не путать\n\n${P}\n\n${P}\n\n## В отношениях`,
+    );
+    const card = parseTarotCard(withContrast, "02-mag.md");
+    expect(card.contrast).toHaveLength(2);
   });
 
   test("rejects a missing section, an unknown one, a bad list, a bad suit and text before the first section", () => {
