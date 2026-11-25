@@ -1,12 +1,14 @@
 import { PosterButton } from "@/components/PosterButton";
 import { weekdayPosterSpec } from "@/lib/poster-weekday";
-import type { WeekdayPlanet } from "@/lib/weekday-planets";
+import { WEEKDAY_PLANETS, type WeekdayPlanet } from "@/lib/weekday-planets";
 import { PlanetArtwork } from "./PlanetArtwork";
 import { WeekdayCountdown } from "./WeekdayCountdown";
 
 // Первый экран страницы дней недели: что за день сейчас, сколько он ещё продлится и кнопки «поделиться» и «к вопросу дня».
 // Глубокий текст (образ, вопрос, действие) лежит в карточке дня ниже, здесь его не повторяем
-export function WeekdayNow({ planet }: { planet: WeekdayPlanet }) {
+export function WeekdayNow({ planet, today }: { planet: WeekdayPlanet; today: number }) {
+  const prev = WEEKDAY_PLANETS[(today + 6) % 7]!;
+  const next = WEEKDAY_PLANETS[(today + 1) % 7]!;
   return (
     <aside className="weekday-strip weekday-now" data-planet={planet.glyph} aria-label="Планета дня">
       <span className="weekday-mark" aria-hidden="true">
@@ -19,9 +21,13 @@ export function WeekdayNow({ planet }: { planet: WeekdayPlanet }) {
         </p>
         <p className="weekday-strip__archetype">{planet.archetype}</p>
         <WeekdayCountdown />
+        <p className="weekday-now__neighbours">
+          <a className="touch-link" href={`#${prev.slug}`}>← {prev.day}</a>
+          <a className="touch-link" href={`#${next.slug}`}>{next.day} →</a>
+        </p>
       </div>
       <div className="weekday-now__actions">
-        <PosterButton spec={weekdayPosterSpec(planet)} />
+        <PosterButton spec={weekdayPosterSpec(planet)} preview />
         <a className="touch-link" href={`#${planet.slug}`}>
           Вопрос и действие дня
         </a>

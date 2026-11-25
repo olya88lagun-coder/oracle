@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { renderPathPoster, renderPoster, renderThreadPoster, type PathPosterSpec, type PosterSpec, type ThreadPosterSpec } from "@/lib/poster";
 import type { MoonPosterSpec } from "@/lib/poster-moon";
 import { renderMoonPoster } from "@/lib/poster-moon-render";
@@ -8,8 +8,13 @@ import type { WeekdayPosterSpec } from "@/lib/poster-weekday";
 import { renderWeekdayPoster } from "@/lib/poster-weekday-render";
 
 // «Картинка для сторис»: рисуется в браузере и скачивается или уходит в окно «Поделиться» вместе с файлом. Ни дат, ни данных на сервер
-export function PosterButton({ spec, label = "Картинка для сторис" }: { spec: PosterSpec | PathPosterSpec | ThreadPosterSpec | MoonPosterSpec | WeekdayPosterSpec; label?: string }) {
+export function PosterButton({ spec, label = "Картинка для сторис", preview = false }: { spec: PosterSpec | PathPosterSpec | ThreadPosterSpec | MoonPosterSpec | WeekdayPosterSpec; label?: string; preview?: boolean }) {
   const [state, setState] = useState<"idle" | "busy" | "done" | "error">("idle");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
 
   async function make() {
     setState("busy");
@@ -18,6 +23,12 @@ export function PosterButton({ spec, label = "Картинка для стори
       const fonts = { serif, sans: getComputedStyle(document.body).fontFamily };
       const blob = "weekday" in spec ? await renderWeekdayPoster(spec, fonts) : "moon" in spec ? await renderMoonPoster(spec, fonts) : "thread" in spec ? await renderThreadPoster(spec, fonts) : "trail" in spec ? await renderPathPoster(spec, fonts) : await renderPoster(spec, fonts);
       const file = new File([blob], `${spec.fileName}.png`, { type: "image/png" });
+      if (preview) {
+        setPreviewUrl((prev) => {
+          if (prev) URL.revokeObjectURL(prev);
+          return URL.createObjectURL(blob);
+        });
+      }
       if (navigator.canShare?.({ files: [file] })) {
         try {
           await navigator.share({ files: [file] });
@@ -26,7 +37,7 @@ export function PosterButton({ spec, label = "Картинка для стори
         } catch (error) {
           // Закрытое окно «Поделиться» — не ошибка, дальше просто скачиваем
           if (error instanceof DOMException && error.name === "AbortError") {
-            setState("idle");
+            setState(preview ? "done" : "idle");
             return;
           }
         }
@@ -50,6 +61,12 @@ export function PosterButton({ spec, label = "Картинка для стори
       </button>
       {state === "done" && <span role="status">Картинка готова — в ней нет личных данных.</span>}
       {state === "error" && <span role="alert">Не получилось нарисовать картинку.</span>}
+      {preview && previewUrl && (
+        <figure className="poster-preview">
+          {/* eslint-disable-next-line @next/next/no-img-element -- blob URL из холста в браузере */}
+          <img src={previewUrl} alt="Превью картинки для сторис" width={108} height={192} />
+        </figure>
+      )}
     </>
   );
 }

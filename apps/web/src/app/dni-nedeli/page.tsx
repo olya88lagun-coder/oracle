@@ -42,7 +42,7 @@ export default function WeekdayPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(data) }} />
-      <main className="moon-page weekday-page">
+      <main className="moon-page weekday-page" data-planet={planet.glyph}>
         <MoonRibbon current="weekday" now={new Date()} initial={moonRibbonData(new Date())} />
         <nav aria-label="Хлебные крошки" className="moon-breadcrumb"><Link href="/">Главная</Link><span aria-hidden="true">/</span><span>Дни недели и планеты</span></nav>
         <header className="weekday-hero">
@@ -50,7 +50,7 @@ export default function WeekdayPage() {
             <p className="eyebrow eyebrow--line">Ритм недели</p>
             <h1>Дни недели и планеты</h1>
             <p className="weekday-hero__lead">В классической традиции каждому дню недели покровительствует своя планета. Её образ не разрешает и не запрещает вам ничего, он служит мягкой подсказкой: на чём сегодня можно задержать внимание.</p>
-            <WeekdayNow planet={planet} />
+            <WeekdayNow planet={planet} today={today} />
           </div>
           <WeekdayWheel today={today} />
         </header>
