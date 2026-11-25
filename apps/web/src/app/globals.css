@@ -5353,8 +5353,23 @@ main:has(> .natal-intro):not(:has(> .natal-quick)) > .natal-form :is(a, button, 
 @media (prefers-reduced-motion: no-preference) {
   :is(.hero__art, .matrix-hero__art, .taro-cat-hero__art, .lila-hero__art, .compat-scene__art) { overflow: clip; }
   :is(.hero__art, .matrix-hero__art, .taro-cat-hero__art, .lila-hero__art, .compat-scene__art) img { animation: art-breathe 26s ease-in-out infinite alternate; }
+  /* Главная: спокойнее дыхание кадра (1 → 1.03), чтобы не спорить со входом текста */
+  .hero__art img { animation: hero-art-breathe 24s ease-in-out infinite alternate; }
+  /* Вход текста: лёгкий подъём со сдвигом по времени — бренд → заголовок → лид → CTA */
+  .hero__brand { animation: hero-rise 680ms var(--ease-out) both; }
+  .hero .display { animation: hero-rise 680ms 110ms var(--ease-out) both; }
+  .hero .lead { animation: hero-rise 680ms 210ms var(--ease-out) both; }
+  .hero__cta { animation: hero-rise 680ms 320ms var(--ease-out) both; }
+  /* Золотой акцент «оракул» чуть проявляется после бренда — без сдвига вёрстки */
+  .hero__brand em { animation: hero-gold-settle 820ms 260ms var(--ease-out) both; }
 }
 @keyframes art-breathe { from { transform: scale(1) translate3d(0, 0, 0); } to { transform: scale(1.07) translate3d(-1.2%, -0.8%, 0); } }
+@keyframes hero-art-breathe { from { transform: scale(1) translate3d(0, 0, 0); } to { transform: scale(1.03) translate3d(-0.5%, -0.35%, 0); } }
+@keyframes hero-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes hero-gold-settle {
+  from { color: var(--ink-soft); text-shadow: 0 0 18px rgba(203, 166, 118, 0.28); }
+  to { color: var(--accent); text-shadow: 0 0 0 transparent; }
+}
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .home :is(.practice-card, .home-principles__item, .home-blog__card, .card--portrait) { animation: scroll-rise linear backwards; animation-timeline: view(); animation-range: entry 0% entry 42%; }
