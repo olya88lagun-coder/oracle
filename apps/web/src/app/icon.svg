@@ -1,10 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="#CBA676">
   <title>Твой оракул</title>
-  <rect width="64" height="64" rx="14" fill="#0A090E"/>
-  <rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="#5C4A38" stroke-width="1.5"/>
-  <defs>
-    <mask id="cut"><rect width="64" height="64" fill="#fff"/><circle cx="38.5" cy="25.5" r="17" fill="#000"/></mask>
-  </defs>
-  <circle cx="30" cy="32" r="19" fill="#CBA676" mask="url(#cut)"/>
-  <circle cx="40" cy="26.5" r="3" fill="#CBA676"/>
+  <path d="M4 37C22 10 42 10 60 37C39 17 25 17 4 37Z"/>
+  <path d="M4 39C22 64 42 64 60 39C39 56 25 56 4 39Z"/>
+  <path d="M34 25C22 23 16 36 22 44C28 53 39 49 42 42C31 49 23 33 34 25Z"/>
+  <path d="M53 9L55 15L61 17L55 19L53 25L51 19L45 17L51 15Z"/>
 </svg>
