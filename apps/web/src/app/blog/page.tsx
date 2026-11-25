@@ -11,14 +11,14 @@ export const metadata: Metadata = publicMetadata({
   image: SITE_PREVIEW_IMAGE,
 });
 
-const dateLabel = (iso: string) => new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${iso}T00:00:00Z`));
+const dateLabel = (iso: string) =>
+  new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(
+    new Date(`${iso}T00:00:00Z`),
+  );
 
-// Главный материал каталога выбирается явно, а не по порядку: у статей одной даты порядок случайный
-const FEATURED_SLUG = "rasshifrovka-matritsy-sudby";
-const ORDERED_POSTS = [...BLOG_POSTS].sort((a, b) => Number(b.slug === FEATURED_SLUG) - Number(a.slug === FEATURED_SLUG));
-
+// Каталог уже отсортирован от новых к старым — первый пост становится главным материалом
 export default function BlogIndexPage() {
-  const posts: CatalogPost[] = ORDERED_POSTS.map((post) => ({
+  const posts: CatalogPost[] = BLOG_POSTS.map((post) => ({
     slug: post.slug,
     path: blogPath(post),
     title: post.title,
@@ -33,7 +33,10 @@ export default function BlogIndexPage() {
   }));
   return (
     <main className="blog-page">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbJsonLd([{ name: "Блог", path: BLOG_PATH }])) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbJsonLd([{ name: "Блог", path: BLOG_PATH }])) }}
+      />
       <header className="matrix-wrap blog-head">
         <h1 className="display">Блог</h1>
         <p className="lead">Как играть в Лилу, читать матрицу судьбы и находить собственный смысл в символических практиках.</p>

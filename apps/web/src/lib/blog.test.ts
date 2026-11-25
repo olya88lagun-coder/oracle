@@ -7,8 +7,10 @@ import { LilaIntention } from "@/components/blog/LilaIntention";
 import { LilaSnakesArrows } from "@/components/blog/LilaSnakesArrows";
 import { WhatIsMatrix } from "@/components/blog/WhatIsMatrix";
 import { MATRIX_FAQ, matrixFaqJsonLd, MatrixGuide } from "@/components/matrix/MatrixGuide";
-import { BLOG_POSTS, blogPath, blogPostBySlug, blogPostJsonLd } from "./blog";
+import { BLOG_POSTS, BLOG_TOPIC_COVERS, blogCoverFor, blogPath, blogPostBySlug, blogPostJsonLd } from "./blog";
 import { PUBLIC_PATHS } from "./seo";
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 const text = (html: string) => html.replace(/<[^>]+>/g, " ");
 
@@ -30,7 +32,17 @@ describe("blog posts", () => {
   test("describe themselves as an article by the site with an absolute image", () => {
     const post = blogPostBySlug("zmei-i-strely-lily")!;
     expect(blogPostJsonLd(post)).toMatchObject({ "@type": "Article", headline: post.title, datePublished: "2026-09-30", author: { "@type": "Organization" } });
-    expect(String(blogPostJsonLd(post).image)).toMatch(/^https?:\/\/.+\/lila\/12-zavist\.webp$/);
+    expect(String(blogPostJsonLd(post).image)).toMatch(/^https?:\/\/.+\/images\/blog\/topic-lila\.webp$/);
+  });
+
+  test("use unified topic covers that exist as files", () => {
+    for (const url of Object.values(BLOG_TOPIC_COVERS)) {
+      expect(existsSync(fileURLToPath(new URL(`../../public${url}`, import.meta.url))), url).toBe(true);
+    }
+    for (const post of BLOG_POSTS) {
+      expect(post.image.url).toBe(blogCoverFor(post.topic, post.slug).url);
+      expect(post.image.url.startsWith("/images/blog/")).toBe(true);
+    }
   });
 });
 

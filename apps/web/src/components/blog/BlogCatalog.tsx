@@ -2,13 +2,27 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { BlogTopic } from "@/lib/blog";
 
-export type CatalogPost = { slug: string; path: string; title: string; description: string; dateLabel: string; published: string; topic: BlogTopic; topicLabel: string; readingMinutes: number; imageUrl: string; imageAlt: string };
+export type CatalogPost = {
+  slug: string;
+  path: string;
+  title: string;
+  description: string;
+  dateLabel: string;
+  published: string;
+  topic: BlogTopic;
+  topicLabel: string;
+  readingMinutes: number;
+  imageUrl: string;
+  imageAlt: string;
+};
 export type CatalogTopic = { topic: BlogTopic; label: string; count: number };
 
 type Filter = "all" | BlogTopic;
+
+const PAGE_SIZE = 9;
 
 const countWord = (count: number): string => {
   const last = count % 10;
@@ -26,9 +40,10 @@ function Meta({ post }: { post: CatalogPost }) {
   );
 }
 
-// Каталог блога: главный материал и сетка. Все статьи отдаются сервером сразу; фильтр по темам только скрывает лишние
+// Каталог блога: свежий главный материал, фильтр-чипы и сетка с «показать ещё»
 export function BlogCatalog({ posts, topics }: { posts: readonly CatalogPost[]; topics: readonly CatalogTopic[] }) {
   const [filter, setFilter] = useState<Filter>("all");
+  const [visible, setVisible] = useState(PAGE_SIZE);
   const [lead, ...rest] = posts;
 
   useEffect(() => {
@@ -38,6 +53,7 @@ export function BlogCatalog({ posts, topics }: { posts: readonly CatalogPost[]; 
 
   function choose(next: Filter) {
     setFilter(next);
+    setVisible(PAGE_SIZE);
     const url = new URL(window.location.href);
     if (next === "all") url.searchParams.delete("topic");
     else url.searchParams.set("topic", next);
@@ -48,18 +64,22 @@ export function BlogCatalog({ posts, topics }: { posts: readonly CatalogPost[]; 
     }
   }
 
-  const shows = (post: CatalogPost) => filter === "all" || post.topic === filter;
-  const total = posts.filter(shows).length;
+  const matches = (post: CatalogPost) => filter === "all" || post.topic === filter;
+  const filteredRest = useMemo(() => rest.filter((post) => filter === "all" || post.topic === filter), [rest, filter]);
+  const total = posts.filter(matches).length;
+  const shown = filteredRest.slice(0, visible);
+  const hasMore = filteredRest.length > visible;
   if (!lead) return null;
 
   return (
     <>
-      <section className="blog-lead" aria-labelledby="blog-lead-title" hidden={!shows(lead)}>
+      <section className="blog-lead" aria-labelledby="blog-lead-title" hidden={!matches(lead)}>
         <div className="blog-lead__art">
           <Image src={lead.imageUrl} alt="" fill priority unoptimized sizes="100vw" />
         </div>
         <div className="matrix-wrap blog-lead__inner">
           <div className="blog-lead__copy">
+            <p className="blog-lead__eyebrow">Свежий материал</p>
             <Meta post={lead} />
             <h2 id="blog-lead-title">
               <Link href={lead.path}>{lead.title}</Link>
@@ -90,11 +110,18 @@ export function BlogCatalog({ posts, topics }: { posts: readonly CatalogPost[]; 
         </div>
 
         <ul className="blog-grid">
-          {rest.map((post) => (
-            <li key={post.slug} hidden={!shows(post)}>
+          {shown.map((post) => (
+            <li key={post.slug}>
               <Link href={post.path} className="blog-card">
                 <span className="blog-card__art">
-                  <Image src={post.imageUrl} alt="" fill unoptimized loading="lazy" sizes="(min-width: 860px) 560px, 100vw" />
+                  <Image
+                    src={post.imageUrl}
+                    alt=""
+                    fill
+                    unoptimized
+                    loading="lazy"
+                    sizes="(min-width: 1100px) 360px, (min-width: 860px) 45vw, 100vw"
+                  />
                 </span>
                 <Meta post={post} />
                 <span className="blog-card__title">{post.title}</span>
@@ -104,6 +131,14 @@ export function BlogCatalog({ posts, topics }: { posts: readonly CatalogPost[]; 
             </li>
           ))}
         </ul>
+
+        {hasMore ? (
+          <div className="blog-more">
+            <button type="button" className="button button--ghost" onClick={() => setVisible((n) => n + PAGE_SIZE)}>
+              Показать ещё
+            </button>
+          </div>
+        ) : null}
       </section>
     </>
   );
