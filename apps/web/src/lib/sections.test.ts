@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { isSectionCurrent, SECTIONS } from "./sections";
+import { isSectionCurrent, NAV_MORE, NAV_PRIMARY, SECTIONS } from "./sections";
 import { PUBLIC_PATHS } from "./seo";
 
 describe("SECTIONS", () => {
@@ -9,6 +9,12 @@ describe("SECTIONS", () => {
 
   test("every section leads to a public page", () => {
     for (const section of SECTIONS) expect(PUBLIC_PATHS).toContain(section.href);
+  });
+
+  test("desktop nav keeps five primary practices with Moon visible and the rest in More", () => {
+    expect(NAV_PRIMARY.map((section) => section.short)).toEqual(["Матрица", "Лила", "Таро", "Натальная карта", "Луна"]);
+    expect(NAV_MORE.map((section) => section.short)).toEqual(["Совместимость", "Нумерология", "Блог"]);
+    expect([...NAV_PRIMARY, ...NAV_MORE].map((section) => section.href).sort()).toEqual([...SECTIONS].map((section) => section.href).sort());
   });
 
   test("the Moon section is current on every Moon page and the others keep the prefix rule", () => {
