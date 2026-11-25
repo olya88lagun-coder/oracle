@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { WEEKDAY_PLANETS } from "@/lib/weekday-planets";
 import { PlanetArtwork } from "./PlanetArtwork";
+import { WeekdayCardFold } from "./WeekdayCardFold";
 
 const STEPS = [
   { icon: "sunrise", when: "Утром", text: "прочитайте образ дня." },
@@ -29,21 +30,23 @@ export function WeekdayCards({ today }: { today: number }) {
               <span className="weekday-card__label">Образ</span>
               {planet.archetype}
             </p>
-            <p className="weekday-card__question">
-              <span className="weekday-card__label">Вопрос для себя</span>
-              {planet.question}
-            </p>
-            <p className="weekday-card__action">
-              <span className="weekday-card__label">Маленькое действие</span>
-              {planet.action}
-            </p>
-            <p className="weekday-card__etymology">{planet.etymology}</p>
-            <p className="weekday-card__practice">
-              {planet.practice.lead}{" "}
-              <Link href={planet.practice.href}>
-                {planet.practice.label}
-              </Link>
-            </p>
+            <WeekdayCardFold open={isToday}>
+              <p className="weekday-card__question">
+                <span className="weekday-card__label">Вопрос для себя</span>
+                {planet.question}
+              </p>
+              <p className="weekday-card__action">
+                <span className="weekday-card__label">Маленькое действие</span>
+                {planet.action}
+              </p>
+              <p className="weekday-card__etymology">{planet.etymology}</p>
+              <p className="weekday-card__practice">
+                {planet.practice.lead}{" "}
+                <Link href={planet.practice.href}>
+                  {planet.practice.label}
+                </Link>
+              </p>
+            </WeekdayCardFold>
           </li>
         );
       })}

@@ -49,10 +49,12 @@ test("the first screen shows what day it is and does not repeat the question of 
   const markup = html();
   const hero = markup.slice(markup.indexOf('class="weekday-hero"'), markup.indexOf('class="weekday-bar"'));
   expect(hero).toContain("weekday-now__actions");
+  expect(hero).toContain("weekday-now__neighbours");
   expect(hero).not.toContain("weekday-strip__question");
   expect(markup.match(/class="weekday-card__action"/g)).toHaveLength(7);
   expect(markup.match(/class="weekday-card__etymology"/g)).toHaveLength(7);
   expect(markup).toContain("weekday-how__icon");
+  expect(markup).toContain("weekday-card__fold");
 });
 
 test("the week bar marks the first and the last day of the week correctly", () => {
