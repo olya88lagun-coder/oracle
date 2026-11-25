@@ -131,6 +131,10 @@ body .stack > * + * { margin-top: 20px; }
 .hero__art img { object-fit: cover; object-position: 64% 50%; }
 .hero__text { position: relative; margin-top: -56px; }
 .hero__text > * + * { margin-top: 22px; }
+/* Имя сайта крупнее шапки, но ниже заголовка: антиква + золотой акцент, как у .wordmark */
+.hero__brand { margin: 0; color: var(--ink); font-family: var(--font-display); font-size: clamp(28px, 3.8vw, 44px); font-weight: 400; line-height: 1.1; letter-spacing: -0.01em; }
+.hero__brand em { font-style: normal; color: var(--accent); }
+.hero__text > .hero__brand + .display { margin-top: 12px; }
 .hero .lead { max-width: 620px; font-size: clamp(18px, 1.5vw, 21px); color: var(--ink); opacity: 0.86; }
 @media (min-width: 900px) {
   /* Левый отступ текста совпадает с логотипом в шапке: (ширина − контейнер) / 2 + 28px, но не больше, чем при max-width героя */
@@ -142,6 +146,7 @@ body .stack > * + * { margin-top: 20px; }
   .hero .display { max-width: 8.6em; }
   .hero .lead { max-width: min(620px, 46vw); }
   .hero__text { z-index: 2; max-width: 680px; margin-top: 0; }
+  .hero__text > .hero__brand + .display { margin-top: 16px; }
 }
 
 /* Блок «Мой портрет» на главной: картинка фоном, текст слева на тёмной части; на телефоне картинка сверху */
@@ -1710,6 +1715,8 @@ body.has-cookie-banner { padding-bottom: var(--cookie-banner-height, 110px); }
   .hero__art { height: min(40vw, 160px); }
   .hero__text { margin-top: -36px; }
   .hero__text > * + * { margin-top: 14px; }
+  .hero__brand { font-size: clamp(24px, 6.4vw, 30px); }
+  .hero__text > .hero__brand + .display { margin-top: 8px; }
   .hero .lead { font-size: 17px; }
   .hero__cta { margin-top: 18px; gap: 16px; }
   .hero__promise { font-size: 14px; }

@@ -14,6 +14,14 @@ describe("home page", () => {
     expect(markup.match(/>Рассчитать матрицу бесплатно<\/a>/g)).toHaveLength(1);
   });
 
+  test("shows the brand name in the hero, not only in the site header", () => {
+    const hero = markup.slice(markup.indexOf('class="hero"'), markup.indexOf('id="home-intents"'));
+    expect(hero).toMatch(/class="hero__brand"/);
+    expect(hero).toContain("Твой ");
+    expect(hero).toContain("<em>оракул</em>");
+    expect(hero.indexOf('class="hero__brand"')).toBeLessThan(hero.indexOf("<h1"));
+  });
+
   test("shows what sets the site apart, after the practices and before the portrait", () => {
     expect(markup).toContain(`<h2 id="home-principles">${HOME_PRINCIPLES_TITLE}</h2>`);
     for (const item of HOME_PRINCIPLES) expect(markup).toContain(item.text);
