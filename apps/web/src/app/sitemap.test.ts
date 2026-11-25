@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { BLOG_POSTS, blogPath } from "@/lib/blog";
+import { NOINDEX_DOCUMENT_PATHS } from "@/lib/legal";
 import { monthWindow } from "@/lib/lunar-calendar-paths";
 import { lunarDayPaths, lunarMonthPath } from "@/lib/lunar-calendar-paths";
 import { PUBLIC_PATHS } from "@/lib/seo";
@@ -10,10 +11,12 @@ const entriesOf = (prefix: string) => sitemap().map((item) => item.url).filter((
 const entry = (path: string) => sitemap().find((item) => item.url === (path === "/" ? SITE_URL : `${SITE_URL}${path}`));
 
 describe("sitemap.xml", () => {
-  test("lists every public page exactly once", () => {
+  test("lists every indexable public page exactly once and skips noindex legal texts", () => {
     const urls = sitemap().map((item) => item.url);
-    expect(urls).toHaveLength(PUBLIC_PATHS.length);
+    expect(urls).toHaveLength(PUBLIC_PATHS.length - NOINDEX_DOCUMENT_PATHS.length);
     expect(new Set(urls).size).toBe(urls.length);
+    for (const path of NOINDEX_DOCUMENT_PATHS) expect(entry(path), path).toBeUndefined();
+    expect(entry("/contacts")).toBeDefined();
   });
 
   test("priorities tell the page kinds apart: home, practices, articles, ordinary pages and reference pages", () => {
@@ -22,7 +25,7 @@ describe("sitemap.xml", () => {
     expect(entry("/blog")?.priority).toBe(0.6);
     for (const post of BLOG_POSTS) expect(entry(blogPath(post))?.priority, post.slug).toBe(0.6);
     expect(entry("/matrica-sudby/arkan-1-mag")?.priority).toBe(0.5);
-    for (const path of ["/natalnaya-karta/slovar-terminov", "/metodika", "/privacy", "/oferta"]) expect(entry(path)?.priority, path).toBe(0.3);
+    for (const path of ["/natalnaya-karta/slovar-terminov", "/metodika", "/contacts"]) expect(entry(path)?.priority, path).toBe(0.3);
   });
 
   test("an article carries its edit date, or else its publication date, as lastmod; pages without a reliable date carry none", () => {

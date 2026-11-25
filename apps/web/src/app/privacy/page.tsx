@@ -10,6 +10,7 @@ export const metadata: Metadata = publicMetadata({
   description: "Какие данные собирает сайт «Твой оракул», зачем, кому передаёт, где хранит и как их удалить.",
   path: "/privacy",
   image: SITE_PREVIEW_IMAGE,
+  robots: { index: false, follow: true },
 });
 
 export default function PrivacyPage() {

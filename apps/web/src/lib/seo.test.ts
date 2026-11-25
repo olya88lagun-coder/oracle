@@ -42,8 +42,15 @@ describe("paths", () => {
     expect(PRIVATE_PATHS).toContain("/portret");
   });
 
-  test("documents are public", () => {
-    expect(PUBLIC_PATHS).toEqual(expect.arrayContaining(["/contacts", "/privacy", "/consent"]));
+  test("documents remain reachable for internal links", () => {
+    expect(PUBLIC_PATHS).toEqual(expect.arrayContaining(["/contacts", "/privacy", "/consent", "/oferta"]));
+  });
+
+  test("legal texts can ask robots not to index while keeping follow", () => {
+    expect(publicMetadata({ title: "Политика", description: "d", path: "/privacy", robots: { index: false, follow: true } }).robots).toEqual({
+      index: false,
+      follow: true,
+    });
   });
 
   test("the Lila landing and all 72 cell pages are public, the game itself is not", () => {

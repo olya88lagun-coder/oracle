@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { MATRIX_PATH } from "@/lib/arcana-paths";
 import { BLOG_PATH, BLOG_POSTS, blogPath } from "@/lib/blog";
 import { COMPAT_PATH } from "@/lib/compat";
-import { DOCUMENT_PATHS } from "@/lib/legal";
+import { DOCUMENT_PATHS, NOINDEX_DOCUMENT_PATHS } from "@/lib/legal";
 import { THREAD_PATH } from "@/lib/life-thread";
 import { LILA_PATH } from "@/lib/lila-paths";
 import { LUNAR_CALENDAR_PATH, parseDaySlug } from "@/lib/lunar-calendar-paths";
@@ -18,7 +18,15 @@ import { TARO_DAY_PATH, TARO_PATH } from "@/lib/taro-paths";
 // Приоритет — подсказка, а не команда (Google его не учитывает, Яндекс учитывает как намёк), но разведём виды страниц:
 // входы в практики выше, справочные и юридические страницы ниже, остальные (значения арканов, карт, клеток, знаков) — посередине
 const PRACTICE_PATHS: ReadonlySet<string> = new Set(["/arkan-2027", NUMEROLOGY_PATH, PERSONAL_YEAR_PATH, CLOCK_PATH, PYTHAGORAS_PATH, THREAD_PATH, MATRIX_PATH, COMPAT_PATH, LILA_PATH, TARO_PATH, TARO_DAY_PATH, MOON_PATH, NATAL_PATH]);
-const REFERENCE_PATHS: ReadonlySet<string> = new Set([GLOSSARY_PATH, "/metodika", `${MATRIX_PATH}/primer`, `${LILA_PATH}/primer`, `${NATAL_PATH}/primer`, `${THREAD_PATH}/primer`, ...DOCUMENT_PATHS]);
+const REFERENCE_PATHS: ReadonlySet<string> = new Set([
+  GLOSSARY_PATH,
+  "/metodika",
+  `${MATRIX_PATH}/primer`,
+  `${LILA_PATH}/primer`,
+  `${NATAL_PATH}/primer`,
+  `${THREAD_PATH}/primer`,
+  ...DOCUMENT_PATHS.filter((path) => !(NOINDEX_DOCUMENT_PATHS as readonly string[]).includes(path)),
+]);
 
 const priorityOf = (path: string): number => {
   if (path === "/") return 1;
@@ -34,7 +42,7 @@ const priorityOf = (path: string): number => {
 const PUBLISHED = new Map(BLOG_POSTS.map((post) => [blogPath(post), new Date(post.updated ?? post.published)]));
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return PUBLIC_PATHS.map((path) => {
+  return PUBLIC_PATHS.filter((path) => !(NOINDEX_DOCUMENT_PATHS as readonly string[]).includes(path)).map((path) => {
     const lastModified = PUBLISHED.get(path);
     return {
       url: path === "/" ? SITE_URL : `${SITE_URL}${path}`,
