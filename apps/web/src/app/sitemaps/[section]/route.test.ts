@@ -20,11 +20,21 @@ describe("section sitemaps", () => {
     expect(await locs("obshchee.xml")).toContain(SITE_URL);
   });
 
-  test("the lunar section holds the moon pages, the months and every date page, and the general one holds none of them", async () => {
+  test("the lunar section holds the moon pages, the months and nearby date pages, and the general one holds none of them", async () => {
     const moon = await locs("luna.xml");
     expect(moon).toContain(`${SITE_URL}/luna-segodnya`);
-    expect(moon.some((url) => /\/lunnyy-kalendar\/\d{1,2}-[a-z]+-\d{4}$/.test(url))).toBe(true);
+    const days = moon.filter((url) => /\/lunnyy-kalendar\/\d{1,2}-[a-z]+-\d{4}$/.test(url));
+    expect(days.length).toBeGreaterThanOrEqual(30);
+    expect(days.length).toBeLessThanOrEqual(61);
     expect(moon.every((url) => /\/(luna|luna-segodnya|lunnyy-kalendar|dni-nedeli)(\/|$)/.test(url))).toBe(true);
     expect((await locs("obshchee.xml")).some((url) => /\/(luna|luna-segodnya|lunnyy-kalendar|dni-nedeli)(\/|$)/.test(url))).toBe(false);
+  });
+
+  test("the tarot section lists hubs, spreads and major arcana only", async () => {
+    const taro = await locs("taro.xml");
+    expect(taro).toContain(`${SITE_URL}/taro`);
+    expect(taro).toContain(`${SITE_URL}/taro/karty/mag`);
+    expect(taro.some((url) => url.includes("/taro/karty/zhezly-tuz"))).toBe(false);
+    expect(taro.filter((url) => url.includes("/taro/karty/"))).toHaveLength(22);
   });
 });

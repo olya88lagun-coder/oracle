@@ -1,19 +1,20 @@
 import { describe, expect, test } from "vitest";
 import { BLOG_POSTS, blogPath } from "@/lib/blog";
 import { NOINDEX_DOCUMENT_PATHS } from "@/lib/legal";
-import { monthWindow } from "@/lib/lunar-calendar-paths";
-import { lunarDayPaths, lunarMonthPath } from "@/lib/lunar-calendar-paths";
+import { lunarDayPathsForSitemap, lunarMonthPath, monthWindow } from "@/lib/lunar-calendar-paths";
 import { PUBLIC_PATHS } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
-import sitemap from "./sitemap";
+import { taroCardPathsForSitemap } from "@/lib/taro-paths";
+import sitemap, { sitemapPaths } from "./sitemap";
 
 const entriesOf = (prefix: string) => sitemap().map((item) => item.url).filter((url) => url.includes(prefix));
 const entry = (path: string) => sitemap().find((item) => item.url === (path === "/" ? SITE_URL : `${SITE_URL}${path}`));
 
 describe("sitemap.xml", () => {
-  test("lists every indexable public page exactly once and skips noindex legal texts", () => {
+  test("lists every sitemap path exactly once and skips noindex legal texts", () => {
     const urls = sitemap().map((item) => item.url);
-    expect(urls).toHaveLength(PUBLIC_PATHS.length - NOINDEX_DOCUMENT_PATHS.length);
+    expect(urls).toHaveLength(sitemapPaths().length);
+    expect(urls.length).toBeLessThan(PUBLIC_PATHS.length - NOINDEX_DOCUMENT_PATHS.length);
     expect(new Set(urls).size).toBe(urls.length);
     for (const path of NOINDEX_DOCUMENT_PATHS) expect(entry(path), path).toBeUndefined();
     expect(entry("/contacts")).toBeDefined();
@@ -41,11 +42,23 @@ describe("sitemap.xml", () => {
     expect(entry("/lunnyy-kalendar")).toBeUndefined();
   });
 
-  test("lists every date page of the window with the lowest priority of the lunar pages, and no date outside the window", () => {
-    const paths = lunarDayPaths(new Date());
+  test("lists only nearby date pages with the lowest lunar priority, not the whole 15-month window", () => {
+    const paths = lunarDayPathsForSitemap(new Date());
     expect(paths).toHaveLength(entriesOf("/lunnyy-kalendar/").filter((url) => /\/\d{1,2}-[a-z]+-\d{4}$/.test(url)).length);
-    expect(paths.length).toBeGreaterThanOrEqual(450);
+    expect(paths.length).toBeLessThanOrEqual(61);
+    expect(paths.length).toBeGreaterThanOrEqual(30);
     for (const path of paths) expect(entry(path)?.priority, path).toBe(0.4);
     expect(entry("/lunnyy-kalendar/24-noyabrya-2020")).toBeUndefined();
+    expect(entry("/lunnyy-kalendar/1-yanvarya-2028")).toBeUndefined();
+  });
+
+  test("lists only the 22 major arcana card pages, not the minor ones", () => {
+    const majors = taroCardPathsForSitemap();
+    expect(majors).toHaveLength(22);
+    for (const path of majors) expect(entry(path)?.priority, path).toBe(0.5);
+    expect(entry("/taro/karty/mag")).toBeDefined();
+    expect(entry("/taro/karty/zhezly-tuz")).toBeUndefined();
+    expect(entry("/taro")).toBeDefined();
+    expect(entry("/taro/rasklady")).toBeDefined();
   });
 });

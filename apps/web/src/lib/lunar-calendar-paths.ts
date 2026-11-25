@@ -65,3 +65,20 @@ export function lunarDayPathOfDate(isoDate: string): string {
 // Адреса всех дней окна месяцев
 export const lunarDayPaths = (now: Date): string[] =>
   monthWindow(now).flatMap(({ year, month }) => Array.from({ length: lengthOfMonth(year, month) }, (_, index) => lunarDayPath(year, month, index + 1)));
+
+// В sitemap — только ближайшие дни (±radius по Москве), и только те, что ещё в окне месяцев (иначе 404)
+export const SITEMAP_DAY_RADIUS = 30;
+
+export function lunarDayPathsForSitemap(now: Date, radiusDays = SITEMAP_DAY_RADIUS): string[] {
+  const [year, month, day] = moscowDate(now).split("-").map(Number) as [number, number, number];
+  const center = Date.UTC(year, month - 1, day);
+  const paths: string[] = [];
+  for (let offset = -radiusDays; offset <= radiusDays; offset++) {
+    const at = new Date(center + offset * 86_400_000);
+    const y = at.getUTCFullYear();
+    const m = at.getUTCMonth() + 1;
+    const d = at.getUTCDate();
+    if (isInWindow(y, m, now)) paths.push(lunarDayPath(y, m, d));
+  }
+  return paths;
+}
