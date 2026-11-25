@@ -9,7 +9,10 @@ test("every day has a short action and an etymology line, with no promises or da
     expect(planet.action.length).toBeGreaterThan(30);
     expect(planet.action.length).toBeLessThanOrEqual(170);
     expect(planet.etymology.length).toBeGreaterThan(20);
-    const text = `${planet.action} ${planet.etymology}`.toLowerCase();
+    expect(planet.focus.length).toBeGreaterThan(80);
+    expect(planet.focus.length).toBeLessThanOrEqual(320);
+    expect(planet.themes).toHaveLength(3);
+    const text = `${planet.action} ${planet.etymology} ${planet.focus} ${planet.themes.join(" ")}`.toLowerCase();
     for (const word of ["благоприятн", "удачн", "гарантир", "обязательно", "здоровь", "деньг"]) expect(text).not.toContain(word);
   }
 });

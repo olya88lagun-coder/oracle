@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, test } from "vitest";
 import { WeekdayWeekBar } from "@/components/weekday/WeekdayWeekBar";
-import { WEEKDAY_PATH, WEEKDAY_PLANETS } from "@/lib/weekday-planets";
+import { WEEKDAY_FAQ, WEEKDAY_PATH, WEEKDAY_PLANETS, WEEKDAY_TRADITION } from "@/lib/weekday-planets";
 import Page, { metadata } from "./page";
 
 const TITLE_SUFFIX = " — Твой оракул";
@@ -53,8 +53,20 @@ test("the first screen shows what day it is and does not repeat the question of 
   expect(hero).not.toContain("weekday-strip__question");
   expect(markup.match(/class="weekday-card__action"/g)).toHaveLength(7);
   expect(markup.match(/class="weekday-card__etymology"/g)).toHaveLength(7);
+  expect(markup.match(/class="weekday-card__focus"/g)).toHaveLength(7);
+  expect(markup.match(/class="weekday-card__themes"/g)).toHaveLength(7);
   expect(markup).toContain("weekday-how__icon");
   expect(markup).toContain("weekday-card__fold");
+});
+
+test("shows a week overview, the tradition note and an expanded FAQ", () => {
+  const markup = html();
+  expect(markup).toContain("weekday-overview");
+  expect(markup.match(/class="weekday-overview__row"/g)).toHaveLength(7);
+  expect(markup).toContain("weekday-tradition");
+  expect(markup).toContain(WEEKDAY_TRADITION.methodHref);
+  expect(WEEKDAY_FAQ.length).toBeGreaterThanOrEqual(6);
+  expect(markup.match(/<details>/g)?.length).toBe(WEEKDAY_FAQ.length);
 });
 
 test("the week bar marks the first and the last day of the week correctly", () => {
