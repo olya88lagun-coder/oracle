@@ -62,7 +62,10 @@ export default function HomePage() {
           <Image src="/hero.webp" alt="" fill priority unoptimized sizes="100vw" />
         </div>
         <div className="hero__text">
-          <p className="eyebrow">Символические практики · самопознание</p>
+          {/* Бренд в первом экране: без шапки имя сайта всё ещё читается */}
+          <p className="hero__brand">
+            Твой <em>оракул</em>
+          </p>
           <h1 className="display">
             Иногда нужен не&nbsp;ответ.
             <br />А другой взгляд.
