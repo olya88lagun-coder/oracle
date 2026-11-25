@@ -42,11 +42,8 @@ describe("paths", () => {
     expect(PRIVATE_PATHS).toContain("/portret");
   });
 
-  test("contacts stay in the sitemap; legal texts do not", () => {
-    expect(PUBLIC_PATHS).toContain("/contacts");
-    expect(PUBLIC_PATHS).not.toContain("/privacy");
-    expect(PUBLIC_PATHS).not.toContain("/consent");
-    expect(PUBLIC_PATHS).not.toContain("/oferta");
+  test("documents remain reachable for internal links", () => {
+    expect(PUBLIC_PATHS).toEqual(expect.arrayContaining(["/contacts", "/privacy", "/consent", "/oferta"]));
   });
 
   test("legal texts can ask robots not to index while keeping follow", () => {

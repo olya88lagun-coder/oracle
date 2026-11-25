@@ -42,7 +42,7 @@ const priorityOf = (path: string): number => {
 const PUBLISHED = new Map(BLOG_POSTS.map((post) => [blogPath(post), new Date(post.updated ?? post.published)]));
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return PUBLIC_PATHS.map((path) => {
+  return PUBLIC_PATHS.filter((path) => !(NOINDEX_DOCUMENT_PATHS as readonly string[]).includes(path)).map((path) => {
     const lastModified = PUBLISHED.get(path);
     return {
       url: path === "/" ? SITE_URL : `${SITE_URL}${path}`,
