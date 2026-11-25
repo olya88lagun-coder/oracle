@@ -9,6 +9,7 @@ const card = (ref: (typeof TAROT_DECK)[number], patch: Partial<TarotCard> = {}):
   ...ref,
   keywords: ["один", "два", "три"],
   essence: [text(80), text(80)],
+  contrast: [],
   love: [text(60)],
   money: [text(60)],
   resource: list,
@@ -41,5 +42,6 @@ describe("checkTarotCards", () => {
     expect(checkTarotCards([card(first, { resource: ["ок", "два пункта", "три пункта"] }), ...rest]).join("\n")).toMatch(/пункт списка/);
     expect(checkTarotCards([card(first, { day: [`${text(40)} Вас ждёт успех.`] }), ...rest]).join("\n")).toMatch(/запрещённые обороты/);
     expect(checkTarotCards([card(first, { essence: [text(40), text(40)], love: [text(35)], money: [text(35)], day: [text(30)] }), ...rest]).join("\n")).toMatch(/слов \d+, нужно не меньше 330/);
+    expect(checkTarotCards([card(first, { contrast: [text(10)] }), ...rest]).join("\n")).toMatch(/С чем не путать/);
   });
 });

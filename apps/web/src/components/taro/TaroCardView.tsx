@@ -18,8 +18,12 @@ const neighbour = (card: TarotCard, shift: number) => {
 };
 
 type SectionKey = keyof typeof TAROT_SECTION_TITLES;
-const SECTIONS: readonly SectionKey[] = ["essence", "love", "money", "resource", "distortion", "day", "action", "question"];
+const SECTIONS: readonly SectionKey[] = ["essence", "contrast", "love", "money", "resource", "distortion", "day", "action", "question"];
 const sectionId = (key: SectionKey) => `razdel-${key}`;
+const hasSection = (card: TarotCard, key: SectionKey): boolean => {
+  if (key === "contrast") return card.contrast.length > 0;
+  return true;
+};
 
 // Расклады, где раздел карты читается в одной из позиций: связывает страницы карт с раскладами
 function SpreadsForSection({ sectionKey }: { sectionKey: SectionKey }) {
@@ -73,8 +77,9 @@ export function TaroCardView({ card }: { card: TarotCard }) {
   const next = neighbour(card, 1);
   const alt = `Карта Таро ${card.name}`;
   const combos = tarotCombos(card.slug);
+  const visible = SECTIONS.filter((key) => hasSection(card, key));
   const toc = [
-    ...SECTIONS.map((key) => ({ id: sectionId(key), title: TAROT_SECTION_TITLES[key] })),
+    ...visible.map((key) => ({ id: sectionId(key), title: TAROT_SECTION_TITLES[key] })),
     ...(combos.length > 0 ? [{ id: COMBOS_ID, title: COMBOS_TITLE }] : []),
   ];
   return (
@@ -120,7 +125,7 @@ export function TaroCardView({ card }: { card: TarotCard }) {
           </header>
 
           <div className="detail-sections">
-            {SECTIONS.map((key) => (
+            {visible.map((key) => (
               <section key={key} id={sectionId(key)} className="detail-section" aria-labelledby={`${sectionId(key)}-title`}>
                 <h2 id={`${sectionId(key)}-title`}>{TAROT_SECTION_TITLES[key]}</h2>
                 <SectionBody card={card} sectionKey={key} />

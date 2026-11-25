@@ -3,7 +3,7 @@ import { parseTarotCard, type TarotCard } from "./tarot";
 import { TAROT_DECK } from "./tarot-deck";
 
 export type { TarotCard } from "./tarot";
-export { TAROT_SECTION_TITLES } from "./tarot";
+export { TAROT_OPTIONAL_SECTIONS, TAROT_SECTION_TITLES } from "./tarot";
 export * from "./tarot-deck";
 
 // Собранные тексты: pnpm content:build → src/generated/tarot.json. Порядок и rank берутся из манифеста колоды

@@ -2,6 +2,7 @@ import type { TarotCardRef, TarotSuit } from "./tarot-deck";
 
 export const TAROT_SECTION_TITLES = {
   essence: "Суть",
+  contrast: "С чем не путать",
   love: "В отношениях",
   money: "В деле и деньгах",
   resource: "Ресурс",
@@ -12,9 +13,14 @@ export const TAROT_SECTION_TITLES = {
 } as const;
 type SectionKey = keyof typeof TAROT_SECTION_TITLES;
 
+// «С чем не путать» — опционально: пилот на старших арканах против серийного LOW_QUALITY
+export const TAROT_OPTIONAL_SECTIONS = ["contrast"] as const satisfies readonly SectionKey[];
+const OPTIONAL = new Set<string>(TAROT_OPTIONAL_SECTIONS);
+
 export type TarotCard = TarotCardRef & {
   readonly keywords: readonly string[];
   readonly essence: readonly string[];
+  readonly contrast: readonly string[];
   readonly love: readonly string[];
   readonly money: readonly string[];
   readonly resource: readonly string[];
@@ -79,8 +85,12 @@ export function parseTarotCard(source: string, file: string): TarotCard {
     if (found.has(key!)) fail(`секция «${title}» повторяется`);
     found.set(key!, newline === -1 ? "" : chunk.slice(newline + 1).trim());
   }
-  for (const [key, title] of Object.entries(TAROT_SECTION_TITLES)) if (!found.get(key as SectionKey)) fail(`нет секции «${title}»`);
+  for (const [key, title] of Object.entries(TAROT_SECTION_TITLES)) {
+    if (OPTIONAL.has(key)) continue;
+    if (!found.get(key as SectionKey)) fail(`нет секции «${title}»`);
+  }
   const text = (key: SectionKey) => found.get(key)!;
+  const contrastRaw = found.get("contrast");
   return {
     order,
     slug,
@@ -89,6 +99,7 @@ export function parseTarotCard(source: string, file: string): TarotCard {
     rank: 0,
     keywords,
     essence: paragraphs(text("essence")),
+    contrast: contrastRaw ? paragraphs(contrastRaw) : [],
     love: paragraphs(text("love")),
     money: paragraphs(text("money")),
     resource: listItems(text("resource"), TAROT_SECTION_TITLES.resource, fail),

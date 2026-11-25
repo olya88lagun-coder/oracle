@@ -41,4 +41,18 @@ describe("a Taro card page", () => {
     expect(hubLinks).toHaveLength(1);
     expect(markup.indexOf('href="/taro/rasklady"')).toBeGreaterThan(markup.lastIndexOf("detail-section"));
   });
+
+  test("shows «С чем не путать» on pilot majors and hides it when the section is empty", () => {
+    const mag = tarotCardText("mag");
+    const minor = tarotCardText("zhezly-tuz");
+    if (!mag || !minor) throw new Error("no card");
+    expect(mag.contrast.length).toBeGreaterThan(0);
+    expect(minor.contrast).toEqual([]);
+    const majorMarkup = renderToStaticMarkup(<TaroCardView card={mag} />);
+    const minorMarkup = renderToStaticMarkup(<TaroCardView card={minor} />);
+    expect(majorMarkup).toContain('id="razdel-contrast-title">С чем не путать</h2>');
+    expect(majorMarkup.indexOf('id="razdel-contrast"')).toBeGreaterThan(majorMarkup.indexOf('id="razdel-essence"'));
+    expect(majorMarkup.indexOf('id="razdel-contrast"')).toBeLessThan(majorMarkup.indexOf('id="razdel-love"'));
+    expect(minorMarkup).not.toContain("razdel-contrast");
+  });
 });
