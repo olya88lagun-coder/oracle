@@ -5,6 +5,8 @@ import { moonRibbonData } from "@/lib/moon-ribbon";
 import { MoonNatalBridge } from "@/components/moon/MoonNatalBridge";
 import { WeekdayCards } from "@/components/weekday/WeekdayCards";
 import { WeekdayNow } from "@/components/weekday/WeekdayNow";
+import { WeekdayOverview } from "@/components/weekday/WeekdayOverview";
+import { WeekdayTradition } from "@/components/weekday/WeekdayTradition";
 import { WeekdayWeekBar } from "@/components/weekday/WeekdayWeekBar";
 import { WeekdayWheel } from "@/components/weekday/WeekdayWheel";
 import { DISCLAIMER } from "@/lib/legal";
@@ -17,7 +19,7 @@ import { WEEKDAY_FAQ, WEEKDAY_PATH, weekdayIndex, WEEKDAY_PLANETS } from "@/lib/
 
 export const metadata: Metadata = publicMetadata({
   title: "Дни недели и планеты: ритм недели",
-  description: "Какая планета покровительствует каждому дню недели: образ дня, вопрос для себя и ссылка на практику. Луна, Марс, Меркурий, Юпитер, Венера, Сатурн, Солнце. Не прогноз.",
+  description: "Планета каждого дня недели: образ, фокус внимания, вопрос и маленькое действие. Классический порядок без прогнозов — от Луны до Солнца.",
   path: WEEKDAY_PATH,
   image: SITE_PREVIEW_IMAGE,
 });
@@ -55,11 +57,13 @@ export default function WeekdayPage() {
           <WeekdayWheel today={today} />
         </header>
         <WeekdayWeekBar today={today} />
+        <WeekdayOverview today={today} />
         <section className="weekday-week" aria-labelledby="weekday-week-title">
           <h2 id="weekday-week-title">Архетипы планет-покровителей</h2>
           <p className="weekday-week__lead">Мы не считаем, что планета «разрешает» или «запрещает» вам какие-то действия. Но её архетип может подсказать, на какой фокус внимания сегодня стоит опереться.</p>
           <WeekdayCards today={today} />
         </section>
+        <WeekdayTradition />
         <MoonNatalBridge from="weekday" />
         <section className="moon-links" aria-labelledby="weekday-links-title">
           <h2 id="weekday-links-title">Продолжить</h2>

@@ -10,7 +10,7 @@ const STEPS = [
   { icon: "moon", when: "Вечером", text: "вернитесь к вопросу." },
 ] as const;
 
-// Семь карточек дней: образ, вопрос для себя, маленькое действие, откуда название дня и ссылка на практику. Сегодняшний день отмечен рамкой и словом «Сегодня»; восьмой ячейкой — «как этим пользоваться»
+// Семь карточек дней: образ, фокус, темы, вопрос, действие, этимология и ссылка на практику. Сегодняшний день отмечен; восьмой ячейкой — «как этим пользоваться»
 export function WeekdayCards({ today }: { today: number }) {
   return (
     <ol className="weekday-cards">
@@ -31,6 +31,15 @@ export function WeekdayCards({ today }: { today: number }) {
               {planet.archetype}
             </p>
             <WeekdayCardFold open={isToday}>
+              <p className="weekday-card__focus">
+                <span className="weekday-card__label">В чём суть</span>
+                {planet.focus}
+              </p>
+              <ul className="weekday-card__themes" aria-label="Темы для внимания">
+                {planet.themes.map((theme) => (
+                  <li key={theme}>{theme}</li>
+                ))}
+              </ul>
               <p className="weekday-card__question">
                 <span className="weekday-card__label">Вопрос для себя</span>
                 {planet.question}

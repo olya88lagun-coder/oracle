@@ -8855,6 +8855,90 @@ main:has(> .natal-intro)::before {
 .weekday-how li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: center; color: var(--ink-soft); }
 .weekday-how strong { color: var(--ink); font-weight: 600; }
 .weekday-how__icon { display: grid; place-items: center; flex: none; width: 44px; height: 44px; border: 1px solid var(--accent-line); border-radius: 50%; background: var(--surface-2); color: var(--accent-hover); }
+
+.weekday-card__focus { color: var(--ink-soft); font-size: 15px; line-height: 1.6; }
+.weekday-card__themes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.weekday-card__themes li {
+  padding: 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--planet, var(--line-strong)) 35%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--planet, var(--accent)) 10%, transparent);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.weekday-overview {
+  min-width: 0;
+  padding-block: 8px 28px;
+  border-top: 1px solid var(--line);
+}
+.weekday-overview__lead { max-width: 62ch; margin: 0 0 18px; color: var(--ink-soft); line-height: 1.65; }
+.weekday-overview__list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.weekday-overview__row {
+  display: grid;
+  grid-template-columns: auto 3.2rem minmax(0, 7rem) minmax(0, 1fr);
+  gap: 10px 14px;
+  align-items: center;
+  min-height: 52px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--planet) 8%, var(--surface-2)), var(--surface));
+  color: inherit;
+  text-decoration: none;
+}
+.weekday-overview__row:hover { border-color: color-mix(in srgb, var(--planet) 45%, var(--line)); }
+.weekday-overview__row .weekday-mark { width: 36px; height: 36px; }
+.weekday-overview__day { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--ink); font-weight: 600; }
+.weekday-overview__badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--planet, var(--accent));
+  color: var(--accent-ink);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.weekday-overview__planet { color: var(--planet, var(--accent)); font-size: 14px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.weekday-overview__archetype { color: var(--ink-soft); font-size: 14px; line-height: 1.4; }
+.weekday-overview li[data-today] .weekday-overview__row {
+  border-color: var(--planet);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--planet) 28%, transparent);
+}
+@media (max-width: 719px) {
+  .weekday-overview__row { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "mark day" "mark planet" "arch arch"; }
+  .weekday-overview__row .weekday-mark { grid-area: mark; }
+  .weekday-overview__day { grid-area: day; }
+  .weekday-overview__planet { grid-area: planet; }
+  .weekday-overview__archetype { grid-area: arch; }
+}
+
+.weekday-tradition {
+  min-width: 0;
+  padding-block: 28px;
+  border-top: 1px solid var(--line);
+}
+.weekday-tradition__lead { max-width: 68ch; margin: 0 0 16px; color: var(--ink-soft); line-height: 1.65; }
+.weekday-tradition__points {
+  display: grid;
+  gap: 10px;
+  max-width: 68ch;
+  margin: 0;
+  padding-inline-start: 1.2em;
+  color: var(--ink);
+  line-height: 1.55;
+}
+.weekday-tradition__method { margin: 18px 0 0; }
+
 /* Страницы лунных суток: гравюра суток в шапке и каталог из 30 карточек с гравюрами */
 .moon-day-head { display: grid; gap: 18px; justify-items: center; text-align: center; }
 .moon-day-head__art img { display: block; width: 180px; height: auto; aspect-ratio: 1; border-radius: 22px; box-shadow: 0 0 40px rgba(203, 166, 118, 0.18), 0 0 0 1px var(--accent-line); }

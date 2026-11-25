@@ -20,7 +20,7 @@ export function WeekdayCardFold({ open, children }: { open: boolean; children: R
 
   return (
     <details ref={ref} className="weekday-card__fold" open>
-      <summary className="weekday-card__fold-summary">Вопрос и действие</summary>
+      <summary className="weekday-card__fold-summary">Подробнее о дне</summary>
       <div className="weekday-card__fold-body">{children}</div>
     </details>
   );
