@@ -11,7 +11,7 @@ import { acceptedHousePages, acceptedNatalPages } from "./natal-pages";
 import { GLOSSARY_PATH } from "./natal-glossary";
 import { NATAL_PATH, natalPagePath } from "./natal-paths";
 import { QUICK_PAGES, QUICK_VARIANTS } from "./natal-quick-pages";
-import { DOCUMENT_PATHS } from "./legal";
+import { DOCUMENT_PATHS, NOINDEX_DOCUMENT_PATHS } from "./legal";
 import { lunarDayPaths, lunarMonthPath, monthWindow } from "./lunar-calendar-paths";
 import { MOON_PATH } from "./moon-paths";
 import { moonYearPaths } from "./moon-year-paths";
@@ -31,17 +31,19 @@ export const PRIVATE_PATHS: readonly string[] = ["/api/", "/login", "/portret", 
 export const ROBOTS_DISALLOW: readonly string[] = ["/api/", "/admin"];
 
 // Практики и их справочники; следующие планы добавят свои
-export const PUBLIC_PATHS: string[] = ["/", "/arkan-2027", NUMEROLOGY_PATH, ...acceptedFatePaths(), PERSONAL_YEAR_PATH, ...acceptedPersonalYearPaths(), CLOCK_PATH, ...acceptedClockPaths(), PYTHAGORAS_PATH, ...acceptedSquarePaths(), ...acceptedPairPaths(), ...acceptedThreadPaths(), ...acceptedThreadPrimerPaths(), ...ARCANA.map(yearArcanumPath), MATRIX_PATH, ARCANA_HUB_PATH, COMPAT_PATH, ...ARCANA.map(compatArcanumPath), ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, TARO_SPREADS_PATH, ...TARO_SPREADS.map(spreadPath), ...TAROT_DECK.map(taroCardPath), MOON_PATH, WEEKDAY_PATH, ...monthWindow(new Date()).map(({ year, month }) => lunarMonthPath(year, month)), ...lunarDayPaths(new Date()), ...moonYearPaths(new Date()), NATAL_PATH, ...QUICK_VARIANTS.map((variant) => QUICK_PAGES[variant].path), `${NATAL_PATH}/primer`, GLOSSARY_PATH, ...acceptedNatalPages().map(natalPagePath), ...acceptedHousePages().map(natalPagePath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), "/metodika", "/matrica-sudby/primer", "/lila/primer", ...DOCUMENT_PATHS];
+const INDEXABLE_DOCUMENT_PATHS = DOCUMENT_PATHS.filter((path) => !(NOINDEX_DOCUMENT_PATHS as readonly string[]).includes(path));
+
+export const PUBLIC_PATHS: string[] = ["/", "/arkan-2027", NUMEROLOGY_PATH, ...acceptedFatePaths(), PERSONAL_YEAR_PATH, ...acceptedPersonalYearPaths(), CLOCK_PATH, ...acceptedClockPaths(), PYTHAGORAS_PATH, ...acceptedSquarePaths(), ...acceptedPairPaths(), ...acceptedThreadPaths(), ...acceptedThreadPrimerPaths(), ...ARCANA.map(yearArcanumPath), MATRIX_PATH, ARCANA_HUB_PATH, COMPAT_PATH, ...ARCANA.map(compatArcanumPath), ...ARCANA.map(arcanumPath), LILA_PATH, ...LILA_CELLS.map(lilaCellPath), TARO_PATH, TARO_DAY_PATH, TARO_SPREADS_PATH, ...TARO_SPREADS.map(spreadPath), ...TAROT_DECK.map(taroCardPath), MOON_PATH, WEEKDAY_PATH, ...monthWindow(new Date()).map(({ year, month }) => lunarMonthPath(year, month)), ...lunarDayPaths(new Date()), ...moonYearPaths(new Date()), NATAL_PATH, ...QUICK_VARIANTS.map((variant) => QUICK_PAGES[variant].path), `${NATAL_PATH}/primer`, GLOSSARY_PATH, ...acceptedNatalPages().map(natalPagePath), ...acceptedHousePages().map(natalPagePath), BLOG_PATH, ...BLOG_POSTS.map(blogPath), "/metodika", "/matrica-sudby/primer", "/lila/primer", ...INDEXABLE_DOCUMENT_PATHS];
 
 type PreviewImage = { url: string; alt: string; width?: number; height?: number };
 
-export function publicMetadata(p: { title: string; description: string; path: string; absoluteTitle?: boolean; image?: PreviewImage }): Metadata {
+export function publicMetadata(p: { title: string; description: string; path: string; absoluteTitle?: boolean; image?: PreviewImage; robots?: Metadata["robots"] }): Metadata {
   // Иллюстрации арканов и клеток квадратные 960 px; общая картинка сайта размеров не указывает
   const images = p.image ? [{ width: ARCANUM_IMAGE_SIZE, height: ARCANUM_IMAGE_SIZE, ...p.image }] : undefined;
   return {
     title: p.absoluteTitle ? { absolute: p.title } : p.title,
     description: p.description,
-    robots: { index: true, follow: true },
+    robots: p.robots ?? { index: true, follow: true },
     alternates: { canonical: p.path },
     openGraph: { title: p.title, description: p.description, url: p.path, type: "website", locale: "ru_RU", siteName: SITE_NAME, ...(images && { images }) },
     twitter: { card: images ? "summary_large_image" : "summary", title: p.title, description: p.description, ...(images && { images: images.map((image) => image.url) }) },

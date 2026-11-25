@@ -22,7 +22,8 @@ describe("sitemap.xml", () => {
     expect(entry("/blog")?.priority).toBe(0.6);
     for (const post of BLOG_POSTS) expect(entry(blogPath(post))?.priority, post.slug).toBe(0.6);
     expect(entry("/matrica-sudby/arkan-1-mag")?.priority).toBe(0.5);
-    for (const path of ["/natalnaya-karta/slovar-terminov", "/metodika", "/privacy", "/oferta"]) expect(entry(path)?.priority, path).toBe(0.3);
+    for (const path of ["/natalnaya-karta/slovar-terminov", "/metodika", "/contacts"]) expect(entry(path)?.priority, path).toBe(0.3);
+    for (const path of ["/privacy", "/consent", "/oferta"]) expect(entry(path), path).toBeUndefined();
   });
 
   test("an article carries its edit date, or else its publication date, as lastmod; pages without a reliable date carry none", () => {

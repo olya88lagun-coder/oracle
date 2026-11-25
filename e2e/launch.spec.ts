@@ -2,9 +2,13 @@ import { expect, test } from "@playwright/test";
 import { BASE_URL } from "./helpers";
 
 test("public pages are indexable and private pages are not", async ({ page }) => {
-  for (const path of ["/", "/matrica-sudby", "/matrica-sudby/arkan-11-sila", "/privacy", "/consent", "/contacts"]) {
+  for (const path of ["/", "/matrica-sudby", "/matrica-sudby/arkan-11-sila", "/contacts"]) {
     await page.goto(path);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "index, follow");
+  }
+  for (const path of ["/privacy", "/consent", "/oferta"]) {
+    await page.goto(path);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, follow");
   }
   for (const path of ["/login", "/portret"]) {
     await page.goto(path);
@@ -19,7 +23,10 @@ test("robots.txt and sitemap.xml describe the public site", async ({ request }) 
   expect(robots).toContain("Disallow: /api/");
   expect(robots).not.toContain("Disallow: /portret");
   expect(robots).toContain("Sitemap:");
-  expect(sitemap).toContain("/privacy");
+  expect(sitemap).toContain("/contacts");
+  expect(sitemap).not.toContain("/privacy");
+  expect(sitemap).not.toContain("/consent");
+  expect(sitemap).not.toContain("/oferta");
   expect(sitemap).toContain("/matrica-sudby/arkan-22-shut");
   expect(sitemap).not.toContain("/portret");
 });

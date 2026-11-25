@@ -11,6 +11,7 @@ export const metadata: Metadata = publicMetadata({
   description: "Условия платных услуг «Твоего оракула»: разборы матрицы судьбы и натальной карты, Лила с проводником. Исполнитель, цена, оплата, чек и возвраты.",
   path: "/oferta",
   image: SITE_PREVIEW_IMAGE,
+  robots: { index: false, follow: true },
 });
 
 export default function OfferPage() {

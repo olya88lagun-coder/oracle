@@ -13,6 +13,9 @@ export const DATA_STORAGE = "на сервере в Москве (Timeweb Cloud)
 
 export const DOCUMENT_PATHS = ["/contacts", "/privacy", "/consent", "/oferta"] as const;
 
+// Юридические тексты остаются доступны по ссылкам, но не должны попадать в поиск и sitemap
+export const NOINDEX_DOCUMENT_PATHS = ["/privacy", "/consent", "/oferta"] as const;
+
 export const DISCLAIMER =
   "«Твой оракул» — инструмент самопознания. Трактовки символических практик — не предсказания и не медицинская, психологическая, юридическая или финансовая консультация.";
 

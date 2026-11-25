@@ -10,6 +10,7 @@ export const metadata: Metadata = publicMetadata({
   description: "Текст согласия на обработку персональных данных, которое даётся при входе на сайт «Твой оракул».",
   path: "/consent",
   image: SITE_PREVIEW_IMAGE,
+  robots: { index: false, follow: true },
 });
 
 export default function ConsentPage() {

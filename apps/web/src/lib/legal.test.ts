@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { DATA_RECIPIENTS, DISCLAIMER, DOCUMENT_PATHS, formatRubles, LEGAL_VERSIONS, LOGIN_CONSENT_RECIPIENTS, OPERATOR } from "./legal";
+import { DATA_RECIPIENTS, DISCLAIMER, DOCUMENT_PATHS, formatRubles, LEGAL_VERSIONS, LOGIN_CONSENT_RECIPIENTS, NOINDEX_DOCUMENT_PATHS, OPERATOR } from "./legal";
 
 describe("legal constants", () => {
   test("the operator has a name, a 12-digit INN of a self-employed person and an e-mail", () => {
@@ -52,6 +52,10 @@ describe("legal constants", () => {
 
   test("documents live at stable addresses", () => {
     expect(DOCUMENT_PATHS).toEqual(["/contacts", "/privacy", "/consent", "/oferta"]);
+  });
+
+  test("privacy, consent and the offer stay off the search index list", () => {
+    expect(NOINDEX_DOCUMENT_PATHS).toEqual(["/privacy", "/consent", "/oferta"]);
   });
 
   test("prices are shown in rubles", () => {
