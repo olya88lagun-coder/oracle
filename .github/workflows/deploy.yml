@@ -122,6 +122,8 @@ jobs:
           curl -fsS "$SITE/matrica-sudby" > "$tmp/matrix.html"
           curl -fsS "$SITE/matrica-sudby/arkan-11-sila" > "$tmp/arcanum.html"
           curl -fsS "$SITE/oferta" > "$tmp/offer.html"
+          curl -fsS "$SITE/privacy" > "$tmp/privacy.html"
+          curl -fsS "$SITE/consent" > "$tmp/consent.html"
           curl -fsS "$SITE/numerologiya" > "$tmp/numerology.html"
 
           assert_contains() {
@@ -157,7 +159,14 @@ jobs:
           assert_contains 'ИНН' "$tmp/contacts.html" "contacts INN"
           assert_contains 'noindex' "$tmp/portret.html" "portrait is not indexed"
           assert_contains 'noindex' "$tmp/login.html" "login is not indexed"
-          assert_contains "$SITE/privacy" "$tmp/sitemap.xml" "sitemap documents"
+          assert_contains 'content="noindex, follow"' "$tmp/privacy.html" "privacy is not indexed"
+          assert_contains 'content="noindex, follow"' "$tmp/consent.html" "consent is not indexed"
+          assert_contains 'content="noindex, follow"' "$tmp/offer.html" "offer is not indexed"
+          assert_contains "$SITE/contacts" "$tmp/sitemap.xml" "sitemap contacts"
+          if grep -Fq "$SITE/privacy" "$tmp/sitemap.xml" || grep -Fq "$SITE/consent" "$tmp/sitemap.xml" || grep -Fq "$SITE/oferta" "$tmp/sitemap.xml"; then
+            echo "SMOKE TEST FAILED: legal texts must stay out of the sitemap"
+            exit 1
+          fi
           assert_contains "Sitemap: $SITE/sitemap.xml" "$tmp/robots.txt" "robots sitemap"
           assert_contains 'Disallow: /api/' "$tmp/robots.txt" "robots service paths"
           assert_contains '<h1 id="matrix-title" class="display">Матрица судьбы <span>по дате рождения</span></h1>' "$tmp/matrix.html" "matrix calculator"
@@ -167,7 +176,6 @@ jobs:
           assert_contains 'ИНН' "$tmp/offer.html" "offer names the seller"
           assert_contains 'content="index, follow"' "$tmp/numerology.html" "numerology indexable"
           assert_contains "$SITE/numerologiya" "$tmp/sitemap.xml" "sitemap numerology"
-          assert_contains "$SITE/oferta" "$tmp/sitemap.xml" "sitemap offer"
 
           assert_status "404" "unknown arcanum is 404" "$SITE/matrica-sudby/arkan-11-mag"
           assert_status "404" "dev login is off in production" "$SITE/api/dev/login"
